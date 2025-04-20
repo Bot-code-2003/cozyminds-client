@@ -205,7 +205,7 @@ const Footer = ({ darkMode }) => {
             alt="Footer Decoration"
             className="w-full h-full object-cover opacity-60 dark:opacity-60 transition-opacity duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#F8F1E9] to-transparent dark:from-[#1A1A1A] dark:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#f3f9fc] to-transparent dark:from-[#1A1A1A] dark:to-transparent" />
         </div>
       </div>
     </>

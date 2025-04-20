@@ -37,7 +37,7 @@ const Features = () => {
           text: "Something cozy to hold close",
         },
       ],
-      color: "F4A261",
+      color: "5999a8",
       bgLight: "FFD7BA",
       bgDark: "3A2E2A",
       position: "top-left",
@@ -145,11 +145,9 @@ const Features = () => {
                   ? "-top-3 -left-3"
                   : feature.position === "top-right"
                   ? "-top-3 -right-3"
-                  : feature.position === "bottom-left"
-                  ? "-bottom-3 -left-3"
-                  : "-bottom-3 -right-3"
-              } 
-                            w-6 h-6 bg-[#${feature.color}] z-10`}
+                  : "-bottom-3 -left-3"
+              } w-6 h-6`}
+              style={{ backgroundColor: `#${feature.color}` }}
             ></div>
 
             <div
@@ -201,8 +199,8 @@ const Features = () => {
       </div>
 
       {/* Feature highlight box */}
-      <div className="mt-16 border-2 border-[#F4A261] p-8 relative">
-        <div className="absolute -top-3 -right-3 px-3 py-1 bg-[#F4A261] text-[#1A1A1A] text-xs font-bold">
+      <div className="mt-16 border-2 border-[var(--accent)] p-8 relative">
+        <div className="absolute -top-3 -right-3 px-3 py-1 bg-[var(--accent)] text-[#ffffff] text-xs font-bold">
           NEW
         </div>
 
@@ -218,15 +216,15 @@ const Features = () => {
             </p>
             {/* <Link
               to="/waitlist"
-              className="inline-flex items-center gap-2 px-6 py-2 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-white dark:text-[#1A1A1A] hover:bg-[#F4A261] dark:hover:bg-[#F4A261] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-2 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-white dark:text-[#1A1A1A] hover:bg-[var(--accent)] dark:hover:bg-[var(--accent)] transition-colors"
             >
               Join the waitlist
               <ArrowRight size={16} />
             </Link> */}
           </div>
 
-          <div className="md:w-1/3 aspect-square bg-[#F4A261]/10 dark:bg-[#F4A261]/5 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] flex items-center justify-center">
-            <Sparkles size={64} className="text-[#F4A261]" />
+          <div className="md:w-1/3 aspect-square bg-[var(--accent)]/10 dark:bg-[var(--accent)]/5 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] flex items-center justify-center">
+            <Sparkles size={64} className="text-[var(--accent)]" />
           </div>
         </div>
       </div>

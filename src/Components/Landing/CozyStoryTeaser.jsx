@@ -33,13 +33,13 @@ const CozyStoryTeaser = ({ darkMode }) => {
         }`}
       >
         {/* Top accent bar */}
-        <div className="h-2 w-full bg-[#F4A261]"></div>
+        <div className="h-2 w-full bg-[var(--accent)]"></div>
 
         {/* Content */}
         <div className="p-8 md:p-12">
           {/* Floating decorative icons */}
           <Stars
-            className="absolute top-8 left-8 text-[#F4A261] opacity-40"
+            className="absolute top-8 left-8 text-[var(--accent)] opacity-40"
             size={18}
           />
           <Wand
@@ -57,7 +57,7 @@ const CozyStoryTeaser = ({ darkMode }) => {
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-4 relative inline-block">
               <span className="relative z-10">Taste the Cozy Story</span>
-              <span className="absolute -bottom-2 left-0 w-full h-2 bg-[#F4A261]/30"></span>
+              <span className="absolute -bottom-2 left-0 w-full h-2 bg-[var(--accent)]/30"></span>
             </h3>
             <p className="opacity-80 max-w-md mx-auto text-base md:text-lg">
               Get a little glimpse of your evolving cozy journey — one visit,
@@ -138,7 +138,7 @@ const CozyStoryTeaser = ({ darkMode }) => {
               to="/login"
               className={`inline-flex items-center gap-2 px-8 py-3 text-sm font-semibold tracking-wide border-2 ${
                 darkMode
-                  ? "bg-[#F4A261] text-[#1A1A1A] border-[#F4A261] hover:bg-transparent hover:text-[#F8F1E9]"
+                  ? "bg-[var(--accent)] text-[#1A1A1A] border-[var(--accent)] hover:bg-transparent hover:text-[#F8F1E9]"
                   : "bg-[#1A1A1A] text-white border-[#1A1A1A] hover:bg-transparent hover:text-[#1A1A1A]"
               } transition-all duration-300 group`}
             >
@@ -153,8 +153,8 @@ const CozyStoryTeaser = ({ darkMode }) => {
       </div>
 
       {/* Decorative corner elements */}
-      <div className="absolute -bottom-3 -right-3 w-24 h-24 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[#F4A261]/20 dark:bg-[#F4A261]/10 z-0"></div>
-      <div className="absolute -top-3 -left-3 w-16 h-16 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[#F4A261]/10 dark:bg-[#F4A261]/5 z-0"></div>
+      <div className="absolute -bottom-3 -right-3 w-24 h-24 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[var(--accent)]/20 dark:bg-[var(--accent)]/10 z-0"></div>
+      <div className="absolute -top-3 -left-3 w-16 h-16 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[var(--accent)]/10 dark:bg-[var(--accent)]/5 z-0"></div>
     </div>
   );
 };

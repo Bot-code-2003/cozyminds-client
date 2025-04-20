@@ -53,7 +53,7 @@ const Testimonials = ({ darkMode }) => {
         {/* Large quote icon */}
         <Quote
           size={120}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#F4A261]/5 dark:text-[#F4A261]/10 -z-10"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#5999a8]/5 dark:text-[#5999a8]/10 -z-10"
         />
       </div>
 
@@ -63,14 +63,14 @@ const Testimonials = ({ darkMode }) => {
             key={index}
             className={`relative border-2 ${
               testimonial.highlight
-                ? "border-[#F4A261]"
+                ? "border-[#5999a8]"
                 : "border-[#1A1A1A] dark:border-[#F8F1E9]"
             } ${
               darkMode ? "bg-[#2A2A2A]" : "bg-white"
             } transition-all duration-300 hover:-translate-y-1 group`}
           >
             {testimonial.highlight && (
-              <div className="absolute -top-3 -right-3 px-3 py-1 bg-[#F4A261] text-[#1A1A1A] text-xs font-bold">
+              <div className="absolute -top-3 -right-3 px-3 py-1 bg-[#5999a8] text-[white] text-xs font-bold">
                 FEATURED
               </div>
             )}
@@ -81,7 +81,7 @@ const Testimonials = ({ darkMode }) => {
                 size={24}
                 className={`mb-4 ${
                   testimonial.highlight
-                    ? "text-[#F4A261]"
+                    ? "text-[#5999a8]"
                     : "text-[#1A1A1A]/20 dark:text-[#F8F1E9]/20"
                 }`}
               />
@@ -92,7 +92,7 @@ const Testimonials = ({ darkMode }) => {
                   <Star
                     key={i}
                     size={16}
-                    className="text-[#F4A261] fill-current"
+                    className="text-[#5999a8] fill-current"
                   />
                 ))}
               </div>
@@ -107,7 +107,7 @@ const Testimonials = ({ darkMode }) => {
                 <div
                   className={`w-10 h-10 flex items-center justify-center ${
                     testimonial.highlight
-                      ? "bg-[#F4A261] text-[#1A1A1A]"
+                      ? "bg-[#5999a8] text-[white]"
                       : darkMode
                       ? "bg-[#F8F1E9] text-[#1A1A1A]"
                       : "bg-[#1A1A1A] text-white"
@@ -129,7 +129,7 @@ const Testimonials = ({ darkMode }) => {
       {/* <div className="text-center mt-16">
         <Link
           to="/testimonials"
-          className="inline-flex items-center gap-2 text-[#F4A261] hover:underline group"
+          className="inline-flex items-center gap-2 text-[#5999a8] hover:underline group"
         >
           Read more testimonials
           <ArrowRight

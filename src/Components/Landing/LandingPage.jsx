@@ -73,10 +73,10 @@ const LandingPage = () => {
 
   return (
     <div
-      className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#F8F1E9] text-[#1A1A1A] font-sans flex flex-col items-center relative overflow-hidden transition-colors duration-300`}
+      className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative overflow-hidden transition-colors duration-300`}
     >
       {/* Gradient Accents */}
-      <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#FFD7BA] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
+      <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
 
       {/* Grid Pattern Background */}
       <div className="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none">
@@ -184,9 +184,9 @@ const LandingPage = () => {
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
               <span className="relative">
-                Cozy <span className="text-[#F4A261]">Minds</span>
+                Cozy <span className="text-[#5999a8]">Minds</span>
                 <svg
-                  className="absolute -bottom-2 left-0 w-full h-2 text-[#F4A261] dark:text-[#F4A261]"
+                  className="absolute -bottom-2 left-0 w-full h-2 text-[#5999a8] dark:text-[#5999a8]"
                   viewBox="0 0 100 10"
                   preserveAspectRatio="none"
                 >
@@ -207,7 +207,7 @@ const LandingPage = () => {
               <button
                 className={`px-6 py-3 ${
                   darkMode
-                    ? "bg-[#F4A261] text-[#1A1A1A]"
+                    ? "bg-[#5999a8] text-white"
                     : "bg-[#1A1A1A] text-white"
                 } hover:opacity-90 transition-opacity flex items-center gap-2 group border-2 border-transparent`}
               >
@@ -234,9 +234,9 @@ const LandingPage = () => {
           <div className="order-1 md:order-2 relative">
             <div className="aspect-square w-full max-w-md mx-auto relative">
               {/* Decorative layers */}
-              <div className="absolute inset-0 bg-[#F4A261]/20 dark:bg-[#F4A261]/10 -rotate-3 transform"></div>
+              <div className="absolute inset-0 bg-[#5999a8]/20 dark:bg-[#5999a8]/10 -rotate-3 transform"></div>
               <div className="absolute inset-0 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rotate-3 transform"></div>
-              <div className="absolute inset-0 bg-[#E9C46A]/20 dark:bg-[#E9C46A]/10 rotate-6 transform"></div>
+              <div className="absolute inset-0 bg-[#5999a8]/20 dark:bg-[#5999a8]/10 rotate-6 transform"></div>
 
               {/* Main image placeholder - replace with your actual image */}
               <div className="relative z-10 w-full h-full border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-white dark:bg-[#2A2A2A] flex items-center justify-center">
@@ -293,7 +293,7 @@ const LandingPage = () => {
                       ? "border-b md:border-b-0 md:border-r"
                       : "border-b md:border-b-0"
                   } border-[#1A1A1A] dark:border-[#F8F1E9] ${
-                    index === 1 ? "bg-[#F4A261]/10 dark:bg-[#F4A261]/5" : ""
+                    index === 1 ? "bg-[#5999a8]/10 dark:bg-[#5999a8]/5" : ""
                   }`}
                 >
                   <div className="mb-4 p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] inline-block">

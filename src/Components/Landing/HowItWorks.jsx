@@ -12,7 +12,7 @@ const HowItWorks = () => {
       description:
         "Sign up with a name you create — no real email needed. Just your cozy self.",
       icon: <Smile size={32} />,
-      color: "F4A261",
+      color: "5999A8",
       bgLight: "FFD7BA",
       bgDark: "3A2E2A",
       position: "top-left",
@@ -67,7 +67,8 @@ const HowItWorks = () => {
                   : step.position === "top-right"
                   ? "-top-3 -right-3"
                   : "-bottom-3 -left-3"
-              } w-6 h-6 bg-[#${step.color}] z-10`}
+              } w-6 h-6`}
+              style={{ backgroundColor: `#${step.color}` }}
             ></div>
 
             <div

@@ -43,16 +43,12 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
           {/* Logo */}
           <div className="text-xl font-bold tracking-wider">
             COZY
-            <span
-              className={`${darkMode ? "text-[#F4A261]" : "text-[#E68A41]"}`}
-            >
-              MINDS
-            </span>
+            <span className={`text-[var(--accent)]`}>MINDS</span>
           </div>
 
           {/* Hamburger Menu Button (visible on mobile) */}
           <button
-            className="md:hidden  p-2 hover:text-[#F4A261] transition-colors"
+            className="md:hidden  p-2 hover:text-[#5999a8] transition-colors"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
           >
@@ -65,7 +61,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
               <Link
                 to={item.path}
                 key={item.name}
-                className="font-medium hover:text-[#F4A261] transition-colors"
+                className="font-medium hover:text-[#5999a8] transition-colors"
               >
                 {item.name}
               </Link>
@@ -76,7 +72,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={toggleDarkMode}
-              className="p-2 hover:text-[#F4A261] transition-colors"
+              className="p-2 hover:text-[#5999a8] transition-colors"
               aria-label="Toggle dark mode"
             >
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -88,7 +84,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                   to={"/dashboard"}
                   className={`px-4 py-2 flex items-center gap-3 ${
                     darkMode
-                      ? "bg-[#F4A261] text-[#1A1A1A]"
+                      ? "bg-[#5999a8] text-[#1A1A1A]"
                       : "bg-[#1A1A1A] text-white"
                   } hover:opacity-90 transition-opacity`}
                 >
@@ -100,7 +96,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                     to="/profile-settings"
                     className={`px-4 py-2 flex items-center gap-3 ${
                       darkMode
-                        ? "bg-[#F4A261] text-[#1A1A1A]"
+                        ? "bg-[#5999a8] text-[#1A1A1A]"
                         : "bg-[#1A1A1A] text-white"
                     } hover:opacity-90 transition-opacity`}
                   >
@@ -114,7 +110,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                 to={"/login"}
                 className={`px-4 py-2 ${
                   darkMode
-                    ? "bg-[#F4A261] text-[#1A1A1A]"
+                    ? "bg-[#5999a8] text-[white]"
                     : "bg-[#1A1A1A] text-white"
                 } hover:opacity-90 transition-opacity`}
               >
@@ -132,7 +128,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                 <Link
                   to={item.path}
                   key={item}
-                  className="font-medium hover:text-[#F4A261] transition-colors text-left"
+                  className="font-medium hover:text-[#5999a8] transition-colors text-left"
                   onClick={toggleMobileMenu}
                 >
                   {item.name}
@@ -143,7 +139,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
               <div className="flex items-center space-x-4 pt-2">
                 <button
                   onClick={toggleDarkMode}
-                  className="p-2 hover:text-[#F4A261] transition-colors"
+                  className="p-2 hover:text-[#5999a8] transition-colors"
                   aria-label="Toggle dark mode"
                 >
                   {darkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -155,7 +151,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                       to={"/dashboard"}
                       className={`px-4 py-2 flex items-center gap-3 ${
                         darkMode
-                          ? "bg-[#F4A261] text-[#1A1A1A]"
+                          ? "bg-[#5999a8] text-[#1A1A1A]"
                           : "bg-[#1A1A1A] text-white"
                       } hover:opacity-90 transition-opacity`}
                       onClick={toggleMobileMenu}
@@ -168,7 +164,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                         to="/profile-settings"
                         className={`px-4 py-2 flex items-center gap-3 ${
                           darkMode
-                            ? "bg-[#F4A261] text-[#1A1A1A]"
+                            ? "bg-[#5999a8] text-[#1A1A1A]"
                             : "bg-[#1A1A1A] text-white"
                         } hover:opacity-90 transition-opacity`}
                         onClick={toggleMobileMenu}
@@ -183,7 +179,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                     to={"/login"}
                     className={`px-4 py-2 ${
                       darkMode
-                        ? "bg-[#F4A261] text-[#1A1A1A]"
+                        ? "bg-[#5999a8] text-[#1A1A1A]"
                         : "bg-[#1A1A1A] text-white"
                     } hover:opacity-90 transition-opacity`}
                     onClick={toggleMobileMenu}
