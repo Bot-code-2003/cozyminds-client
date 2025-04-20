@@ -38,14 +38,6 @@
   --highlight-rgb: 245, 166, 35;
 }
 
-.card-light {
-  background-color: #fff5e1; /* Warm cream, like candlelit pages */
-  border: 1px solid #e8b923; /* Soft amber, like hearth glow */
-  box-shadow: 0 2px 4px rgba(232, 185, 35, 0.1); /* Faint amber glow */
-  border-radius: 8px;
-  padding: 16px;
-}
-
 .card-dark {
   background-color: #2d283e; /* Muted purple, like a moonlit tome */
   border: 1px solid #a6b1e1; /* Silvery lavender, like moonlight */
@@ -54,12 +46,12 @@
   padding: 16px;
 }
 
-/* FOREST */
-/*Halooween*/
 .card-forest,
 .card-halloween,
 .card-christmas,
-.card-ocean {
+.card-ocean,
+.card-pets,
+.card-space {
   color: white !important;
   background-size: cover;
   background-position: center;
@@ -69,7 +61,9 @@
 .card-forest::before,
 .card-halloween::before,
 .card-christmas::before,
-.card-ocean::before {
+.card-ocean::before,
+.card-pets::before,
+.card-space::before {
   content: "";
   position: absolute;
   top: 0;
@@ -89,30 +83,37 @@
 .card-forest > *,
 .card-halloween > *,
 .card-christmas > *,
-.card-ocean > * {
+.card-ocean > *,
+.card-pets > *,
+.card-space > * {
   position: relative;
   z-index: 2;
 }
 .card-forest {
-  border: 2px solid #00ccff;
   background-image: url("./assets/forest.png");
 }
 /* OCEAN */
 .card-ocean {
-  border: 2px solid #00ccff;
   background-image: url("./assets/water.png");
 }
 
 /*CHRISTMAS*/
 .card-christmas {
-  border: 2px solid #ffcc00;
   background-image: url("./assets/christmas.png");
+}
+
+/*Pets*/
+.card-pets {
+  background-image: url("./assets/pets.png");
 }
 
 /*Halooween*/
 .card-halloween {
-  border: 2px solid #ffcc00;
   background-image: url("./assets/halloween.png");
+}
+
+.card-space {
+  background-image: url("./assets/space.png");
 }
 
 .text-primary {

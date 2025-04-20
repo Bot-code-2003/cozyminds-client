@@ -29,3 +29,6 @@ Greeting mail
     <br>The Cozy Minds Team
   </p>
 </div>
+
+
+I want to have this feature. Like user can also buy mail packs. Its like 

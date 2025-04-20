@@ -78,6 +78,11 @@ const JournalingAlt = () => {
       icon: "🐶",
       description: "Furry friends theme",
     },
+    theme_space: {
+      name: "Space Theme",
+      icon: "🚀",
+      description: "Cosmic exploration theme",
+    },
   };
 
   const toggleDarkMode = () => setDarkMode(!darkMode);

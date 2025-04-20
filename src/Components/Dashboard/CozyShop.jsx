@@ -4,15 +4,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCoins } from "../../context/CoinContext";
 import { useDarkMode } from "../../context/ThemeContext";
+
+import Christmas from "../../assets/christmas.png";
+import Halloween from "../../assets/halloween.png";
+import Forest from "../../assets/forest.png";
+import Ocean from "../../assets/water.png";
+import Pets from "../../assets/pets.png";
+import Space from "../../assets/space.png";
+
 import Navbar from "./Navbar";
-import {
-  ShoppingCart,
-  Package,
-  Tag,
-  Star,
-  Shield,
-  Sparkles,
-} from "lucide-react";
+import { ShoppingCart, Package, Sparkles, Star } from "lucide-react";
 
 const CozyShop = () => {
   const navigate = useNavigate();
@@ -20,7 +21,6 @@ const CozyShop = () => {
   const { darkMode } = useDarkMode();
   const [notification, setNotification] = useState(null);
   const [activeTab, setActiveTab] = useState("shop");
-  const [activeCategory, setActiveCategory] = useState("all");
   const [animateCoins, setAnimateCoins] = useState(false);
 
   // Sync coins when component mounts
@@ -28,69 +28,69 @@ const CozyShop = () => {
     syncCoinsFromStorage();
   }, []);
 
-  // Shop items with enhanced descriptions and categories
+  // Shop items with an additional `isEmoji` flag
   const shopItems = [
     {
       id: "theme_forest",
       name: "Forest Theme",
-      description:
-        "Transform your journal with serene forest visuals and calming nature sounds",
+      description: "Transform your journal with serene forest visuals",
       price: 50,
-      image: "🌲",
+      image: Forest,
       category: "theme",
-      featured: true,
+      featured: "Featured",
+      featuredStyle: "feature-card",
+      isEmoji: false,
     },
     {
       id: "theme_ocean",
       name: "Ocean Theme",
-      description:
-        "Immerse yourself in tranquil ocean waves and coastal ambiance",
+      description: "Immerse yourself in tranquil ocean waves",
       price: 50,
-      image: "🌊",
+      image: Ocean,
       category: "theme",
+      isEmoji: false,
     },
     {
       id: "theme_christmas",
       name: "Christmas Theme",
-      description:
-        "Celebrate the festive season with this festive Christmas-themed theme",
+      description: "Celebrate the festive season with holiday cheer",
       price: 50,
-      image: "🎄",
+      image: Christmas,
       category: "theme",
+      featured: "Event",
+      featuredStyle: "event-card",
+      isEmoji: false,
     },
     {
       id: "theme_halloween",
       name: "Halloween Theme",
-      description:
-        "Scare your friends and family with this spooky Halloween-themed theme",
+      description: "Add some spooky vibes to your journal",
       price: 50,
-      image: "🎃",
+      image: Halloween,
       category: "theme",
+      featured: "Limited Deal",
+      featuredStyle: "deal-card",
+      isEmoji: false,
     },
     {
       id: "theme_pets",
       name: "Pets Theme",
-      description:
-        "Immerse yourself in the warmth and companionship of your furry friends",
+      description: "For the animal lovers and pet owners",
       price: 50,
-      image: "🐶",
+      image: Pets,
       category: "theme",
+      isEmoji: false,
+    },
+    {
+      id: "theme_space",
+      name: "Space Theme",
+      description: "A cosmic journey through the universe",
+      price: 50,
+      image: Space,
+      category: "theme",
+      isEmoji: false,
     },
   ];
-
-  // Categories for filtering
-  const categories = [
-    { id: "all", name: "All Items", icon: Tag },
-    { id: "theme", name: "Themes", icon: Sparkles },
-    { id: "sticker", name: "Stickers", icon: Star },
-    { id: "badge", name: "Badges", icon: Shield },
-  ];
-
-  // Filter items based on active category
-  const filteredItems =
-    activeCategory === "all"
-      ? shopItems
-      : shopItems.filter((item) => item.category === activeCategory);
 
   // Add a function to check if an item is a one-time purchase
   const isOneTimePurchase = (category) => {
@@ -224,87 +224,89 @@ const CozyShop = () => {
 
         {/* Shop Items */}
         {activeTab === "shop" && (
-          <>
-            {/* Category filters */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    activeCategory === category.id
-                      ? "bg-[var(--accent)] text-white shadow-md"
-                      : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]/80"
-                  }`}
-                >
-                  <category.icon size={14} className="mr-1.5" />
-                  {category.name}
-                </button>
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {shopItems.map((item) => {
+              const soldOut = isItemSoldOut(item);
 
-            {/* All items grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item) => {
-                const soldOut = isItemSoldOut(item);
-                return (
-                  <div
-                    key={item.id}
-                    className="border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--bg-secondary)] hover:shadow-md transition-all duration-300 relative group"
-                  >
-                    {item.featured && activeCategory !== "all" && (
-                      <div className="absolute top-3 right-3 bg-[var(--accent)] text-white text-xs px-2 py-1 rounded-full z-10">
-                        Featured
-                      </div>
-                    )}
-                    <div className="p-6 flex flex-col items-center">
-                      <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                        {item.image}
-                      </div>
-                      <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                        {item.name}
-                      </h3>
-                      <p className="text-[var(--text-secondary)] text-sm mb-4 text-center">
-                        {item.description}
-                      </p>
-                      <div className="flex justify-between items-center w-full mt-auto">
-                        <div className="flex items-center">
-                          <span className="text-yellow-300 mr-1">🪙</span>
-                          <span className="text-[var(--text-primary)]">
-                            {item.price}
-                          </span>
-                        </div>
-                        {soldOut ? (
-                          <span className="px-4 py-2 rounded-md bg-gray-300 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                            Owned
-                          </span>
-                        ) : (
-                          <button
-                            onClick={() => handlePurchase(item)}
-                            disabled={coins < item.price}
-                            className={`px-4 py-2 rounded-md transition-all ${
-                              coins >= item.price
-                                ? "bg-[var(--accent)] text-white hover:bg-opacity-90 hover:shadow-md"
-                                : "bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700"
-                            }`}
-                          >
-                            Buy
-                          </button>
-                        )}
-                      </div>
-                      {!soldOut &&
-                        !isOneTimePurchase(item.category) &&
-                        getInventoryItemCount(item.id) > 0 && (
-                          <div className="mt-2 text-sm text-[var(--text-secondary)]">
-                            Owned: {getInventoryItemCount(item.id)}
-                          </div>
-                        )}
-                    </div>
+              return (
+                <div
+                  key={item.id}
+                  className={`border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--bg-secondary)] hover:shadow-lg transition-all duration-300 relative group h-60 flex flex-col ${
+                    item.featuredStyle || ""
+                  }`}
+                  style={
+                    !item.isEmoji
+                      ? {
+                          backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%), url(${item.image})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }
+                      : {}
+                  }
+                >
+                  {/* Category Badge */}
+                  <div className="absolute top-3 right-3 bg-[var(--accent)] text-white text-xs px-2 py-1 rounded-full z-10">
+                    {item.category}
                   </div>
-                );
-              })}
-            </div>
-          </>
+                  {/* Featured Badge */}
+                  {item.featured && (
+                    <div className="absolute top-3 left-3 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-xs px-2 py-1 rounded-full z-10">
+                      {item.featured}
+                    </div>
+                  )}
+                  {/* Emoji Display for isEmoji: true */}
+                  {item.isEmoji && (
+                    <div className="flex-grow flex items-center justify-center">
+                      <span className="text-6xl transform group-hover:scale-110 transition-transform duration-300">
+                        {item.image}
+                      </span>
+                    </div>
+                  )}
+                  {/* Content Area (over gradient for images, bottom for emojis) */}
+                  <div className="mt-auto p-6 flex flex-col items-center text-center z-10">
+                    <h3 className="text-xl font-semibold text-white mb-2 drop-shadow-md">
+                      {item.name}
+                    </h3>
+                    <p className="text-white text-sm mb-4 opacity-90 drop-shadow-sm">
+                      {item.description}
+                    </p>
+                    <div className="flex justify-between items-center w-full">
+                      <div className="flex items-center">
+                        <span className="text-yellow-300 mr-1">🪙</span>
+                        <span className="text-white font-medium">
+                          {item.price}
+                        </span>
+                      </div>
+                      {soldOut ? (
+                        <span className="px-4 py-2 rounded-md bg-gray-500 text-white bg-opacity-70">
+                          Owned
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handlePurchase(item)}
+                          disabled={coins < item.price}
+                          className={`px-4 py-2 rounded-md transition-all ${
+                            coins >= item.price
+                              ? "bg-[var(--accent)] text-white hover:bg-opacity-90 hover:shadow-md"
+                              : "bg-gray-500 text-white bg-opacity-70 cursor-not-allowed"
+                          }`}
+                        >
+                          Buy
+                        </button>
+                      )}
+                    </div>
+                    {!soldOut &&
+                      !isOneTimePurchase(item.category) &&
+                      getInventoryItemCount(item.id) > 0 && (
+                        <div className="mt-2 text-sm text-white opacity-80">
+                          Owned: {getInventoryItemCount(item.id)}
+                        </div>
+                      )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
 
         {/* Inventory */}
@@ -341,79 +343,58 @@ const CozyShop = () => {
                   </p>
                 </div>
 
-                {/* Themes Section */}
-                {inventory.filter((item) => item.category === "theme").length >
-                  0 && (
-                  <div className="mb-8">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4 flex items-center">
-                      <Sparkles className="mr-2" size={16} />
-                      Themes
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {inventory
-                        .filter((item) => item.category === "theme")
-                        .map((item) => (
-                          <div
-                            key={item.id}
-                            className="border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--bg-secondary)] hover:shadow-md transition-all duration-300"
-                          >
-                            <div className="p-6 flex flex-col items-center">
-                              <div className="text-6xl mb-4 hover:animate-pulse">
-                                {item.image}
-                              </div>
-                              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                                {item.name}
-                              </h3>
-                              <p className="text-[var(--text-secondary)] text-sm mb-4 text-center">
-                                {item.description}
-                              </p>
-                              <p className="text-sm text-[var(--text-secondary)]">
-                                Use this theme when creating a new journal entry
-                              </p>
-                            </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {inventory.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--bg-secondary)] hover:shadow-lg transition-all duration-300 relative h-60 flex flex-col ${
+                        item.featuredStyle || ""
+                      }`}
+                      style={
+                        !item.isEmoji
+                          ? {
+                              backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%), url(${item.image})`,
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                            }
+                          : {}
+                      }
+                    >
+                      {/* Category Badge */}
+                      <div className="absolute top-3 right-3 bg-[var(--accent)] text-white text-xs px-2 py-1 rounded-full z-10">
+                        {item.category}
+                      </div>
+                      {/* Featured Badge */}
+                      {item.featured && (
+                        <div className="absolute top-3 left-3 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-xs px-2 py-1 rounded-full z-10">
+                          {item.featured}
+                        </div>
+                      )}
+                      {/* Emoji Display for isEmoji: true */}
+                      {item.isEmoji && (
+                        <div className="flex-grow flex items-center justify-center">
+                          <span className="text-6xl transform group-hover:scale-110 transition-transform duration-300">
+                            {item.image}
+                          </span>
+                        </div>
+                      )}
+                      {/* Content Area (over gradient for images, bottom for emojis) */}
+                      <div className="mt-auto p-6 flex flex-col items-center text-center z-10">
+                        <h3 className="text-xl font-semibold text-white mb-2 drop-shadow-md">
+                          {item.name}
+                        </h3>
+                        <p className="text-white text-sm mb-4 opacity-90 drop-shadow-sm">
+                          {item.description}
+                        </p>
+                        {!isOneTimePurchase(item.category) && (
+                          <div className="mt-2 px-3 py-1 bg-[var(--bg-primary)] bg-opacity-70 rounded-full text-sm text-white opacity-80">
+                            Quantity: {item.quantity}
                           </div>
-                        ))}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
-
-                {/* Other Items Section */}
-                {inventory.filter((item) => item.category !== "theme").length >
-                  0 && (
-                  <div className="mb-8">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4 flex items-center">
-                      <Star className="mr-2" size={16} />
-                      Other Items
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {inventory
-                        .filter((item) => item.category !== "theme")
-                        .map((item) => (
-                          <div
-                            key={item.id}
-                            className="border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--bg-secondary)] hover:shadow-md transition-all duration-300"
-                          >
-                            <div className="p-6 flex flex-col items-center">
-                              <div className="text-6xl mb-4 hover:animate-pulse">
-                                {item.image}
-                              </div>
-                              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                                {item.name}
-                              </h3>
-                              <p className="text-[var(--text-secondary)] text-sm mb-4 text-center">
-                                {item.description}
-                              </p>
-                              {!isOneTimePurchase(item.category) && (
-                                <div className="mt-2 px-3 py-1 bg-[var(--bg-primary)] rounded-full text-sm text-[var(--text-secondary)]">
-                                  Quantity: {item.quantity}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
+                  ))}
+                </div>
               </>
             )}
           </div>

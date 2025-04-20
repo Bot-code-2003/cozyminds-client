@@ -124,7 +124,11 @@ export const CoinProvider = ({ children }) => {
       if (existingItem) {
         existingItem.quantity = (existingItem.quantity || 1) + 1;
       } else {
-        newInventory.push({ ...item, quantity: 1 });
+        newInventory.push({
+          ...item,
+          quantity: 1,
+          isEmoji: item.isEmoji ?? false,
+        });
       }
 
       const response = await API.put(`/user/${user._id}`, {

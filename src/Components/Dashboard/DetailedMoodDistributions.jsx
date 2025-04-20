@@ -301,7 +301,11 @@ const DetailedMoodDistributions = () => {
       } font-sans transition-colors duration-300`}
     >
       {/* Top navigation bar */}
-      <Navbar handleLogout={handleLogout} name="Dashboard" link="/" />
+      <Navbar
+        handleLogout={handleLogout}
+        name="New Entry"
+        link="/journaling-alt"
+      />
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
