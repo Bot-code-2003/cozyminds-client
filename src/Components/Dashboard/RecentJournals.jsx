@@ -91,88 +91,76 @@ const RecentJournals = ({ entries, darkMode, formatDate }) => {
               <Link
                 to={`/journal/${entry._id}`}
                 key={entry._id}
-                className={`group relative h-72 rounded-3xl overflow-hidden ${cardClass} transition-all duration-500 hover:scale-[1.02]`}
+                className={`rounded-xl border p-5 hover:shadow-md transition-all duration-200 ${cardClass}`}
               >
-                {/* Dynamic background with overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-900">
-                  {/* Animated accent color blob */}
-                  <div className="absolute -right-16 -bottom-16 w-48 h-48 rounded-full bg-[var(--highlight)]/30 blur-3xl group-hover:scale-125 transition-transform duration-700" />
-                  <div className="absolute -left-16 -top-16 w-32 h-32 rounded-full bg-[var(--highlight)]/20 blur-3xl group-hover:scale-110 transition-transform duration-500" />
+                {/* Theme icon indicator */}
+                {entry.theme && (
+                  <div className="absolute top-3 right-3 opacity-70">
+                    <span
+                      role="img"
+                      aria-label="theme-icon"
+                      className="text-lg"
+                    >
+                      {currentTheme.icon}
+                    </span>
+                  </div>
+                )}
+
+                {/* Title with decorative underline */}
+                <h3 className="text-lg font-semibold mb-2 truncate relative">
+                  {entry.title || "Untitled Entry"}
+                  <span className="absolute bottom-0 left-0 w-16 h-0.5 bg-current opacity-60"></span>
+                </h3>
+
+                {/* Date with theme icon */}
+                <p className="text-xs  mb-3 flex items-center gap-1">
+                  <span role="img" aria-label="date" className="text-xs">
+                    {currentTheme.dateIcon}
+                  </span>
+                  {formatDate(entry.date)}
+                </p>
+
+                {/* Mood badge with enhanced styling */}
+                <div className="flex gap-1">
+                  {entry.mood && (
+                    <span
+                      className="inline-block text-xs font-medium text-white px-2 py-1 rounded-full mb-3 shadow-sm"
+                      style={{
+                        backgroundColor: moodData?.color || "#2e7d32",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                      }}
+                    >
+                      {moodData?.emoji} {entry.mood}
+                    </span>
+                  )}
+
+                  {/* Tags */}
+                  {entry.tags?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {entry.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs px-2 py-0.5 rounded bg-[var(--highlight)]  opacity-80 border border-current/20"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Content container with grid layout */}
-                <div className="relative h-full flex flex-col p-6 z-10">
-                  {/* Top section with title and icon */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1 pr-4">
-                      <h3 className="text-xl font-bold text-white mb-1 leading-tight">
-                        {entry.title || "Untitled Entry"}
-                      </h3>
-                      <p className="text-xs text-white/70 font-medium flex items-center gap-1.5">
-                        <span role="img" aria-label="date">
-                          {currentTheme.dateIcon}
-                        </span>
-                        {formatDate(entry.date)}
-                      </p>
-                    </div>
-                    {entry.theme && (
-                      <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-white/10 rounded-2xl text-2xl shadow-lg">
-                        <span role="img" aria-label="theme-icon">
-                          {currentTheme.icon}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                {/* Content Preview with themed divider */}
+                <div className="relative">
+                  <div className="absolute left-0 top-0 w-1 h-full bg-current/30 rounded"></div>
+                  <p className="text-sm line-clamp-3 opacity-90 pl-3">
+                    {entry.content || "No content available."}
+                  </p>
+                </div>
 
-                  {/* Content preview with custom styling */}
-                  <div className="flex-grow mb-6">
-                    <div className="relative">
-                      <p className="text-sm text-white/80 line-clamp-3 leading-relaxed">
-                        {entry.content || "No content available."}
-                      </p>
-                      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-gray-900 to-transparent"></div>
-                    </div>
-                  </div>
-
-                  {/* Bottom section with tags and CTA */}
-                  <div className="mt-auto">
-                    {/* Tags and mood container */}
-                    <div className="flex flex-wrap gap-2 items-center mb-4">
-                      {/* Mood indicator with enhanced styling */}
-                      {entry.mood && (
-                        <span
-                          className="inline-flex items-center gap-1 text-xs font-medium text-white px-3 py-1.5 rounded-lg shadow-lg"
-                          style={{
-                            backgroundColor: moodData?.color || "#2e7d32",
-                          }}
-                        >
-                          <span className="text-base">{moodData?.emoji}</span>{" "}
-                          {entry.mood}
-                        </span>
-                      )}
-
-                      {/* Modern tag design */}
-                      {entry.tags?.length > 0 &&
-                        entry.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-white inline-flex text-xs font-medium px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                    </div>
-
-                    {/* Read more button with animated indicator */}
-                    <div className="flex items-center justify-end">
-                      <div className="group inline-flex items-center gap-1 text-white font-medium py-2 px-4 rounded-lg bg-[var(--highlight)] shadow-lg">
-                        <span>{currentTheme.readMoreText}</span>
-                        <span className="transform transition-transform duration-300 group-hover:translate-x-1">
-                          →
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                {/* Read more indicator with theme-specific text */}
+                <div className="mt-3 text-xs font-medium flex items-center justify-end theme-accent">
+                  <span>{currentTheme.readMoreText}</span>
+                  <span className="ml-1">→</span>
                 </div>
               </Link>
             );

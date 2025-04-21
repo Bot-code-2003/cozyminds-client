@@ -12,7 +12,6 @@ import Features from "./Features";
 import HowItWorks from "./HowItWorks";
 
 import axios from "axios";
-import CozyStoryTeaser from "./CozyStoryTeaser";
 
 // import Home from "../../assets/home1.png";
 // import Home from "../../assets/home2.jpg";
@@ -259,7 +258,7 @@ const LandingPage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="z-10 flex flex-col items-center gap-24 w-full max-w-6xl">
+      <main className="z-10 flex flex-col items-center gap-24 w-full max-w-7xl">
         {/* Stats Section - Improved */}
         <div className="w-full px-6">
           <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9]">
@@ -313,9 +312,6 @@ const LandingPage = () => {
 
         {/* How It Works Section */}
         <HowItWorks />
-
-        {/* CozyStory Teaser Block */}
-        <CozyStoryTeaser darkMode={darkMode} />
       </main>
 
       {/* Testimonials */}

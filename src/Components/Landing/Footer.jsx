@@ -6,7 +6,7 @@ const Footer = ({ darkMode }) => {
   return (
     <>
       {/* Call-to-Action Section */}
-      <section className="relative z-10 w-full max-w-6xl py-12 mb-12 mx-auto">
+      <section className="relative z-10 w-full max-w-7xl py-12 mb-12 mx-auto">
         <div
           className={`w-full p-6 md:p-12 ${
             darkMode ? "bg-[#2A2A2A]" : "bg-[#1A1A1A] text-white"
@@ -22,84 +22,46 @@ const Footer = ({ darkMode }) => {
                   darkMode ? "" : "text-white/80"
                 }`}
               >
-                Join thousands who have transformed their mental clarity with
-                Cozy Minds.
+                Join others in finding mental clarity with Cozy Minds, crafted
+                for well-being.
               </p>
             </div>
             <Link
               to="/login"
               className={`px-6 py-3 md:px-8 md:py-4 text-sm md:text-base ${
-                darkMode ? "bg-[#F4A261] text-black" : "bg-white text-black"
+                darkMode ? "bg-[#5999a8] text-white" : "bg-white text-black"
               } hover:opacity-90 transition-opacity whitespace-nowrap`}
             >
-              Begin your Journey
+              Begin Your Journey
             </Link>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full max-w-6xl sm:min-h-[500px] px-4 py-12 mx-auto border-t border-[#1A1A1A]/10 dark:border-[#F8F1E9]/10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
+      <footer className="relative z-10 w-full max-w-6xl px-4 py-12 mx-auto border-t border-[#1A1A1A]/10 dark:border-[#F8F1E9]/10">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="text-center md:text-left">
             <div className="text-xl font-bold tracking-wider mb-4">
               COZY
               <span
-                className={`${darkMode ? "text-[#F4A261]" : "text-[#E68A41]"}`}
+                className={`${darkMode ? "text-[#5999a8]" : "text-[#E68A41]"}`}
               >
                 MINDS
               </span>
             </div>
-            <p className="opacity-70 text-sm">
-              Bringing mental clarity to your daily life with minimalist,
-              effective tools.
+            <p className="opacity-70 text-sm max-w-xs">
+              A solo developer's passion project to bring mental clarity and
+              well-being to all.
             </p>
           </div>
 
-          {[
-            {
-              title: "Product",
-              links: ["Features", "Pricing", "Testimonials", "FAQ"],
-            },
-            {
-              title: "Company",
-              links: ["About", "Team", "Careers", "Press"],
-            },
-            {
-              title: "Resources",
-              links: ["Blog", "Support", "Contact", "Privacy"],
-            },
-          ].map((column, index) => (
-            <div key={index}>
-              <h3 className="font-semibold mb-4 text-base md:text-lg">
-                {column.title}
-              </h3>
-              <ul className="space-y-2">
-                {column.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
-                      className="opacity-70 hover:opacity-100 hover:text-[#F4A261] transition-all text-sm"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="border-t border-[#1A1A1A]/10 dark:border-[#F8F1E9]/10 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs md:text-sm opacity-60 text-center md:text-left">
-            © {new Date().getFullYear()} Cozy Minds • Built for your calm
-          </p>
           <div className="flex gap-6">
             {[
               {
                 icon: (
                   <path
-                    d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z"
+                    d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.464976C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z"
                     stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
@@ -180,7 +142,7 @@ const Footer = ({ darkMode }) => {
               <a
                 key={index}
                 href="#"
-                className="opacity-60 hover:opacity-100 hover:text-[#F4A261] transition-all"
+                className="opacity-60 hover:opacity-100 hover:text-[#5999a8] transition-all"
               >
                 <svg
                   width="20"
@@ -194,6 +156,13 @@ const Footer = ({ darkMode }) => {
               </a>
             ))}
           </div>
+        </div>
+
+        <div className="border-t border-[#1A1A1A]/10 dark:border-[#F8F1E9]/10 mt-12 pt-6 text-center">
+          <p className="text-xs md:text-sm opacity-60">
+            © {new Date().getFullYear()} Cozy Minds • Built with care for your
+            calm
+          </p>
         </div>
       </footer>
 
