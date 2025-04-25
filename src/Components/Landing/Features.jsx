@@ -145,7 +145,7 @@ const Features = () => {
                 clarity.
               </p>
 
-              <form className="flex flex-col sm:flex-row gap-3 max-w-md">
+              {/* <form className="flex flex-col sm:flex-row gap-3 max-w-md">
                 <input
                   type="email"
                   placeholder="Enter your email for early access"
@@ -157,7 +157,7 @@ const Features = () => {
                 >
                   Notify Me
                 </button>
-              </form>
+              </form> */}
             </div>
 
             <div className="relative">
