@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+"use client";
+
+import { useState } from "react";
 import { Sun, Moon, LayoutDashboard, User, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
+const Navbar = ({
+  isScrolled,
+  darkMode,
+  setDarkMode,
+  user,
+  openLoginModal,
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleDarkMode = () => {
@@ -48,7 +56,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
 
           {/* Hamburger Menu Button (visible on mobile) */}
           <button
-            className="md:hidden  p-2 hover:text-[#5999a8] transition-colors"
+            className="md:hidden p-2 hover:text-[#5999a8] transition-colors"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
           >
@@ -80,17 +88,6 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
 
             {user !== null ? (
               <>
-                {/* <Link
-                  to={"/dashboard"}
-                  className={`px-4 py-2 flex items-center gap-3 ${
-                    darkMode
-                      ? "bg-[#5999a8] text-[#1A1A1A]"
-                      : "bg-[#1A1A1A] text-white"
-                  } hover:opacity-90 transition-opacity`}
-                >
-                  Dashboard <LayoutDashboard size={18} />
-                </Link> */}
-
                 {user && (
                   <Link
                     to="/profile-settings"
@@ -106,8 +103,8 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                 )}
               </>
             ) : (
-              <Link
-                to={"/login"}
+              <button
+                onClick={openLoginModal}
                 className={`px-4 py-2 ${
                   darkMode
                     ? "bg-[#5999a8] text-[white]"
@@ -115,7 +112,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                 } hover:opacity-90 transition-opacity`}
               >
                 Login
-              </Link>
+              </button>
             )}
           </div>
         </div>
@@ -127,7 +124,7 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
               {navigationItems.map((item) => (
                 <Link
                   to={item.path}
-                  key={item}
+                  key={item.name}
                   className="font-medium hover:text-[#5999a8] transition-colors text-left"
                   onClick={toggleMobileMenu}
                 >
@@ -175,17 +172,19 @@ const Navbar = ({ isScrolled, darkMode, setDarkMode, user }) => {
                     )}
                   </>
                 ) : (
-                  <Link
-                    to={"/login"}
+                  <button
+                    onClick={(e) => {
+                      toggleMobileMenu();
+                      openLoginModal(e);
+                    }}
                     className={`px-4 py-2 ${
                       darkMode
                         ? "bg-[#5999a8] text-[#1A1A1A]"
                         : "bg-[#1A1A1A] text-white"
                     } hover:opacity-90 transition-opacity`}
-                    onClick={toggleMobileMenu}
                   >
                     Login
-                  </Link>
+                  </button>
                 )}
               </div>
             </div>

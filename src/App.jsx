@@ -46,11 +46,11 @@ const App = () => {
               <Route path="/" element={<LandingPage />} />
             )}
             <Route path="/journaling-alt" element={<JournalingAlt />} />
-            <Route
+            {/* <Route
               path="/login"
               element={<Login setUser={setUser} />} // Pass setUser to Login
-            />
-            <Route path="/signup" element={<Signup setUser={setUser} />} />
+            /> */}
+            {/* <Route path="/signup" element={<Signup setUser={setUser} />} /> */}
             <Route path="/journal/:id" element={<JournalEntry />} />
             <Route path="/cozyshop" element={<CozyShop />} />
             <Route
