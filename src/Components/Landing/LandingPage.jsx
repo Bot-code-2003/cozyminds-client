@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowRight, Smile, Clock, Users, X } from "lucide-react";
+import { ArrowRight, Smile, Clock, Users, X, Eye, EyeOff } from "lucide-react";
 import Navbar from "./Navbar";
 import { useDarkMode } from "../../context/ThemeContext";
 import Footer from "./Footer";
@@ -24,6 +24,11 @@ const LandingPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
 
+  // Password visibility states
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showVerifyPassword, setShowVerifyPassword] = useState(false);
+
   // Login form state
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [loginError, setLoginError] = useState(null);
@@ -33,11 +38,20 @@ const LandingPage = () => {
     nickname: "",
     email: "",
     password: "",
+    verifyPassword: "",
     age: "",
     gender: "",
     subscribe: false,
   });
   const [signupError, setSignupError] = useState(null);
+  const [passwordMatch, setPasswordMatch] = useState(true);
+
+  // Check if passwords match
+  useEffect(() => {
+    if (signupForm.verifyPassword || signupForm.password) {
+      setPasswordMatch(signupForm.password === signupForm.verifyPassword);
+    }
+  }, [signupForm.password, signupForm.verifyPassword]);
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -106,8 +120,18 @@ const LandingPage = () => {
     e.preventDefault();
     setSignupError(null);
 
+    // Check if passwords match before submitting
+    if (signupForm.password !== signupForm.verifyPassword) {
+      setPasswordMatch(false);
+      setSignupError("Passwords do not match. Please try again.");
+      return;
+    }
+
     try {
-      const res = await API.post("/signup", signupForm);
+      // Remove verifyPassword from the data sent to API
+      const { verifyPassword, ...formDataToSend } = signupForm;
+
+      const res = await API.post("/signup", formDataToSend);
       const user = res.data.user;
       setUser(user);
       sessionStorage.setItem("user", JSON.stringify(user));
@@ -394,19 +418,19 @@ const LandingPage = () => {
         <Features />
 
         {/* How It Works Section */}
-        <HowItWorks />
+        <HowItWorks setShowLoginModal={setShowLoginModal} />
       </main>
 
       {/* Testimonials */}
       <Testimonials darkMode={darkMode} />
 
       {/* Footer + CTA Section */}
-      <Footer darkMode={darkMode} />
+      <Footer darkMode={darkMode} setShowLoginModal={setShowLoginModal} />
 
       {/* Login Modal */}
       {showLoginModal && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black/90 bg-opacity-50"
+          className="fixed inset-0 flex items-center justify-center bg-black/80 bg-opacity-50"
           style={{ zIndex: 9999 }}
         >
           <div className="w-full max-w-md bg-[var(--bg-primary)] text-[var(--text-primary)] p-6 relative">
@@ -435,15 +459,30 @@ const LandingPage = () => {
                 className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
               />
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={loginForm.password}
-                onChange={handleLoginChange}
-                required
-                className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
-              />
+              <div className="relative">
+                <input
+                  type={showLoginPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  value={loginForm.password}
+                  onChange={handleLoginChange}
+                  required
+                  className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowLoginPassword(!showLoginPassword)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[var(--accent)]"
+                >
+                  {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              <div className="text-xs text-amber-500 font-medium">
+                Important: Please remember your email and password carefully. If
+                forgotten, account recovery requires contacting the developer
+                directly.
+              </div>
 
               <button
                 type="submit"
@@ -469,7 +508,7 @@ const LandingPage = () => {
 
       {/* Signup Modal */}
       {showSignupModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 bg-opacity-50">
           <div className="w-full max-w-md bg-[var(--bg-primary)] text-[var(--text-primary)] p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowSignupModal(false)}
@@ -506,15 +545,67 @@ const LandingPage = () => {
                 className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
               />
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={signupForm.password}
-                onChange={handleSignupChange}
-                required
-                className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
-              />
+              <div className="relative">
+                <input
+                  type={showSignupPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  value={signupForm.password}
+                  onChange={handleSignupChange}
+                  required
+                  className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowSignupPassword(!showSignupPassword)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[var(--accent)]"
+                >
+                  {showSignupPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+
+              <div className="relative">
+                <input
+                  type={showVerifyPassword ? "text" : "password"}
+                  name="verifyPassword"
+                  placeholder="Verify Password"
+                  value={signupForm.verifyPassword}
+                  onChange={handleSignupChange}
+                  required
+                  className={`w-full p-3 border ${
+                    signupForm.verifyPassword && !passwordMatch
+                      ? "border-red-500"
+                      : "border-[var(--border)]"
+                  } bg-transparent focus:outline-none`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowVerifyPassword(!showVerifyPassword)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[var(--accent)]"
+                >
+                  {showVerifyPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+
+              {signupForm.verifyPassword && !passwordMatch && (
+                <div className="text-red-500 text-xs">
+                  Passwords do not match
+                </div>
+              )}
+
+              <div className="text-xs text-amber-500 font-medium">
+                Important: Please remember your email and password carefully. If
+                forgotten, account recovery requires contacting the developer
+                directly.
+              </div>
 
               <input
                 type="number"
@@ -541,7 +632,7 @@ const LandingPage = () => {
                 <option value="female">Female</option>
               </select>
 
-              <label className="flex items-center space-x-2 text-sm">
+              {/* <label className="flex items-center space-x-2 text-sm">
                 <input
                   type="checkbox"
                   name="subscribe"
@@ -549,11 +640,12 @@ const LandingPage = () => {
                   onChange={handleSignupChange}
                 />
                 <span>Subscribe to motivational emails</span>
-              </label>
+              </label> */}
 
               <button
                 type="submit"
                 className="w-full p-3 bg-[var(--accent)] text-[var(--bg-primary)] hover:opacity-90 transition"
+                disabled={signupForm.verifyPassword && !passwordMatch}
               >
                 Create Account
               </button>

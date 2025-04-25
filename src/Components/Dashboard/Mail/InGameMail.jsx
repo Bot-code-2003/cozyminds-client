@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Paperclip, Trash2, MailCheck, X } from "lucide-react";
+import { Paperclip, Trash2, MailCheck, X, Gift } from "lucide-react";
 import { useDarkMode } from "../../../context/ThemeContext";
-// import Mails from "./assets/mails.png";
+import { useCoins } from "../../../context/CoinContext"; // Import the coin context
 
 // Configure Axios with base URL
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -17,9 +17,12 @@ const InGameMail = ({
   userId,
 }) => {
   const { darkMode } = useDarkMode();
+  const { updateUserCoins, showCoinAward } = useCoins(); // Use the coin context
   const [selectedMail, setSelectedMail] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [claimingReward, setClaimingReward] = useState(false);
+  const [claimSuccess, setClaimSuccess] = useState(null);
 
   // Set initial selected mail when mails change
   useEffect(() => {
@@ -44,6 +47,59 @@ const InGameMail = ({
     }
   };
 
+  // Claim reward
+  const claimReward = async (mailId) => {
+    try {
+      setClaimingReward(true);
+      setError(null);
+      setClaimSuccess(null);
+
+      const response = await API.put(`/mail/${mailId}/claim-reward`, {
+        userId,
+      });
+
+      // Update the mail in the list
+      const updatedMails = mails.map((mail) =>
+        mail.id === mailId ? { ...mail, rewardClaimed: true, read: true } : mail
+      );
+
+      setMails(updatedMails);
+      setHasUnreadMails(updatedMails.some((mail) => !mail.read));
+
+      // Update selected mail
+      if (selectedMail && selectedMail.id === mailId) {
+        setSelectedMail({ ...selectedMail, rewardClaimed: true, read: true });
+      }
+
+      // Get the reward amount from the mail
+      const mail = mails.find((m) => m.id === mailId);
+      const rewardAmount = mail?.rewardAmount || 50; // Default to 50 if not specified
+
+      // Update user coins in context and show coin award popup
+      if (response.data.newCoinsBalance) {
+        // Update coins directly with the new balance from the server
+        const user = JSON.parse(sessionStorage.getItem("user") || "null");
+        if (user) {
+          user.coins = response.data.newCoinsBalance;
+          sessionStorage.setItem("user", JSON.stringify(user));
+
+          // Trigger a storage event to update other components
+          window.dispatchEvent(new Event("storage"));
+        }
+
+        // Show the coin award popup
+        showCoinAward(rewardAmount);
+      }
+
+      setClaimSuccess(response.data.message);
+    } catch (err) {
+      console.error("Error claiming reward:", err);
+      setError(err.response?.data?.message || "Failed to claim reward.");
+    } finally {
+      setClaimingReward(false);
+    }
+  };
+
   // Delete mail
   const deleteMail = async (mailId) => {
     try {
@@ -60,6 +116,27 @@ const InGameMail = ({
       setError("Failed to delete mail.");
     }
   };
+
+  // Handle claim button click in mail content
+  useEffect(() => {
+    if (
+      selectedMail &&
+      selectedMail.mailType === "reward" &&
+      !selectedMail.rewardClaimed
+    ) {
+      const claimButton = document.getElementById("claim-reward-button");
+      if (claimButton) {
+        claimButton.addEventListener("click", () =>
+          claimReward(selectedMail.id)
+        );
+        return () => {
+          claimButton.removeEventListener("click", () =>
+            claimReward(selectedMail.id)
+          );
+        };
+      }
+    }
+  }, [selectedMail]);
 
   if (loading) {
     return (
@@ -185,6 +262,11 @@ const InGameMail = ({
                                 }`}
                               >
                                 {mail.title}
+                                {mail.mailType === "reward" && (
+                                  <span className="ml-2 text-yellow-500">
+                                    🎁
+                                  </span>
+                                )}
                               </h3>
                               {!mail.read && (
                                 <span className="w-2 h-2 bg-[var(--highlight)] rounded-full"></span>
@@ -215,6 +297,9 @@ const InGameMail = ({
                     <div className="flex justify-between items-center">
                       <h2 className="text-lg font-semibold text-[var(--accent)]">
                         {selectedMail.title}
+                        {selectedMail.mailType === "reward" && (
+                          <span className="ml-2 text-yellow-500">🎁</span>
+                        )}
                       </h2>
                     </div>
                     <p className="text-sm text-[var(--text-secondary)]">
@@ -227,10 +312,57 @@ const InGameMail = ({
                         minute: "2-digit",
                       })}
                     </p>
+
+                    {/* Mail Content */}
                     <div
                       className="leading-relaxed mt-2"
                       dangerouslySetInnerHTML={{ __html: selectedMail.content }}
                     />
+
+                    {/* Reward Claim Button (if applicable) */}
+                    {selectedMail.mailType === "reward" && (
+                      <div className="mt-4">
+                        {selectedMail.rewardClaimed ? (
+                          <div className="p-3 bg-green-100 text-green-800 rounded-md flex items-center">
+                            <Gift size={18} className="mr-2" />
+                            <span>
+                              Reward of {selectedMail.rewardAmount || 50} coins
+                              already claimed!
+                            </span>
+                          </div>
+                        ) : (
+                          <div>
+                            <button
+                              onClick={() => claimReward(selectedMail.id)}
+                              disabled={claimingReward}
+                              className="flex items-center space-x-2 bg-[#D4B96E] text-white px-4 py-2 rounded-md hover:bg-[#C4A24C] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <Gift size={18} />
+                              <span>
+                                {claimingReward
+                                  ? "Claiming..."
+                                  : `Claim ${
+                                      selectedMail.rewardAmount || 50
+                                    } Coins`}
+                              </span>
+                            </button>
+
+                            {claimSuccess && (
+                              <div className="mt-2 p-2 bg-green-100 text-green-800 rounded-md">
+                                {claimSuccess}
+                              </div>
+                            )}
+
+                            {error && (
+                              <div className="mt-2 p-2 bg-red-100 text-red-800 rounded-md">
+                                {error}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {selectedMail.hasAttachment && (
                       <div className="flex items-center text-[var(--accent)]">
                         <Paperclip size={16} className="mr-1" />

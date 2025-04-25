@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import FooterImg from "../../assets/footer2.webp";
 
-const Footer = ({ darkMode }) => {
+const Footer = ({ darkMode, setShowLoginModal }) => {
   return (
     <>
       {/* Call-to-Action Section */}
@@ -26,14 +26,14 @@ const Footer = ({ darkMode }) => {
                 for well-being.
               </p>
             </div>
-            <Link
-              to="/login"
+            <button
+              onClick={() => setShowLoginModal(true)}
               className={`px-6 py-3 md:px-8 md:py-4 text-sm md:text-base ${
                 darkMode ? "bg-[#5999a8] text-white" : "bg-white text-black"
               } hover:opacity-90 transition-opacity whitespace-nowrap`}
             >
               Begin Your Journey
-            </Link>
+            </button>
           </div>
         </div>
       </section>

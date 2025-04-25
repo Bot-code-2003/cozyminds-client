@@ -2,7 +2,7 @@ import React from "react";
 import { MailCheck, Lock, Leaf } from "lucide-react";
 import { useDarkMode } from "../../context/ThemeContext";
 
-const HowItWorks = () => {
+const HowItWorks = ({ setShowLoginModal }) => {
   const { darkMode } = useDarkMode();
 
   const sections = [
@@ -30,7 +30,7 @@ const HowItWorks = () => {
       bgDark: "263326",
       cta: {
         text: "Start Journaling",
-        link: "/journal", // replace with your actual route
+        // link: "/journal", // replace with your actual route
       },
     },
   ];
@@ -52,12 +52,12 @@ const HowItWorks = () => {
               <p className="opacity-80 whitespace-pre-line">{s.description}</p>
             </div>
             {s.cta && (
-              <a
-                href={s.cta.link}
-                className="mt-auto inline-block text-sm font-semibold px-4 py-2 border border-[#1A1A1A] dark:border-[#F8F1E9] rounded-md"
+              <button
+                onClick={() => setShowLoginModal(true)}
+                className="mt-auto inline-block text-sm font-semibold px-4 py-2 border cursor-pointer border-[#1A1A1A] dark:border-[#F8F1E9] rounded-md"
               >
                 {s.cta.text}
-              </a>
+              </button>
             )}
           </div>
         ))}
