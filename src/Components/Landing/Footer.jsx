@@ -6,7 +6,7 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
   return (
     <>
       {/* Call-to-Action Section */}
-      <section className="relative z-10 w-full max-w-7xl py-12 mb-12 mx-auto">
+      <section className="relative z-10 w-full max-w-7xl py-12 mb-12 mx-auto px-6">
         <div
           className={`w-full p-6 md:p-12 ${
             darkMode ? "bg-[#2A2A2A]" : "bg-[#1A1A1A] text-white"

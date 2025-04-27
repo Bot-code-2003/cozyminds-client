@@ -365,7 +365,7 @@ const LandingPage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="z-10 flex flex-col items-center gap-24 w-full max-w-7xl">
+      <main className="z-10 flex flex-col items-center gap-24 max-w-7xl">
         {/* Stats Section - Improved */}
         <div className="w-full px-6">
           <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9]">
@@ -433,7 +433,7 @@ const LandingPage = () => {
           className="fixed inset-0 flex items-center justify-center bg-black/80 bg-opacity-50"
           style={{ zIndex: 9999 }}
         >
-          <div className="w-full max-w-md bg-[var(--bg-primary)] text-[var(--text-primary)] p-6 relative">
+          <div className="w-full max-w-2xl bg-[var(--bg-primary)] text-[var(--text-primary)] p-6 relative">
             <button
               onClick={() => setShowLoginModal(false)}
               className="absolute top-4 right-4 p-2 text-[var(--accent)]"
@@ -479,9 +479,8 @@ const LandingPage = () => {
               </div>
 
               <div className="text-xs text-amber-500 font-medium">
-                Important: Please remember your email and password carefully. If
-                forgotten, account recovery requires contacting the developer
-                directly.
+                Important: Remember your email and password. If you forget them,
+                you'll need to contact the developer to recover your account.
               </div>
 
               <button
@@ -502,6 +501,167 @@ const LandingPage = () => {
                 </a>
               </p>
             </form>
+
+            {/* Cozy Geometric Pattern */}
+            <div className="mt-8 w-full border-t border-[var(--border)] pt-4">
+              <svg viewBox="0 0 800 150" xmlns="http://www.w3.org/2000/svg">
+                {/* Sky background */}
+                <rect width="800" height="150" fill="#e6f7ff" />
+
+                {/* Mountains */}
+                <polygon
+                  points="0,150 100,80 150,120 250,60 350,110 450,50 600,130 700,70 800,120 800,150"
+                  fill="#a2d7dd"
+                />
+                <polygon
+                  points="0,150 50,100 150,130 250,90 400,140 500,80 600,140 750,90 800,130 800,150"
+                  fill="#86c5d0"
+                />
+
+                {/* Ground */}
+                <rect y="130" width="800" height="20" fill="#b3e6b3" />
+
+                {/* Geometric trees */}
+                <g>
+                  {/* Tree 1 */}
+                  <rect x="50" y="90" width="10" height="40" fill="#5d4037" />
+                  <polygon points="35,90 75,90 55,60" fill="#66bb6a" />
+                  <polygon points="40,70 70,70 55,40" fill="#81c784" />
+                </g>
+
+                <g>
+                  {/* Tree 2 */}
+                  <rect x="150" y="100" width="8" height="30" fill="#5d4037" />
+                  <polygon points="136,100 172,100 154,80" fill="#66bb6a" />
+                  <polygon points="140,85 168,85 154,65" fill="#81c784" />
+                  <polygon points="144,70 164,70 154,55" fill="#a5d6a7" />
+                </g>
+
+                <g>
+                  {/* Tree 3 */}
+                  <rect x="700" y="95" width="10" height="35" fill="#5d4037" />
+                  <polygon points="685,95 725,95 705,75" fill="#66bb6a" />
+                  <polygon points="690,80 720,80 705,60" fill="#81c784" />
+                  <polygon points="695,65 715,65 705,45" fill="#a5d6a7" />
+                </g>
+
+                {/* Geometric house */}
+                <g>
+                  {/* House body */}
+                  <rect x="350" y="90" width="50" height="40" fill="#ffccbc" />
+                  {/* Roof */}
+                  <polygon points="340,90 410,90 375,65" fill="#ff8a65" />
+                  {/* Door */}
+                  <rect x="365" y="110" width="15" height="20" fill="#795548" />
+                  {/* Windows */}
+                  <rect x="355" y="100" width="10" height="10" fill="#bbdefb" />
+                  <rect x="385" y="100" width="10" height="10" fill="#bbdefb" />
+                  <line
+                    x1="360"
+                    y1="100"
+                    x2="360"
+                    y2="110"
+                    stroke="#7986cb"
+                    stroke-width="1"
+                  />
+                  <line
+                    x1="355"
+                    y1="105"
+                    x2="365"
+                    y2="105"
+                    stroke="#7986cb"
+                    stroke-width="1"
+                  />
+                  <line
+                    x1="390"
+                    y1="100"
+                    x2="390"
+                    y2="110"
+                    stroke="#7986cb"
+                    stroke-width="1"
+                  />
+                  <line
+                    x1="385"
+                    y1="105"
+                    x2="395"
+                    y2="105"
+                    stroke="#7986cb"
+                    stroke-width="1"
+                  />
+                  {/* Chimney */}
+                  <rect x="390" y="70" width="8" height="15" fill="#795548" />
+                </g>
+
+                {/* Garden flowers */}
+                <g>
+                  {/* Flower 1 */}
+                  <rect x="250" y="120" width="2" height="10" fill="#558b2f" />
+                  <polygon points="246,120 256,120 251,112" fill="#f48fb1" />
+                </g>
+
+                <g>
+                  {/* Flower 2 */}
+                  <rect x="260" y="120" width="2" height="8" fill="#558b2f" />
+                  <polygon points="256,120 266,120 261,112" fill="#ce93d8" />
+                </g>
+
+                <g>
+                  {/* Flower 3 */}
+                  <rect x="270" y="120" width="2" height="10" fill="#558b2f" />
+                  <polygon points="266,120 276,120 271,112" fill="#90caf9" />
+                </g>
+
+                <g>
+                  {/* Flower 4 */}
+                  <rect x="460" y="120" width="2" height="10" fill="#558b2f" />
+                  <polygon points="456,120 466,120 461,112" fill="#fff59d" />
+                </g>
+
+                <g>
+                  {/* Flower 5 */}
+                  <rect x="475" y="120" width="2" height="8" fill="#558b2f" />
+                  <polygon points="471,120 481,120 476,112" fill="#ffcc80" />
+                </g>
+
+                {/* Sun */}
+                <g>
+                  <polygon
+                    points="620,40 625,25 630,40 645,45 630,50 625,65 620,50 605,45"
+                    fill="#ffeb3b"
+                  />
+                </g>
+
+                {/* Birds (simple triangles) */}
+                <polygon points="180,30 185,35 190,30" fill="#424242" />
+                <polygon points="200,40 205,45 210,40" fill="#424242" />
+
+                {/* Clouds (geometric) */}
+                <g>
+                  <rect x="100" y="30" width="30" height="15" fill="#ffffff" />
+                  <rect x="115" y="23" width="20" height="12" fill="#ffffff" />
+                  <rect x="90" y="35" width="20" height="10" fill="#ffffff" />
+                </g>
+
+                <g>
+                  <rect x="500" y="25" width="40" height="20" fill="#ffffff" />
+                  <rect x="520" y="15" width="30" height="15" fill="#ffffff" />
+                  <rect x="490" y="35" width="25" height="10" fill="#ffffff" />
+                </g>
+
+                {/* Geometric bunny */}
+                <g>
+                  {/* Body */}
+                  <rect x="550" y="115" width="20" height="15" fill="#f5f5f5" />
+                  {/* Head */}
+                  <rect x="545" y="105" width="15" height="12" fill="#f5f5f5" />
+                  {/* Ears */}
+                  <rect x="547" y="95" width="4" height="10" fill="#f5f5f5" />
+                  <rect x="554" y="95" width="4" height="10" fill="#f5f5f5" />
+                  {/* Tail */}
+                  <rect x="570" y="120" width="5" height="5" fill="#ffffff" />
+                </g>
+              </svg>
+            </div>
           </div>
         </div>
       )}
@@ -509,7 +669,7 @@ const LandingPage = () => {
       {/* Signup Modal */}
       {showSignupModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 bg-opacity-50">
-          <div className="w-full max-w-md bg-[var(--bg-primary)] text-[var(--text-primary)] p-6 relative max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-2xl bg-[var(--bg-primary)] text-[var(--text-primary)] p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowSignupModal(false)}
               className="absolute top-4 right-4 p-2 text-[var(--accent)]"
@@ -544,103 +704,104 @@ const LandingPage = () => {
                 required
                 className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
               />
-
-              <div className="relative">
-                <input
-                  type={showSignupPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="Password"
-                  value={signupForm.password}
-                  onChange={handleSignupChange}
-                  required
-                  className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowSignupPassword(!showSignupPassword)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[var(--accent)]"
-                >
-                  {showSignupPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
-
-              <div className="relative">
-                <input
-                  type={showVerifyPassword ? "text" : "password"}
-                  name="verifyPassword"
-                  placeholder="Verify Password"
-                  value={signupForm.verifyPassword}
-                  onChange={handleSignupChange}
-                  required
-                  className={`w-full p-3 border ${
-                    signupForm.verifyPassword && !passwordMatch
-                      ? "border-red-500"
-                      : "border-[var(--border)]"
-                  } bg-transparent focus:outline-none`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowVerifyPassword(!showVerifyPassword)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[var(--accent)]"
-                >
-                  {showVerifyPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
-
-              {signupForm.verifyPassword && !passwordMatch && (
-                <div className="text-red-500 text-xs">
-                  Passwords do not match
+              <div className="flex w-full justify-between gap-2 items-center ">
+                <div className="relative w-full">
+                  <input
+                    type={showSignupPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Password"
+                    value={signupForm.password}
+                    onChange={handleSignupChange}
+                    required
+                    className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupPassword(!showSignupPassword)}
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[var(--accent)]"
+                  >
+                    {showSignupPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
                 </div>
-              )}
+
+                <div className="relative w-full">
+                  <input
+                    type={showVerifyPassword ? "text" : "password"}
+                    name="verifyPassword"
+                    placeholder="Verify Password"
+                    value={signupForm.verifyPassword}
+                    onChange={handleSignupChange}
+                    required
+                    className={`w-full p-3 border ${
+                      signupForm.verifyPassword && !passwordMatch
+                        ? "border-red-500"
+                        : "border-[var(--border)]"
+                    } bg-transparent focus:outline-none`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowVerifyPassword(!showVerifyPassword)}
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[var(--accent)]"
+                  >
+                    {showVerifyPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+
+                {signupForm.verifyPassword && !passwordMatch && (
+                  <div className="text-red-500 text-xs">
+                    Passwords do not match
+                  </div>
+                )}
+              </div>
 
               <div className="text-xs text-amber-500 font-medium">
-                Important: Please remember your email and password carefully. If
-                forgotten, account recovery requires contacting the developer
-                directly.
+                Important: Remember your email and password. If you forget them,
+                you'll need to contact the developer to recover your account.
+              </div>
+              <div className="flex w-full justify-between gap-2 items-center ">
+                <input
+                  type="number"
+                  name="age"
+                  placeholder="Age"
+                  value={signupForm.age}
+                  onChange={handleSignupChange}
+                  required
+                  min="13"
+                  className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
+                />
+
+                <select
+                  name="gender"
+                  value={signupForm.gender}
+                  onChange={handleSignupChange}
+                  required
+                  className="w-full p-3 border border-[var(--border)] text-[var(--text-primary)] bg-transparent focus:outline-none"
+                >
+                  <option value="" disabled>
+                    Select Gender
+                  </option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
               </div>
 
-              <input
-                type="number"
-                name="age"
-                placeholder="Age"
-                value={signupForm.age}
-                onChange={handleSignupChange}
-                required
-                min="13"
-                className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
-              />
-
-              <select
-                name="gender"
-                value={signupForm.gender}
-                onChange={handleSignupChange}
-                required
-                className="w-full p-3 border border-[var(--border)] bg-transparent focus:outline-none"
-              >
-                <option value="" disabled>
-                  Select Gender
-                </option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-
               {/* <label className="flex items-center space-x-2 text-sm">
-                <input
-                  type="checkbox"
-                  name="subscribe"
-                  checked={signupForm.subscribe}
-                  onChange={handleSignupChange}
-                />
-                <span>Subscribe to motivational emails</span>
-              </label> */}
+          <input
+            type="checkbox"
+            name="subscribe"
+            checked={signupForm.subscribe}
+            onChange={handleSignupChange}
+          />
+          <span>Subscribe to motivational emails</span>
+        </label> */}
 
               <button
                 type="submit"
@@ -661,6 +822,167 @@ const LandingPage = () => {
                 </a>
               </p>
             </form>
+            <div className="mt-8 w-full border-t border-[var(--border)] pt-4">
+              <svg viewBox="0 0 800 150" xmlns="http://www.w3.org/2000/svg">
+                {/* Sky background */}
+                <rect width="800" height="150" fill="#e6f7ff" />
+
+                {/* Mountains */}
+                <polygon
+                  points="0,150 100,80 150,120 250,60 350,110 450,50 600,130 700,70 800,120 800,150"
+                  fill="#a2d7dd"
+                />
+                <polygon
+                  points="0,150 50,100 150,130 250,90 400,140 500,80 600,140 750,90 800,130 800,150"
+                  fill="#86c5d0"
+                />
+
+                {/* Ground */}
+                <rect y="130" width="800" height="20" fill="#b3e6b3" />
+
+                {/* Geometric trees */}
+                <g>
+                  {/* Tree 1 */}
+                  <rect x="50" y="90" width="10" height="40" fill="#5d4037" />
+                  <polygon points="35,90 75,90 55,60" fill="#66bb6a" />
+                  <polygon points="40,70 70,70 55,40" fill="#81c784" />
+                </g>
+
+                <g>
+                  {/* Tree 2 */}
+                  <rect x="150" y="100" width="8" height="30" fill="#5d4037" />
+                  <polygon points="136,100 172,100 154,80" fill="#66bb6a" />
+                  <polygon points="140,85 168,85 154,65" fill="#81c784" />
+                  <polygon points="144,70 164,70 154,55" fill="#a5d6a7" />
+                </g>
+
+                <g>
+                  {/* Tree 3 */}
+                  <rect x="700" y="95" width="10" height="35" fill="#5d4037" />
+                  <polygon points="685,95 725,95 705,75" fill="#66bb6a" />
+                  <polygon points="690,80 720,80 705,60" fill="#81c784" />
+                  <polygon points="695,65 715,65 705,45" fill="#a5d6a7" />
+                </g>
+
+                {/* Geometric house */}
+                <g>
+                  {/* House body */}
+                  <rect x="350" y="90" width="50" height="40" fill="#ffccbc" />
+                  {/* Roof */}
+                  <polygon points="340,90 410,90 375,65" fill="#ff8a65" />
+                  {/* Door */}
+                  <rect x="365" y="110" width="15" height="20" fill="#795548" />
+                  {/* Windows */}
+                  <rect x="355" y="100" width="10" height="10" fill="#bbdefb" />
+                  <rect x="385" y="100" width="10" height="10" fill="#bbdefb" />
+                  <line
+                    x1="360"
+                    y1="100"
+                    x2="360"
+                    y2="110"
+                    stroke="#7986cb"
+                    stroke-width="1"
+                  />
+                  <line
+                    x1="355"
+                    y1="105"
+                    x2="365"
+                    y2="105"
+                    stroke="#7986cb"
+                    stroke-width="1"
+                  />
+                  <line
+                    x1="390"
+                    y1="100"
+                    x2="390"
+                    y2="110"
+                    stroke="#7986cb"
+                    stroke-width="1"
+                  />
+                  <line
+                    x1="385"
+                    y1="105"
+                    x2="395"
+                    y2="105"
+                    stroke="#7986cb"
+                    stroke-width="1"
+                  />
+                  {/* Chimney */}
+                  <rect x="390" y="70" width="8" height="15" fill="#795548" />
+                </g>
+
+                {/* Garden flowers */}
+                <g>
+                  {/* Flower 1 */}
+                  <rect x="250" y="120" width="2" height="10" fill="#558b2f" />
+                  <polygon points="246,120 256,120 251,112" fill="#f48fb1" />
+                </g>
+
+                <g>
+                  {/* Flower 2 */}
+                  <rect x="260" y="120" width="2" height="8" fill="#558b2f" />
+                  <polygon points="256,120 266,120 261,112" fill="#ce93d8" />
+                </g>
+
+                <g>
+                  {/* Flower 3 */}
+                  <rect x="270" y="120" width="2" height="10" fill="#558b2f" />
+                  <polygon points="266,120 276,120 271,112" fill="#90caf9" />
+                </g>
+
+                <g>
+                  {/* Flower 4 */}
+                  <rect x="460" y="120" width="2" height="10" fill="#558b2f" />
+                  <polygon points="456,120 466,120 461,112" fill="#fff59d" />
+                </g>
+
+                <g>
+                  {/* Flower 5 */}
+                  <rect x="475" y="120" width="2" height="8" fill="#558b2f" />
+                  <polygon points="471,120 481,120 476,112" fill="#ffcc80" />
+                </g>
+
+                {/* Sun */}
+                <g>
+                  <polygon
+                    points="620,40 625,25 630,40 645,45 630,50 625,65 620,50 605,45"
+                    fill="#ffeb3b"
+                  />
+                </g>
+
+                {/* Birds (simple triangles) */}
+                <polygon points="180,30 185,35 190,30" fill="#424242" />
+                <polygon points="200,40 205,45 210,40" fill="#424242" />
+
+                {/* Clouds (geometric) */}
+                <g>
+                  <rect x="100" y="30" width="30" height="15" fill="#ffffff" />
+                  <rect x="115" y="23" width="20" height="12" fill="#ffffff" />
+                  <rect x="90" y="35" width="20" height="10" fill="#ffffff" />
+                </g>
+
+                <g>
+                  <rect x="500" y="25" width="40" height="20" fill="#ffffff" />
+                  <rect x="520" y="15" width="30" height="15" fill="#ffffff" />
+                  <rect x="490" y="35" width="25" height="10" fill="#ffffff" />
+                </g>
+
+                {/* Geometric bunny */}
+                <g>
+                  {/* Body */}
+                  <rect x="550" y="115" width="20" height="15" fill="#f5f5f5" />
+                  {/* Head */}
+                  <rect x="545" y="105" width="15" height="12" fill="#f5f5f5" />
+                  {/* Ears */}
+                  <rect x="547" y="95" width="4" height="10" fill="#f5f5f5" />
+                  <rect x="554" y="95" width="4" height="10" fill="#f5f5f5" />
+                  {/* Tail */}
+                  <rect x="570" y="120" width="5" height="5" fill="#ffffff" />
+                </g>
+              </svg>
+            </div>
+
+            {/* Compact Geometric Pattern */}
           </div>
         </div>
       )}

@@ -5,12 +5,20 @@ import { useNavigate } from "react-router-dom";
 import { useCoins } from "../../context/CoinContext";
 import { useDarkMode } from "../../context/ThemeContext";
 
-import Christmas from "../../assets/christmas.png";
-import Halloween from "../../assets/halloween.png";
 import Forest from "../../assets/forest.png";
 import Ocean from "../../assets/water.png";
-import Pets from "../../assets/pets.png";
-import Space from "../../assets/space.png";
+import Black from "../../assets/black-n.png";
+import CalmOcean from "../../assets/calm-ocean-n.png";
+import NightSky from "../../assets/night-sky-n.png";
+import PastelSky from "../../assets/pastel-sky-n.png";
+import EnergeticYellow from "../../assets/energetic-yellow-n.png";
+import CozyRoom from "../../assets/cozy-room-e.png";
+import CountrySide from "../../assets/country-side-e.png";
+import MagicalRoom from "../../assets/magical-room-e.png";
+import NothernLights from "../../assets/nothern-lights-e.png";
+import PostApocalyptic from "../../assets/post-apocalyptic-e.png";
+import SpaceObserve from "../../assets/space-observe-e.png";
+import WinterCabin from "../../assets/winter-cabin-e.png";
 
 import Navbar from "./Navbar";
 import { ShoppingCart, Package, Sparkles, Star } from "lucide-react";
@@ -31,13 +39,68 @@ const CozyShop = () => {
   // Shop items with an additional `isEmoji` flag
   const shopItems = [
     {
+      id: "emoji_cozy_room",
+      name: "Cozy Room",
+      description: "Relax and unwind in a cozy room",
+      price: 100,
+      image: CozyRoom,
+      category: "theme",
+      featured: "Exclusive",
+      featuredStyle: "feature-card",
+      isEmoji: false,
+    },
+    {
+      id: "emoji_country_side",
+      name: "Country Side",
+      description: "Immerse yourself in a picturesque country side",
+      price: 100,
+      image: CountrySide,
+      category: "theme",
+      featured: "Exclusive",
+      featuredStyle: "feature-card",
+      isEmoji: false,
+    },
+    {
+      id: "emoji_magical_room",
+      name: "Magical Room",
+      description: "Enter a world of enchantment and magic",
+      price: 100,
+      image: MagicalRoom,
+      category: "theme",
+      featured: "Exclusive",
+      featuredStyle: "feature-card",
+      isEmoji: false,
+    },
+    {
+      id: "emoji_nothern_lights",
+      name: "Northern Lights",
+      description: "Immerse yourself in the mesmerizing northern lights",
+      price: 100,
+      image: NothernLights,
+      category: "theme",
+      featured: "Exclusive",
+      featuredStyle: "feature-card",
+      isEmoji: false,
+    },
+    {
+      id: "emoji_post_apocalyptic",
+      name: "Post-Apocalyptic",
+      description: "Enter a world of dystopia and apocalypse",
+      price: 100,
+      image: PostApocalyptic,
+      category: "theme",
+      featured: "Exclusive",
+      featuredStyle: "feature-card",
+      isEmoji: false,
+    },
+    {
       id: "theme_forest",
       name: "Forest Theme",
       description: "Transform your journal with serene forest visuals",
-      price: 50,
+      price: 100,
       image: Forest,
       category: "theme",
-      featured: "Featured",
+      featured: "Exclusive",
       featuredStyle: "feature-card",
       isEmoji: false,
     },
@@ -51,42 +114,47 @@ const CozyShop = () => {
       isEmoji: false,
     },
     {
-      id: "theme_christmas",
-      name: "Christmas Theme",
-      description: "Celebrate the festive season with holiday cheer",
+      id: "theme_black",
+      name: "Black Theme",
+      description: "Enter a world of darkness and intrigue",
       price: 50,
-      image: Christmas,
-      category: "theme",
-      featured: "Event",
-      featuredStyle: "event-card",
-      isEmoji: false,
-    },
-    {
-      id: "theme_halloween",
-      name: "Halloween Theme",
-      description: "Add some spooky vibes to your journal",
-      price: 50,
-      image: Halloween,
-      category: "theme",
-      featured: "Limited Deal",
-      featuredStyle: "deal-card",
-      isEmoji: false,
-    },
-    {
-      id: "theme_pets",
-      name: "Pets Theme",
-      description: "For the animal lovers and pet owners",
-      price: 50,
-      image: Pets,
+      image: Black,
       category: "theme",
       isEmoji: false,
     },
     {
-      id: "theme_space",
-      name: "Space Theme",
-      description: "A cosmic journey through the universe",
+      id: "theme_calm_ocean",
+      name: "Calm Ocean Theme",
+      description: "Relax and unwind in a serene coastal haven",
       price: 50,
-      image: Space,
+      image: CalmOcean,
+      category: "theme",
+      isEmoji: false,
+    },
+    {
+      id: "theme_night_sky",
+      name: "Night Sky Theme",
+      description: "Immerse yourself in a mesmerizing night sky",
+      price: 50,
+      image: NightSky,
+      category: "theme",
+      isEmoji: false,
+    },
+    {
+      id: "theme_pastel_sky",
+      name: "Pastel Sky Theme",
+      description: "Experience a vibrant and colorful pastel sky",
+      price: 50,
+      image: PastelSky,
+      category: "theme",
+      isEmoji: false,
+    },
+    {
+      id: "theme_energetic_yellow",
+      name: "Energetic Yellow Theme",
+      description: "Immerse yourself in a vibrant and energetic yellow theme",
+      price: 50,
+      image: EnergeticYellow,
       category: "theme",
       isEmoji: false,
     },

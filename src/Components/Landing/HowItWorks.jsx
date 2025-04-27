@@ -36,7 +36,7 @@ const HowItWorks = ({ setShowLoginModal }) => {
   ];
 
   return (
-    <section className="w-full mx-auto">
+    <section className="w-full mx-auto px-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {sections.map((s, i) => (
           <div

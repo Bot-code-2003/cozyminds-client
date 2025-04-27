@@ -14,9 +14,9 @@ import { Gift, BarChart3, Mail, ShoppingBag, ChevronRight } from "lucide-react";
 const Features = () => {
   const { darkMode, setDarkMode } = useDarkMode();
   return (
-    <div className="relative z-10 w-full ">
+    <div className="relative z-10 px-6 ">
       {/* Features Section */}
-      <section className="relative z-10 w-full py-24">
+      <section className="relative z-10 w-full py-24 ">
         <div className="text-center mb-20">
           <div className="inline-block mb-6 px-4 py-1.5 bg-[#f0e6d9] dark:bg-[#2a2520] rounded-full text-xs font-medium tracking-wider text-[#5999a8] dark:text-[#7ab8c7] shadow-sm">
             STANDOUT FEATURES
