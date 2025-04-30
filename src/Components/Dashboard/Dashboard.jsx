@@ -98,6 +98,7 @@ const Dashboard = () => {
         const response = await API.get(`/journals/${user._id}`);
         setJournalEntries(response.data.journals || []);
         setFilteredEntries(response.data.journals || []);
+        console.log("Journal entries:", response.data.journals);
       } catch (err) {
         console.error("Error fetching journal entries:", err);
         setError("Failed to load journal entries. Please try again later.");

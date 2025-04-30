@@ -7,19 +7,19 @@ import { CoinProvider } from "./context/CoinContext";
 import LandingPage from "./Components/Landing/LandingPage";
 import Login from "./Components/Login";
 import Signup from "./Components/Signup";
-import JournalingAlt from "./Components/JournalingAlt";
+// import JournalingAlt from "./Components/JournalingAlt";
+import JournalingAlt from "./Components/EnterJournal/JournalingAlt";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import JournalEntry from "./Components/JournalEntry";
 import JournalEntries from "./Components/Dashboard/JournalEntries";
 import ProfileSettings from "./Components/ProfileSettings";
 import Features from "./Components/Landing/Features";
 import DetailedMoodDistributions from "./Components/Dashboard/DetailedMoodDistributions";
-import Library from "./Components/Library";
 
 import "./index.css";
 import SiteMaster from "./SiteMaster";
 import Collections from "./Components/Dashboard/Collections";
-import CozyShop from "./Components/Dashboard/CozyShop";
+import CozyShop from "./Components/Dashboard/Shop/CozyShop";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -64,7 +64,7 @@ const App = () => {
               path="/mood-distributions"
               element={<DetailedMoodDistributions />}
             />
-            <Route path="/library" element={<Library />} />
+
             <Route path="/sitemaster" element={<SiteMaster />} />
           </Routes>
         </div>

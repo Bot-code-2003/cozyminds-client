@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { getCardClass, getThemeDetails } from "./ThemeDetails.js";
 
 // Mood definitions
 const moods = [
@@ -12,64 +13,7 @@ const moods = [
   { emoji: "🥳", name: "Excited", color: "#F9C74F" },
 ];
 
-// Theme icon and text mapping
-const themeDetails = {
-  theme_forest: {
-    icon: "🌲",
-    dateIcon: "🍃",
-    readMoreText: "Wander deeper",
-  },
-  theme_ocean: {
-    icon: "🐠",
-    dateIcon: "🫧",
-    readMoreText: "Dive deeper",
-  },
-  theme_christmas: {
-    icon: "🎄",
-    dateIcon: "❄️",
-    readMoreText: "Unwrap entry",
-  },
-  theme_halloween: {
-    icon: "🎃",
-    dateIcon: "👻",
-    readMoreText: "Enter if you dare",
-  },
-  theme_pets: {
-    icon: "🐶",
-    dateIcon: "🐕",
-    readMoreText: "Pet entry",
-  },
-};
-
 const RecentJournals = ({ entries, darkMode, formatDate }) => {
-  const getCardClass = (theme) => {
-    if (theme === "theme_forest") {
-      return "card-forest";
-    } else if (theme === "theme_ocean") {
-      return "card-ocean";
-    } else if (theme === "theme_christmas") {
-      return "card-christmas";
-    } else if (theme === "theme_halloween") {
-      return "card-halloween";
-    } else if (theme === "theme_pets") {
-      return "card-pets";
-    } else if (theme === "theme_space") {
-      return "card-space";
-    } else {
-      return "card-dark";
-    }
-  };
-
-  const getThemeDetails = (theme) => {
-    return (
-      themeDetails[theme] || {
-        icon: "📝",
-        dateIcon: "📅",
-        readMoreText: "Read more",
-      }
-    );
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 mb-10 bg-[var(--bg-secondary)] border border-designer rounded-xl shadow-md">
       <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">

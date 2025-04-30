@@ -46,74 +46,194 @@
   padding: 16px;
 }
 
+.card-forest {
+  background-image: url("./assets/forest.png");
+}
+
+.card-ocean {
+  background-image: url("./assets/water.png");
+}
+
+.card-black {
+  background-image: url("./assets/black-n.png");
+}
+
+.card-calm-ocean {
+  background-image: url("./assets/calm-ocean-n.png");
+}
+
+.card-night-sky {
+  background-image: url("./assets/night-sky-n.png");
+}
+
+.card-pastel-sky {
+  background-image: url("./assets/pastel-sky-n.png");
+}
+
+.card-energetic-yellow {
+  background-image: url("./assets/energetic-yellow-n.png");
+}
+
+.card-cozy-room {
+  background-image: url("./assets/cozy-room-e.png");
+}
+
+.card-country-side {
+  background-image: url("./assets/country-side-e.png");
+}
+
+.card-magical-room {
+  background-image: url("./assets/magical-room-e.png");
+}
+
+.card-northern-lights {
+  background-image: url("./assets/nothern-lights-e.png");
+}
+
+.card-post-apocalyptic {
+  background-image: url("./assets/post-apocalyptic-e.png");
+}
+
+.card-space-observe {
+  background-image: url("./assets/space-observe-e.png");
+}
+
+.card-winter-cabin {
+  background-image: url("./assets/winter-cabin-e.png");
+}
+
+/* New solid theme cards */
+.card-solid-pink {
+  background-color: #ffd1dc;
+}
+
+.card-solid-blue {
+  background-color: #ccccff;
+}
+
+.card-solid-green {
+  background-color: #c1e1c1;
+}
+
+.card-solid-lavender {
+  background-color: #e6e6fa;
+}
+
+.card-solid-peach {
+  background-color: #ffdab9;
+}
+
+.card-solid-mint {
+  background-color: #bdfcc9;
+}
+
+.card-solid-yellow {
+  background-color: #fffacd;
+}
+
+.card-solid-coral {
+  background-color: #ffb6b9;
+}
+
+.card-solid-lilac {
+  background-color: #d8bfd8;
+}
+
+.card-solid-aqua {
+  background-color: #afeeee;
+}
+
+/* Common styling for all cards */
 .card-forest,
-.card-halloween,
-.card-christmas,
 .card-ocean,
-.card-pets,
-.card-space {
-  color: white !important;
+.card-black,
+.card-calm-ocean,
+.card-night-sky,
+.card-pastel-sky,
+.card-energetic-yellow,
+.card-cozy-room,
+.card-country-side,
+.card-magical-room,
+.card-northern-lights,
+.card-post-apocalyptic,
+.card-space-observe,
+.card-winter-cabin,
+.card-solid-pink,
+.card-solid-blue,
+.card-solid-green,
+.card-solid-lavender,
+.card-solid-peach,
+.card-solid-mint,
+.card-solid-yellow,
+.card-solid-coral,
+.card-solid-lilac,
+.card-solid-aqua {
   background-size: cover;
   background-position: center;
-  position: relative; /* Enables positioning of the pseudo-element */
+  position: relative;
+  color: white !important;
 }
 
 .card-forest::before,
-.card-halloween::before,
-.card-christmas::before,
 .card-ocean::before,
-.card-pets::before,
-.card-space::before {
+.card-black::before,
+.card-calm-ocean::before,
+.card-night-sky::before,
+.card-pastel-sky::before,
+.card-energetic-yellow::before,
+.card-cozy-room::before,
+.card-country-side::before,
+.card-magical-room::before,
+.card-northern-lights::before,
+.card-post-apocalyptic::before,
+.card-space-observe::before,
+.card-winter-cabin::before,
+.card-solid-pink::before,
+.card-solid-blue::before,
+.card-solid-green::before,
+.card-solid-lavender::before,
+.card-solid-peach::before,
+.card-solid-mint::before,
+.card-solid-yellow::before,
+.card-solid-coral::before,
+.card-solid-lilac::before,
+.card-solid-aqua::before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(
-    0,
-    0,
-    0,
-    0.5
-  ); /* Light, snowy overlay for Christmas vibe */
-  z-index: 1; /* Overlay sits above the background image */
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
-/* Ensure content inside the card (if any) is above the overlay */
 .card-forest > *,
-.card-halloween > *,
-.card-christmas > *,
 .card-ocean > *,
-.card-pets > *,
-.card-space > * {
+.card-black > *,
+.card-calm-ocean > *,
+.card-night-sky > *,
+.card-pastl-sky > *,
+.card-energetic-yellow > *,
+.card-cozy-room > *,
+.card-country-side > *,
+.card-magical-room > *,
+.card-northern-lights > *,
+.card-post-apocalyptic > *,
+.card-space-observe > *,
+.card-winter-cabin > *,
+.card-solid-pink > *,
+.card-solid-blue > *,
+.card-solid-green > *,
+.card-solid-lavender > *,
+.card-solid-peach > *,
+.card-solid-mint > *,
+.card-solid-yellow > *,
+.card-solid-coral > *,
+.card-solid-lilac > *,
+.card-solid-aqua > * {
   position: relative;
   z-index: 2;
-}
-.card-forest {
-  background-image: url("./assets/forest.png");
-}
-/* OCEAN */
-.card-ocean {
-  background-image: url("./assets/water.png");
-}
-
-/*CHRISTMAS*/
-.card-christmas {
-  background-image: url("./assets/christmas.png");
-}
-
-/*Pets*/
-.card-pets {
-  background-image: url("./assets/pets.png");
-}
-
-/*Halooween*/
-.card-halloween {
-  background-image: url("./assets/halloween.png");
-}
-
-.card-space {
-  background-image: url("./assets/space.png");
 }
 
 .text-primary {
@@ -165,7 +285,7 @@ body {
   padding: 8px 16px;
   border-radius: 6px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* Increased z-index to ensure it’s above other elements */
+  z-index: 1000; /* Increased z-index to ensure it's above other elements */
   display: flex;
   align-items: center;
   animation: fadeIn 0.3s ease-out forwards;

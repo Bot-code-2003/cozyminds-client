@@ -17,6 +17,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useCoins } from "../../context/CoinContext";
 import Navbar from "./Navbar";
+import { getThemeDetails, getCardClass } from "./ThemeDetails";
 
 // Mood options with emojis, descriptions and colors
 const MOODS = [
@@ -70,34 +71,6 @@ const MOODS = [
   },
 ];
 
-const themeDetails = {
-  theme_forest: {
-    icon: "🌲",
-    dateIcon: "🍃",
-    readMoreText: "Wander deeper",
-  },
-  theme_ocean: {
-    icon: "🐠",
-    dateIcon: "🫧",
-    readMoreText: "Dive deeper",
-  },
-  theme_christmas: {
-    icon: "🎄",
-    dateIcon: "❄️",
-    readMoreText: "Unwrap entry",
-  },
-  theme_halloween: {
-    icon: "🎃",
-    dateIcon: "👻",
-    readMoreText: "Enter if you dare",
-  },
-  theme_pets: {
-    icon: "🐶",
-    dateIcon: "🐕",
-    readMoreText: "Pet entry",
-  },
-};
-
 const JournalEntries = () => {
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
   const { collection } = useParams();
@@ -105,32 +78,6 @@ const JournalEntries = () => {
   const navigate = useNavigate();
   const { darkMode } = useDarkMode();
   const { inventory } = useCoins();
-
-  const getCardClass = (theme) => {
-    if (theme === "theme_forest") {
-      return "card-forest";
-    } else if (theme === "theme_ocean") {
-      return "card-ocean";
-    } else if (theme === "theme_christmas") {
-      return "card-christmas";
-    } else if (theme === "theme_halloween") {
-      return "card-halloween";
-    } else if (theme === "theme_pets") {
-      return "card-pets";
-    } else {
-      return darkMode ? "card-dark" : "card-light";
-    }
-  };
-
-  const getThemeDetails = (theme) => {
-    return (
-      themeDetails[theme] || {
-        icon: "📝",
-        dateIcon: "📅",
-        readMoreText: "Read more",
-      }
-    );
-  };
 
   // State management
   const [journalEntries, setJournalEntries] = useState([]);

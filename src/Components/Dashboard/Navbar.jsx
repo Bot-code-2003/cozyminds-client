@@ -96,7 +96,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
       <nav
         className={`w-full bg-[var(--bg-navbar)] border-b border-[var(--border)] py-3 px-4 md:px-6 flex justify-between items-center sticky top-0 z-20`}
       >
-        <Link to={"/"} className="flex items-center">
+        <Link to={"/"} className="flex cursor-pointer items-center">
           <div className="text-lg font-bold tracking-wider text-[var(--text-primary)]">
             COZY
             <span className="text-[var(--accent)]">MINDS</span>
@@ -114,7 +114,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
           <Link
             to="/cozyshop"
-            className="p-2 hover:text-[var(--accent)] transition-colors"
+            className="p-2 hover:text-[var(--accent)] cursor-pointer transition-colors"
             aria-label="Shop"
           >
             <ShoppingBag size={18} />
@@ -122,7 +122,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
           <button
             onClick={toggleMailModal}
-            className="p-2 hover:text-[var(--accent)] transition-colors relative"
+            className="p-2 hover:text-[var(--accent)] cursor-pointer transition-colors relative"
             aria-label="Mail"
           >
             <Mail size={18} />
@@ -133,7 +133,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
           <button
             onClick={toggleDarkMode}
-            className="p-2 hover:text-[var(--accent)] transition-colors"
+            className="p-2 hover:text-[var(--accent)] cursor-pointer transition-colors"
             aria-label="Toggle dark mode"
           >
             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -145,7 +145,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             {!isJournalingAlt && (
               <Link
                 to={link}
-                className="flex items-center px-4 py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
+                className="flex items-center px-4 py-2 cursor-pointer border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
               >
                 <Plus size={18} className="mr-2" />
                 {name || "New Entry"}
@@ -156,7 +156,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             {!isRootPath && (
               <Link
                 to="/"
-                className="flex items-center px-4 py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
+                className="flex items-center px-4 py-2 cursor-pointer border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
               >
                 <ArrowLeft size={18} className="mr-2" />
                 Dashboard
@@ -168,7 +168,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className="hidden md:flex items-center px-4 py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
+                className="hidden md:flex items-center px-4 cursor-pointer py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
               >
                 <span className="hidden md:inline">
                   {userData.nickname || "User"}
@@ -180,13 +180,13 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 <div className="absolute right-0 mt-1 w-44 shadow-md z-30 bg-[var(--bg-secondary)] border-[var(--border)]">
                   <Link
                     to="/profile-settings"
-                    className="block px-4 py-2 text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
+                    className="block px-4 py-2 cursor-pointer text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
                   >
                     Profile Settings
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
+                    className="w-full text-left cursor-pointer px-4 py-2 text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
                   >
                     Logout
                   </button>
