@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowLeft, Check, Save } from "lucide-react";
-import { getThemeDetails, getCardClass } from "../../Dashboard/ThemeDetails";
+import { getThemeDetails, getCardClass } from "../Dashboard/ThemeDetails";
 import JournalEntry from "./JournalEntryPreview";
 
 const ThemeSelector = ({

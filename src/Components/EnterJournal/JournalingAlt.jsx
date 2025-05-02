@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useCoins } from "../../context/CoinContext";
 import Navbar from "../Dashboard/Navbar";
-import JournalEditor from "./Components/JournalEditor";
-import MoodSelector from "./Components/MoodSelector";
-import ThemeSelector from "./Components/ThemeSelector";
-import TagsManager from "./Components/TagsManager";
-import CollectionsManager from "./Components/CollectionsManager";
-import StepIndicator from "./Components/StepIndicator";
+import JournalEditor from "./JournalEditor";
+import MoodSelector from "./MoodSelector";
+import ThemeSelector from "./ThemeSelector";
+import TagsManager from "./TagsManager";
+import CollectionsManager from "./CollectionsManager";
+import StepIndicator from "./StepIndicator";
 import { getThemeDetails } from "../Dashboard/ThemeDetails";
 
 const JournalingAlt = () => {

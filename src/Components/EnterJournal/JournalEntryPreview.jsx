@@ -1,9 +1,9 @@
 "use client";
 
 import { useParams, Link } from "react-router-dom";
-import { useDarkMode } from "../../../context/ThemeContext";
+import { useDarkMode } from "../../context/ThemeContext";
 import { Tag, BarChart2, ArrowLeft } from "lucide-react";
-import { getCardClass, getThemeDetails } from "../../Dashboard/ThemeDetails";
+import { getCardClass, getThemeDetails } from "../Dashboard/ThemeDetails";
 
 // Mood styling configurations
 const moodStyles = {
