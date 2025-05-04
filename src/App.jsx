@@ -20,6 +20,8 @@ import "./index.css";
 import SiteMaster from "./SiteMaster";
 import Collections from "./Components/Dashboard/Collections";
 import CozyShop from "./Components/Dashboard/Shop/CozyShop";
+import Privacy from "./Components/Landing/Privacy";
+import Terms from "./Components/Landing/Terms";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -57,6 +59,8 @@ const App = () => {
               path="/journal-entries/:collection"
               element={<JournalEntries />}
             />
+            <Route path="/privacy-policy" element={<Privacy />} />
+            <Route path="/terms-of-service" element={<Terms />} />
             <Route path="/collections" element={<Collections />} />
             <Route path="/profile-settings" element={<ProfileSettings />} />
             <Route path="/features" element={<Features />} />

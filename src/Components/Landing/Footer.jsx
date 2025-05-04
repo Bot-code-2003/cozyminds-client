@@ -54,6 +54,15 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
               A solo developer's passion project to bring mental clarity and
               well-being to all.
             </p>
+
+            <div className="flex gap-4 mt-4 opacity-70 text-sm max-w-xs  ">
+              <Link className="hover:underline" to="/privacy-policy">
+                Privacy Policy
+              </Link>
+              <Link className="hover:underline" to="/terms-of-service">
+                Terms of Service
+              </Link>
+            </div>
           </div>
 
           <div className="flex gap-6">
