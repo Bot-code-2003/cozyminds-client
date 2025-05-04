@@ -160,7 +160,7 @@ const JournalEntry = () => {
       <div className="absolute bottom-0 right-0 w-full h-1/3 opacity-20 dark:opacity-10 transform skew-y-12 pointer-events-none"></div>
 
       {/* Main Content Container */}
-      <div className="w-full max-w-4xl z-10">
+      <div className="w-full max-w-5xl z-10">
         {/* Back Button */}
         <Link
           to="/"
@@ -191,17 +191,17 @@ const JournalEntry = () => {
           <div className="p-6 sm:p-8">
             {/* Header Section */}
             <div className="border-b border-[var(--border)] pb-6 mb-6">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide mb-4">
+              <h1 className="text-3xl sm:text-3xl md:text-4xl font-bold tracking-wide mb-4">
                 {entry.title.toUpperCase()}
               </h1>
 
               {/* Date & Stats Row */}
-              <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm opacity-80 tracking-wide">
-                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 px-3 py-1 rounded-full">
+              <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-xs opacity-80 tracking-wide">
+                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 text-[var(--accent)] px-3 py-1 rounded-full">
                   <span>{currentTheme.dateIcon}</span>
                   <span>{formatDate(entry.date)}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 px-3 py-1 rounded-full">
+                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 text-[var(--accent)] px-3 py-1 rounded-full">
                   <BarChart2 size={14} />
                   <span>{entry.wordCount} WORDS</span>
                 </div>
@@ -252,7 +252,7 @@ const JournalEntry = () => {
               <div className="absolute left-0 top-0 w-1 h-full bg-[var(--accent)]/30 rounded"></div>
 
               <div
-                className={`pl-4 text-lg leading-relaxed tracking-wide ${
+                className={`pl-4 text-lg leading-relaxed tracking-wide max-h-[300px] overflow-y-scroll ${
                   darkMode ? "text-[#F8F1E9]/90" : "text-[#1A1A1A]/90"
                 }`}
               >

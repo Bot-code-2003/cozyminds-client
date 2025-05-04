@@ -14,6 +14,8 @@ import CollectionsManager from "./CollectionsManager";
 import StepIndicator from "./StepIndicator";
 import { getThemeDetails } from "../Dashboard/ThemeDetails";
 
+import { ArrowLeft, ArrowRight } from "lucide-react";
+
 const JournalingAlt = () => {
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
   const { darkMode, setDarkMode } = useDarkMode();
@@ -192,7 +194,7 @@ const JournalingAlt = () => {
         );
       case 2:
         return (
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr] gap-5">
+          <div className="">
             <div>
               <MoodSelector
                 selectedMood={selectedMood}
@@ -201,7 +203,7 @@ const JournalingAlt = () => {
                 onBack={goToPreviousStep}
               />
             </div>
-            <div className="flex flex-col gap-5">
+            <div className=" flex flex-col p-5 my-auto gap-5 bg-[var(--bg-secondary)]">
               <TagsManager
                 selectedTags={selectedTags}
                 setSelectedTags={setSelectedTags}
@@ -213,6 +215,23 @@ const JournalingAlt = () => {
                 setSelectedCollections={setSelectedCollections}
                 existingCollections={existingCollections}
               />
+            </div>
+            <div className="flex justify-between items-center mt-6">
+              <button
+                onClick={goToPreviousStep}
+                className="px-4 py-2 border border-[var(--border)] bg-[var(--bg-primary)] rounded-md flex items-center text-sm hover:bg-[var(--bg-primary)]/80 transition-colors"
+              >
+                <ArrowLeft size={16} className="mr-2" />
+                Back
+              </button>
+              <button
+                onClick={goToNextStep}
+                disabled={!selectedMood}
+                className="px-4 py-2 bg-[var(--accent)] text-white rounded-md flex items-center text-sm hover:bg-[var(--accent)]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+                <ArrowRight size={16} className="ml-2" />
+              </button>
             </div>
           </div>
         );

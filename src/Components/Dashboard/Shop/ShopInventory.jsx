@@ -31,7 +31,8 @@ const ShopInventory = ({ inventory, setActiveTab, isOneTimePurchase }) => {
               My Collection
             </h2>
             <p className="text-[var(--text-secondary)]">
-              Items you've purchased from the Cozy Shop
+              Items you've purchased from the Cozy Shop <br /> Write a new entry
+              to use these items
             </p>
           </div>
 

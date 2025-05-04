@@ -206,11 +206,11 @@ const JournalEntryPreview = ({
 
               {/* Date & Stats Row */}
               <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm opacity-80 tracking-wide">
-                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 px-3 py-1 rounded-full">
+                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 text-[var(--accent)] px-3 py-1 rounded-full">
                   <span>{currentTheme?.dateIcon || "📅"}</span>
                   <span>{formatDate(entry?.date)}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 px-3 py-1 rounded-full">
+                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 text-[var(--accent)] px-3 py-1 rounded-full">
                   <BarChart2 size={14} />
                   <span>{entry?.wordCount || "0"} WORDS</span>
                 </div>

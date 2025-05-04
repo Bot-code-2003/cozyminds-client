@@ -175,6 +175,7 @@ export const CoinProvider = ({ children }) => {
         showCoinPopup,
         coinsEarned,
         showCoinAward,
+        userData,
       }}
     >
       {children}

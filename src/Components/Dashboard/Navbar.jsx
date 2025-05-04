@@ -16,7 +16,7 @@ import { useCoins } from "../../context/CoinContext";
 import InGameMail from "./Mail/InGameMail";
 import axios from "axios";
 
-// Configure Axios with base URL
+// Configure API
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
@@ -33,15 +33,15 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   const isRootPath = location.pathname === "/";
   const isJournalingAlt = location.pathname === "/journaling-alt";
 
-  // Fetch user data from session storage once on mount
+  // Load user data once
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem("user") || "null");
     setUserData(user);
-  }, []); // Empty dependency array means this only runs once on mount
+  }, []);
 
   const userId = userData?._id;
 
-  // Handle clicks outside dropdown
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -52,7 +52,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch mails to initialize state
+  // Fetch mails
   useEffect(() => {
     if (!userId) {
       setMails([]);
@@ -88,105 +88,103 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
     window.location.href = "/";
   };
 
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-  const toggleMailModal = () => setMailModalOpen(!mailModalOpen);
-
   return (
     <>
-      <nav
-        className={`w-full bg-[var(--bg-navbar)] border-b border-[var(--border)] py-3 px-4 md:px-6 flex justify-between items-center sticky top-0 z-20`}
-      >
-        <Link to={"/"} className="flex cursor-pointer items-center">
+      <nav className="w-full bg-[var(--bg-navbar)] border-b border-[var(--border)] py-3 px-4 md:px-6 flex justify-between items-center sticky top-0 z-20">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
           <div className="text-lg font-bold tracking-wider text-[var(--text-primary)]">
-            COZY
-            <span className="text-[var(--accent)]">MINDS</span>
+            COZY<span className="text-[var(--accent)]">MINDS</span>
           </div>
         </Link>
 
+        {/* Right side controls */}
         <div className="flex items-center space-x-2 md:space-x-4">
           {/* Coins display */}
           {isInitialized && (
-            <div className="flex items-center px-3 py-1 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-full">
+            <div className="flex items-center px-3 py-1 bg-[var(--bg-secondary)] border border-[var(--border)]">
               <span className="text-yellow-300 mr-1">🪙</span>
               <span className="text-[var(--text-primary)]">{coins}</span>
             </div>
           )}
 
+          {/* Shop button */}
           <Link
             to="/cozyshop"
-            className="p-2 hover:text-[var(--accent)] cursor-pointer transition-colors"
+            className="p-2 hover:text-[var(--accent)] transition-colors"
             aria-label="Shop"
           >
             <ShoppingBag size={18} />
           </Link>
 
+          {/* Mail button */}
           <button
-            onClick={toggleMailModal}
-            className="p-2 hover:text-[var(--accent)] cursor-pointer transition-colors relative"
+            onClick={() => setMailModalOpen(!mailModalOpen)}
+            className="p-2 hover:text-[var(--accent)] transition-colors relative"
             aria-label="Mail"
           >
             <Mail size={18} />
             {hasUnreadMails && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[var(--highlight)] rounded-full"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-[var(--highlight)]"></span>
             )}
           </button>
 
+          {/* Dark mode toggle */}
           <button
             onClick={toggleDarkMode}
-            className="p-2 hover:text-[var(--accent)] cursor-pointer transition-colors"
+            className="p-2 hover:text-[var(--accent)] transition-colors"
             aria-label="Toggle dark mode"
           >
             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          {/* Button Logic */}
+          {/* Navigation buttons */}
           <div className="hidden md:flex items-center space-x-2">
-            {/* Show New Entry unless on /journaling-alt */}
+            {/* New Entry button */}
             {!isJournalingAlt && (
               <Link
                 to={link}
-                className="flex items-center px-4 py-2 cursor-pointer border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
+                className="flex items-center px-4 py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
               >
                 <Plus size={18} className="mr-2" />
-                {name || "New Entry"}
+                {name}
               </Link>
             )}
 
-            {/* Show Dashboard for non-root paths */}
-            {!isRootPath && (
+            {/* Dashboard button */}
+            {/* {!isRootPath && (
               <Link
                 to="/"
-                className="flex items-center px-4 py-2 cursor-pointer border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
+                className="flex items-center px-4 py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
               >
                 <ArrowLeft size={18} className="mr-2" />
                 Dashboard
               </Link>
-            )}
+            )} */}
           </div>
 
+          {/* User dropdown */}
           {userData && (
             <div className="relative" ref={dropdownRef}>
               <button
-                onClick={toggleDropdown}
-                className="hidden md:flex items-center px-4 cursor-pointer py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors duration-200"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="hidden md:flex items-center px-4 py-2 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
               >
-                <span className="hidden md:inline">
-                  {userData.nickname || "User"}
-                </span>
+                <span>{userData.nickname || "User"}</span>
                 <ChevronDown size={16} className="ml-2" />
               </button>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-1 w-44 shadow-md z-30 bg-[var(--bg-secondary)] border-[var(--border)]">
+                <div className="absolute right-0 mt-1 w-44 shadow-md z-30 bg-[var(--bg-secondary)] border border-[var(--border)]">
                   <Link
                     to="/profile-settings"
-                    className="block px-4 py-2 cursor-pointer text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
+                    className="block px-4 py-2 text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
                   >
                     Profile Settings
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left cursor-pointer px-4 py-2 text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
+                    className="w-full text-left px-4 py-2 text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-primary)] transition-colors"
                   >
                     Logout
                   </button>
@@ -197,9 +195,10 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
         </div>
       </nav>
 
+      {/* Mail Modal */}
       {mailModalOpen && (
         <InGameMail
-          toggleMailModal={toggleMailModal}
+          toggleMailModal={() => setMailModalOpen(false)}
           mails={mails}
           setMails={setMails}
           setHasUnreadMails={setHasUnreadMails}

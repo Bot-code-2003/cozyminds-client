@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useCoins } from "../../../context/CoinContext.jsx";
 import { useDarkMode } from "../../../context/ThemeContext.jsx";
 
-import Navbar from "./Navbar";
+import Navbar from "../Navbar.jsx";
 import {
   ShoppingCart,
   Package,
@@ -18,11 +18,12 @@ import ShopDeals from "./ShopDeals.jsx";
 import ShopItem from "./ShopItem.jsx";
 import ShopInventory from "./ShopInventory";
 
-import { shopItems, shopDeals } from "./ShopItems.js";
+import { shopItems } from "./ShopItems.js";
 
 const CozyShop = () => {
   const navigate = useNavigate();
-  const { coins, inventory, purchaseItem, syncCoinsFromStorage } = useCoins();
+  const { coins, inventory, purchaseItem, syncCoinsFromStorage, userData } =
+    useCoins();
   const { darkMode } = useDarkMode();
   const [notification, setNotification] = useState(null);
   const [activeTab, setActiveTab] = useState("shop");
@@ -103,21 +104,25 @@ const CozyShop = () => {
           (item) => !item.featured && !item.id.includes("solid")
         );
 
+  if (!userData) {
+    navigate("/");
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      <div className="max-w-7xl mx-auto py-8">
+        <div className="flex text-center flex-col md:flex-row justify-center items-start md:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
-              Cozy Shop
+              Cozy <span className="text-[var(--accent)]">Shop</span>
             </h1>
             <p className="text-[var(--text-secondary)]">
               Enhance your journaling experience with unique items
             </p>
           </div>
-          <div
+          {/* <div
             className={`flex items-center px-5 py-3 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg shadow-sm transition-all ${
               animateCoins ? "scale-110" : ""
             }`}
@@ -126,7 +131,7 @@ const CozyShop = () => {
             <span className="text-[var(--text-primary)] text-xl font-medium">
               {coins}
             </span>
-          </div>
+          </div> */}
         </div>
 
         {/* Tabs */}
@@ -142,7 +147,7 @@ const CozyShop = () => {
             <ShoppingCart className="inline mr-2" size={16} />
             Shop
           </button>
-          <button
+          {/* <button
             className={`px-4 py-3 font-medium transition-colors ${
               activeTab === "deals"
                 ? "text-[var(--accent)] border-b-2 border-[var(--accent)]"
@@ -152,7 +157,7 @@ const CozyShop = () => {
           >
             <Percent className="inline mr-2" size={16} />
             Deals
-          </button>
+          </button> */}
           <button
             className={`px-4 py-3 font-medium transition-colors ${
               activeTab === "inventory"
@@ -252,7 +257,7 @@ const CozyShop = () => {
         )}
 
         {/* Deals */}
-        {activeTab === "deals" && (
+        {/* {activeTab === "deals" && (
           <ShopDeals
             deals={shopDeals}
             shopItems={shopItems}
@@ -260,7 +265,7 @@ const CozyShop = () => {
             coins={coins}
             handlePurchase={handlePurchase}
           />
-        )}
+        )} */}
 
         {/* Inventory */}
         {activeTab === "inventory" && (

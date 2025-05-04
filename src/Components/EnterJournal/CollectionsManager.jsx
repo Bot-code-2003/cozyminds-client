@@ -41,7 +41,7 @@ const CollectionsManager = ({
   };
 
   return (
-    <div className="bg-[var(--bg-secondary)] border-[var(--border)] shadow-[var(--shadow)] rounded-xl p-4">
+    <div className="bg-[var(--bg-primary)] border-[var(--border)] shadow-[var(--shadow)] rounded-xl p-4">
       <h3 className="text-md font-medium mb-3 text-[var(--text-primary)] flex items-center">
         <FolderPlus size={16} className="mr-1.5" />
         Collections
@@ -109,7 +109,7 @@ const CollectionsManager = ({
                 <button
                   key={collection}
                   onClick={() => toggleCollection(collection)}
-                  className="px-2 py-0.5 text-xs bg-[var(--bg-primary)] text-[var(--text-primary)] rounded-full hover:bg-[var(--bg-primary)]/80 transition-colors"
+                  className="px-2 py-0.5 text-xs bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full hover:bg-[var(--bg-primary)]/80 transition-colors"
                 >
                   {collection}
                 </button>

@@ -20,18 +20,14 @@ const JournalEditor = ({
   }, []);
 
   return (
-    <div className="bg-[var(--bg-secondary)] border-[var(--border)] shadow-[var(--shadow)] rounded-xl p-5">
-      <h2 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">
-        Write Your Journal
-      </h2>
-
+    <div className="bg-[var(--bg-secondary)] border-[var(--border)] shadow-[var(--shadow)] p-5">
       <input
         ref={titleRef}
         type="text"
         value={journalTitle}
         onChange={(e) => setJournalTitle(e.target.value)}
         placeholder="Entry Title"
-        className="w-full border-none outline-none text-2xl font-semibold mb-3 bg-transparent text-[var(--text-primary)] placeholder-[var(--text-secondary)]"
+        className="w-full border-none outline-none text-2xl p-3 font-semibold mb-1 bg-transparent text-[var(--text-primary)] placeholder-[var(--text-secondary)]"
       />
 
       <textarea
@@ -39,7 +35,7 @@ const JournalEditor = ({
         value={journalText}
         onChange={(e) => setJournalText(e.target.value)}
         placeholder="Write your thoughts..."
-        className="w-full min-h-[450px] resize-none border-[var(--border)] rounded-md outline-none p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] text-sm"
+        className="w-full min-h-[300px] resize-none border-[var(--border)] rounded-md outline-none p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] text-sm"
       />
 
       <div className="flex justify-between items-center mt-3 text-sm text-[var(--text-secondary)]">

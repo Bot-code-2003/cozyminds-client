@@ -40,9 +40,12 @@ const ShopItem = ({
               backgroundSize: "cover",
               backgroundPosition: "center",
             }
+          : item.gradient
+          ? {
+              backgroundImage: `${item.gradient}`,
+            }
           : item.color
           ? {
-              backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%)`,
               backgroundColor: item.color,
             }
           : {}
@@ -71,7 +74,7 @@ const ShopItem = ({
       )}
 
       {/* Pastel theme display */}
-      {!item.isEmoji && !item.image && item.color && renderPastelTheme()}
+      {/* {!item.isEmoji && !item.image && item.color && renderPastelTheme()} */}
 
       {/* Content Area (over gradient for images, bottom for emojis) */}
       <div className="mt-auto p-6 flex flex-col items-center text-center z-10">

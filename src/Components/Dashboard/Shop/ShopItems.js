@@ -3,7 +3,6 @@ import Ocean from "../../../assets/water.png";
 import Black from "../../../assets/black-n.png";
 import CalmOcean from "../../../assets/calm-ocean-n.png";
 import NightSky from "../../../assets/night-sky-n.png";
-import PastelSky from "../../../assets/pastel-sky-n.png";
 import EnergeticYellow from "../../../assets/energetic-yellow-n.png";
 import CozyRoom from "../../../assets/cozy-room-e.png";
 import CountrySide from "../../../assets/country-side-e.png";
@@ -147,7 +146,6 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
   },
-  // New solid color themes
   {
     id: "theme_solid_pink",
     name: "Dusty Rose",
@@ -156,7 +154,8 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#4A3A3A", // soft dusty rose-brown
+    color: "#4A3A3A",
+    gradient: "radial-gradient(circle at center, #b06d86, #4a3a3a)",
   },
   {
     id: "theme_solid_blue",
@@ -167,6 +166,7 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
     color: "#2E2B4F",
+    gradient: "radial-gradient(circle at center, #47487a, #2e2b4f)",
   },
   {
     id: "theme_solid_green",
@@ -177,6 +177,7 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
     color: "#1F2924",
+    gradient: "radial-gradient(circle at center, #416b5b, #1f2924)",
   },
   {
     id: "theme_solid_lavender",
@@ -187,6 +188,7 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
     color: "#3F3A4A",
+    gradient: "radial-gradient(circle at center, #796687, #3f3a4a)",
   },
   {
     id: "theme_solid_peach",
@@ -197,16 +199,7 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
     color: "#4F3D32",
-  },
-  {
-    id: "theme_solid_mint",
-    name: "Forest Mist",
-    description: "A muted forest mist green for your journal",
-    price: 10,
-    image: null,
-    category: "theme",
-    isEmoji: false,
-    color: "#2E3A36",
+    gradient: "radial-gradient(circle at center, #a76d50, #4f3d32)",
   },
   {
     id: "theme_solid_yellow",
@@ -217,6 +210,7 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
     color: "#4A3F2A",
+    gradient: "radial-gradient(circle at center, #b08b3f, #4a3f2a)",
   },
   {
     id: "theme_solid_coral",
@@ -227,6 +221,7 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
     color: "#543737",
+    gradient: "radial-gradient(circle at center, #a7544c, #543737)",
   },
   {
     id: "theme_solid_lilac",
@@ -237,6 +232,7 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
     color: "#4B3C4C",
+    gradient: "radial-gradient(circle at center, #8c688e, #4b3c4c)",
   },
   {
     id: "theme_solid_aqua",
@@ -247,45 +243,46 @@ export const shopItems = [
     category: "theme",
     isEmoji: false,
     color: "#2F3E3F",
+    gradient: "radial-gradient(circle at center, #4e767b, #2f3e3f)",
   },
 ];
 
-// Deals and packs
-export const shopDeals = [
-  {
-    id: "deal_exclusive_duo",
-    name: "Exclusive Duo",
-    description: "Get any 2 exclusive themes at a special price",
-    originalPrice: 200,
-    price: 150,
-    items: 2,
-    itemType: "exclusive",
-    category: "deal",
-    featured: "Limited Time",
-    featuredStyle: "feature-card-deal",
-  },
-  {
-    id: "deal_theme_bundle",
-    name: "Theme Bundle",
-    description: "Get any 3 regular themes at a discounted price",
-    originalPrice: 150,
-    price: 120,
-    items: 3,
-    itemType: "regular",
-    category: "deal",
-    featured: "Value Pack",
-    featuredStyle: "feature-card-deal",
-  },
-  {
-    id: "deal_solid_collection",
-    name: "solid Collection",
-    description: "Get any 4 solid themes for the price of 3",
-    originalPrice: 200,
-    price: 150,
-    items: 4,
-    itemType: "solid",
-    category: "deal",
-    featured: "New",
-    featuredStyle: "feature-card-deal",
-  },
-];
+// // Deals and packs
+// export const shopDeals = [
+//   {
+//     id: "deal_exclusive_duo",
+//     name: "Exclusive Duo",
+//     description: "Get any 2 exclusive themes at a special price",
+//     originalPrice: 200,
+//     price: 150,
+//     items: 2,
+//     itemType: "exclusive",
+//     category: "deal",
+//     featured: "",
+//     featuredStyle: "feature-card-deal",
+//   },
+//   {
+//     id: "deal_theme_bundle",
+//     name: "Theme Bundle",
+//     description: "Get any 3 regular themes at a discounted price",
+//     originalPrice: 150,
+//     price: 120,
+//     items: 3,
+//     itemType: "regular",
+//     category: "deal",
+//     featured: "",
+//     featuredStyle: "feature-card-deal",
+//   },
+//   {
+//     id: "deal_solid_collection",
+//     name: "solid Collection",
+//     description: "Get any 4 solid themes for the price of 3",
+//     originalPrice: 200,
+//     price: 150,
+//     items: 4,
+//     itemType: "solid",
+//     category: "deal",
+//     featured: "",
+//     featuredStyle: "feature-card-deal",
+//   },
+// ];
