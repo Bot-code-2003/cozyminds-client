@@ -2,7 +2,7 @@ import React from "react";
 
 const Terms = () => {
   return (
-    <div className="max-w-3xl mx-auto p-6 text-left text-gray-800">
+    <div className="max-w-3xl mx-auto p-6 text-left text-gray-500">
       <h1 className="text-3xl font-bold mb-4">Terms of Service</h1>
       <p className="mb-4">
         Welcome to <strong>Cozy Minds</strong>. These terms govern your use of

@@ -5,29 +5,29 @@ const Testimonials = ({ darkMode }) => {
   const testimonials = [
     {
       quote:
-        "The daily emails have transformed my morning routine. I feel more focused and prepared for the day.",
-      author: "Alex K.",
-      role: "Marketing Director",
+        "It’s lovely. The messages feel warm and personal. I use it every evening with my tea.",
+      author: "Mom",
+      role: "Lifelong Encourager",
       rating: 5,
-      avatar: "A",
-      highlight: false,
-    },
-    {
-      quote:
-        "Mood Grid helped me identify patterns in my stress levels. Now I can anticipate and manage them better.",
-      author: "Jamie T.",
-      role: "Software Engineer",
-      rating: 5,
-      avatar: "J",
+      avatar: "M",
       highlight: true,
     },
     {
       quote:
-        "I've tried many mindfulness apps, but this one actually fits into my busy schedule. Just 5 minutes makes a difference.",
-      author: "Morgan L.",
-      role: "Healthcare Professional",
+        "Proud of what you've built. It’s clean, simple, and feels like a quiet corner on the internet.",
+      author: "Dad",
+      role: "Supportive Dad",
       rating: 5,
-      avatar: "M",
+      avatar: "D",
+      highlight: false,
+    },
+    {
+      quote:
+        "I’ve actually started journaling because of this — and I never journal. The daily rewards are fun too.",
+      author: "Brother",
+      role: "Reluctant Tester Turned Fan",
+      rating: 5,
+      avatar: "B",
       highlight: false,
     },
   ];

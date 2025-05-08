@@ -15,7 +15,7 @@ const moods = [
 
 const RecentJournals = ({ entries, darkMode, formatDate }) => {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 mb-10 bg-[var(--bg-secondary)] border border-designer rounded-xl shadow-md">
+    <div className="max-w-7xl mx-auto px-4 sm:px-0 py-8 ">
       <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">
         Recent Journals
       </h2>

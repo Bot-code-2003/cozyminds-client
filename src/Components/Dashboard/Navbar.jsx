@@ -102,7 +102,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
         <div className="flex items-center space-x-2 md:space-x-4">
           {/* Coins display */}
           {isInitialized && (
-            <div className="flex items-center px-3 py-1 bg-[var(--bg-secondary)] border border-[var(--border)]">
+            <div className="flex items-center py-1">
               <span className="text-yellow-300 mr-1">🪙</span>
               <span className="text-[var(--text-primary)]">{coins}</span>
             </div>

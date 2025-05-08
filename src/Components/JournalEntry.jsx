@@ -1,3 +1,4 @@
+// JournalEntry.jsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -171,9 +172,9 @@ const JournalEntry = () => {
         </Link>
 
         {/* Journal Container */}
-        <div className="bg-[var(--bg-primary)]/80 backdrop-blur-sm rounded-xl shadow-lg border border-[var(--border)] overflow-hidden">
+        <div className="bg-[var(--bg-primary)]/70 backdrop-blur-sm rounded-xl shadow-lg border border-[var(--border)] overflow-hidden">
           {/* Theme Header Banner */}
-          <div className="relative h-12 bg-[var(--accent)]/30 flex items-center justify-end px-4">
+          <div className="relative h-12 bg-[var(--accent)]/60 flex items-center justify-end px-4">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium tracking-wider opacity-70">
                 {entry.theme
@@ -188,20 +189,22 @@ const JournalEntry = () => {
           </div>
 
           {/* Content Container */}
-          <div className="p-6 sm:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             {/* Header Section */}
-            <div className="border-b border-[var(--border)] pb-6 mb-6">
-              <h1 className="text-3xl sm:text-3xl md:text-4xl font-bold tracking-wide mb-4">
+            <div className="border-b border-[var(--border)] pb-4 sm:pb-6 mb-4 sm:mb-6">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide mb-4 break-words">
                 {entry.title.toUpperCase()}
               </h1>
 
               {/* Date & Stats Row */}
-              <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-xs opacity-80 tracking-wide">
-                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 text-[var(--accent)] px-3 py-1 rounded-full">
+              <div className="flex flex-wrap gap-2 sm:gap-4 text-xs opacity-80 tracking-wide">
+                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 text-[var(--accent)] px-2 sm:px-3 py-1 rounded-full">
                   <span>{currentTheme.dateIcon}</span>
-                  <span>{formatDate(entry.date)}</span>
+                  <span className="truncate max-w-[180px] sm:max-w-none">
+                    {formatDate(entry.date)}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 text-[var(--accent)] px-3 py-1 rounded-full">
+                <div className="flex items-center gap-2 bg-[var(--bg-secondary)]/50 text-[var(--accent)] px-2 sm:px-3 py-1 rounded-full">
                   <BarChart2 size={14} />
                   <span>{entry.wordCount} WORDS</span>
                 </div>
@@ -209,12 +212,12 @@ const JournalEntry = () => {
             </div>
 
             {/* Mood & Tags Section */}
-            <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 mb-8">
+            <div className="flex flex-col gap-3 mb-6 sm:mb-8">
               {/* Mood Badge */}
               {entry.mood && (
                 <div>
                   <span
-                    className={`inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium tracking-wide rounded-full ${moodStyle.bgColor} ${moodStyle.textColor} border ${moodStyle.borderColor}`}
+                    className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 text-sm font-medium tracking-wide rounded-full ${moodStyle.bgColor} ${moodStyle.textColor} border ${moodStyle.borderColor}`}
                   >
                     <span>{moodStyle.emoji}</span>
                     <span>{entry.mood.toUpperCase()}</span>
@@ -228,7 +231,7 @@ const JournalEntry = () => {
                   entry.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium tracking-wide rounded-full ${
+                      className={`inline-flex items-center gap-1 px-2 sm:px-3 py-1 text-xs font-medium tracking-wide rounded-full ${
                         darkMode
                           ? "bg-[#F8F1E9]/10 text-[#F8F1E9] border-[#F8F1E9]/20"
                           : "bg-[#1A1A1A]/10 text-[#1A1A1A] border-[#1A1A1A]/20"
@@ -252,7 +255,7 @@ const JournalEntry = () => {
               <div className="absolute left-0 top-0 w-1 h-full bg-[var(--accent)]/30 rounded"></div>
 
               <div
-                className={`pl-4 text-lg leading-relaxed tracking-wide max-h-[300px] overflow-y-scroll ${
+                className={`pl-3 sm:pl-4 text-base sm:text-lg leading-relaxed tracking-wide max-h-[200px] sm:max-h-[300px] overflow-y-auto ${
                   darkMode ? "text-[#F8F1E9]/90" : "text-[#1A1A1A]/90"
                 }`}
               >
