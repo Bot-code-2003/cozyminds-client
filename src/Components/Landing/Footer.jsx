@@ -63,6 +63,10 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
               <Link className="hover:underline" to="/terms-of-service">
                 Terms of Service
               </Link>
+
+              <Link className="hover:underline" to="/cozyminds-blog">
+                Our Blogs
+              </Link>
             </div>
           </div>
 

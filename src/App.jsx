@@ -16,12 +16,15 @@ import ProfileSettings from "./Components/ProfileSettings";
 import Features from "./Components/Landing/Features";
 import DetailedMoodDistributions from "./Components/Dashboard/DetailedMoodDistributions";
 
+import CozyMindsBlog from "./Components/Landing/CozyMindsBlog";
+
 import "./index.css";
 import SiteMaster from "./SiteMaster";
 import Collections from "./Components/Dashboard/Collections";
 import CozyShop from "./Components/Dashboard/Shop/CozyShop";
 import Privacy from "./Components/Landing/Privacy";
 import Terms from "./Components/Landing/Terms";
+import BlogPage from "./Components/Landing/BlogPage";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -61,6 +64,8 @@ const App = () => {
             />
             <Route path="/privacy-policy" element={<Privacy />} />
             <Route path="/terms-of-service" element={<Terms />} />
+            <Route path="/cozyminds-blog" element={<CozyMindsBlog />} />
+            <Route path="/blog/:slug" element={<BlogPage />} />
             <Route path="/collections" element={<Collections />} />
             <Route path="/profile-settings" element={<ProfileSettings />} />
             <Route path="/features" element={<Features />} />
