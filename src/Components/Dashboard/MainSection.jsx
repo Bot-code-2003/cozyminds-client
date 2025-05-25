@@ -38,7 +38,7 @@ const MainSection = ({
   ];
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-0 py-8">
+    <main className="max-w-7xl mx-auto py-8">
       {/* Welcome Section */}
       <div className="mb-10 text-center">
         <h1 className={`text-4xl `}>
@@ -47,10 +47,8 @@ const MainSection = ({
             {userData?.nickname || "Traveler"}
           </span>
         </h1>
-        <p
-          className={`mt-2 text-sm font-sans uppercase tracking-wide text-[var(--text-secondary)]`}
-        >
-          Your personal journal
+        <p className="mt-2 mb-2 text-sm font-sans uppercase tracking-wide text-gray-500">
+          Your personal journal.{" "}
         </p>
       </div>
 

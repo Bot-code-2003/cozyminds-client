@@ -82,7 +82,8 @@ const ProfileSettings = () => {
         ...form,
         age: form.age ? parseInt(form.age) : null,
       };
-      await API.put(`/user/${userData.id}`, updated);
+
+      await API.put(`/user/${userData._id}`, updated);
       sessionStorage.setItem("user", JSON.stringify(updated));
       setUserData(updated);
       setSuccess("Profile updated successfully");

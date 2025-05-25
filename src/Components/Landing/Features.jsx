@@ -14,9 +14,9 @@ import { Gift, BarChart3, Mail, ShoppingBag, ChevronRight } from "lucide-react";
 const Features = () => {
   const { darkMode, setDarkMode } = useDarkMode();
   return (
-    <div className="relative z-10 px-6 ">
+    <div className="relative z-10 px-1 sm:px-6 ">
       {/* Features Section */}
-      <section className="relative z-10 w-full py-24 ">
+      <section className="relative z-10 w-full py-12 sm:py-24 ">
         <div className="text-center mb-20">
           <div className="inline-block mb-6 px-4 py-1.5 bg-[#f0e6d9] dark:bg-[#2a2520] rounded-full text-xs font-medium tracking-wider text-[#5999a8] dark:text-[#7ab8c7] shadow-sm">
             STANDOUT FEATURES
@@ -57,9 +57,9 @@ const Features = () => {
               icon: <Mail size={32} />,
               image: MailIG,
               label: "MAIL",
-              title: "In-Game Mail",
+              title: "In-Site Mail",
               description:
-                "Receive warm greetings, seasonal stories, and surprise gifts from whimsical in-game characters.",
+                "Receive heartwarming greetings, seasonal tales, and delightful surprise gifts from the charming characters of Cozy Minds, right in your in-site mailbox.",
               color: "A3C9A8",
               bgLight: "e8f5e9",
               bgDark: "1b2e1e",
@@ -99,7 +99,7 @@ const Features = () => {
                     <p className="opacity-80 mb-6">{feature.description}</p>
                   </div>
 
-                  <Link
+                  {/* <Link
                     to={`/features/${feature.title
                       .toLowerCase()
                       .replace(/\s+/g, "-")}`}
@@ -110,7 +110,7 @@ const Features = () => {
                       size={16}
                       className="ml-1 group-hover:translate-x-1 transition-transform"
                     />
-                  </Link>
+                  </Link> */}
                 </div>
 
                 <div className="md:w-1/2 aspect-square rounded-xl overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-lg">

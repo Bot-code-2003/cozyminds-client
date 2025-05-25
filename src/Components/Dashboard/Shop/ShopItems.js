@@ -12,7 +12,133 @@ import PostApocalyptic from "../../../assets/post-apocalyptic-e.png";
 import SpaceObserve from "../../../assets/space-observe-e.png";
 import WinterCabin from "../../../assets/winter-cabin-e.png";
 
+//seasonal
+import Christmas from "../../../assets/christmas.png";
+
+// Example concept pack images - replace with your actual image paths
+import ConceptImage1 from "../../../assets/concept_sheep.png";
+import ConceptImage2 from "../../../assets/concept_sheep1.png";
+import ConceptImage3 from "../../../assets/concept_sheep2.png";
+
+// Mail theme preview image
+import ElfMailPreview from "../../../assets/elf.png";
+import WifeMailPreview from "../../../assets/wifu.png";
+
 export const shopItems = [
+  // New Mail Themes
+  {
+    id: "mailtheme_elf_from_elbaf",
+    name: "Elf From Elbaf Mail Theme",
+    price: 450,
+    image: ElfMailPreview,
+    category: "mailtheme",
+    featured: "New",
+    featuredStyle: "feature-card",
+    isEmoji: false,
+    previewClass: "elf-theme-preview",
+    previewHtml: `
+  <div style="
+  background-image: url('${ElfMailPreview}');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 2rem;
+  color: white;
+  font-family: 'Merriweather', 'Cinzel', serif;
+  min-height: 400px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.3);
+  background-blend-mode: overlay;
+">
+  <p>Ara~ did the stars guide you back to me again, wanderer? <br /></p>
+  <p>Elaniel, an elf of Elbaf's twilight groves, whispers with the stars and walks where moonlight lingers. 🌙</p>
+  <p><br />~ Elaniel Moonshade</p>
+</div>
+
+`,
+  },
+  {
+    id: "mailtheme_wifu",
+    name: "Rexona",
+
+    price: 450,
+    image: WifeMailPreview,
+    category: "mailtheme",
+    featured: "New",
+    featuredStyle: "feature-card",
+    isEmoji: false,
+    previewClass: "waifu-theme-preview",
+    previewHtml: `
+  <div style="
+  background-image: url('${WifeMailPreview}');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 2rem;
+  color: white;
+  font-family: 'Merriweather', 'Cinzel', serif;
+  min-height: 400px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.3);
+  background-blend-mode: overlay;
+">
+  <p>~Hi, my darling senpai! 💖</p>
+  <p>Rexona, your sweet and sparkly wifu from the pastel realms, dreams of mochi dates and cozy cuddles under sakura trees. 🌸</p>
+  <p><br />~ Rexona</p>
+</div>
+
+  `,
+  },
+  // New Concept Packs
+  {
+    id: "concept_pack_maple_woolly",
+    name: "Maple & Woolly's Little Journey",
+    description: "Set of 3 Illustrated Scenes",
+    story:
+      "Maple wasn't a hero. Just a little wanderer with a big hat, a woolly friend, and a map full of dreams.\nEvery morning, they picked a new direction. Some led to glowing caves where stars whispered.\nOthers to towering mountains bathed in peachy skies.\nAnd sometimes they just rested beneath cherry blossoms and scribbled in journals, not chasing anything at all.\nBecause to them, the best journeys weren't about reaching anywhere—they were about wandering together.",
+    price: 450,
+    category: "conceptpack",
+    featured: "New",
+    featuredStyle: "feature-card",
+    conceptImages: [
+      {
+        id: "maple_wolly_toward_the_peaks",
+        image: ConceptImage1,
+        name: "Toward the Peaks",
+        description: "Part of the Maple & Woolly's Little Journey",
+        parentPack: "concept_pack_maple_woolly",
+      },
+      {
+        id: "maple_wolly_glowpath_wanderers",
+        image: ConceptImage2,
+        name: "Glowpath Wanderers",
+        description: "Part of the Maple & Woolly's Little Journey",
+        parentPack: "concept_pack_maple_woolly",
+      },
+      {
+        id: "maple_wolly_dragons_lair",
+        image: ConceptImage3,
+        name: "Dragon's Lair",
+        description: "Part of the Maple & Woolly's Little Journey",
+        parentPack: "concept_pack_maple_woolly",
+      },
+    ],
+  },
+
+  // Original shop items
+  {
+    id: "theme_christmas",
+    name: "Christmas",
+    description: "Celebrate the holidays with a festive theme",
+    price: 0,
+    image: Christmas,
+    category: "theme",
+    featured: "Seasonal 2025",
+    featuredStyle: "feature-card",
+    isEmoji: false,
+  },
   {
     id: "theme_cozy_room",
     name: "Cozy Room",
@@ -246,43 +372,3 @@ export const shopItems = [
     gradient: "radial-gradient(circle at center, #4e767b, #2f3e3f)",
   },
 ];
-
-// // Deals and packs
-// export const shopDeals = [
-//   {
-//     id: "deal_exclusive_duo",
-//     name: "Exclusive Duo",
-//     description: "Get any 2 exclusive themes at a special price",
-//     originalPrice: 200,
-//     price: 150,
-//     items: 2,
-//     itemType: "exclusive",
-//     category: "deal",
-//     featured: "",
-//     featuredStyle: "feature-card-deal",
-//   },
-//   {
-//     id: "deal_theme_bundle",
-//     name: "Theme Bundle",
-//     description: "Get any 3 regular themes at a discounted price",
-//     originalPrice: 150,
-//     price: 120,
-//     items: 3,
-//     itemType: "regular",
-//     category: "deal",
-//     featured: "",
-//     featuredStyle: "feature-card-deal",
-//   },
-//   {
-//     id: "deal_solid_collection",
-//     name: "solid Collection",
-//     description: "Get any 4 solid themes for the price of 3",
-//     originalPrice: 200,
-//     price: 150,
-//     items: 4,
-//     itemType: "solid",
-//     category: "deal",
-//     featured: "",
-//     featuredStyle: "feature-card-deal",
-//   },
-// ];

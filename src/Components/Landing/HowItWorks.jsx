@@ -1,5 +1,5 @@
 import React from "react";
-import { MailCheck, Lock, Leaf } from "lucide-react";
+import { MailCheck, Lock } from "lucide-react";
 import { useDarkMode } from "../../context/ThemeContext";
 
 const HowItWorks = ({ setShowLoginModal }) => {
@@ -7,58 +7,66 @@ const HowItWorks = ({ setShowLoginModal }) => {
 
   const sections = [
     {
-      icon: <MailCheck size={32} />,
-      title: "🧚‍♂️ Identity Your Way",
-      description:
-        "No Gmail? No problem. Use a magical alias like `elf@elbaf.com` or `dreamer@moonmail.co`. Your space, your rules.",
-      bgLight: "FDEEDC",
-      bgDark: "2E2B2B",
+      icon: <MailCheck size={36} className="text-[#4C5B5C]" />,
+      title: "🧚‍♂️ Identity, Your Way",
+      description: (
+        <>
+          No personal email needed. Sign in with a whimsical alias like{" "}
+          <code className="px-1 py-0.5 bg-black/10 dark:bg-white/10 rounded font-mono text-sm">
+            batman@dc.com
+          </code>{" "}
+          or{" "}
+          <code className="px-1 py-0.5 bg-black/10 dark:bg-white/10 rounded font-mono text-sm">
+            sunshine@cozyspace.co
+          </code>
+          . Stay anonymous, stay comfy — this space is yours.
+        </>
+      ),
+      bgLight: "E0ECF8",
+      bgDark: "1C1F2A",
     },
     {
-      icon: <Lock size={32} />,
-      title: "🔒 Built on Trust",
-      description:
-        "Your entries are just for you. We don’t analyze, sell, or track your thoughts. Everything is private, secure, and focused entirely on your well-being.",
+      icon: <Lock size={36} className="text-[#4C5B5C]" />,
+      title: "🔒 Private & Insightful",
+      description: (
+        <>
+          Your words are yours alone. We gently analyze your journal to give
+          personal insights — but never share a single word.
+        </>
+      ),
       bgLight: "D5E8D4",
       bgDark: "1F2924",
-    },
-    {
-      icon: <Leaf size={32} />,
-      title: "🌱 Ready to Begin?",
-      description: "Let’s build your cozy world — one entry at a time.",
-      bgLight: "E2F0CB",
-      bgDark: "263326",
-      cta: {
-        text: "Start Journaling",
-        // link: "/journal", // replace with your actual route
-      },
     },
   ];
 
   return (
-    <section className="w-full mx-auto px-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {sections.map((s, i) => (
+    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-14 text-[#1A1A1A] dark:text-[#F8F1E9]">
+        The Magic Behind Cozy Minds
+      </h2>
+
+      <div className="grid gap-8 sm:grid-cols-2">
+        {sections.map((section, index) => (
           <div
-            key={i}
-            className="p-6 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl flex flex-col justify-between"
+            key={index}
+            className="rounded-3xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] p-6 sm:p-8 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col gap-4 backdrop-blur-md"
             style={{
-              backgroundColor: darkMode ? `#${s.bgDark}` : `#${s.bgLight}`,
+              backgroundColor: darkMode
+                ? `#${section.bgDark}`
+                : `#${section.bgLight}`,
             }}
           >
-            <div className="mb-6 text-[#1A1A1A] dark:text-[#F8F1E9]">
-              <div className="mb-4">{s.icon}</div>
-              <h3 className="text-xl font-bold mb-2">{s.title}</h3>
-              <p className="opacity-80 whitespace-pre-line">{s.description}</p>
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-white/30 dark:bg-white/10 shadow-inner">
+                {section.icon}
+              </div>
+              <h3 className="text-xl sm:text-2xl font-semibold text-[#1A1A1A] dark:text-[#F8F1E9]">
+                {section.title}
+              </h3>
             </div>
-            {s.cta && (
-              <button
-                onClick={() => setShowLoginModal(true)}
-                className="mt-auto inline-block text-sm font-semibold px-4 py-2 border cursor-pointer border-[#1A1A1A] dark:border-[#F8F1E9] rounded-md"
-              >
-                {s.cta.text}
-              </button>
-            )}
+            <p className="text-sm sm:text-base leading-relaxed text-[#1A1A1A] dark:text-[#F8F1E9] opacity-90">
+              {section.description}
+            </p>
           </div>
         ))}
       </div>

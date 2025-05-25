@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Paperclip,
-  Trash2,
   MailCheck,
   X,
   Gift,
@@ -15,6 +14,7 @@ import {
 } from "lucide-react";
 import { useDarkMode } from "../../../context/ThemeContext";
 import { useCoins } from "../../../context/CoinContext";
+import AID from "../../../assets/wifu.png";
 
 // Configure Axios with base URL
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -35,6 +35,7 @@ const InGameMail = ({
   const [claimSuccess, setClaimSuccess] = useState(null);
   const [activeView, setActiveView] = useState("inbox"); // "inbox" or "detail"
   const [isMobile, setIsMobile] = useState(false);
+  const [mailAnimation, setMailAnimation] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -79,6 +80,7 @@ const InGameMail = ({
       setClaimingReward(true);
       setError(null);
       setClaimSuccess(null);
+      setMailAnimation(true);
 
       const response = await API.put(`/mail/${mailId}/claim-reward`, {
         userId,
@@ -118,9 +120,15 @@ const InGameMail = ({
       }
 
       setClaimSuccess(response.data.message);
+
+      // Reset animation after 2 seconds
+      setTimeout(() => {
+        setMailAnimation(false);
+      }, 2000);
     } catch (err) {
       console.error("Error claiming reward:", err);
       setError(err.response?.data?.message || "Failed to claim reward.");
+      setMailAnimation(false);
     } finally {
       setClaimingReward(false);
     }
@@ -186,31 +194,147 @@ const InGameMail = ({
     }
   }, [selectedMail]);
 
+  // Custom styles for deep sea fantasy theme
+  const fantasyStyles = {
+    modalBg:
+      "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm",
+    mailContainer: `w-full max-w-md md:max-w-2xl lg:max-w-7xl min-h-[90vh] overflow-hidden border-2 ${
+      darkMode
+        ? "bg-[#0B3B46] border-[#FFCE59] shadow-[0_0_15px_rgba(255,206,89,0.4)]"
+        : "bg-[#EFE7CB] border-[#2FA58D] shadow-[0_0_15px_rgba(47,165,141,0.4)]"
+    }`,
+    header: `flex justify-between items-center p-4 ${
+      darkMode
+        ? "bg-[#215866] border-b border-[#FFCE59]"
+        : "bg-gradient-to-r from-[#93BBC6] to-[#65A0B0] border-b border-[#2FA58D]"
+    }`,
+    headerTitle: `text-xl font-serif font-semibold ${
+      darkMode ? "text-[#FFCE59]" : "text-[#0B3B46]"
+    }`,
+    scrollArea: `h-[80vh] ${
+      darkMode
+        ? "scrollbar-thin scrollbar-thumb-[#FFCE59] scrollbar-track-[#0B3B46]"
+        : "scrollbar-thin scrollbar-thumb-[#2FA58D] scrollbar-track-[#EFE7CB]"
+    }`,
+    mailListItem: (isSelected, isUnread) =>
+      `p-4 cursor-pointer transition-all duration-300 ${
+        darkMode
+          ? isSelected
+            ? "bg-[#215866] border-l-4 border-[#FFCE59]"
+            : isUnread
+            ? "border-l-4 border-[#FFCE59]"
+            : "border-l-4 border-transparent hover:bg-[#215866]/70"
+          : isSelected
+          ? "bg-[#CBE4EA] border-l-4 border-[#2FA58D]"
+          : isUnread
+          ? "border-l-4 border-[#2FA58D]"
+          : "border-l-4 border-transparent hover:bg-[#CBE4EA]/70"
+      }`,
+    mailTitle: (isUnread) =>
+      `text-base font-medium truncate max-w-[80%] ${
+        darkMode
+          ? isUnread
+            ? "text-[#FFCE59]"
+            : "text-[#F6F1DC]"
+          : isUnread
+          ? "text-[#2FA58D] font-bold"
+          : "text-[#0B3B46]"
+      }`,
+    mailSender: `text-sm truncate max-w-[60%] ${
+      darkMode ? "text-[#93BBC6]" : "text-[#215866]"
+    }`,
+    mailDate: `text-xs ${darkMode ? "text-[#93BBC6]" : "text-[#215866]"}`,
+    mailContent: `p-6 ${darkMode ? "text-[#F6F1DC]" : "text-[#0B3B46]"}`,
+    mailDetailTitle: `text-xl font-serif font-semibold ${
+      darkMode ? "text-[#FFCE59]" : "text-[#215866]"
+    }`,
+    rewardTag: `text-xs px-2 py-1 ${
+      darkMode
+        ? "bg-[#FFCE59]/20 text-[#FFCE59]"
+        : "bg-[#2FA58D]/20 text-[#2FA58D] font-semibold"
+    }`,
+    rewardBox: `mt-6 p-4 border ${
+      darkMode
+        ? "bg-[#215866] border-[#FFCE59]"
+        : "bg-[#CBE4EA]/70 border-[#2FA58D]"
+    }`,
+    button: (color = "primary") =>
+      `flex items-center gap-2 ${
+        color === "primary"
+          ? darkMode
+            ? "bg-[#FFCE59] text-[#0B3B46]"
+            : "bg-[#2FA58D] text-white"
+          : darkMode
+          ? "bg-[#2FA58D] text-white"
+          : "bg-[#215866] text-white"
+      } px-4 py-2 hover:opacity-90 transition-all duration-300 shadow-md`,
+    emptyState:
+      "flex flex-col items-center justify-center h-full p-6 text-center",
+    emptyIcon: `mb-4 opacity-50 ${
+      darkMode ? "text-[#93BBC6]" : "text-[#65A0B0]"
+    }`,
+    emptyText: `text-base font-medium ${
+      darkMode ? "text-[#93BBC6]" : "text-[#215866]"
+    }`,
+    loadingSpinner: `animate-spin w-8 h-8 border-4 border-t-transparent ${
+      darkMode ? "border-[#FFCE59]" : "border-[#2FA58D]"
+    }`,
+    mobileBackButton: `flex items-center gap-2 p-3 ${
+      darkMode
+        ? "text-[#FFCE59] border-b border-[#FFCE59]"
+        : "text-[#2FA58D] border-b border-[#2FA58D]"
+    }`,
+    claimButton: `w-full flex items-center justify-center gap-2 px-4 py-3 disabled:opacity-50 disabled:cursor-not-allowed font-medium ${
+      darkMode
+        ? "bg-gradient-to-r from-[#FFCE59] to-[#FFAD33] text-[#0B3B46] hover:brightness-110 transition-all duration-300 shadow-[0_0_10px_rgba(255,206,89,0.5)]"
+        : "bg-gradient-to-r from-[#2FA58D] to-[#217A69] text-white hover:brightness-110 transition-all duration-300 shadow-[0_0_10px_rgba(47,165,141,0.5)]"
+    }`,
+    successMessage: `mt-3 p-2 text-sm ${
+      darkMode
+        ? "bg-[#2FA58D]/20 text-[#2FA58D]"
+        : "bg-[#2FA58D]/20 text-[#0B3B46]"
+    }`,
+    errorMessage: `mt-3 p-2 text-sm ${
+      darkMode ? "bg-red-100 text-red-800" : "bg-[#f5caca] text-[#a83240]"
+    }`,
+    attachmentBox: `flex items-center p-3 ${
+      darkMode
+        ? "bg-[#215866] text-[#FFCE59]"
+        : "bg-[#CBE4EA]/70 text-[#2FA58D]"
+    }`,
+    mailDetailContent: `prose prose-sm max-w-none ${
+      darkMode
+        ? "text-[#F6F1DC] prose-headings:text-[#FFCE59] prose-a:text-[#2FA58D]"
+        : "text-[#0B3B46] prose-headings:text-[#2FA58D] prose-a:text-[#215866]"
+    }`,
+    unreadIndicator: `w-2 h-2 mt-2 animate-pulse ${
+      darkMode ? "bg-[#FFCE59]" : "bg-[#2FA58D]"
+    }`,
+    storyCircle: `ring-2 ring-offset-2 ${
+      darkMode
+        ? "ring-[#FFCE59] ring-offset-[#0B3B46]"
+        : "ring-[#2FA58D] ring-offset-[#EFE7CB]"
+    }`,
+    mailAnimation: mailAnimation ? "animate-bounce" : "",
+  };
+
   if (loading) {
     return (
-      <div
-        className={`fixed inset-0 z-50 flex items-center justify-center ${
-          darkMode ? "bg-black/80" : "bg-black/50"
-        }`}
-      >
-        <div
-          className={`w-full max-w-md md:max-w-2xl lg:max-w-4xl rounded-lg shadow-lg p-5 bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-primary)]`}
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-[var(--accent)]">
-              Inbox
-            </h2>
+      <div className={fantasyStyles.modalBg}>
+        <div className={fantasyStyles.mailContainer}>
+          <div className={fantasyStyles.header}>
+            <h2 className={fantasyStyles.headerTitle}>Inbox</h2>
             <button
               onClick={toggleMailModal}
-              className="p-1.5 rounded-full hover:bg-[var(--accent)]/10 transition-colors"
+              className="p-1.5 rounded-full hover:bg-[#d4a256]/10 transition-colors"
               aria-label="Close modal"
             >
-              <X size={20} className="text-[var(--accent)]" />
+              <X size={20} className="text-[#d4a256]" />
             </button>
           </div>
           <div className="flex justify-center items-center h-[300px] md:h-[450px]">
             <div className="flex flex-col items-center gap-3">
-              <div className="animate-spin w-8 h-8 border-4 border-[var(--accent)] border-t-transparent rounded-full"></div>
+              <div className={fantasyStyles.loadingSpinner}></div>
               <span className="text-base font-medium">
                 Loading your mail...
               </span>
@@ -223,24 +347,16 @@ const InGameMail = ({
 
   if (error) {
     return (
-      <div
-        className={`fixed inset-0 z-50 flex items-center justify-center ${
-          darkMode ? "bg-black/80" : "bg-black/50"
-        }`}
-      >
-        <div
-          className={`w-full max-w-md md:max-w-2xl lg:max-w-4xl rounded-lg shadow-lg p-5 bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-primary)]`}
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-[var(--accent)]">
-              Inbox
-            </h2>
+      <div className={fantasyStyles.modalBg}>
+        <div className={fantasyStyles.mailContainer}>
+          <div className={fantasyStyles.header}>
+            <h2 className={fantasyStyles.headerTitle}>Inbox</h2>
             <button
               onClick={toggleMailModal}
-              className="p-1.5 rounded-full hover:bg-[var(--accent)]/10 transition-colors"
+              className="p-1.5 rounded-full hover:bg-[#d4a256]/10 transition-colors"
               aria-label="Close modal"
             >
-              <X size={20} className="text-[var(--accent)]" />
+              <X size={20} className="text-[#d4a256]" />
             </button>
           </div>
           <div className="flex justify-center items-center h-[300px] md:h-[450px]">
@@ -253,7 +369,7 @@ const InGameMail = ({
               </span>
               <button
                 onClick={toggleMailModal}
-                className="mt-4 px-4 py-2 bg-[var(--accent)] text-white rounded-md hover:bg-[var(--accent)]/80 transition-colors"
+                className={fantasyStyles.button()}
               >
                 Close
               </button>
@@ -265,49 +381,38 @@ const InGameMail = ({
   }
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${
-        darkMode ? "bg-black/80" : "bg-black/50"
-      }`}
-    >
-      <div
-        className={`w-full max-w-md md:max-w-2xl lg:max-w-6xl min-h-[90vh] rounded-lg shadow-lg overflow-hidden bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-primary)]`}
-      >
+    <div className={fantasyStyles.modalBg}>
+      <div className={fantasyStyles.mailContainer}>
         {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b border-[var(--border)]">
+        <div className={fantasyStyles.header}>
           <div className="flex items-center gap-2">
-            <Mail className="h-5 w-5 text-[var(--accent)]" />
-            <h2 className="text-xl font-semibold text-[var(--accent)]">
-              Inbox
-            </h2>
+            <Mail className="h-5 w-5 text-[#d4a256]" />
+            <h2 className={fantasyStyles.headerTitle}>Magical Messenger</h2>
           </div>
           <button
             onClick={toggleMailModal}
-            className="p-1.5 rounded-full hover:bg-[var(--accent)]/10 transition-colors"
+            className="p-1.5 rounded-full hover:bg-[#d4a256]/10 transition-colors"
             aria-label="Close modal"
           >
-            <X size={20} className="text-[var(--accent)]" />
+            <X size={20} className="text-[#d4a256]" />
           </button>
         </div>
 
         {/* Mobile View */}
         {isMobile && (
-          <div className="h-[80vh] overflow-hidden">
+          <div className={fantasyStyles.scrollArea}>
             {activeView === "inbox" ? (
               /* Mobile Inbox List */
               <div className="h-full overflow-y-auto">
                 {mails.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-                    <Inbox
-                      size={40}
-                      className="text-[var(--text-secondary)] mb-4"
-                    />
-                    <p className="text-base font-medium text-[var(--text-secondary)]">
-                      Your inbox is empty
+                  <div className={fantasyStyles.emptyState}>
+                    <Inbox size={40} className={fantasyStyles.emptyIcon} />
+                    <p className={fantasyStyles.emptyText}>
+                      Your magical scroll case is empty
                     </p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-[var(--border)]">
+                  <div className="divide-y divide-[#e2c496]/30">
                     {mails.map((mail) => {
                       const formattedDate = new Date(
                         mail.date
@@ -320,32 +425,29 @@ const InGameMail = ({
                         <div
                           key={mail.id}
                           onClick={() => handleSelectMail(mail)}
-                          className={`p-4 cursor-pointer transition-colors hover:bg-[var(--bg-primary)] ${
+                          className={fantasyStyles.mailListItem(
+                            false,
                             !mail.read
-                              ? "border-l-4 border-[var(--accent)]"
-                              : "border-l-4 border-transparent"
-                          }`}
+                          )}
                         >
                           <div className="flex justify-between items-start mb-1">
-                            <h3
-                              className={`text-base font-medium ${
-                                !mail.read ? "text-[var(--accent)]" : ""
-                              }`}
-                            >
+                            <h3 className={fantasyStyles.mailTitle(!mail.read)}>
                               {mail.title}
                               {mail.mailType === "reward" && (
-                                <span className="ml-2 text-yellow-500">🎁</span>
+                                <span className="ml-2 text-yellow-500">✨</span>
                               )}
                             </h3>
                             {!mail.read && (
-                              <span className="w-2 h-2 bg-[var(--highlight)] rounded-full mt-2"></span>
+                              <span
+                                className={fantasyStyles.unreadIndicator}
+                              ></span>
                             )}
                           </div>
                           <div className="flex justify-between items-center">
-                            <p className="text-sm text-[var(--text-secondary)]">
+                            <p className={fantasyStyles.mailSender}>
                               {mail.sender}
                             </p>
-                            <p className="text-xs text-[var(--text-secondary)]">
+                            <p className={fantasyStyles.mailDate}>
                               {formattedDate}
                             </p>
                           </div>
@@ -361,32 +463,32 @@ const InGameMail = ({
                 {/* Back button */}
                 <button
                   onClick={handleBackToInbox}
-                  className="flex items-center gap-2 p-3 text-[var(--accent)] border-b border-[var(--border)]"
+                  className={fantasyStyles.mobileBackButton}
                 >
                   <ArrowLeft size={16} />
-                  <span>Back to inbox</span>
+                  <span>Back to scrolls</span>
                 </button>
 
                 {/* Mail content */}
                 {selectedMail ? (
-                  <div className="flex-1 overflow-y-auto p-4">
-                    <div className="space-y-4">
+                  <div className="flex-1 overflow-y-auto">
+                    <div className={fantasyStyles.mailContent}>
                       <div className="flex items-start justify-between">
-                        <h2 className="text-lg font-semibold text-[var(--accent)] pr-4">
+                        <h2 className={fantasyStyles.mailDetailTitle}>
                           {selectedMail.title}
                           {selectedMail.mailType === "reward" && (
-                            <span className="ml-2 text-yellow-500">🎁</span>
+                            <span className="ml-2 text-yellow-500">✨</span>
                           )}
                         </h2>
                         {selectedMail.mailType === "reward" &&
                           !selectedMail.rewardClaimed && (
-                            <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-1 rounded-full">
-                              Reward
+                            <span className={fantasyStyles.rewardTag}>
+                              Treasure
                             </span>
                           )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[var(--text-secondary)]">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[#7e6c56] mt-2">
                         <div className="flex items-center gap-1">
                           <span className="font-medium">From:</span>{" "}
                           {selectedMail.sender}
@@ -405,9 +507,11 @@ const InGameMail = ({
                         </div>
                       </div>
 
-                      <div className="border-t border-[var(--border)] my-4 pt-4">
+                      <div
+                        className={`border-t border-[#e2c496]/30 my-4 pt-4 ${fantasyStyles.mailAnimation}`}
+                      >
                         <div
-                          className="prose prose-sm max-w-none text-[var(--text-primary)]"
+                          className={fantasyStyles.mailDetailContent}
                           dangerouslySetInnerHTML={{
                             __html: selectedMail.content,
                           }}
@@ -416,12 +520,12 @@ const InGameMail = ({
 
                       {/* Reward Claim Button */}
                       {selectedMail.mailType === "reward" && (
-                        <div className="mt-6 p-4 bg-[var(--bg-primary)] rounded-lg border border-[var(--border)]">
+                        <div className={fantasyStyles.rewardBox}>
                           {selectedMail.rewardClaimed ? (
                             <div className="flex items-center text-green-500 gap-2">
                               <Gift size={18} />
                               <span>
-                                Reward of {selectedMail.rewardAmount || 50}{" "}
+                                Treasure of {selectedMail.rewardAmount || 50}{" "}
                                 coins already claimed!
                               </span>
                             </div>
@@ -430,32 +534,32 @@ const InGameMail = ({
                               <div className="flex items-center gap-2 mb-3">
                                 <Gift size={18} className="text-yellow-500" />
                                 <span className="font-medium">
-                                  Reward Available
+                                  Magical Treasure Available
                                 </span>
                               </div>
                               <button
                                 onClick={() => claimReward(selectedMail.id)}
                                 disabled={claimingReward}
-                                className="w-full flex items-center justify-center gap-2 bg-[#D4B96E] text-white px-4 py-3 rounded-md hover:bg-[#C4A24C] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className={fantasyStyles.claimButton}
                               >
-                                <Star size={16} />
-                                <span className="font-medium">
+                                <Star size={16} className="animate-pulse" />
+                                <span>
                                   {claimingReward
-                                    ? "Claiming..."
+                                    ? "Summoning..."
                                     : `Claim ${
                                         selectedMail.rewardAmount || 50
-                                      } Coins`}
+                                      } Magic Coins`}
                                 </span>
                               </button>
 
                               {claimSuccess && (
-                                <div className="mt-3 p-2 bg-green-100 text-green-800 rounded-md text-sm">
+                                <div className={fantasyStyles.successMessage}>
                                   {claimSuccess}
                                 </div>
                               )}
 
                               {error && (
-                                <div className="mt-3 p-2 bg-red-100 text-red-800 rounded-md text-sm">
+                                <div className={fantasyStyles.errorMessage}>
                                   {error}
                                 </div>
                               )}
@@ -465,9 +569,9 @@ const InGameMail = ({
                       )}
 
                       {selectedMail.hasAttachment && (
-                        <div className="flex items-center text-[var(--accent)] p-3 bg-[var(--bg-primary)] rounded-md">
+                        <div className={fantasyStyles.attachmentBox}>
                           <Paperclip size={16} className="mr-2" />
-                          <span className="text-sm">Attachment</span>
+                          <span className="text-sm">Magical Attachment</span>
                         </div>
                       )}
 
@@ -477,27 +581,27 @@ const InGameMail = ({
                           <button
                             onClick={() => markAsRead(selectedMail.id)}
                             title="Mark as Read"
-                            className="flex-1 flex items-center justify-center gap-2 bg-[var(--accent)] text-white px-3 py-2 rounded-md hover:bg-[var(--accent)]/80 transition-colors"
+                            className={fantasyStyles.button()}
                           >
                             <MailCheck size={16} />
                             <span>Mark as Read</span>
                           </button>
                         )}
-                        <button
-                          onClick={() => deleteMail(selectedMail.id)}
-                          title="Delete Mail"
-                          className="flex-1 flex items-center justify-center gap-2 bg-[var(--accent)] text-white px-3 py-2 rounded-md hover:bg-[var(--accent)]/80 transition-colors"
-                        >
-                          <Trash2 size={16} />
-                          <span>Delete</span>
-                        </button>
+                        {/* <button
+                            onClick={() => deleteMail(selectedMail.id)}
+                            title="Delete Mail"
+                            className={fantasyStyles.button("secondary")}
+                          >
+                            <Trash2 size={16} />
+                            <span>Discard</span>
+                          </button> */}
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center h-full text-[var(--text-secondary)]">
+                  <div className="flex items-center justify-center h-full text-[#7e6c56]">
                     <p className="text-base font-medium">
-                      Select a mail to view.
+                      Select a scroll to view.
                     </p>
                   </div>
                 )}
@@ -510,20 +614,17 @@ const InGameMail = ({
         {!isMobile && (
           <div className="flex h-[80vh]">
             {/* Left Panel - Mail List */}
-            <div className="w-1/3 border-r border-[var(--border)] overflow-hidden">
+            <div className="w-1/3 border-r border-[#e2c496]/30 overflow-hidden">
               <div className="h-full overflow-y-auto">
                 {mails.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-                    <Inbox
-                      size={40}
-                      className="text-[var(--text-secondary)] mb-4"
-                    />
-                    <p className="text-base font-medium text-[var(--text-secondary)]">
-                      Your inbox is empty
+                  <div className={fantasyStyles.emptyState}>
+                    <Inbox size={40} className={fantasyStyles.emptyIcon} />
+                    <p className={fantasyStyles.emptyText}>
+                      Your magical scroll case is empty
                     </p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-[var(--border)]">
+                  <div className="divide-y divide-[#e2c496]/30">
                     {mails.map((mail) => {
                       const formattedDate = new Date(
                         mail.date
@@ -537,34 +638,29 @@ const InGameMail = ({
                         <div
                           key={mail.id}
                           onClick={() => handleSelectMail(mail)}
-                          className={`p-4 cursor-pointer transition-colors hover:bg-[var(--bg-primary)] ${
-                            isSelected
-                              ? "bg-[var(--bg-primary)] border-l-4 border-[var(--accent)]"
-                              : !mail.read
-                              ? "border-l-4 border-[var(--accent)]"
-                              : "border-l-4 border-transparent"
-                          }`}
+                          className={fantasyStyles.mailListItem(
+                            isSelected,
+                            !mail.read
+                          )}
                         >
                           <div className="flex justify-between items-start mb-1">
-                            <h3
-                              className={`text-base font-medium truncate max-w-[80%] ${
-                                !mail.read ? "text-[var(--accent)]" : ""
-                              }`}
-                            >
+                            <h3 className={fantasyStyles.mailTitle(!mail.read)}>
                               {mail.title}
                               {mail.mailType === "reward" && (
-                                <span className="ml-2 text-yellow-500">🎁</span>
+                                <span className="ml-2 text-yellow-500">✨</span>
                               )}
                             </h3>
                             {!mail.read && (
-                              <span className="w-2 h-2 bg-[var(--highlight)] rounded-full mt-2"></span>
+                              <span
+                                className={fantasyStyles.unreadIndicator}
+                              ></span>
                             )}
                           </div>
                           <div className="flex justify-between items-center">
-                            <p className="text-sm text-[var(--text-secondary)] truncate max-w-[60%]">
+                            <p className={fantasyStyles.mailSender}>
                               {mail.sender}
                             </p>
-                            <p className="text-xs text-[var(--text-secondary)]">
+                            <p className={fantasyStyles.mailDate}>
                               {formattedDate}
                             </p>
                           </div>
@@ -580,24 +676,24 @@ const InGameMail = ({
             <div className="w-2/3 overflow-hidden">
               <div className="h-full overflow-y-auto">
                 {selectedMail ? (
-                  <div className="p-6">
+                  <div className={fantasyStyles.mailContent}>
                     <div className="space-y-4">
                       <div className="flex items-start justify-between">
-                        <h2 className="text-xl font-semibold text-[var(--accent)] pr-4">
+                        <h2 className={fantasyStyles.mailDetailTitle}>
                           {selectedMail.title}
                           {selectedMail.mailType === "reward" && (
-                            <span className="ml-2 text-yellow-500">🎁</span>
+                            <span className="ml-2 text-yellow-500">✨</span>
                           )}
                         </h2>
                         {selectedMail.mailType === "reward" &&
                           !selectedMail.rewardClaimed && (
-                            <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-1 rounded-full">
-                              Reward
+                            <span className={fantasyStyles.rewardTag}>
+                              Treasure
                             </span>
                           )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[var(--text-secondary)]">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[#7e6c56]">
                         <div className="flex items-center gap-1">
                           <span className="font-medium">From:</span>{" "}
                           {selectedMail.sender}
@@ -616,9 +712,11 @@ const InGameMail = ({
                         </div>
                       </div>
 
-                      <div className="border-t border-[var(--border)] my-4 pt-4">
+                      <div
+                        className={`border-t border-[#e2c496]/30 my-4 pt-4 ${fantasyStyles.mailAnimation}`}
+                      >
                         <div
-                          className="prose prose-sm max-w-none text-[var(--text-primary)]"
+                          className={fantasyStyles.mailDetailContent}
                           dangerouslySetInnerHTML={{
                             __html: selectedMail.content,
                           }}
@@ -627,12 +725,12 @@ const InGameMail = ({
 
                       {/* Reward Claim Button */}
                       {selectedMail.mailType === "reward" && (
-                        <div className="mt-6 p-4 bg-[var(--bg-primary)] rounded-lg border border-[var(--border)]">
+                        <div className={fantasyStyles.rewardBox}>
                           {selectedMail.rewardClaimed ? (
                             <div className="flex items-center text-green-500 gap-2">
                               <Gift size={18} />
                               <span>
-                                Reward of {selectedMail.rewardAmount || 50}{" "}
+                                Treasure of {selectedMail.rewardAmount || 50}{" "}
                                 coins already claimed!
                               </span>
                             </div>
@@ -641,32 +739,32 @@ const InGameMail = ({
                               <div className="flex items-center gap-2 mb-3">
                                 <Gift size={18} className="text-yellow-500" />
                                 <span className="font-medium">
-                                  Reward Available
+                                  Magical Treasure Available
                                 </span>
                               </div>
                               <button
                                 onClick={() => claimReward(selectedMail.id)}
                                 disabled={claimingReward}
-                                className="flex items-center justify-center gap-2 bg-[#D4B96E] text-white px-4 py-3 rounded-md hover:bg-[#C4A24C] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className={fantasyStyles.claimButton}
                               >
-                                <Star size={16} />
-                                <span className="font-medium">
+                                <Star size={16} className="animate-pulse" />
+                                <span>
                                   {claimingReward
-                                    ? "Claiming..."
+                                    ? "Summoning..."
                                     : `Claim ${
                                         selectedMail.rewardAmount || 50
-                                      } Coins`}
+                                      } Magic Coins`}
                                 </span>
                               </button>
 
                               {claimSuccess && (
-                                <div className="mt-3 p-2 bg-green-100 text-green-800 rounded-md text-sm">
+                                <div className={fantasyStyles.successMessage}>
                                   {claimSuccess}
                                 </div>
                               )}
 
                               {error && (
-                                <div className="mt-3 p-2 bg-red-100 text-red-800 rounded-md text-sm">
+                                <div className={fantasyStyles.errorMessage}>
                                   {error}
                                 </div>
                               )}
@@ -676,9 +774,9 @@ const InGameMail = ({
                       )}
 
                       {selectedMail.hasAttachment && (
-                        <div className="flex items-center text-[var(--accent)] p-3 bg-[var(--bg-primary)] rounded-md">
+                        <div className={fantasyStyles.attachmentBox}>
                           <Paperclip size={16} className="mr-2" />
-                          <span className="text-sm">Attachment</span>
+                          <span className="text-sm">Magical Attachment</span>
                         </div>
                       )}
 
@@ -688,28 +786,28 @@ const InGameMail = ({
                           <button
                             onClick={() => markAsRead(selectedMail.id)}
                             title="Mark as Read"
-                            className="flex items-center gap-2 bg-[var(--accent)] text-white px-4 py-2 rounded-md hover:bg-[var(--accent)]/80 transition-colors"
+                            className={fantasyStyles.button()}
                           >
                             <MailCheck size={16} />
                             <span>Mark as Read</span>
                           </button>
                         )}
-                        <button
+                        {/* <button
                           onClick={() => deleteMail(selectedMail.id)}
                           title="Delete Mail"
-                          className="flex items-center gap-2 bg-[var(--accent)] text-white px-4 py-2 rounded-md hover:bg-[var(--accent)]/80 transition-colors"
+                          className={fantasyStyles.button("secondary")}
                         >
                           <Trash2 size={16} />
-                          <span>Delete</span>
-                        </button>
+                          <span>Discard</span>
+                        </button> */}
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-[var(--text-secondary)]">
+                  <div className="flex flex-col items-center justify-center h-full text-[#7e6c56]">
                     <Mail size={40} className="mb-4 opacity-50" />
                     <p className="text-base font-medium">
-                      Select a mail to view
+                      Select a magical scroll to view
                     </p>
                   </div>
                 )}

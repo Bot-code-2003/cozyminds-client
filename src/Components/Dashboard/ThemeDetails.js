@@ -122,6 +122,28 @@ export const themeDetails = {
     dateIcon: "🌀",
     readMoreText: "Flow freely",
   },
+  maple_wolly_toward_the_peaks: {
+    icon: "🌲",
+    dateIcon: "🍃",
+    readMoreText: "Wander deeper",
+  },
+  maple_wolly_glowpath_wanderers: {
+    icon: "🌟",
+    dateIcon: "🌟",
+    readMoreText: "Wander deeper",
+  },
+  maple_wolly_dragons_lair: {
+    icon: "🔥",
+    dateIcon: "🔥",
+    readMoreText: "Wander deeper",
+  },
+
+  // seasonal
+  theme_christmas: {
+    icon: "🎄",
+    dateIcon: "🎅",
+    readMoreText: "Celebrate",
+  },
 };
 
 // Function to get card class based on theme
@@ -178,6 +200,18 @@ export const getCardClass = (theme) => {
       return "card-solid-lilac";
     case "theme_solid_aqua":
       return "card-solid-aqua";
+
+    // concept packs
+    case "maple_wolly_toward_the_peaks":
+      return "card-maple-wolly-toward-the-peaks";
+    case "maple_wolly_glowpath_wanderers":
+      return "card-maple-wolly-glowpath-wanderers";
+    case "maple_wolly_dragons_lair":
+      return "card-maple-wolly-dragons-lair";
+
+    // seasonal
+    case "theme_christmas":
+      return "card-christmas";
 
     default:
       return "card-dark";

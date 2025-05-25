@@ -7,12 +7,10 @@ import { useDarkMode } from "../../context/ThemeContext";
 import { useCoins } from "../../context/CoinContext";
 import Navbar from "../Dashboard/Navbar";
 import JournalEditor from "./JournalEditor";
-import MoodSelector from "./MoodSelector";
 import ThemeSelector from "./ThemeSelector";
-import TagsManager from "./TagsManager";
-import CollectionsManager from "./CollectionsManager";
 import StepIndicator from "./StepIndicator";
 import { getThemeDetails } from "../Dashboard/ThemeDetails";
+import SecondStep from "./SecondStep";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -56,16 +54,20 @@ const JournalingAlt = () => {
     const fetchExistingData = async () => {
       try {
         const userData = JSON.parse(sessionStorage.getItem("user"));
+
+        console.log("User data:", userData.inventory);
+
         if (!userData || !userData._id) return;
 
         // Get available themes from user inventory
         const themes = userData.inventory
-          .filter((item) => item.category === "theme")
+          .filter(
+            (item) =>
+              item.category === "theme" || item.category === "conceptpack"
+          )
           .map((item) => ({
             id: item.id,
-            name: getThemeDetails(item.id).icon
-              ? item.id.replace("theme_", "")
-              : item.name,
+            name: item.name,
             icon: getThemeDetails(item.id).icon || item.image,
             description:
               getThemeDetails(item.id).readMoreText || item.description,
@@ -109,6 +111,8 @@ const JournalingAlt = () => {
     };
     fetchExistingData();
   }, [inventory]);
+
+  console.log("Available themes:", availableThemes);
 
   // Update word count and reset isSaved
   useEffect(() => {
@@ -195,44 +199,18 @@ const JournalingAlt = () => {
       case 2:
         return (
           <div className="">
-            <div>
-              <MoodSelector
-                selectedMood={selectedMood}
-                setSelectedMood={setSelectedMood}
-                onNext={goToNextStep}
-                onBack={goToPreviousStep}
-              />
-            </div>
-            <div className=" flex flex-col p-5 my-auto gap-5 bg-[var(--bg-secondary)]">
-              <TagsManager
-                selectedTags={selectedTags}
-                setSelectedTags={setSelectedTags}
-                existingTags={existingTags}
-              />
-
-              <CollectionsManager
-                selectedCollections={selectedCollections}
-                setSelectedCollections={setSelectedCollections}
-                existingCollections={existingCollections}
-              />
-            </div>
-            <div className="flex justify-between items-center mt-6">
-              <button
-                onClick={goToPreviousStep}
-                className="px-4 py-2 border border-[var(--border)] bg-[var(--bg-primary)] rounded-md flex items-center text-sm hover:bg-[var(--bg-primary)]/80 transition-colors"
-              >
-                <ArrowLeft size={16} className="mr-2" />
-                Back
-              </button>
-              <button
-                onClick={goToNextStep}
-                disabled={!selectedMood}
-                className="px-4 py-2 bg-[var(--accent)] text-white rounded-md flex items-center text-sm hover:bg-[var(--accent)]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Next
-                <ArrowRight size={16} className="ml-2" />
-              </button>
-            </div>
+            <SecondStep
+              selectedTags={selectedTags}
+              setSelectedTags={setSelectedTags}
+              existingTags={existingTags}
+              selectedMood={selectedMood}
+              setSelectedMood={setSelectedMood}
+              selectedCollections={selectedCollections}
+              setSelectedCollections={setSelectedCollections}
+              existingCollections={existingCollections}
+              onBack={goToPreviousStep}
+              onNext={goToNextStep}
+            />
           </div>
         );
       case 3:
@@ -265,8 +243,7 @@ const JournalingAlt = () => {
           </div>
         )}
 
-        <StepIndicator currentStep={currentStep} totalSteps={3} />
-
+        {/* <StepIndicator currentStep={currentStep} totalSteps={3} /> */}
         <div className="mt-6">{renderCurrentStep()}</div>
       </main>
     </div>

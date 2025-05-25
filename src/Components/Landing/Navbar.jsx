@@ -105,7 +105,7 @@ const Navbar = ({
             ) : (
               <button
                 onClick={openLoginModal}
-                className={`px-4 py-2 ${
+                className={`px-4 rounded-sm py-2 ${
                   darkMode
                     ? "bg-[#5999a8] text-[white]"
                     : "bg-[#1A1A1A] text-white"

@@ -143,7 +143,7 @@ const MoodDistribution = ({ journalEntries }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-0 py-8 ">
+    <div className="max-w-7xl mx-auto sm:px-0 py-8 ">
       <div
         className={`p-6 border-designer bg-[var(--bg-secondary)] border shadow-elegant`}
       >

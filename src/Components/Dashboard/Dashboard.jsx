@@ -9,6 +9,7 @@ import Navbar from "./Navbar";
 import MainSection from "./MainSection";
 import MoodDistribution from "./MoodDistribution";
 import RecentJournals from "./RecentJournals";
+import Footer from "../Landing/Footer";
 
 const Dashboard = () => {
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -190,32 +191,36 @@ const Dashboard = () => {
         name="New Entry"
         link={"/journaling-alt"}
       />
-      <MainSection
-        darkMode={darkMode}
-        journalEntries={journalEntries}
-        userData={userData}
-        wordCountStats={wordCountStats}
-        formatDate={formatDate}
-      />
-      <MoodDistribution journalEntries={journalEntries} />
-      {isLoading && (
-        <div>
-          <p>Loading journal entries...</p>
-        </div>
-      )}
-      {error && (
-        <div>
-          <p>Error</p>
-          <p className="opacity-70">{error}</p>
-        </div>
-      )}
-      {!isLoading && !error && (
-        <RecentJournals
-          entries={filteredEntries.slice(0, 3)}
+      <div className="px-4">
+        <MainSection
           darkMode={darkMode}
+          journalEntries={journalEntries}
+          userData={userData}
+          wordCountStats={wordCountStats}
           formatDate={formatDate}
         />
-      )}
+        <MoodDistribution journalEntries={journalEntries} />
+        {isLoading && (
+          <div>
+            <p>Loading journal entries...</p>
+          </div>
+        )}
+        {error && (
+          <div>
+            <p>Error</p>
+            <p className="opacity-70">{error}</p>
+          </div>
+        )}
+        {!isLoading && !error && (
+          <RecentJournals
+            entries={filteredEntries.slice(0, 3)}
+            darkMode={darkMode}
+            formatDate={formatDate}
+          />
+        )}
+      </div>
+
+      {/* <Footer /> */}
     </div>
   );
 };

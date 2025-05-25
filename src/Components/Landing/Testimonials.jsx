@@ -33,13 +33,13 @@ const Testimonials = ({ darkMode }) => {
   ];
 
   return (
-    <section className="z-10 w-full max-w-7xl py-24 px-6 relative">
+    <section className="z-10 w-full max-w-7xl py-24 px-1 sm:px-6 relative">
       {/* Background decorative elements */}
       <div className="absolute -top-12 -right-12 w-24 h-24 border-2 border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 z-0"></div>
       <div className="absolute bottom-12 left-0 w-12 h-12 border-2 border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 z-0"></div>
 
       <div className="text-center mb-16 relative">
-        <div className="inline-block mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
+        <div className="inline-block rounded-2xl mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
           TESTIMONIALS
         </div>
         <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -67,10 +67,10 @@ const Testimonials = ({ darkMode }) => {
                 : "border-[#1A1A1A] dark:border-[#F8F1E9]"
             } ${
               darkMode ? "bg-[#2A2A2A]" : "bg-white"
-            } transition-all duration-300 hover:-translate-y-1 group`}
+            } transition-all rounded-2xl duration-300 hover:-translate-y-1 group`}
           >
             {testimonial.highlight && (
-              <div className="absolute -top-3 -right-3 px-3 py-1 bg-[#5999a8] text-[white] text-xs font-bold">
+              <div className="absolute -top-3 rounded-2xl -right-3 px-3 py-1 bg-[#5999a8] text-[white] text-xs font-bold">
                 FEATURED
               </div>
             )}
@@ -105,7 +105,7 @@ const Testimonials = ({ darkMode }) => {
               {/* Author info */}
               <div className="flex items-center mt-auto">
                 <div
-                  className={`w-10 h-10 flex items-center justify-center ${
+                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
                     testimonial.highlight
                       ? "bg-[#5999a8] text-[white]"
                       : darkMode

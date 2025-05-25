@@ -12,40 +12,62 @@ import {
   Sparkles,
   Star,
   Tag,
-  Percent,
+  BookOpen,
+  Mail,
 } from "lucide-react";
-import ShopDeals from "./ShopDeals.jsx";
 import ShopItem from "./ShopItem.jsx";
 import ShopInventory from "./ShopInventory";
+import ConceptPackItem from "./ConceptPackItem.jsx";
 
 import { shopItems } from "./ShopItems.js";
 
 const CozyShop = () => {
   const navigate = useNavigate();
-  const { coins, inventory, purchaseItem, syncCoinsFromStorage, userData } =
-    useCoins();
+  const {
+    coins,
+    inventory,
+    purchaseItem,
+    syncCoinsFromStorage,
+    userData,
+    updateUserData,
+  } = useCoins();
+
   const { darkMode } = useDarkMode();
   const [notification, setNotification] = useState(null);
   const [activeTab, setActiveTab] = useState("shop");
   const [animateCoins, setAnimateCoins] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [activeMailTheme, setActiveMailTheme] = useState(null);
+  const [previewMailTheme, setPreviewMailTheme] = useState(null);
 
   // Sync coins when component mounts
   useEffect(() => {
+    console.log("Inventory:", inventory);
     syncCoinsFromStorage();
+    if (userData && userData.activeMailTheme) {
+      setActiveMailTheme(userData.activeMailTheme);
+    }
   }, []);
 
   // Add a function to check if an item is a one-time purchase
   const isOneTimePurchase = (category) => {
-    // Items like themes and badges should only be purchased once
-    return ["theme", "badge"].includes(category);
+    // Items like themes, badges, concept packs, and mail themes should only be purchased once
+    return ["theme", "badge", "conceptpack", "mailtheme"].includes(category);
   };
 
+  // Replace the isItemSoldOut function in your CozyShop component with this:
+
   const isItemSoldOut = (item) => {
-    // For one-time purchase items, check if the user already owns it
+    // For concept packs, check if any items in inventory have this pack as parent
+    if (item.category === "conceptpack") {
+      return inventory.some((invItem) => invItem.parentPack === item.id);
+    }
+
+    // For other one-time purchase items, check if the user already owns it
     if (isOneTimePurchase(item.category)) {
       return inventory.some((i) => i.id === item.id);
     }
+
     return false;
   };
 
@@ -93,15 +115,62 @@ const CozyShop = () => {
     return item ? item.quantity : 0;
   };
 
+  const handlePreviewMailTheme = (theme) => {
+    setPreviewMailTheme(theme);
+  };
+
+  const closePreview = () => {
+    setPreviewMailTheme(null);
+  };
+
+  const activateMailTheme = async (themeId) => {
+    try {
+      // Update user's active mail theme
+      if (userData) {
+        console.log("Activating mail theme:", themeId);
+
+        const updatedUser = { ...userData, activeMailTheme: themeId };
+
+        // Update in context
+        updateUserData(updatedUser);
+
+        // Update state
+        setActiveMailTheme(themeId);
+
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error activating mail theme:", error);
+      return false;
+    }
+  };
+
+  // Filter out items that are already in inventory for one-time purchases
+  const filteredShopItems = shopItems.filter((item) => {
+    if (isOneTimePurchase(item.category)) {
+      return !isItemSoldOut(item);
+    }
+    return true;
+  });
+
   const filteredItems =
     activeCategory === "all"
-      ? shopItems
+      ? filteredShopItems
       : activeCategory === "exclusive"
-      ? shopItems.filter((item) => item.featured === "Exclusive")
+      ? filteredShopItems.filter((item) => item.featured === "Exclusive")
       : activeCategory === "solid"
-      ? shopItems.filter((item) => item.id.includes("solid"))
-      : shopItems.filter(
-          (item) => !item.featured && !item.id.includes("solid")
+      ? filteredShopItems.filter((item) => item.id.includes("solid"))
+      : activeCategory === "conceptpack"
+      ? filteredShopItems.filter((item) => item.category === "conceptpack")
+      : activeCategory === "mailtheme"
+      ? filteredShopItems.filter((item) => item.category === "mailtheme")
+      : filteredShopItems.filter(
+          (item) =>
+            !item.featured &&
+            !item.id.includes("solid") &&
+            item.category !== "conceptpack" &&
+            item.category !== "mailtheme"
         );
 
   if (!userData) {
@@ -112,7 +181,7 @@ const CozyShop = () => {
     <div className="min-h-screen bg-[var(--bg-primary)]">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex text-center flex-col md:flex-row justify-center items-start md:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
@@ -147,17 +216,6 @@ const CozyShop = () => {
             <ShoppingCart className="inline mr-2" size={16} />
             Shop
           </button>
-          {/* <button
-            className={`px-4 py-3 font-medium transition-colors ${
-              activeTab === "deals"
-                ? "text-[var(--accent)] border-b-2 border-[var(--accent)]"
-                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            }`}
-            onClick={() => setActiveTab("deals")}
-          >
-            <Percent className="inline mr-2" size={16} />
-            Deals
-          </button> */}
           <button
             className={`px-4 py-3 font-medium transition-colors ${
               activeTab === "inventory"
@@ -204,7 +262,7 @@ const CozyShop = () => {
                     : "bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
                 }`}
               >
-                All Themes
+                All Items
               </button>
               <button
                 onClick={() => setActiveCategory("exclusive")}
@@ -226,7 +284,29 @@ const CozyShop = () => {
                 }`}
               >
                 <Tag className="inline mr-1" size={14} />
-                solid
+                Solid
+              </button>
+              <button
+                onClick={() => setActiveCategory("conceptpack")}
+                className={`px-3 py-1 text-sm rounded-md ${
+                  activeCategory === "conceptpack"
+                    ? "bg-[var(--accent)] text-white"
+                    : "bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                }`}
+              >
+                <BookOpen className="inline mr-1" size={14} />
+                Concept Packs
+              </button>
+              <button
+                onClick={() => setActiveCategory("mailtheme")}
+                className={`px-3 py-1 text-sm rounded-md ${
+                  activeCategory === "mailtheme"
+                    ? "bg-[var(--accent)] text-white"
+                    : "bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border)]"
+                }`}
+              >
+                <Mail className="inline mr-1" size={14} />
+                Mail Themes
               </button>
               <button
                 onClick={() => setActiveCategory("regular")}
@@ -241,31 +321,31 @@ const CozyShop = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredItems.map((item) => (
-                <ShopItem
-                  key={item.id}
-                  item={item}
-                  isItemSoldOut={isItemSoldOut(item)}
-                  handlePurchase={handlePurchase}
-                  coins={coins}
-                  isOneTimePurchase={isOneTimePurchase}
-                  getInventoryItemCount={getInventoryItemCount}
-                />
-              ))}
+              {filteredItems.map((item) =>
+                item.category === "conceptpack" ? (
+                  <ConceptPackItem
+                    key={item.id}
+                    item={item}
+                    isItemSoldOut={isItemSoldOut}
+                    handlePurchase={handlePurchase}
+                    coins={coins}
+                  />
+                ) : (
+                  <ShopItem
+                    key={item.id}
+                    item={item}
+                    isItemSoldOut={isItemSoldOut}
+                    handlePurchase={handlePurchase}
+                    coins={coins}
+                    isOneTimePurchase={isOneTimePurchase}
+                    getInventoryItemCount={getInventoryItemCount}
+                    handlePreviewMailTheme={handlePreviewMailTheme}
+                  />
+                )
+              )}
             </div>
           </>
         )}
-
-        {/* Deals */}
-        {/* {activeTab === "deals" && (
-          <ShopDeals
-            deals={shopDeals}
-            shopItems={shopItems}
-            inventory={inventory}
-            coins={coins}
-            handlePurchase={handlePurchase}
-          />
-        )} */}
 
         {/* Inventory */}
         {activeTab === "inventory" && (
@@ -273,7 +353,54 @@ const CozyShop = () => {
             inventory={inventory}
             setActiveTab={setActiveTab}
             isOneTimePurchase={isOneTimePurchase}
+            activateMailTheme={activateMailTheme}
           />
+        )}
+
+        {/* Mail Theme Preview Modal */}
+        {previewMailTheme && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-[var(--bg-primary)] rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
+              <div className="p-6 border-b border-[var(--border)]">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)]">
+                  {previewMailTheme.name} Preview
+                </h3>
+              </div>
+              <div className="p-6">
+                <div
+                  className={`border rounded-lg p-6 ${
+                    previewMailTheme.previewClass || ""
+                  }`}
+                  style={previewMailTheme.styles || {}}
+                >
+                  <div className="mb-4 pb-4 border-b border-[var(--border)]">
+                    <div className="font-medium text-[var(--text-primary)]">
+                      From: {previewMailTheme.senderPrefix || "Cozy Minds Team"}
+                    </div>
+                    <div className="font-bold text-xl mt-2 text-[var(--text-primary)]">
+                      Your Weekly Journaling Insights
+                    </div>
+                  </div>
+                  <div
+                    className="prose text-[var(--text-primary)]"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        previewMailTheme.previewContent ||
+                        '<p>Your Weekly Summary ✨</p><p>Entries this week: 5</p><p>Most frequent mood: Happy</p><p>You journal in the: evening</p><p>Prompt for this week: "What made you smile this week?"</p><p>Keep reflecting,</p><p>Cozy Minds Team</p>',
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="p-6 border-t border-[var(--border)] flex justify-end gap-2">
+                <button
+                  onClick={closePreview}
+                  className="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-md"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

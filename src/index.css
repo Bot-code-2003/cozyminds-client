@@ -4,45 +4,69 @@
 /* Reset for sharp corners */
 * {
   border-radius: 0 !important;
-  /* font-family: serif !important; */
-  font-family: "Merriweather", serif;
+  font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
+  font-style: normal;
+}
+
+button:hover {
+  cursor: pointer;
 }
 
 /* CSS Variables for Dark/Light Mode */
 :root {
   --bg-primary: #f3f3f3;
   --bg-secondary: #ffffff;
-  --bg-navbar: #e0e0e0;
+  --bg-navbar: #ffffff;
+  --text-journal-title: #ffffff;
   --text-primary: #333333;
-  --text-secondary: #666666;
+  --text-secondary: #747474;
   --accent: #5999a8;
   --accent-rgb: 112, 178, 192;
   --border: #c8c7c7;
   --shadow: rgba(0, 0, 0, 0.1);
-  --highlight: #f5a623;
+  --highlight: #7da48d; /* Misty pastel green */
   --highlight-rgb: 245, 166, 35;
+
+  --card-bg: #dbdbdb; /* Deep charcoal with lavender undertone */
+  --card-txt: #222222;
 }
 
 .dark {
   --bg-primary: #1f1f1f;
   --bg-secondary: #252525;
-  --bg-navbar: #1a1a1a;
+  --bg-navbar: #000000;
   --text-primary: #f0f0f0;
-  --text-secondary: #aaaaaa;
+  --text-secondary: #f1f1f1;
   --accent: #70b2c0;
   --accent-rgb: 112, 178, 192;
   --border: #4f4f4f;
   --shadow: rgba(0, 0, 0, 0.2);
-  --highlight: #f5a623;
+  --highlight: #cbe6c5; /* Desaturated forest green */
   --highlight-rgb: 245, 166, 35;
+  --card-bg: #353535; /* Deep charcoal with lavender undertone */
+  --card-txt: #ffffff;
+}
+
+/* Concept Packs */
+.card-maple-wolly-toward-the-peaks {
+  background-image: url("./assets/concept_sheep.png");
+}
+.card-maple-wolly-glowpath-wanderers {
+  background-image: url("./assets/concept_sheep1.png");
+}
+.card-maple-wolly-dragons-lair {
+  background-image: url("./assets/concept_sheep2.png");
+}
+
+/* Seasonal */
+.card-christmas {
+  background-image: url("./assets/christmas.png");
 }
 
 .card-dark {
-  background-color: #2d283e; /* Muted purple, like a moonlit tome */
-  border: 1px solid #a6b1e1; /* Silvery lavender, like moonlight */
-  box-shadow: 0 2px 4px rgba(166, 177, 225, 0.15); /* Subtle purple glow */
-  border-radius: 8px;
+  background-color: var(--bg-secondary);
+  color: var(--card-txt);
   padding: 16px;
 }
 
@@ -167,7 +191,12 @@
 .card-solid-yellow,
 .card-solid-coral,
 .card-solid-lilac,
-.card-solid-aqua {
+.card-solid-aqua,
+.card-maple-wolly-toward-the-peaks,
+.card-maple-wolly-glowpath-wanderers,
+.card-maple-wolly-dragons-lair,
+.card-christmas {
+  background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -197,7 +226,11 @@
 .card-solid-yellow::before,
 .card-solid-coral::before,
 .card-solid-lilac::before,
-.card-solid-aqua::before {
+.card-solid-aqua::before,
+.card-maple-wolly-toward-the-peaks::before,
+.card-maple-wolly-glowpath-wanderers::before,
+.card-maple-wolly-dragons-lair::before,
+.card-christmas::before {
   content: "";
   position: absolute;
   top: 0;
@@ -231,7 +264,11 @@
 .card-solid-yellow > *,
 .card-solid-coral > *,
 .card-solid-lilac > *,
-.card-solid-aqua > * {
+.card-solid-aqua > *,
+.card-maple-wolly-toward-the-peaks > *,
+.card-maple-wolly-glowpath-wanderers > *,
+.card-maple-wolly-dragons-lair > *,
+.card-christmas > * {
   position: relative;
   z-index: 2;
 }
