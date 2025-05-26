@@ -286,7 +286,7 @@ const BlogPage = ({ darkMode, setDarkMode, onBack }) => {
           {/* Article Content */}
           <article className="prose prose-sm sm:prose-lg max-w-none mb-8 sm:mb-12">
             <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm">
-              {post.content.split("\n\n").map((paragraph, index) => {
+              {post.content.split("\n").map((paragraph, index) => {
                 if (paragraph.startsWith("**") && paragraph.endsWith("**")) {
                   return (
                     <h2
@@ -337,9 +337,12 @@ const BlogPage = ({ darkMode, setDarkMode, onBack }) => {
                   <p
                     key={index}
                     className="text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-6 opacity-90"
-                  >
-                    {paragraph}
-                  </p>
+                    dangerouslySetInnerHTML={{
+                      __html: paragraph
+                        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold
+                        .replace(/\*(.*?)\*/g, "<em>$1</em>"), // Italics (optional)
+                    }}
+                  ></p>
                 );
               })}
             </div>
