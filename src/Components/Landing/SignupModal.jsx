@@ -145,16 +145,22 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                   aria-label="Nickname"
                 />
 
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={signupForm.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus:outline-none focus:ring-2 focus:ring-[#5999a8] transition-all"
-                  aria-label="Email address"
-                />
+                <div className="space-y-2">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={signupForm.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus:outline-none focus:ring-2 focus:ring-[#5999a8] transition-all"
+                    aria-label="Email address"
+                  />
+                  <div className="text-xs text-gray-500 dark:text-gray-400 px-1">
+                    💡 No need for your real email! Feel free to use something
+                    creative like batman@dc.comics or starwriter@moon.sky
+                  </div>
+                </div>
 
                 <div className="flex flex-col sm:flex-row w-full gap-2">
                   <div className="relative flex-1">
