@@ -31,7 +31,7 @@ const Navbar = ({
 
   const navigationItems = [
     { name: "Home", path: "/", icon: <Home size={16} /> },
-    { name: "Blog", path: "/cozyminds-blog", icon: <BookOpen size={16} /> },
+    { name: "Blog", path: "/starlitblogs", icon: <BookOpen size={16} /> },
     { name: "About", path: "/aboutus", icon: <Info size={16} /> },
   ];
 
