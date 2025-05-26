@@ -18,9 +18,9 @@ const Terms = ({ darkMode }) => {
   const sections = [
     {
       icon: <Globe size={24} />,
-      title: "Using Cozy Minds",
+      title: "Using Starlit Journals",
       content:
-        "Cozy Minds is a journaling and self-reflection app designed for personal use. You agree not to misuse, disrupt, or exploit the platform.",
+        "Starlit Journals is a journaling and self-reflection app designed for personal use. You agree not to misuse, disrupt, or exploit the platform.",
     },
     {
       icon: <FileText size={24} />,
@@ -32,7 +32,7 @@ const Terms = ({ darkMode }) => {
       icon: <Shield size={24} />,
       title: "Service Availability",
       content:
-        "We do our best to keep Cozy Minds running smoothly, but we can't guarantee perfect uptime or bug-free experiences. Features may evolve or change over time.",
+        "We do our best to keep Starlit Journals running smoothly, but we can't guarantee perfect uptime or bug-free experiences. Features may evolve or change over time.",
     },
     {
       icon: <RefreshCw size={24} />,
@@ -91,9 +91,9 @@ const Terms = ({ darkMode }) => {
             </span>
           </h1>
           <p className="text-lg md:text-xl opacity-80 font-medium max-w-2xl mx-auto">
-            Welcome to <strong>Cozy Minds</strong>. These terms govern your use
-            of our platform. By accessing or using the app, you agree to these
-            terms.
+            Welcome to <strong>Starlit Journals</strong>. These terms govern
+            your use of our platform. By accessing or using the app, you agree
+            to these terms.
           </p>
         </div>
 

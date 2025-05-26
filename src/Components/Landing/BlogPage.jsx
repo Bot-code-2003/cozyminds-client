@@ -68,7 +68,7 @@ const BlogPage = ({ darkMode, setDarkMode, onBack }) => {
       <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans transition-colors duration-300">
         {/* SEO Meta Tags */}
         <head>
-          <title>{post.seo.ogTitle} | TheCozyTale Blog</title>
+          <title>{post.seo.ogTitle} | Starlit Journals Blog</title>
           <meta name="description" content={post.metaDescription} />
           <meta name="keywords" content={post.seo.keywords} />
           <meta name="author" content={post.author} />
@@ -127,7 +127,7 @@ const BlogPage = ({ darkMode, setDarkMode, onBack }) => {
           {/* Mobile Navigation */}
           <div className="flex items-center justify-between mb-6 sm:hidden">
             <button
-              onClick={() => navigate("/cozyminds-blog")}
+              onClick={() => navigate("/starlitblogs")}
               className="flex items-center gap-2 px-3 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-lg hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300"
             >
               <ArrowLeft size={16} />
@@ -188,7 +188,7 @@ const BlogPage = ({ darkMode, setDarkMode, onBack }) => {
           {/* Desktop Navigation */}
           <div className="hidden sm:flex items-center justify-between mb-8">
             <button
-              onClick={() => navigate("/cozyminds-blog")}
+              onClick={() => navigate("/starlitblogs")}
               className="flex items-center gap-2 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-md hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300"
             >
               <ArrowLeft size={16} />

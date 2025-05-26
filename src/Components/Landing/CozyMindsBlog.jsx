@@ -100,17 +100,20 @@ const CozyMindsBlog = () => {
           name="keywords"
           content="journaling blog, mental wellness, mindfulness, self-reflection, therapeutic writing, emotional health, mindful living"
         />
-        <meta name="author" content="Cozy Minds Team" />
+        <meta name="author" content="Starlit Journals Team" />
         <meta
           property="og:title"
-          content="Cozy Minds Blog - Mindful Journaling Insights"
+          content="Starlit Journals Blog - Mindful Journaling Insights"
         />
         <meta
           property="og:description"
           content="Thoughtful insights and gentle guidance for your journaling journey and mental wellness."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://cozyminds.com/blog" />
+        <meta
+          property="og:url"
+          content="https://starlitjournals.vercel.app/starlitblogs"
+        />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"

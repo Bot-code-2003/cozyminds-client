@@ -125,7 +125,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                   id="signup-form-heading"
                   className="text-2xl font-bold mb-6 text-center"
                 >
-                  Join Cozy Minds
+                  Join Starlit Journals
                 </h2>
 
                 {signupError && (

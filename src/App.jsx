@@ -67,7 +67,7 @@ const App = () => {
             />
             <Route path="/privacy-policy" element={<Privacy />} />
             <Route path="/terms-of-service" element={<Terms />} />
-            <Route path="/cozyminds-blog" element={<CozyMindsBlog />} />
+            <Route path="/starlitblogs" element={<CozyMindsBlog />} />
             <Route path="/blog/:slug" element={<BlogPage />} />
             <Route path="/collections" element={<Collections />} />
             <Route path="/profile-settings" element={<ProfileSettings />} />
