@@ -11,6 +11,7 @@ import {
   Inbox,
   Mail,
   Star,
+  Trash2,
 } from "lucide-react";
 import { useDarkMode } from "../../../context/ThemeContext";
 import { useCoins } from "../../../context/CoinContext";
@@ -197,125 +198,127 @@ const InGameMail = ({
   // Custom styles for deep sea fantasy theme
   const fantasyStyles = {
     modalBg:
-      "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm",
-    mailContainer: `w-full max-w-md md:max-w-2xl lg:max-w-7xl min-h-[90vh] overflow-hidden border-2 ${
+      "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md",
+    mailContainer: `w-full max-w-md md:max-w-2xl lg:max-w-7xl min-h-[90vh] overflow-hidden border ${
       darkMode
-        ? "bg-[#0B3B46] border-[#FFCE59] shadow-[0_0_15px_rgba(255,206,89,0.4)]"
-        : "bg-[#EFE7CB] border-[#2FA58D] shadow-[0_0_15px_rgba(47,165,141,0.4)]"
-    }`,
+        ? "bg-[#1a1a1a] border-[#404040] shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+        : "bg-white border-[#e5e7eb] shadow-[0_8px_32px_rgba(0,0,0,0.1)]"
+    } rounded-lg`,
     header: `flex justify-between items-center p-4 ${
       darkMode
-        ? "bg-[#215866] border-b border-[#FFCE59]"
-        : "bg-gradient-to-r from-[#93BBC6] to-[#65A0B0] border-b border-[#2FA58D]"
+        ? "bg-[#2d2d2d] border-b border-[#404040]"
+        : "bg-[#f8fafc] border-b border-[#e5e7eb]"
     }`,
-    headerTitle: `text-xl font-serif font-semibold ${
-      darkMode ? "text-[#FFCE59]" : "text-[#0B3B46]"
+    headerTitle: `text-xl font-semibold ${
+      darkMode ? "text-[#f1f5f9]" : "text-[#1e293b]"
     }`,
     scrollArea: `h-[80vh] ${
       darkMode
-        ? "scrollbar-thin scrollbar-thumb-[#FFCE59] scrollbar-track-[#0B3B46]"
-        : "scrollbar-thin scrollbar-thumb-[#2FA58D] scrollbar-track-[#EFE7CB]"
+        ? "scrollbar-thin scrollbar-thumb-[#525252] scrollbar-track-[#1a1a1a]"
+        : "scrollbar-thin scrollbar-thumb-[#cbd5e1] scrollbar-track-[#f1f5f9]"
     }`,
     mailListItem: (isSelected, isUnread) =>
-      `p-4 cursor-pointer transition-all duration-300 ${
+      `p-4 cursor-pointer transition-all duration-200 ${
         darkMode
           ? isSelected
-            ? "bg-[#215866] border-l-4 border-[#FFCE59]"
+            ? "bg-[#374151] border-l-4 border-[#3b82f6]"
             : isUnread
-            ? "border-l-4 border-[#FFCE59]"
-            : "border-l-4 border-transparent hover:bg-[#215866]/70"
+            ? "border-l-4 border-[#3b82f6] bg-[#2d2d2d]/50"
+            : "border-l-4 border-transparent hover:bg-[#374151]/50"
           : isSelected
-          ? "bg-[#CBE4EA] border-l-4 border-[#2FA58D]"
+          ? "bg-[#f1f5f9] border-l-4 border-[#3b82f6]"
           : isUnread
-          ? "border-l-4 border-[#2FA58D]"
-          : "border-l-4 border-transparent hover:bg-[#CBE4EA]/70"
+          ? "border-l-4 border-[#3b82f6] bg-[#eff6ff]"
+          : "border-l-4 border-transparent hover:bg-[#f8fafc]"
       }`,
     mailTitle: (isUnread) =>
       `text-base font-medium truncate max-w-[80%] ${
         darkMode
           ? isUnread
-            ? "text-[#FFCE59]"
-            : "text-[#F6F1DC]"
+            ? "text-[#f1f5f9] font-semibold"
+            : "text-[#d1d5db]"
           : isUnread
-          ? "text-[#2FA58D] font-bold"
-          : "text-[#0B3B46]"
+          ? "text-[#1e293b] font-semibold"
+          : "text-[#374151]"
       }`,
     mailSender: `text-sm truncate max-w-[60%] ${
-      darkMode ? "text-[#93BBC6]" : "text-[#215866]"
+      darkMode ? "text-[#9ca3af]" : "text-[#6b7280]"
     }`,
-    mailDate: `text-xs ${darkMode ? "text-[#93BBC6]" : "text-[#215866]"}`,
-    mailContent: `p-6 ${darkMode ? "text-[#F6F1DC]" : "text-[#0B3B46]"}`,
-    mailDetailTitle: `text-xl font-serif font-semibold ${
-      darkMode ? "text-[#FFCE59]" : "text-[#215866]"
+    mailDate: `text-xs ${darkMode ? "text-[#9ca3af]" : "text-[#6b7280]"}`,
+    mailContent: `p-6 ${darkMode ? "text-[#e5e7eb]" : "text-[#374151]"}`,
+    mailDetailTitle: `text-xl font-semibold ${
+      darkMode ? "text-[#f1f5f9]" : "text-[#1e293b]"
     }`,
-    rewardTag: `text-xs px-2 py-1 ${
+    rewardTag: `text-xs px-3 py-1 rounded-full font-medium ${
       darkMode
-        ? "bg-[#FFCE59]/20 text-[#FFCE59]"
-        : "bg-[#2FA58D]/20 text-[#2FA58D] font-semibold"
+        ? "bg-[#10b981]/20 text-[#34d399] border border-[#10b981]/30"
+        : "bg-[#dcfce7] text-[#059669] border border-[#bbf7d0]"
     }`,
-    rewardBox: `mt-6 p-4 border ${
+    rewardBox: `mt-6 p-4 rounded-lg border ${
       darkMode
-        ? "bg-[#215866] border-[#FFCE59]"
-        : "bg-[#CBE4EA]/70 border-[#2FA58D]"
+        ? "bg-[#374151] border-[#4b5563]"
+        : "bg-[#f8fafc] border-[#e2e8f0]"
     }`,
     button: (color = "primary") =>
-      `flex items-center gap-2 ${
+      `flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all duration-200 ${
         color === "primary"
           ? darkMode
-            ? "bg-[#FFCE59] text-[#0B3B46]"
-            : "bg-[#2FA58D] text-white"
+            ? "bg-[#3b82f6] text-white hover:bg-[#2563eb] shadow-lg shadow-blue-500/25"
+            : "bg-[#3b82f6] text-white hover:bg-[#2563eb] shadow-lg shadow-blue-500/25"
           : darkMode
-          ? "bg-[#2FA58D] text-white"
-          : "bg-[#215866] text-white"
-      } px-4 py-2 hover:opacity-90 transition-all duration-300 shadow-md`,
+          ? "bg-[#6b7280] text-white hover:bg-[#4b5563]"
+          : "bg-[#6b7280] text-white hover:bg-[#4b5563]"
+      }`,
     emptyState:
       "flex flex-col items-center justify-center h-full p-6 text-center",
     emptyIcon: `mb-4 opacity-50 ${
-      darkMode ? "text-[#93BBC6]" : "text-[#65A0B0]"
+      darkMode ? "text-[#9ca3af]" : "text-[#9ca3af]"
     }`,
     emptyText: `text-base font-medium ${
-      darkMode ? "text-[#93BBC6]" : "text-[#215866]"
+      darkMode ? "text-[#9ca3af]" : "text-[#6b7280]"
     }`,
-    loadingSpinner: `animate-spin w-8 h-8 border-4 border-t-transparent ${
-      darkMode ? "border-[#FFCE59]" : "border-[#2FA58D]"
+    loadingSpinner: `animate-spin w-8 h-8 border-4 border-t-transparent rounded-full ${
+      darkMode ? "border-[#3b82f6]" : "border-[#3b82f6]"
     }`,
     mobileBackButton: `flex items-center gap-2 p-3 ${
       darkMode
-        ? "text-[#FFCE59] border-b border-[#FFCE59]"
-        : "text-[#2FA58D] border-b border-[#2FA58D]"
+        ? "text-[#3b82f6] border-b border-[#404040]"
+        : "text-[#3b82f6] border-b border-[#e5e7eb]"
     }`,
-    claimButton: `w-full flex items-center justify-center gap-2 px-4 py-3 disabled:opacity-50 disabled:cursor-not-allowed font-medium ${
+    claimButton: `w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all duration-200 ${
       darkMode
-        ? "bg-gradient-to-r from-[#FFCE59] to-[#FFAD33] text-[#0B3B46] hover:brightness-110 transition-all duration-300 shadow-[0_0_10px_rgba(255,206,89,0.5)]"
-        : "bg-gradient-to-r from-[#2FA58D] to-[#217A69] text-white hover:brightness-110 transition-all duration-300 shadow-[0_0_10px_rgba(47,165,141,0.5)]"
+        ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white hover:from-[#059669] hover:to-[#047857] shadow-lg shadow-emerald-500/25"
+        : "bg-gradient-to-r from-[#10b981] to-[#059669] text-white hover:from-[#059669] hover:to-[#047857] shadow-lg shadow-emerald-500/25"
     }`,
-    successMessage: `mt-3 p-2 text-sm ${
+    successMessage: `mt-3 p-3 rounded-md text-sm font-medium ${
       darkMode
-        ? "bg-[#2FA58D]/20 text-[#2FA58D]"
-        : "bg-[#2FA58D]/20 text-[#0B3B46]"
+        ? "bg-[#10b981]/20 text-[#34d399] border border-[#10b981]/30"
+        : "bg-[#d1fae5] text-[#065f46] border border-[#a7f3d0]"
     }`,
-    errorMessage: `mt-3 p-2 text-sm ${
-      darkMode ? "bg-red-100 text-red-800" : "bg-[#f5caca] text-[#a83240]"
-    }`,
-    attachmentBox: `flex items-center p-3 ${
+    errorMessage: `mt-3 p-3 rounded-md text-sm font-medium ${
       darkMode
-        ? "bg-[#215866] text-[#FFCE59]"
-        : "bg-[#CBE4EA]/70 text-[#2FA58D]"
+        ? "bg-[#ef4444]/20 text-[#f87171] border border-[#ef4444]/30"
+        : "bg-[#fee2e2] text-[#991b1b] border border-[#fecaca]"
+    }`,
+    attachmentBox: `flex items-center p-3 rounded-md ${
+      darkMode
+        ? "bg-[#374151] text-[#d1d5db] border border-[#4b5563]"
+        : "bg-[#f1f5f9] text-[#374151] border border-[#e2e8f0]"
     }`,
     mailDetailContent: `prose prose-sm max-w-none ${
       darkMode
-        ? "text-[#F6F1DC] prose-headings:text-[#FFCE59] prose-a:text-[#2FA58D]"
-        : "text-[#0B3B46] prose-headings:text-[#2FA58D] prose-a:text-[#215866]"
+        ? "text-[#e5e7eb] prose-headings:text-[#f1f5f9] prose-a:text-[#60a5fa] prose-strong:text-[#f1f5f9]"
+        : "text-[#374151] prose-headings:text-[#1e293b] prose-a:text-[#2563eb] prose-strong:text-[#1e293b]"
     }`,
-    unreadIndicator: `w-2 h-2 mt-2 animate-pulse ${
-      darkMode ? "bg-[#FFCE59]" : "bg-[#2FA58D]"
+    unreadIndicator: `w-2 h-2 mt-2 rounded-full ${
+      darkMode ? "bg-[#3b82f6]" : "bg-[#3b82f6]"
     }`,
     storyCircle: `ring-2 ring-offset-2 ${
       darkMode
-        ? "ring-[#FFCE59] ring-offset-[#0B3B46]"
-        : "ring-[#2FA58D] ring-offset-[#EFE7CB]"
+        ? "ring-[#3b82f6] ring-offset-[#1a1a1a]"
+        : "ring-[#3b82f6] ring-offset-white"
     }`,
-    mailAnimation: mailAnimation ? "animate-bounce" : "",
+    mailAnimation: mailAnimation ? "animate-pulse" : "",
   };
 
   if (loading) {
@@ -792,14 +795,14 @@ const InGameMail = ({
                             <span>Mark as Read</span>
                           </button>
                         )}
-                        {/* <button
+                        <button
                           onClick={() => deleteMail(selectedMail.id)}
                           title="Delete Mail"
                           className={fantasyStyles.button("secondary")}
                         >
                           <Trash2 size={16} />
                           <span>Discard</span>
-                        </button> */}
+                        </button>
                       </div>
                     </div>
                   </div>

@@ -32,7 +32,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <div className="text-lg font-bold tracking-wider text-[var(--text-primary)]">
-            COZY<span className="text-[var(--accent)]">JOURNAL</span>
+            STARLIT<span className="text-[var(--accent)]">JOURNASL</span>
           </div>
         </Link>
 

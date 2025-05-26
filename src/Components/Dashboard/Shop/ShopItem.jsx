@@ -1,7 +1,7 @@
 "use client";
 
-import { Star } from "lucide-react";
-import { useState } from "react";
+import { Star, Eye, X } from "lucide-react";
+import { useState, useCallback } from "react";
 
 const ShopItem = ({
   item,
@@ -12,139 +12,233 @@ const ShopItem = ({
   getInventoryItemCount,
   handlePreviewMailTheme,
 }) => {
-  const soldOut = isItemSoldOut(item);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const soldOut = isItemSoldOut(item);
+  const canAfford = coins >= item.price;
+  const inventoryCount = getInventoryItemCount(item.id);
+  const showInventoryCount =
+    !soldOut && !isOneTimePurchase(item.category) && inventoryCount > 0;
 
-  // For pastel themes that don't have images
-  const renderPastelTheme = () => {
-    return (
-      <div
-        className="flex-grow flex items-center justify-center"
-        style={{
-          backgroundColor: item.color,
-          borderRadius: "8px 8px 0 0",
-        }}
-      >
-        <div className=" w-full"></div>
-      </div>
-    );
+  const openModal = useCallback((e) => {
+    e.stopPropagation();
+    setIsModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
+  const onPurchase = useCallback(() => {
+    handlePurchase(item);
+  }, [handlePurchase, item]);
+
+  // Handle keyboard navigation for modal
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === "Escape") {
+        closeModal();
+      }
+    },
+    [closeModal]
+  );
+
+  // Get background styles
+  const getBackgroundStyle = () => {
+    if (item.isEmoji) return {};
+
+    if (item.image) {
+      return {
+        backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%), url(${item.image})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      };
+    }
+
+    if (item.gradient) {
+      return { backgroundImage: item.gradient };
+    }
+
+    if (item.color) {
+      return { backgroundColor: item.color };
+    }
+
+    return {};
   };
 
   return (
     <>
-      <div
-        key={item.id}
-        className={`border border-[var(--border)] rounded-lg overflow-hidden bg-[var(--bg-secondary)] hover:shadow-lg transition-all duration-300 relative group h-60 flex flex-col ${
-          item.featuredStyle || ""
-        }`}
-        style={
-          !item.isEmoji && item.image
-            ? {
-                backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%), url(${item.image})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }
-            : item.gradient
-            ? {
-                backgroundImage: `${item.gradient}`,
-              }
-            : item.color
-            ? {
-                backgroundColor: item.color,
-              }
-            : {}
-        }
+      {/* Shop Item Card */}
+      <article
+        className={`
+          relative group h-60 flex flex-col overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 
+          bg-white dark:bg-gray-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer
+          ${item.featuredStyle || ""}
+        `}
+        style={getBackgroundStyle()}
+        role="button"
+        tabIndex={0}
+        aria-label={`${item.name} - ${item.price} coins`}
       >
-        {/* Category Badge */}
-        <div className="absolute top-3 right-3 bg-[var(--accent)] text-white text-xs px-2 py-1 rounded-full z-10">
-          {item.category}
+        {/* Badges */}
+        <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10">
+          {/* Featured Badge */}
+          {item.featured && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-white text-xs font-medium rounded-full backdrop-blur-sm">
+              {item.featured === "Exclusive" && (
+                <Star size={10} className="text-yellow-500" />
+              )}
+              {item.featured}
+            </div>
+          )}
+
+          {/* Category Badge */}
+          <div className="px-2 py-1 bg-gray-900/80 text-white text-xs font-medium rounded-full backdrop-blur-sm">
+            {item.category}
+          </div>
         </div>
 
-        {/* Featured Badge */}
-        {item.featured && (
-          <div className="absolute top-3 left-3 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-xs px-2 py-1 rounded-full z-10 flex items-center">
-            {item.featured === "Exclusive" && (
-              <Star className="mr-1" size={10} />
-            )}
-            {item.featured}
-          </div>
-        )}
-
-        {/* Emoji Display for isEmoji: true */}
+        {/* Emoji Display */}
         {item.isEmoji && (
           <div className="flex-grow flex items-center justify-center">
-            <span className="text-6xl transform group-hover:scale-110 transition-transform duration-300">
+            <span
+              className="text-6xl transform group-hover:scale-110 transition-transform duration-300"
+              role="img"
+              aria-label={item.name}
+            >
               {item.image}
             </span>
           </div>
         )}
 
-        {/* Content Area (over gradient for images, bottom for emojis) */}
-        <div className="mt-auto p-6 flex flex-col items-center text-center z-10">
-          <h3 className="text-xl font-semibold text-white mb-2 drop-shadow-md">
+        {/* Content Area */}
+        <div className="mt-auto p-4 flex flex-col items-center text-center z-10">
+          <h3 className="text-lg font-semibold text-white mb-2 drop-shadow-md line-clamp-1">
             {item.name}
           </h3>
-          <p className="text-white text-sm mb-4 opacity-90 drop-shadow-sm">
+          <p className="text-white/90 text-sm mb-4 drop-shadow-sm line-clamp-2 leading-relaxed">
             {item.description}
           </p>
-          <div className="flex justify-between items-center w-full gap-2">
+
+          {/* Action Buttons */}
+          <div className="flex justify-center items-center w-full gap-2">
+            {/* Preview Button for Mail Themes */}
             {item.category === "mailtheme" && (
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsModalOpen(true);
-                }}
-                className="px-3 py-2 bg-white text-black bg-opacity-70 rounded-md text-sm hover:bg-opacity-90"
+                onClick={openModal}
+                className="flex items-center gap-1 px-3 py-2 bg-white/80 hover:bg-white/90 text-gray-900 text-sm font-medium rounded-md transition-all duration-200 backdrop-blur-sm"
+                aria-label={`Preview ${item.name}`}
               >
+                <Eye size={14} />
                 Preview
               </button>
             )}
+
+            {/* Purchase/Owned Button */}
             {soldOut ? (
-              <span className="px-4 py-2 rounded-md bg-gray-500 text-white bg-opacity-70">
-                Owned
-              </span>
+              <div className="px-4 py-2 bg-green-500/80 text-white text-sm font-medium rounded-md backdrop-blur-sm">
+                ✓ Owned
+              </div>
             ) : (
               <button
-                onClick={() => handlePurchase(item)}
-                disabled={coins < item.price}
-                className={`px-4 py-2 rounded-md transition-all ${
-                  coins >= item.price
-                    ? "bg-[var(--accent)] cursor-pointer text-white hover:bg-opacity-90 hover:shadow-md"
-                    : "bg-gray-500 text-white bg-opacity-70 cursor-not-allowed"
-                }`}
+                onClick={onPurchase}
+                disabled={!canAfford}
+                className={`
+                  px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 backdrop-blur-sm
+                  ${
+                    canAfford
+                      ? "bg-blue-500/80 hover:bg-blue-500/90 text-white cursor-pointer hover:shadow-md"
+                      : "bg-gray-500/60 text-white/70 cursor-not-allowed"
+                  }
+                `}
+                aria-label={`Purchase ${item.name} for ${item.price} coins`}
               >
-                🪙{item.price}
+                🪙 {item.price.toLocaleString()}
               </button>
             )}
           </div>
 
-          {!soldOut &&
-            !isOneTimePurchase(item.category) &&
-            getInventoryItemCount(item.id) > 0 && (
-              <div className="mt-2 text-sm text-white opacity-80">
-                Owned: {getInventoryItemCount(item.id)}
-              </div>
-            )}
+          {/* Inventory Count */}
+          {showInventoryCount && (
+            <div className="mt-2 text-xs text-white/80 font-medium">
+              Owned: {inventoryCount}
+            </div>
+          )}
         </div>
-      </div>
 
-      {/* Modal for Preview */}
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      </article>
+
+      {/* Preview Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
-          <div className="bg-[var(--bg-secondary)] rounded-lg p-6 max-w-3xl w-full relative">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-2 right-2 text-white hover:text-gray-300"
-            >
-              ✕
-            </button>
-            <h2 className="text-xl font-semibold text-white mb-4">
-              {item.name} Preview
-            </h2>
-            <div
-              className="preview-content"
-              dangerouslySetInnerHTML={{ __html: item.previewHtml }}
-            />
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999] p-4"
+          onClick={closeModal}
+          onKeyDown={handleKeyDown}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h2
+                id="modal-title"
+                className="text-xl font-semibold text-gray-900 dark:text-white"
+              >
+                {item.name} Preview
+              </h2>
+              <button
+                onClick={closeModal}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
+                aria-label="Close preview"
+              >
+                <X size={20} className="text-gray-500 dark:text-gray-400" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="prose prose-sm max-w-none dark:prose-invert">
+              {item.previewHtml ? (
+                <div dangerouslySetInnerHTML={{ __html: item.previewHtml }} />
+              ) : (
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  Preview not available for this item.
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200"
+              >
+                Close
+              </button>
+              {!soldOut && (
+                <button
+                  onClick={() => {
+                    onPurchase();
+                    closeModal();
+                  }}
+                  disabled={!canAfford}
+                  className={`
+                    px-6 py-2 rounded-lg font-medium transition-all duration-200
+                    ${
+                      canAfford
+                        ? "bg-blue-500 hover:bg-blue-600 text-white"
+                        : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                    }
+                  `}
+                >
+                  Purchase for 🪙 {item.price.toLocaleString()}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

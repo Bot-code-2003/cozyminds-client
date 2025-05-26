@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { Brain, Sunrise, Moon } from "lucide-react";
-import AuthModals from "./AuthModal";
+import AuthModals from "./AuthModals";
 import { useEffect, useState } from "react";
 import BlogPostData from "./blogPosts.json";
 import { useNavigate } from "react-router-dom";
@@ -68,7 +68,7 @@ const BlogPage = ({ darkMode, setDarkMode, onBack }) => {
       <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans transition-colors duration-300">
         {/* SEO Meta Tags */}
         <head>
-          <title>{post.seo.ogTitle} | Cozy Minds Blog</title>
+          <title>{post.seo.ogTitle} | TheCozyTale Blog</title>
           <meta name="description" content={post.metaDescription} />
           <meta name="keywords" content={post.seo.keywords} />
           <meta name="author" content={post.author} />

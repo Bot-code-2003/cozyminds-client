@@ -23,8 +23,8 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
                   darkMode ? "" : "text-white/80"
                 }`}
               >
-                Join others in finding mental clarity with Cozy Minds, crafted
-                for well-being.
+                Join others in finding mental clarity with Starlit Journals,
+                crafted for well-being.
               </p>
             </div>
             <button
@@ -44,12 +44,12 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-center md:text-left">
             <div className="text-xl font-bold tracking-wider mb-4">
-              COZY
               <span
                 className={`${darkMode ? "text-[#5999a8]" : "text-[#E68A41]"}`}
               >
-                MINDS
-              </span>
+                STARLIT
+              </span>{" "}
+              JOURNALS
             </div>
             <p className="opacity-70 text-sm max-w-xs">
               A solo developer's passion project to bring mental clarity and
@@ -104,8 +104,8 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
 
         <div className="border-t border-[#1A1A1A]/10 dark:border-[#F8F1E9]/10 mt-12 pt-6 text-center">
           <p className="text-xs md:text-sm opacity-60">
-            © {new Date().getFullYear()} Cozy Minds • Built with care for your
-            calm
+            © {new Date().getFullYear()} Starlit Journals • Built with care for
+            your calm
           </p>
         </div>
       </footer>

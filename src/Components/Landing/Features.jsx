@@ -37,21 +37,21 @@ const Features = () => {
               label: "REWARDS",
               title: "Daily Journaling Rewards",
               description:
-                "Earn cozy coins every day you write. Hit streaks for surprise bonuses and limited collectibles!",
-              color: "5999A8",
-              bgLight: "f0e6d9",
-              bgDark: "2a2520",
+                "Earn coins every day you write. Hit streaks for surprise bonuses and limited collectibles!",
+              color: "6BC9B5", // Ocean jade
+              bgLight: "DAD8DC", // Deeper aqua tide
+              bgDark: "123C3A", // Deep kelp night
             },
             {
-              icon: <BarChart3 size={32} />, // You can use any mood/chart-related icon here
-              image: Mood, // Replace with an actual mood chart visual later
+              icon: <BarChart3 size={32} />,
+              image: Mood,
               label: "INSIGHTS",
               title: "Mood Insights",
               description:
                 "Visualize how your moods shift over time with beautiful charts. Reflect deeper with every entry you make.",
-              color: "A68FAA", // Soft purple-pink vibe
-              bgLight: "f3ecf9",
-              bgDark: "3e2c4a",
+              color: "6BC9B5",
+              bgLight: "DAD8DC",
+              bgDark: "123C3A",
             },
             {
               icon: <Mail size={32} />,
@@ -59,10 +59,10 @@ const Features = () => {
               label: "MAIL",
               title: "In-Site Mail",
               description:
-                "Receive heartwarming greetings, seasonal tales, and delightful surprise gifts from the charming characters of Cozy Minds, right in your in-site mailbox.",
-              color: "A3C9A8",
-              bgLight: "e8f5e9",
-              bgDark: "1b2e1e",
+                "Receive heartwarming greetings, seasonal tales, and delightful surprise gifts from the charming characters of Starlit Journals, right in your in-site mailbox.",
+              color: "6BC9B5",
+              bgLight: "DAD8DC",
+              bgDark: "123C3A",
             },
             {
               icon: <ShoppingBag size={32} />,
@@ -71,19 +71,14 @@ const Features = () => {
               title: "Inventory & Shop",
               description:
                 "Buy sticker packs, journal themes, and magical mail styles. Activate, customize, and make it yours.",
-              color: "D4C4A1",
-              bgLight: "f5f0e5",
-              bgDark: "2d2a22",
+              color: "6BC9B5",
+              bgLight: "DAD8DC",
+              bgDark: "123C3A",
             },
           ].map((feature, index) => (
             <div
               key={index}
-              className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-              style={{
-                backgroundColor: darkMode
-                  ? `#${feature.bgDark}`
-                  : `#${feature.bgLight}`,
-              }}
+              className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border-2"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#5999A8]/10 to-transparent rounded-bl-full"></div>
 

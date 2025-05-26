@@ -8,7 +8,7 @@ import Footer from "./Footer";
 import Testimonials from "./Testimonials";
 import Features from "./Features";
 import HowItWorks from "./HowItWorks";
-import AuthModals from "./AuthModal";
+import AuthModals from "./AuthModals";
 import axios from "axios";
 import Home from "../../assets/home3.png";
 
@@ -86,16 +86,16 @@ const LandingPage = () => {
       className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative overflow-hidden transition-colors duration-300`}
     >
       {/* SEO Metadata */}
-      <title>Cozy Minds - Guided Journaling for Mental Wellness</title>
+      <title>Starlit Journals - A place to dream and write.</title>
       <meta
         name="description"
-        content="Cozy Minds offers a minimalist approach to mental wellness through guided journaling and mindfulness practices. Start your journey to clarity today."
+        content="Starlit Journals offers a serene space for guided journaling and mindfulness practices to foster mental clarity and personal growth."
       />
       <meta
         name="keywords"
-        content="mental wellness, guided journaling, mindfulness, mental health, self-care, meditation"
+        content="mental wellness, guided journaling, mindfulness, mental health, self-care, meditation, personal growth"
       />
-      <meta name="author" content="Cozy Minds Team" />
+      <meta name="author" content="Starlit Journals Team" />
       <meta name="robots" content="index, follow" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -129,10 +129,11 @@ const LandingPage = () => {
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         openLoginModal={openLoginModal}
+        openSignupModal={openSignupModal}
       />
 
       {/* Header */}
-      <header className="z-10 w-full max-w-6xl mt-24 mb-16 px-2 sm:px-6">
+      <header className="z-10 w-full max-w-6xl mt-32 mb-16 px-2 sm:px-6">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="order-2 md:order-1">
             <div className="inline-block mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
@@ -140,7 +141,7 @@ const LandingPage = () => {
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
               <span className="relative">
-                Cozy <span className="text-[#5999a8]">Minds</span>
+                Starlit<span className="text-[#5999a8]">Journals</span>
                 <svg
                   className="absolute -bottom-2 left-0 w-full h-2 text-[#5999a8] dark:text-[#5999a8]"
                   viewBox="0 0 100 10"
@@ -156,8 +157,8 @@ const LandingPage = () => {
               </span>
             </h1>
             <p className="mt-4 text-lg md:text-xl opacity-80 font-medium sm:max-w-xl">
-              Clarity starts here — sharp and simple. A minimalist approach to
-              mental wellness through guided journaling and mindfulness.
+              Illuminate your thoughts with Starlit Journals. A serene space for
+              guided journaling and mindfulness to foster mental clarity.
             </p>
             <div className="mt-10">
               <button
@@ -167,7 +168,7 @@ const LandingPage = () => {
                     : "bg-[#1A1A1A] text-white"
                 } hover:opacity-90 transition-opacity w-full sm:w-fit rounded-md flex items-center gap-2 group border-2 border-transparent`}
                 onClick={openLoginModal}
-                aria-label="Begin your mental wellness journey"
+                aria-label="Begin your journaling journey"
               >
                 <span className="flex items-center gap-2">
                   Begin your Journey
@@ -189,12 +190,12 @@ const LandingPage = () => {
                 <img
                   src={Home || "/placeholder.svg"}
                   className="w-full h-full object-cover rounded-2xl"
-                  alt="Cozy Minds app interface showing guided journaling"
+                  alt="Starlit Journals app interface showing guided journaling"
                   loading="lazy"
                 />
               </div>
               <div className="absolute -bottom-6 -right-6 w-24 h-24 rounded-2xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[#F8F1E9] dark:bg-[#1A1A1A] z-20 flex items-center justify-center">
-                <span className="text-sm font-bold">Find Peace</span>
+                <span className="text-sm font-bold">Find Serenity</span>
               </div>
             </div>
           </div>
@@ -219,7 +220,7 @@ const LandingPage = () => {
                   label: "Active Users",
                   icon: <Users size={28} />,
                   description:
-                    "Join our growing community of mindful individuals",
+                    "Join our growing community of mindful journalers",
                 },
                 {
                   number: "89%",
@@ -229,7 +230,7 @@ const LandingPage = () => {
                 },
                 {
                   number: "5 mins",
-                  label: "To a More Peaceful Mind",
+                  label: "To a More Serene Mind",
                   icon: <Clock size={28} />,
                   description:
                     "That's all it takes to start your daily practice",

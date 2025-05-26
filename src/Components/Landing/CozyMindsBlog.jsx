@@ -18,14 +18,18 @@ import {
 } from "lucide-react";
 import blogPostsData from "./blogPosts.json";
 import BlogPage from "./BlogPage";
-import AuthModals from "./AuthModal";
+import AuthModals from "./AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
+
+import Navbar from "./Navbar";
 
 const CozyMindsBlog = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [showBlogPage, setShowBlogPage] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,6 +39,18 @@ const CozyMindsBlog = () => {
 
   useEffect(() => {
     scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const getIcon = (iconName) => {
@@ -73,7 +89,8 @@ const CozyMindsBlog = () => {
       {/* SEO Meta Tags */}
       <head>
         <title>
-          Cozy Minds Blog - Mindful Journaling Insights & Mental Wellness Tips
+          Starlit Journals Blog - Mindful Journaling Insights & Mental Wellness
+          Tips
         </title>
         <meta
           name="description"
@@ -97,13 +114,21 @@ const CozyMindsBlog = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="Cozy Minds Blog - Mindful Journaling Insights"
+          content="Starlit Journals Blog - Mindful Journaling Insights"
         />
         <meta
           name="twitter:description"
           content="Discover expert tips on journaling, mindfulness, and mental wellness."
         />
       </head>
+
+      <Navbar
+        isScrolled={isScrolled}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        openLoginModal={openLoginModal}
+        openSignupModal={openSignupModal}
+      />
 
       {/* Gradient Accents */}
       <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
@@ -130,27 +155,6 @@ const CozyMindsBlog = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Mobile Header */}
-        <div className="flex items-center justify-between mb-6 sm:hidden">
-          <Link to="/" className="text-lg font-bold">
-            Cozy Minds
-          </Link>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300"
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
-          </div>
-        </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
@@ -179,29 +183,13 @@ const CozyMindsBlog = () => {
         )}
 
         {/* Desktop Header */}
-        <div className="text-center mb-8 sm:mb-16">
-          <div className="hidden sm:flex gap-2 justify-end mb-4">
-            <Link
-              to="/"
-              className="p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300"
-            >
-              Cozy Minds
-            </Link>
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300"
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-          </div>
-
+        <div className="text-center mb-8 mt-20 sm:mb-16">
           <div className="inline-block mb-3 sm:mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
             MINDFUL READING
           </div>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 sm:mb-6 leading-tight">
             <span className="relative">
-              Cozy Minds <span className="text-[#5999a8]">Blog</span>
+              Statlit Journals <span className="text-[#5999a8]">Blog</span>
               <svg
                 className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-1 sm:h-2 text-[#5999a8]"
                 viewBox="0 0 100 10"

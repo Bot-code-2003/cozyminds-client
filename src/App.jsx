@@ -25,6 +25,7 @@ import CozyShop from "./Components/Dashboard/Shop/CozyShop";
 import Privacy from "./Components/Landing/Privacy";
 import Terms from "./Components/Landing/Terms";
 import BlogPage from "./Components/Landing/BlogPage";
+import AboutUs from "./Components/Landing/AboutUs";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -50,6 +51,8 @@ const App = () => {
             ) : (
               <Route path="/" element={<LandingPage />} />
             )}
+
+            <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/journaling-alt" element={<JournalingAlt />} />
             {/* <Route
               path="/login"

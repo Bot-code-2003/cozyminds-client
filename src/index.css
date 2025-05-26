@@ -16,7 +16,7 @@ button:hover {
 /* CSS Variables for Dark/Light Mode */
 :root {
   --bg-primary: #f3f3f3;
-  --bg-secondary: #ffffff;
+  --bg-secondary: #f0f0f0;
   --bg-navbar: #ffffff;
   --text-journal-title: #ffffff;
   --text-primary: #333333;
