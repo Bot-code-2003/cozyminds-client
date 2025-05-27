@@ -15,6 +15,12 @@ import {
   Sun,
   Menu,
   X,
+  ChevronLeft,
+  ChevronRight,
+  Smile,
+  Pen,
+  PawPrint,
+  Lamp,
 } from "lucide-react";
 import blogPostsData from "./blogPosts.json";
 import BlogPage from "./BlogPage";
@@ -28,7 +34,7 @@ const CozyMindsBlog = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [showBlogPage, setShowBlogPage] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
   const navigate = useNavigate();
@@ -60,6 +66,10 @@ const CozyMindsBlog = () => {
       BookOpen: <BookOpen size={20} className="sm:w-6 sm:h-6" />,
       Heart: <Heart size={20} className="sm:w-6 sm:h-6" />,
       Moon: <Moon size={20} className="sm:w-6 sm:h-6" />,
+      Smile: <Smile size={20} className="sm:w-6 sm:h-6" />,
+      Pen: <Pen size={20} className="sm:w-6 sm:h-6" />,
+      PawPrint: <PawPrint size={20} className="sm:w-6 sm:h-6" />,
+      Lamp: <Lamp size={20} className="sm:w-6 sm:h-6" />,
     };
     return icons[iconName] || <BookOpen size={20} className="sm:w-6 sm:h-6" />;
   };
@@ -81,8 +91,29 @@ const CozyMindsBlog = () => {
     navigate(`/blog/${selectedPost.slug}`);
   }
 
-  const featuredPost = blogPostsData.find((post) => post.featured);
+  const featuredPosts = blogPostsData.filter((post) => post.featured);
   const regularPosts = blogPostsData.filter((post) => !post.featured);
+
+  // Auto-rotate carousel for featured posts
+  useEffect(() => {
+    if (featuredPosts.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentFeaturedIndex((prev) => (prev + 1) % featuredPosts.length);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [featuredPosts.length]);
+
+  const nextFeatured = () => {
+    setCurrentFeaturedIndex((prev) => (prev + 1) % featuredPosts.length);
+  };
+
+  const prevFeatured = () => {
+    setCurrentFeaturedIndex(
+      (prev) => (prev - 1 + featuredPosts.length) % featuredPosts.length
+    );
+  };
 
   return (
     <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans transition-colors duration-300">
@@ -133,8 +164,9 @@ const CozyMindsBlog = () => {
         openSignupModal={openSignupModal}
       />
 
-      {/* Gradient Accents */}
-      <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
+      {/* Enhanced Gradient Accents */}
+      <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-br from-[#8fa9af]/30 via-[#5999a8]/20 to-transparent opacity-80 dark:opacity-30 transition-opacity duration-300"></div>
+      <div className="absolute top-1/4 right-0 w-1/3 h-1/3 bg-gradient-to-l from-[#5999a8]/20 to-transparent opacity-60 dark:opacity-20 rounded-full blur-3xl"></div>
 
       {/* Grid Pattern Background - Hidden on mobile for better performance */}
       <div className="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none hidden sm:block">
@@ -157,18 +189,16 @@ const CozyMindsBlog = () => {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Mobile Header */}
-
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden mb-6 p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm">
+          <div className="sm:hidden mb-6 p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl bg-white/80 dark:bg-[#2A2A2A]/80 backdrop-blur-md shadow-xl">
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => {
                   openLoginModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full p-3 text-left border border-[#1A1A1A] dark:border-[#F8F1E9] rounded-lg hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300"
+                className="w-full p-3 text-left border border-[#1A1A1A] dark:border-[#F8F1E9] rounded-lg hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300 font-medium"
               >
                 Sign In
               </button>
@@ -177,7 +207,7 @@ const CozyMindsBlog = () => {
                   openSignupModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full p-3 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] rounded-lg font-medium"
+                className="w-full p-3 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] rounded-lg font-medium hover:scale-105 transition-transform duration-300"
               >
                 Get Started
               </button>
@@ -185,178 +215,234 @@ const CozyMindsBlog = () => {
           </div>
         )}
 
-        {/* Desktop Header */}
-        <div className="text-center mb-8 mt-20 sm:mb-16">
-          <div className="inline-block mb-3 sm:mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
+        {/* Enhanced Header */}
+        <div className="text-center mb-12 mt-20 sm:mb-20">
+          <div className="inline-block mb-4 sm:mb-6 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-bold tracking-widest bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm rounded-full">
             MINDFUL READING
           </div>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 sm:mb-6 leading-tight">
-            <span className="relative">
-              Statlit Journals <span className="text-[#5999a8]">Blog</span>
-              <svg
-                className="absolute -bottom-1 sm:-bottom-2 left-0 w-full h-1 sm:h-2 text-[#5999a8]"
-                viewBox="0 0 100 10"
-                preserveAspectRatio="none"
-              >
-                <path
-                  d="M0,5 Q25,0 50,5 T100,5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  fill="none"
-                />
-              </svg>
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight mb-6 sm:mb-8 leading-none">
+            <span className="relative inline-block">
+              Starlit Journals{" "}
+              <span className="text-[#5999a8] relative">
+                Blog
+                <svg
+                  className="absolute -bottom-2 sm:-bottom-3 left-0 w-full h-2 sm:h-3 text-[#5999a8]"
+                  viewBox="0 0 100 10"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0,5 Q25,0 50,5 T100,5"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    fill="none"
+                  />
+                </svg>
+              </span>
             </span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl opacity-80 font-medium max-w-2xl mx-auto px-4">
+          <p className="text-lg sm:text-xl md:text-2xl opacity-90 font-medium max-w-3xl mx-auto px-4 leading-relaxed">
             Thoughtful insights, gentle guidance, and inspiring stories to
             support your journaling journey and mental wellness.
           </p>
         </div>
 
-        {/* Featured Post */}
-        {featuredPost && (
-          <div className="mb-8 sm:mb-16">
-            <div
-              className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl sm:rounded-2xl overflow-hidden bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 cursor-pointer group"
-              onClick={() => openBlogPost(featuredPost)}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-                <div className="relative overflow-hidden order-1 md:order-1">
-                  <img
-                    src={featuredPost.image || "/placeholder.svg"}
-                    alt={featuredPost.title}
-                    className="w-full h-48 sm:h-64 md:h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
-                    <span className="px-2 sm:px-3 py-1 bg-[#5999a8] text-white text-xs font-medium rounded-md shadow-lg">
-                      FEATURED
-                    </span>
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                <div className="p-4 sm:p-6 md:p-8 order-2 md:order-2">
-                  <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                    <div className="p-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl sm:rounded-2xl bg-[#5999a8]/10 dark:bg-[#5999a8]/20 group-hover:scale-110 transition-transform duration-300">
-                      {getIcon(featuredPost.icon)}
-                    </div>
-                    <span className="text-xs sm:text-sm font-medium opacity-70">
-                      {featuredPost.category}
-                    </span>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 leading-tight group-hover:text-[#5999a8] transition-colors duration-300">
-                    {featuredPost.title}
-                  </h2>
-                  <p className="text-sm sm:text-base md:text-lg opacity-80 mb-4 sm:mb-6 leading-relaxed">
-                    {featuredPost.excerpt}
-                  </p>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm opacity-70">
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        <User size={14} className="sm:w-4 sm:h-4" />
-                        <span>{featuredPost.author}</span>
+        {/* Enhanced Featured Posts Carousel */}
+        {featuredPosts.length > 0 && (
+          <div className="mb-12 sm:mb-20">
+            <div className="relative">
+              <div className="overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md shadow-2xl">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentFeaturedIndex * 100}%)`,
+                  }}
+                >
+                  {featuredPosts.map((post, index) => (
+                    <div key={post.id} className="w-full flex-shrink-0">
+                      <div
+                        className="grid grid-cols-1 md:grid-cols-2 gap-0 cursor-pointer group"
+                        onClick={() => openBlogPost(post)}
+                      >
+                        <div className="relative overflow-hidden order-1 md:order-1">
+                          <img
+                            src={post.image || "/placeholder.svg"}
+                            alt={post.title}
+                            className="w-full h-56 sm:h-72 md:h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          />
+                          <div className="absolute top-4 sm:top-6 left-4 sm:left-6">
+                            <span className="px-3 sm:px-4 py-2 bg-[#5999a8] text-white text-sm font-bold rounded-full shadow-lg">
+                              FEATURED
+                            </span>
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        </div>
+                        <div className="p-6 sm:p-8 md:p-10 order-2 md:order-2">
+                          <div className="flex items-center gap-4 sm:gap-5 mb-4 sm:mb-6">
+                            <div className="p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl bg-[#5999a8]/15 dark:bg-[#5999a8]/25 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                              {getIcon(post.icon)}
+                            </div>
+                            <span className="text-sm sm:text-base font-bold opacity-80 tracking-wide">
+                              {post.category}
+                            </span>
+                          </div>
+                          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 sm:mb-6 leading-tight group-hover:text-[#5999a8] transition-colors duration-300">
+                            {post.title}
+                          </h2>
+                          <p className="text-base sm:text-lg md:text-xl opacity-85 mb-6 sm:mb-8 leading-relaxed">
+                            {post.excerpt}
+                          </p>
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+                            <div className="flex flex-wrap items-center gap-4 sm:gap-5 text-sm sm:text-base opacity-75">
+                              <div className="flex items-center gap-2">
+                                <User size={16} className="sm:w-5 sm:h-5" />
+                                <span className="font-medium">
+                                  {post.author}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Calendar size={16} className="sm:w-5 sm:h-5" />
+                                <span>{post.date}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Clock size={16} className="sm:w-5 sm:h-5" />
+                                <span>{post.readTime}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3 px-5 sm:px-6 py-3 sm:py-4 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] rounded-xl group-hover:scale-105 group-hover:shadow-xl transition-all duration-300 font-bold text-base sm:text-lg w-fit">
+                              Read More
+                              <ArrowRight
+                                size={18}
+                                className="sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-300"
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        <Calendar size={14} className="sm:w-4 sm:h-4" />
-                        <span>{featuredPost.date}</span>
-                      </div>
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        <Clock size={14} className="sm:w-4 sm:h-4" />
-                        <span>{featuredPost.readTime}</span>
-                      </div>
                     </div>
-                    <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] rounded-md group-hover:scale-105 transition-all duration-300 font-medium text-sm sm:text-base w-fit">
-                      Read More
-                      <ArrowRight
-                        size={14}
-                        className="sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-300"
-                      />
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
+
+              {/* Carousel Controls */}
+              {featuredPosts.length > 1 && (
+                <>
+                  <button
+                    onClick={prevFeatured}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    onClick={nextFeatured}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+
+                  {/* Carousel Indicators */}
+                  <div className="flex justify-center gap-2 mt-6">
+                    {featuredPosts.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentFeaturedIndex(index)}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          index === currentFeaturedIndex
+                            ? "bg-[#5999a8] scale-125"
+                            : "bg-[#1A1A1A]/30 dark:bg-[#F8F1E9]/30 hover:bg-[#5999a8]/50"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
 
-        {/* Blog Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-16">
-          {regularPosts.map((post) => (
+        {/* Enhanced Blog Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 mb-12 sm:mb-20">
+          {regularPosts.map((post, index) => (
             <article
               key={post.id}
-              className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl sm:rounded-2xl overflow-hidden bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group cursor-pointer"
+              className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl overflow-hidden bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
               onClick={() => openBlogPost(post)}
+              style={{
+                animationDelay: `${index * 100}ms`,
+              }}
             >
               <div className="relative overflow-hidden">
                 <img
                   src={post.image || "/placeholder.svg"}
                   alt={post.title}
-                  className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
-                  <div className="p-1.5 sm:p-2 bg-white/90 dark:bg-[#1A1A1A]/90 rounded-xl sm:rounded-2xl border border-[#1A1A1A] dark:border-[#F8F1E9] group-hover:scale-110 transition-transform duration-300">
+                <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
+                  <div className="p-2 sm:p-3 bg-white/95 dark:bg-[#1A1A1A]/95 rounded-2xl border border-[#1A1A1A] dark:border-[#F8F1E9] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
                     {getIcon(post.icon)}
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
-              <div className="p-4 sm:p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-medium px-2 py-1 bg-[#5999a8]/10 dark:bg-[#5999a8]/20 rounded-md">
+              <div className="p-5 sm:p-7">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-xs sm:text-sm font-bold px-3 py-1.5 bg-[#5999a8]/15 dark:bg-[#5999a8]/25 rounded-full border border-[#5999a8]/30">
                     {post.category}
                   </span>
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold mb-3 leading-tight group-hover:text-[#5999a8] transition-colors duration-300">
+                <h3 className="text-xl sm:text-2xl font-black mb-4 leading-tight group-hover:text-[#5999a8] transition-colors duration-300">
                   {post.title}
                 </h3>
-                <p className="text-sm sm:text-base opacity-80 mb-4 leading-relaxed line-clamp-3">
+                <p className="text-sm sm:text-base opacity-85 mb-5 leading-relaxed line-clamp-3">
                   {post.excerpt}
                 </p>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 text-xs sm:text-sm opacity-70">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <User size={12} className="sm:w-3.5 sm:h-3.5" />
-                      <span>{post.author}</span>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 text-xs sm:text-sm opacity-75">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5">
+                      <User size={14} className="sm:w-4 sm:h-4" />
+                      <span className="font-medium">{post.author}</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Clock size={12} className="sm:w-3.5 sm:h-3.5" />
+                    <div className="flex items-center gap-1.5">
+                      <Clock size={14} className="sm:w-4 sm:h-4" />
                       <span>{post.readTime}</span>
                     </div>
                   </div>
-                  <span className="text-right sm:text-left">{post.date}</span>
+                  <span className="text-right sm:text-left font-medium">
+                    {post.date}
+                  </span>
                 </div>
               </div>
             </article>
           ))}
         </div>
 
-        {/* Signup CTA */}
-        <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl sm:rounded-2xl p-6 sm:p-8 bg-[#5999a8]/10 dark:bg-[#5999a8]/5 text-center">
-          <div className="mb-4 sm:mb-6">
-            <div className="inline-block p-3 sm:p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl sm:rounded-2xl">
-              <Heart size={24} className="sm:w-8 sm:h-8" />
+        {/* Enhanced Signup CTA */}
+        <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl p-8 sm:p-12 bg-gradient-to-br from-[#5999a8]/10 via-white/50 to-[#5999a8]/5 dark:from-[#5999a8]/10 dark:via-[#2A2A2A]/50 dark:to-[#5999a8]/5 text-center backdrop-blur-md shadow-2xl">
+          <div className="mb-6 sm:mb-8">
+            <div className="inline-block p-4 sm:p-6 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl bg-white/80 dark:bg-[#1A1A1A]/80 shadow-lg">
+              <Heart size={32} className="sm:w-12 sm:h-12 text-[#5999a8]" />
             </div>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 tracking-tight">
+          <h3 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 tracking-tight">
             Ready to Start Your Journey?
           </h3>
-          <p className="text-base sm:text-lg opacity-80 mb-6 max-w-xl mx-auto leading-relaxed px-4">
+          <p className="text-lg sm:text-xl opacity-90 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-4">
             Join thousands of mindful writers who've discovered the
             transformative power of daily journaling. Your cozy space awaits.
           </p>
-          <div className="flex flex-col gap-3 justify-center max-w-md mx-auto">
+          <div className="flex flex-col gap-4 justify-center max-w-lg mx-auto">
             <button
               onClick={openSignupModal}
-              className="inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:opacity-90 transition-all duration-300 rounded-md font-semibold text-base sm:text-lg group w-full"
+              className="inline-flex items-center justify-center gap-4 px-8 sm:px-10 py-4 sm:py-5 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:scale-105 hover:shadow-xl transition-all duration-300 rounded-xl font-black text-lg sm:text-xl group w-full"
             >
               Begin Your Cozy Journey
               <ArrowRight
-                size={18}
-                className="sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300"
+                size={22}
+                className="sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform duration-300"
               />
             </button>
             <button
               onClick={openLoginModal}
-              className="inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] hover:bg-[#5999a8]/10 dark:hover:bg-[#5999a8]/20 transition-all duration-300 rounded-md font-semibold text-base sm:text-lg w-full"
+              className="inline-flex items-center justify-center gap-4 px-8 sm:px-10 py-4 sm:py-5 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] hover:bg-[#5999a8]/15 dark:hover:bg-[#5999a8]/25 hover:scale-105 transition-all duration-300 rounded-xl font-black text-lg sm:text-xl w-full"
             >
               Already a Member? Sign In
             </button>
