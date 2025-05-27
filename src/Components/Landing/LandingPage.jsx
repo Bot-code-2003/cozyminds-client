@@ -60,13 +60,17 @@ const LandingPage = () => {
 
     // Fetch journal count
     const fetchJournalCount = async () => {
+      console.log("⏳ Fetching journal count...");
       try {
         const response = await API.get("/journals/journalscount");
-        console.log("Number of journal entries:", response.data.count);
+        console.log("✅ Journal count:", response.data.count);
         setJournalCount(response.data.count);
       } catch (err) {
-        console.error("Error fetching journal count:", err);
-        setJournalCount(0); // Fallback to 0 on error
+        console.error(
+          "❌ Error fetching journal count:",
+          err.response?.data || err.message
+        );
+        setJournalCount(0);
       }
     };
 
