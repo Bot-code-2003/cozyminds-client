@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowRight, Smile, Clock, Users } from "lucide-react";
+import { ArrowRight, BookImage, Notebook, Clock, Users } from "lucide-react";
 import Navbar from "./Navbar";
 import { useDarkMode } from "../../context/ThemeContext";
 import Footer from "./Footer";
@@ -18,7 +18,8 @@ const LandingPage = () => {
   });
 
   const [isScrolled, setIsScrolled] = useState(false);
-  const [userCount, setUserCount] = useState(0);
+  const [userCount, setUserCount] = useState(null); // Initialize as null to indicate loading
+  const [journalCount, setJournalCount] = useState(null); // State for journal entries count
   const [email, setEmail] = useState("");
   const [category, setCategory] = useState("Peace");
   const { darkMode, setDarkMode } = useDarkMode();
@@ -43,18 +44,34 @@ const LandingPage = () => {
     }, 2000);
   };
 
-  // Handle scroll effect and user count
+  // Handle scroll effect and fetch user and journal counts
   useEffect(() => {
-    const numOfUsers = async () => {
+    // Fetch user count
+    const fetchUserCount = async () => {
       try {
         const response = await API.get("/users");
         console.log("Number of users:", response.data.users);
         setUserCount(response.data.users);
       } catch (err) {
         console.error("Error fetching user count:", err);
+        setUserCount(0); // Fallback to 0 on error
       }
     };
-    numOfUsers();
+
+    // Fetch journal count
+    const fetchJournalCount = async () => {
+      try {
+        const response = await API.get("/journals/journalscount");
+        console.log("Number of journal entries:", response.data.count);
+        setJournalCount(response.data.count);
+      } catch (err) {
+        console.error("Error fetching journal count:", err);
+        setJournalCount(0); // Fallback to 0 on error
+      }
+    };
+
+    fetchUserCount();
+    fetchJournalCount();
 
     const storedUser = JSON.parse(sessionStorage.getItem("user"));
     console.log("Stored User:", storedUser);
@@ -194,8 +211,8 @@ const LandingPage = () => {
                   loading="lazy"
                 />
               </div>
-              <div className="absolute -bottom-6 -right-6 w-24 h-24 rounded-2xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[#F8F1E9] dark:bg-[#1A1A1A] z-20 flex items-center justify-center">
-                <span className="text-sm font-bold">Find Serenity</span>
+              <div className="absolute -bottom-6 -right-6 w-20 h-20 rounded-2xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[#F8F1E9] dark:bg-[#1A1A1A] z-20 flex items-center justify-center">
+                <span className="text-2xl font-bold">❤️</span>
               </div>
             </div>
           </div>
@@ -216,17 +233,31 @@ const LandingPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3">
               {[
                 {
-                  number: userCount || 1250,
+                  number:
+                    userCount === null ? (
+                      <div
+                        className={`inline-block h-8 w-8 border-4 border-t-[#5999a8] border-[#1A1A1A] dark:border-t-[#5999a8] dark:border-[#F8F1E9] rounded-full animate-spin`}
+                      ></div>
+                    ) : (
+                      userCount
+                    ),
                   label: "Active Users",
                   icon: <Users size={28} />,
                   description:
                     "Join our growing community of mindful journalers",
                 },
                 {
-                  number: "89%",
-                  label: "Feel Calmer After Journaling",
-                  icon: <Smile size={28} />,
-                  description: "Based on our user satisfaction surveys",
+                  number:
+                    journalCount === null ? (
+                      <div
+                        className={`inline-block h-8 w-8 border-4 border-t-[#5999a8] border-[#1A1A1A] dark:border-t-[#5999a8] dark:border-[#F8F1E9] rounded-full animate-spin`}
+                      ></div>
+                    ) : (
+                      journalCount
+                    ),
+                  label: "Entries Written",
+                  icon: <Notebook size={28} />,
+                  description: "Total journal entries created by our community",
                 },
                 {
                   number: "5 mins",
@@ -249,7 +280,7 @@ const LandingPage = () => {
                   <div className="mb-4 rounded-2xl p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] inline-block">
                     {stat.icon}
                   </div>
-                  <h3 className="text-4xl font-bold mb-2">{stat.number}</h3>
+                  <div className="text-4xl font-bold mb-2">{stat.number}</div>
                   <p className="text-lg font-medium mb-2">{stat.label}</p>
                   <p className="text-sm opacity-70">{stat.description}</p>
                 </div>
