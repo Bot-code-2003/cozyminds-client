@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useCoins } from "../../context/CoinContext";
-import axios from "axios";
+import { useJournals } from "../../context/JournalContext"; // Import the JournalContext
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import MainSection from "./MainSection";
@@ -11,10 +11,9 @@ import MoodDistribution from "./MoodDistribution";
 import RecentJournals from "./RecentJournals";
 
 const Dashboard = () => {
-  const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
   const { darkMode } = useDarkMode();
   const { setCoins, setInventory } = useCoins();
-  const [journalEntries, setJournalEntries] = useState([]);
+  const { journalEntries, user, loading: isLoading, error } = useJournals(); // Use context to get data
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,95 +22,21 @@ const Dashboard = () => {
   const [entriesPerPage] = useState(6);
 
   const [userData, setUserData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const moods = [
-    {
-      emoji: "😄",
-      name: "Happy",
-      description: "Feeling joyful and content",
-      color: "#4FACFE",
-    },
-    {
-      emoji: "😐",
-      name: "Neutral",
-      description: "Neither good nor bad",
-      color: "#00F2FE",
-    },
-    {
-      emoji: "😔",
-      name: "Sad",
-      description: "Feeling down or blue",
-      color: "#6A7FDB",
-    },
-    {
-      emoji: "😡",
-      name: "Angry",
-      description: "Frustrated or irritated",
-      color: "#FF5E62",
-    },
-    {
-      emoji: "😰",
-      name: "Anxious",
-      description: "Worried or nervous",
-      color: "#B721FF",
-    },
-    {
-      emoji: "🥱",
-      name: "Tired",
-      description: "Low energy or exhausted",
-      color: "#8D99AE",
-    },
-    {
-      emoji: "🤔",
-      name: "Reflective",
-      description: "Thoughtful and introspective",
-      color: "#21D4FD",
-    },
-    {
-      emoji: "🥳",
-      name: "Excited",
-      description: "Enthusiastic and energized",
-      color: "#FBAB7E",
-    },
-  ];
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+      return;
+    }
+    setUserData(user);
+    setCoins(user.coins || 0);
+    setInventory(user.inventory || []);
+    setFilteredEntries(journalEntries || []);
+  }, [user, journalEntries, navigate, setCoins, setInventory]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const user = JSON.parse(sessionStorage.getItem("user") || "null");
-        if (!user) {
-          navigate("/login");
-          return;
-        }
-
-        // Set user data from session storage
-        setUserData(user);
-        setCoins(user.coins || 0);
-        setInventory(user.inventory || []);
-
-        // Fetch journal entries
-        const response = await API.get(`/journals/${user._id}`);
-        setJournalEntries(response.data.journals || []);
-        setFilteredEntries(response.data.journals || []);
-      } catch (err) {
-        console.error("Error fetching journal entries:", err);
-        setError("Failed to load journal entries. Please try again later.");
-        setJournalEntries([]);
-        setFilteredEntries([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [navigate, setCoins, setInventory]);
-
-  useEffect(() => {
-    let filtered = [...journalEntries];
+    let filtered = [...(journalEntries || [])];
     if (searchQuery) {
       filtered = filtered.filter(
         (entry) =>
@@ -155,7 +80,8 @@ const Dashboard = () => {
   };
 
   const getWordCountStats = () => {
-    if (!journalEntries.length) return { total: 0, average: 0, max: 0 };
+    if (!journalEntries || !journalEntries.length)
+      return { total: 0, average: 0, max: 0 };
     const total = journalEntries.reduce(
       (sum, entry) => sum + (entry.wordCount || 0),
       0

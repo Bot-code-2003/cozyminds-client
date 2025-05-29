@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import {
   Paperclip,
   MailCheck,
@@ -15,22 +14,14 @@ import {
 } from "lucide-react";
 import { useDarkMode } from "../../../context/ThemeContext";
 import { useCoins } from "../../../context/CoinContext";
+import { useMails } from "../../../context/MailContext";
 import AID from "../../../assets/wifu.png";
 
-// Configure Axios with base URL
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
-
-const InGameMail = ({
-  toggleMailModal,
-  mails,
-  setMails,
-  setHasUnreadMails,
-  userId,
-}) => {
+const InGameMail = ({ toggleMailModal }) => {
   const { darkMode } = useDarkMode();
-  const { updateUserCoins, showCoinAward } = useCoins();
+  const { showCoinAward } = useCoins();
+  const { mails, markAsRead, claimReward, deleteMail } = useMails();
   const [selectedMail, setSelectedMail] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [claimingReward, setClaimingReward] = useState(false);
   const [claimSuccess, setClaimSuccess] = useState(null);
@@ -61,107 +52,16 @@ const InGameMail = ({
     }
   }, [mails, selectedMail]);
 
-  // Mark mail as read
-  const markAsRead = async (mailId) => {
-    try {
-      await API.put(`/mail/${mailId}/read`, { userId });
-      const updatedMails = mails.map((mail) =>
-        mail.id === mailId ? { ...mail, read: true } : mail
-      );
-      setMails(updatedMails);
-      setHasUnreadMails(updatedMails.some((mail) => !mail.read));
-    } catch (err) {
-      console.error("Error marking mail as read:", err);
-    }
-  };
-
-  // Claim reward
-  const claimReward = async (mailId) => {
-    try {
-      setClaimingReward(true);
-      setError(null);
-      setClaimSuccess(null);
-      setMailAnimation(true);
-
-      const response = await API.put(`/mail/${mailId}/claim-reward`, {
-        userId,
-      });
-
-      // Update the mail in the list
-      const updatedMails = mails.map((mail) =>
-        mail.id === mailId ? { ...mail, rewardClaimed: true, read: true } : mail
-      );
-
-      setMails(updatedMails);
-      setHasUnreadMails(updatedMails.some((mail) => !mail.read));
-
-      // Update selected mail
-      if (selectedMail && selectedMail.id === mailId) {
-        setSelectedMail({ ...selectedMail, rewardClaimed: true, read: true });
-      }
-
-      // Get the reward amount from the mail
-      const mail = mails.find((m) => m.id === mailId);
-      const rewardAmount = mail?.rewardAmount || 50; // Default to 50 if not specified
-
-      // Update user coins in context and show coin award popup
-      if (response.data.newCoinsBalance) {
-        // Update coins directly with the new balance from the server
-        const user = JSON.parse(sessionStorage.getItem("user") || "null");
-        if (user) {
-          user.coins = response.data.newCoinsBalance;
-          sessionStorage.setItem("user", JSON.stringify(user));
-
-          // Trigger a storage event to update other components
-          window.dispatchEvent(new Event("storage"));
-        }
-
-        // Show the coin award popup
-        showCoinAward(rewardAmount);
-      }
-
-      setClaimSuccess(response.data.message);
-
-      // Reset animation after 2 seconds
-      setTimeout(() => {
-        setMailAnimation(false);
-      }, 2000);
-    } catch (err) {
-      console.error("Error claiming reward:", err);
-      setError(err.response?.data?.message || "Failed to claim reward.");
-      setMailAnimation(false);
-    } finally {
-      setClaimingReward(false);
-    }
-  };
-
-  // Delete mail
-  const deleteMail = async (mailId) => {
-    try {
-      await API.delete(`/mail/${mailId}`, { data: { userId } });
-      const updatedMails = mails.filter((mail) => mail.id !== mailId);
-      setMails(updatedMails);
-      setHasUnreadMails(updatedMails.some((mail) => !mail.read));
-
-      if (selectedMail && selectedMail.id === mailId) {
-        // After deleting the selected mail automatically update the selected mail to the next mail.
-        setSelectedMail(updatedMails.length > 0 ? updatedMails[0] : null);
-
-        // On mobile, go back to inbox view after deleting
-        if (isMobile) {
-          setActiveView("inbox");
-        }
-      }
-    } catch (err) {
-      console.error("Error deleting mail:", err);
-      setError("Failed to delete mail.");
-    }
-  };
-
   // Handle mail selection
-  const handleSelectMail = (mail) => {
+  const handleSelectMail = async (mail) => {
     setSelectedMail(mail);
-    if (!mail.read) markAsRead(mail.id);
+    if (!mail.read) {
+      try {
+        await markAsRead(mail.id);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
 
     // On mobile, switch to detail view
     if (isMobile) {
@@ -174,6 +74,55 @@ const InGameMail = ({
     setActiveView("inbox");
   };
 
+  // Handle claim reward
+  const handleClaimReward = async (mailId) => {
+    try {
+      setClaimingReward(true);
+      setError(null);
+      setClaimSuccess(null);
+      setMailAnimation(true);
+
+      const message = await claimReward(mailId, showCoinAward);
+
+      // Update selected mail
+      if (selectedMail && selectedMail.id === mailId) {
+        setSelectedMail({ ...selectedMail, rewardClaimed: true, read: true });
+      }
+
+      setClaimSuccess(message);
+
+      // Reset animation after 2 seconds
+      setTimeout(() => {
+        setMailAnimation(false);
+      }, 2000);
+    } catch (err) {
+      setError(err.message);
+      setMailAnimation(false);
+    } finally {
+      setClaimingReward(false);
+    }
+  };
+
+  // Handle delete mail
+  const handleDeleteMail = async (mailId) => {
+    try {
+      await deleteMail(mailId);
+
+      if (selectedMail && selectedMail.id === mailId) {
+        // After deleting the selected mail, update the selected mail to the next mail
+        const updatedMails = mails.filter((mail) => mail.id !== mailId);
+        setSelectedMail(updatedMails.length > 0 ? updatedMails[0] : null);
+
+        // On mobile, go back to inbox view after deleting
+        if (isMobile) {
+          setActiveView("inbox");
+        }
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   // Handle claim button click in mail content
   useEffect(() => {
     if (
@@ -184,11 +133,11 @@ const InGameMail = ({
       const claimButton = document.getElementById("claim-reward-button");
       if (claimButton) {
         claimButton.addEventListener("click", () =>
-          claimReward(selectedMail.id)
+          handleClaimReward(selectedMail.id)
         );
         return () => {
           claimButton.removeEventListener("click", () =>
-            claimReward(selectedMail.id)
+            handleClaimReward(selectedMail.id)
           );
         };
       }
@@ -277,9 +226,6 @@ const InGameMail = ({
     emptyText: `text-base font-medium ${
       darkMode ? "text-[#9ca3af]" : "text-[#6b7280]"
     }`,
-    loadingSpinner: `animate-spin w-8 h-8 border-4 border-t-transparent rounded-full ${
-      darkMode ? "border-[#3b82f6]" : "border-[#3b82f6]"
-    }`,
     mobileBackButton: `flex items-center gap-2 p-3 ${
       darkMode
         ? "text-[#3b82f6] border-b border-[#404040]"
@@ -320,68 +266,6 @@ const InGameMail = ({
     }`,
     mailAnimation: mailAnimation ? "animate-pulse" : "",
   };
-
-  if (loading) {
-    return (
-      <div className={fantasyStyles.modalBg}>
-        <div className={fantasyStyles.mailContainer}>
-          <div className={fantasyStyles.header}>
-            <h2 className={fantasyStyles.headerTitle}>Inbox</h2>
-            <button
-              onClick={toggleMailModal}
-              className="p-1.5 rounded-full hover:bg-[#d4a256]/10 transition-colors"
-              aria-label="Close modal"
-            >
-              <X size={20} className="text-[#d4a256]" />
-            </button>
-          </div>
-          <div className="flex justify-center items-center h-[300px] md:h-[450px]">
-            <div className="flex flex-col items-center gap-3">
-              <div className={fantasyStyles.loadingSpinner}></div>
-              <span className="text-base font-medium">
-                Loading your mail...
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={fantasyStyles.modalBg}>
-        <div className={fantasyStyles.mailContainer}>
-          <div className={fantasyStyles.header}>
-            <h2 className={fantasyStyles.headerTitle}>Inbox</h2>
-            <button
-              onClick={toggleMailModal}
-              className="p-1.5 rounded-full hover:bg-[#d4a256]/10 transition-colors"
-              aria-label="Close modal"
-            >
-              <X size={20} className="text-[#d4a256]" />
-            </button>
-          </div>
-          <div className="flex justify-center items-center h-[300px] md:h-[450px]">
-            <div className="text-center p-6 max-w-md">
-              <div className="text-red-500 mb-3">
-                <X size={40} className="mx-auto" />
-              </div>
-              <span className="text-base font-medium text-red-400 block mb-2">
-                {error}
-              </span>
-              <button
-                onClick={toggleMailModal}
-                className={fantasyStyles.button()}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={fantasyStyles.modalBg}>
@@ -541,7 +425,9 @@ const InGameMail = ({
                                 </span>
                               </div>
                               <button
-                                onClick={() => claimReward(selectedMail.id)}
+                                onClick={() =>
+                                  handleClaimReward(selectedMail.id)
+                                }
                                 disabled={claimingReward}
                                 className={fantasyStyles.claimButton}
                               >
@@ -582,7 +468,7 @@ const InGameMail = ({
                       <div className="flex flex-wrap gap-2 mt-6">
                         {!selectedMail.read && (
                           <button
-                            onClick={() => markAsRead(selectedMail.id)}
+                            onClick={() => handleSelectMail(selectedMail)} // Re-triggers markAsRead via handleSelectMail
                             title="Mark as Read"
                             className={fantasyStyles.button()}
                           >
@@ -591,13 +477,13 @@ const InGameMail = ({
                           </button>
                         )}
                         {/* <button
-                            onClick={() => deleteMail(selectedMail.id)}
-                            title="Delete Mail"
-                            className={fantasyStyles.button("secondary")}
-                          >
-                            <Trash2 size={16} />
-                            <span>Discard</span>
-                          </button> */}
+                          onClick={() => handleDeleteMail(selectedMail.id)}
+                          title="Delete Mail"
+                          className={fantasyStyles.button("secondary")}
+                        >
+                          <Trash2 size={16} />
+                          <span>Discard</span>
+                        </button> */}
                       </div>
                     </div>
                   </div>
@@ -746,7 +632,9 @@ const InGameMail = ({
                                 </span>
                               </div>
                               <button
-                                onClick={() => claimReward(selectedMail.id)}
+                                onClick={() =>
+                                  handleClaimReward(selectedMail.id)
+                                }
                                 disabled={claimingReward}
                                 className={fantasyStyles.claimButton}
                               >
@@ -787,7 +675,7 @@ const InGameMail = ({
                       <div className="flex gap-3 mt-6">
                         {!selectedMail.read && (
                           <button
-                            onClick={() => markAsRead(selectedMail.id)}
+                            onClick={() => handleSelectMail(selectedMail)} // Re-triggers markAsRead via handleSelectMail
                             title="Mark as Read"
                             className={fantasyStyles.button()}
                           >
@@ -796,7 +684,7 @@ const InGameMail = ({
                           </button>
                         )}
                         <button
-                          onClick={() => deleteMail(selectedMail.id)}
+                          onClick={() => handleDeleteMail(selectedMail.id)}
                           title="Delete Mail"
                           className={fantasyStyles.button("secondary")}
                         >

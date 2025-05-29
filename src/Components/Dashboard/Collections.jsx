@@ -1,75 +1,48 @@
-// First, let's modify the Collections component to add a delete button and confirmation modal
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FolderOpen, Plus, Calendar, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDarkMode } from "../../context/ThemeContext";
+import { useJournals } from "../../context/JournalContext"; // Import JournalContext
 import Navbar from "./Navbar";
 
 const Collections = () => {
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
   const { darkMode } = useDarkMode();
+  const { journalEntries, user, loading: isLoading, error } = useJournals(); // Use context to get data
   const [collections, setCollections] = useState(["All"]);
-  const [journalEntries, setJournalEntries] = useState([]);
   const [userData, setUserData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const navigate = useNavigate();
 
-  // Load user data and collections
+  // Load user data and collections from context
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
+    if (!user) {
+      navigate("/login");
+      return;
+    }
 
-      try {
-        const user = JSON.parse(sessionStorage.getItem("user") || "null");
-        setUserData(user);
+    setUserData(user);
 
-        if (!user) {
-          navigate("/login");
-          return;
-        }
+    // Set collections - always include "All" first
+    const uniqueCollections = ["All"];
 
-        // Fetch journal entries from the server
-        const response = await API.get(`/journals/${user._id}`);
-        setJournalEntries(response.data.journals || []);
-
-        // Set collections - always include "All" first
-        const uniqueCollections = ["All"];
-
-        // Get all unique collections from all journal entries
-        response.data.journals.forEach((journal) => {
-          if (journal.collections && Array.isArray(journal.collections)) {
-            journal.collections.forEach((collection) => {
-              if (
-                collection !== "All" &&
-                !uniqueCollections.includes(collection)
-              ) {
-                uniqueCollections.push(collection);
-              }
-            });
+    // Get all unique collections from journal entries
+    journalEntries.forEach((journal) => {
+      if (journal.collections && Array.isArray(journal.collections)) {
+        journal.collections.forEach((collection) => {
+          if (collection !== "All" && !uniqueCollections.includes(collection)) {
+            uniqueCollections.push(collection);
           }
         });
-
-        setCollections(uniqueCollections);
-      } catch (err) {
-        console.error("Error fetching journal entries:", err);
-        setError("Failed to load collections. Please try again later.");
-        setJournalEntries([]);
-        setCollections(["All"]);
-      } finally {
-        setIsLoading(false);
       }
-    };
+    });
 
-    fetchData();
-  }, [navigate]);
+    setCollections(uniqueCollections);
+  }, [user, journalEntries, navigate]);
 
   // Logout
   const handleLogout = () => {
@@ -130,13 +103,16 @@ const Collections = () => {
       // Update the local state to reflect the change
       setCollections(collections.filter((c) => c !== collectionToDelete));
 
+      // Optionally refresh the journal entries by fetching again
+      const response = await API.get(`/journals/${userData._id}`);
+      const updatedEntries = response.data.journals || [];
+      // Note: Since we're using context, ideally we'd update the context instead.
+      // For now, we'll just update the local state, but you might want to update the context as well.
+      setJournalEntries(updatedEntries);
+
       // Close the modal
       setShowDeleteModal(false);
       setCollectionToDelete(null);
-
-      // Optionally refresh the journal entries to ensure the UI is in sync
-      const response = await API.get(`/journals/${userData._id}`);
-      setJournalEntries(response.data.journals || []);
     } catch (err) {
       console.error("Error deleting collection:", err);
       setError(`Failed to delete collection: ${err.message}`);

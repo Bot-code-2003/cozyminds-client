@@ -74,7 +74,6 @@ const JournalEntry = () => {
   const [entry, setEntry] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJournalEntry = async () => {
@@ -166,7 +165,14 @@ const JournalEntry = () => {
       <div className="w-full max-w-5xl z-10">
         {/* Back Button */}
         <button
-          onClick={() => navigate("/")}
+          onClick={() => {
+            // Use browser back if available, otherwise go to dashboard
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              navigate("/");
+            }
+          }}
           className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-md bg-[var(--accent)]/90 hover:bg-[var(--accent)] transition-all duration-200 backdrop-blur-sm"
         >
           <ArrowLeft size={16} />

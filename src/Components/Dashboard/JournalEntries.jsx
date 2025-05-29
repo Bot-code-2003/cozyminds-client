@@ -16,6 +16,7 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useCoins } from "../../context/CoinContext";
+import { useJournals } from "../../context/JournalContext"; // Import JournalContext
 import Navbar from "./Navbar";
 import { getThemeDetails, getCardClass } from "./ThemeDetails";
 import JournalCard from "./JorunalCard";
@@ -79,6 +80,12 @@ const JournalEntries = () => {
   const navigate = useNavigate();
   const { darkMode } = useDarkMode();
   const { inventory } = useCoins();
+  const {
+    journalEntries: allEntries,
+    user,
+    loading: isLoading,
+    error,
+  } = useJournals(); // Use context to get data
 
   // State management
   const [journalEntries, setJournalEntries] = useState([]);
@@ -96,42 +103,30 @@ const JournalEntries = () => {
     entriesPerPage: 9,
   });
   const [userData, setUserData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Load user data and journal entries
+  // Load user data and filter journal entries by collection
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
+    if (!user) {
+      navigate("/login");
+      return;
+    }
 
-      try {
-        const user = JSON.parse(sessionStorage.getItem("user") || "null");
-        setUserData(user);
+    setUserData(user);
 
-        if (!user) {
-          navigate("/login");
-          return;
-        }
+    // Filter journal entries by the current collection
+    const filteredByCollection =
+      decodedCollection === "All"
+        ? allEntries
+        : allEntries.filter(
+            (entry) =>
+              entry.collections &&
+              Array.isArray(entry.collections) &&
+              entry.collections.includes(decodedCollection)
+          );
 
-        const response = await API.get(
-          `/journals/${user._id}/collection/${decodedCollection}`
-        );
-        const journals = response.data.journals || [];
-        setJournalEntries(journals);
-        setFilteredEntries(journals);
-      } catch (err) {
-        console.error("Error fetching journal entries:", err);
-        setError("Failed to load journal entries. Please try again later.");
-        setJournalEntries([]);
-        setFilteredEntries([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [navigate, decodedCollection]);
+    setJournalEntries(filteredByCollection);
+    setFilteredEntries(filteredByCollection);
+  }, [user, allEntries, decodedCollection, navigate]);
 
   // Filter and sort entries
   useEffect(() => {
@@ -203,9 +198,12 @@ const JournalEntries = () => {
     if (window.confirm("Are you sure you want to delete this journal entry?")) {
       try {
         await API.delete(`/journal/${id}`);
+        // Update local state
         setJournalEntries((prevEntries) =>
           prevEntries.filter((entry) => entry._id !== id)
         );
+        // Note: Ideally, we'd update the context here to keep the global state in sync
+        // For now, we're just updating the local state
       } catch (err) {
         console.error("Error deleting entry:", err);
         alert("Failed to delete entry. Please try again.");
@@ -470,6 +468,7 @@ const JournalEntries = () => {
                     formatDate={formatDate}
                     getThemeDetails={getThemeDetails}
                     getCardClass={getCardClass}
+                    deleteEntry={deleteEntry}
                   />
                 ))}
               </div>

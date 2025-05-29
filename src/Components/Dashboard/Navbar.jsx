@@ -18,40 +18,23 @@ import {
   Star,
 } from "lucide-react";
 import InGameMail from "./Mail/InGameMail";
-import axios from "axios";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useCoins } from "../../context/CoinContext.jsx";
+import { useMails } from "../../context/MailContext";
 
-// Configure API
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
-
-const Navbar = ({
-  name = "New Entry",
-  link = "/journaling-alt",
-  // coins = 0,
-  // isInitialized = false,
-}) => {
+const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mailModalOpen, setMailModalOpen] = useState(false);
-  const [mails, setMails] = useState([]);
-  const [hasUnreadMails, setHasUnreadMails] = useState(false);
-  const [userData, setUserData] = useState(null);
   const dropdownRef = useRef(null);
   const { darkMode, setDarkMode } = useDarkMode();
-
   const { coins } = useCoins();
+  const { mails, setMails, user: userData, hasUnreadMails } = useMails(); // Use hasUnreadMails from context
 
   const isRootPath = location.pathname === "/";
   const isJournalingAlt = location.pathname === "/journaling-alt";
-
-  // Load user data once
-  useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user") || "null");
-    setUserData(user);
-  }, []);
 
   const userId = userData?._id;
 
@@ -65,30 +48,6 @@ const Navbar = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // Fetch mails
-  useEffect(() => {
-    if (!userId) {
-      setMails([]);
-      setHasUnreadMails(false);
-      return;
-    }
-
-    const fetchMails = async () => {
-      try {
-        const response = await API.get(`/mails/${userId}`);
-        const fetchedMails = response.data.mails;
-        setMails(fetchedMails);
-        setHasUnreadMails(fetchedMails.some((mail) => !mail.read));
-      } catch (err) {
-        console.error("Error fetching mails:", err);
-        setMails([]);
-        setHasUnreadMails(false);
-      }
-    };
-
-    fetchMails();
-  }, [userId]);
 
   if (location.pathname === "/" && link === "/") return null;
 
@@ -352,13 +311,7 @@ const Navbar = ({
 
       {/* Mail Modal */}
       {mailModalOpen && (
-        <InGameMail
-          toggleMailModal={() => setMailModalOpen(false)}
-          mails={mails}
-          setMails={setMails}
-          setHasUnreadMails={setHasUnreadMails}
-          userId={userId}
-        />
+        <InGameMail toggleMailModal={() => setMailModalOpen(false)} />
       )}
     </>
   );

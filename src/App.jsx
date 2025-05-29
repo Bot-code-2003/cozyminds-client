@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+
 import { ThemeProvider } from "./context/ThemeContext";
 import { CoinProvider } from "./context/CoinContext";
+import { JournalProvider } from "./context/JournalContext";
+import { MailProvider } from "./context/MailContext";
 
 // Components
 import LandingPage from "./Components/Landing/LandingPage";
@@ -43,44 +46,46 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <CoinProvider>
-        <div>
-          <Routes>
-            {user ? (
-              <Route path="/" element={<Dashboard />} />
-            ) : (
-              <Route path="/" element={<LandingPage />} />
-            )}
-
-            <Route path="/aboutus" element={<AboutUs />} />
-            <Route path="/journaling-alt" element={<JournalingAlt />} />
-            {/* <Route
+      <JournalProvider>
+        <MailProvider>
+          <CoinProvider>
+            <div>
+              <Routes>
+                <Route
+                  path="/"
+                  element={user ? <Dashboard /> : <LandingPage />}
+                />
+                <Route path="/aboutus" element={<AboutUs />} />
+                <Route path="/journaling-alt" element={<JournalingAlt />} />
+                {/* <Route
               path="/login"
               element={<Login setUser={setUser} />} // Pass setUser to Login
             /> */}
-            {/* <Route path="/signup" element={<Signup setUser={setUser} />} /> */}
-            <Route path="/journal/:id" element={<JournalEntry />} />
-            <Route path="/cozyshop" element={<CozyShop />} />
-            <Route
-              path="/journal-entries/:collection"
-              element={<JournalEntries />}
-            />
-            <Route path="/privacy-policy" element={<Privacy />} />
-            <Route path="/terms-of-service" element={<Terms />} />
-            <Route path="/starlitblogs" element={<CozyMindsBlog />} />
-            <Route path="/blog/:slug" element={<BlogPage />} />
-            <Route path="/collections" element={<Collections />} />
-            <Route path="/profile-settings" element={<ProfileSettings />} />
-            <Route path="/features" element={<Features />} />
-            <Route
-              path="/mood-distributions"
-              element={<DetailedMoodDistributions />}
-            />
+                {/* <Route path="/signup" element={<Signup setUser={setUser} />} /> */}
+                <Route path="/journal/:id" element={<JournalEntry />} />
+                <Route path="/cozyshop" element={<CozyShop />} />
+                <Route
+                  path="/journal-entries/:collection"
+                  element={<JournalEntries />}
+                />
+                <Route path="/privacy-policy" element={<Privacy />} />
+                <Route path="/terms-of-service" element={<Terms />} />
+                <Route path="/starlitblogs" element={<CozyMindsBlog />} />
+                <Route path="/blog/:slug" element={<BlogPage />} />
+                <Route path="/collections" element={<Collections />} />
+                <Route path="/profile-settings" element={<ProfileSettings />} />
+                <Route path="/features" element={<Features />} />
+                <Route
+                  path="/mood-distributions"
+                  element={<DetailedMoodDistributions />}
+                />
 
-            <Route path="/sitemaster" element={<SiteMaster />} />
-          </Routes>
-        </div>
-      </CoinProvider>
+                <Route path="/sitemaster" element={<SiteMaster />} />
+              </Routes>
+            </div>
+          </CoinProvider>
+        </MailProvider>
+      </JournalProvider>
     </ThemeProvider>
   );
 };
