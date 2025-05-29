@@ -144,6 +144,12 @@ export const themeDetails = {
     dateIcon: "🎅",
     readMoreText: "Celebrate",
   },
+
+  theme_default: {
+    icon: "📝",
+    dateIcon: "📅",
+    readMoreText: "Read more",
+  },
 };
 
 // Function to get card class based on theme
@@ -212,6 +218,9 @@ export const getCardClass = (theme) => {
     // seasonal
     case "theme_christmas":
       return "card-christmas";
+
+    case "theme_default":
+      return "card-default";
 
     default:
       return "card-dark";

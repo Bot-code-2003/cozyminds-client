@@ -1,20 +1,3 @@
-import Forest from "../../../assets/forest.png";
-import Ocean from "../../../assets/water.png";
-import Black from "../../../assets/black-n.png";
-import CalmOcean from "../../../assets/calm-ocean-n.png";
-import NightSky from "../../../assets/night-sky-n.png";
-import EnergeticYellow from "../../../assets/energetic-yellow-n.png";
-import CozyRoom from "../../../assets/cozy-room-e.png";
-import CountrySide from "../../../assets/country-side-e.png";
-import MagicalRoom from "../../../assets/magical-room-e.png";
-import NothernLights from "../../../assets/nothern-lights-e.png";
-import PostApocalyptic from "../../../assets/post-apocalyptic-e.png";
-import SpaceObserve from "../../../assets/space-observe-e.png";
-import WinterCabin from "../../../assets/winter-cabin-e.png";
-
-//seasonal
-import Christmas from "../../../assets/christmas.png";
-
 // Example concept pack images - replace with your actual image paths
 import ConceptImage1 from "../../../assets/concept_sheep.png";
 import ConceptImage2 from "../../../assets/concept_sheep1.png";
@@ -30,14 +13,14 @@ export const shopItems = [
     id: "mailtheme_elf_from_elbaf",
     name: "Elf From Elbaf Mail Theme",
     price: 450,
-    image: ElfMailPreview,
     category: "mailtheme",
     featured: "New",
     featuredStyle: "feature-card",
     isEmoji: false,
-    previewClass: "elf-theme-preview",
+    cardClass: "card-elf-theme",
+    previewClass: "elf-theme-preview card-elf-theme", // Added card-elf-theme for consistent styling
     previewHtml: `
-  <div style="
+  <div class="card-elf-theme" style="
   background-image: url('${ElfMailPreview}');
   background-size: cover;
   background-repeat: no-repeat;
@@ -48,29 +31,28 @@ export const shopItems = [
   min-height: 400px;
   width: 100%;
   box-sizing: border-box;
-  background-color: rgba(0, 0, 0, 0.3);
-  background-blend-mode: overlay;
+  position: relative;
 ">
-  <p>Ara~ did the stars guide you back to me again, wanderer? <br /></p>
-  <p>Elaniel, an elf of Elbaf's twilight groves, whispers with the stars and walks where moonlight lingers. 🌙</p>
-  <p><br />~ Elaniel Moonshade</p>
+  <div style="position: relative; z-index: 2;">
+    <p>Ara~ did the stars guide you back to me again, wanderer? <br /></p>
+    <p>Elaniel, an elf of Elbaf's twilight groves, whispers with the stars and walks where moonlight lingers. 🌙</p>
+    <p><br />~ Elaniel Moonshade</p>
+  </div>
 </div>
-
 `,
   },
   {
     id: "mailtheme_wifu",
     name: "Rexona",
-
     price: 450,
-    image: WifeMailPreview,
     category: "mailtheme",
     featured: "New",
     featuredStyle: "feature-card",
     isEmoji: false,
-    previewClass: "waifu-theme-preview",
+    cardClass: "card-waifu-theme",
+    previewClass: "waifu-theme-preview card-waifu-theme", // Added card-waifu-theme for consistent styling
     previewHtml: `
-  <div style="
+  <div class="card-waifu-theme" style="
   background-image: url('${WifeMailPreview}');
   background-size: cover;
   background-repeat: no-repeat;
@@ -81,15 +63,15 @@ export const shopItems = [
   min-height: 400px;
   width: 100%;
   box-sizing: border-box;
-  background-color: rgba(0, 0, 0, 0.3);
-  background-blend-mode: overlay;
+  position: relative;
 ">
-  <p>~Hi, my darling senpai! 💖</p>
-  <p>Rexona, your sweet and sparkly wifu from the pastel realms, dreams of mochi dates and cozy cuddles under sakura trees. 🌸</p>
-  <p><br />~ Rexona</p>
+  <div style="position: relative; z-index: 2;">
+    <p>~Hi, my darling senpai! 💖</p>
+    <p>Rexona, your sweet and sparkly wifu from the pastel realms, dreams of mochi dates and cozy cuddles under sakura trees. 🌸</p>
+    <p><br />~ Rexona</p>
+  </div>
 </div>
-
-  `,
+`,
   },
   // New Concept Packs
   {
@@ -126,14 +108,13 @@ export const shopItems = [
       },
     ],
   },
-
   // Original shop items
   {
     id: "theme_christmas",
     name: "Christmas",
     description: "Celebrate the holidays with a festive theme",
     price: 0,
-    image: Christmas,
+    cardClass: "card-christmas",
     category: "theme",
     featured: "Seasonal 2025",
     featuredStyle: "feature-card",
@@ -144,7 +125,7 @@ export const shopItems = [
     name: "Cozy Room",
     description: "Relax and unwind in a cozy room",
     price: 100,
-    image: CozyRoom,
+    cardClass: "card-cozy-room",
     category: "theme",
     featured: "Exclusive",
     featuredStyle: "feature-card",
@@ -155,7 +136,7 @@ export const shopItems = [
     name: "Country Side",
     description: "Immerse yourself in a picturesque country side",
     price: 100,
-    image: CountrySide,
+    cardClass: "card-country-side",
     category: "theme",
     featured: "Exclusive",
     featuredStyle: "feature-card",
@@ -166,18 +147,18 @@ export const shopItems = [
     name: "Magical Room",
     description: "Enter a world of enchantment and magic",
     price: 100,
-    image: MagicalRoom,
+    cardClass: "card-magical-room",
     category: "theme",
     featured: "Exclusive",
     featuredStyle: "feature-card",
     isEmoji: false,
   },
   {
-    id: "theme_nothern_lights",
+    id: "theme_northern_lights",
     name: "Northern Lights",
     description: "Immerse yourself in the mesmerizing northern lights",
     price: 100,
-    image: NothernLights,
+    cardClass: "card-northern-lights",
     category: "theme",
     featured: "Exclusive",
     featuredStyle: "feature-card",
@@ -188,7 +169,7 @@ export const shopItems = [
     name: "Post-Apocalyptic",
     description: "Enter a world of dystopia and apocalypse",
     price: 100,
-    image: PostApocalyptic,
+    cardClass: "card-post-apocalyptic",
     category: "theme",
     featured: "Exclusive",
     featuredStyle: "feature-card",
@@ -199,7 +180,7 @@ export const shopItems = [
     name: "Space Observe",
     description: "Immerse yourself in the vastness of space",
     price: 100,
-    image: SpaceObserve,
+    cardClass: "card-space-observe",
     category: "theme",
     featured: "Exclusive",
     featuredStyle: "feature-card",
@@ -210,7 +191,7 @@ export const shopItems = [
     name: "Winter Cabin",
     description: "Relax and unwind in a cozy winter cabin",
     price: 100,
-    image: WinterCabin,
+    cardClass: "card-winter-cabin",
     category: "theme",
     featured: "Exclusive",
     featuredStyle: "feature-card",
@@ -221,7 +202,7 @@ export const shopItems = [
     name: "Forest Theme",
     description: "Transform your journal with serene forest visuals",
     price: 100,
-    image: Forest,
+    cardClass: "card-forest",
     category: "theme",
     featured: "Exclusive",
     featuredStyle: "feature-card",
@@ -232,7 +213,7 @@ export const shopItems = [
     name: "Ocean Theme",
     description: "Immerse yourself in tranquil ocean waves",
     price: 50,
-    image: Ocean,
+    cardClass: "card-ocean",
     category: "theme",
     isEmoji: false,
   },
@@ -241,7 +222,7 @@ export const shopItems = [
     name: "Black Theme",
     description: "Enter a world of darkness and intrigue",
     price: 50,
-    image: Black,
+    cardClass: "card-black",
     category: "theme",
     isEmoji: false,
   },
@@ -250,7 +231,7 @@ export const shopItems = [
     name: "Calm Ocean Theme",
     description: "Relax and unwind in a serene coastal haven",
     price: 50,
-    image: CalmOcean,
+    cardClass: "card-calm-ocean",
     category: "theme",
     isEmoji: false,
   },
@@ -259,7 +240,7 @@ export const shopItems = [
     name: "Night Sky Theme",
     description: "Immerse yourself in a mesmerizing night sky",
     price: 50,
-    image: NightSky,
+    cardClass: "card-night-sky",
     category: "theme",
     isEmoji: false,
   },
@@ -268,7 +249,7 @@ export const shopItems = [
     name: "Energetic Yellow Theme",
     description: "Immerse yourself in a vibrant and energetic yellow theme",
     price: 50,
-    image: EnergeticYellow,
+    cardClass: "card-energetic-yellow",
     category: "theme",
     isEmoji: false,
   },
@@ -280,8 +261,7 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#4A3A3A",
-    gradient: "radial-gradient(circle at center, #b06d86, #4a3a3a)",
+    cardClass: "card-solid-pink",
   },
   {
     id: "theme_solid_blue",
@@ -291,8 +271,7 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#2E2B4F",
-    gradient: "radial-gradient(circle at center, #47487a, #2e2b4f)",
+    cardClass: "card-solid-blue",
   },
   {
     id: "theme_solid_green",
@@ -302,8 +281,7 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#1F2924",
-    gradient: "radial-gradient(circle at center, #416b5b, #1f2924)",
+    cardClass: "card-solid-green",
   },
   {
     id: "theme_solid_lavender",
@@ -313,8 +291,7 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#3F3A4A",
-    gradient: "radial-gradient(circle at center, #796687, #3f3a4a)",
+    cardClass: "card-solid-lavender",
   },
   {
     id: "theme_solid_peach",
@@ -324,8 +301,17 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#4F3D32",
-    gradient: "radial-gradient(circle at center, #a76d50, #4f3d32)",
+    cardClass: "card-solid-peach",
+  },
+  {
+    id: "theme_solid_mint",
+    name: "Ashen Mint",
+    description: "A deep mint theme with ashen tones",
+    price: 10,
+    image: null,
+    category: "theme",
+    isEmoji: false,
+    cardClass: "card-solid-mint",
   },
   {
     id: "theme_solid_yellow",
@@ -335,8 +321,7 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#4A3F2A",
-    gradient: "radial-gradient(circle at center, #b08b3f, #4a3f2a)",
+    cardClass: "card-solid-yellow",
   },
   {
     id: "theme_solid_coral",
@@ -346,8 +331,7 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#543737",
-    gradient: "radial-gradient(circle at center, #a7544c, #543737)",
+    cardClass: "card-solid-coral",
   },
   {
     id: "theme_solid_lilac",
@@ -357,8 +341,7 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#4B3C4C",
-    gradient: "radial-gradient(circle at center, #8c688e, #4b3c4c)",
+    cardClass: "card-solid-lilac",
   },
   {
     id: "theme_solid_aqua",
@@ -368,7 +351,6 @@ export const shopItems = [
     image: null,
     category: "theme",
     isEmoji: false,
-    color: "#2F3E3F",
-    gradient: "radial-gradient(circle at center, #4e767b, #2f3e3f)",
+    cardClass: "card-solid-aqua",
   },
 ];

@@ -8,7 +8,6 @@ import { useCoins } from "../../context/CoinContext";
 import Navbar from "../Dashboard/Navbar";
 import JournalEditor from "./JournalEditor";
 import ThemeSelector from "./ThemeSelector";
-import StepIndicator from "./StepIndicator";
 import { getThemeDetails } from "../Dashboard/ThemeDetails";
 import SecondStep from "./SecondStep";
 
@@ -35,7 +34,7 @@ const JournalingAlt = () => {
   const [selectedMood, setSelectedMood] = useState(null);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedCollections, setSelectedCollections] = useState(["All"]);
-  const [selectedTheme, setSelectedTheme] = useState(null);
+  const [selectedTheme, setSelectedTheme] = useState("theme_default");
 
   // Data state
   const [existingTags, setExistingTags] = useState([]);
@@ -55,7 +54,7 @@ const JournalingAlt = () => {
       try {
         const userData = JSON.parse(sessionStorage.getItem("user"));
 
-        console.log("User data:", userData.inventory);
+        // console.log("User data:", userData.inventory);
 
         if (!userData || !userData._id) return;
 
@@ -74,6 +73,8 @@ const JournalingAlt = () => {
           }));
 
         setAvailableThemes(themes);
+
+        // console.log("Available themes:", availableThemes);
 
         const response = await API.get(`/journals/${userData._id}`);
         const journals = response.data.journals || [];
@@ -112,7 +113,7 @@ const JournalingAlt = () => {
     fetchExistingData();
   }, [inventory]);
 
-  console.log("Available themes:", availableThemes);
+  // console.log("Available themes:", availableThemes);
 
   // Update word count and reset isSaved
   useEffect(() => {

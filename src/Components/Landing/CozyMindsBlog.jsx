@@ -267,7 +267,7 @@ const CozyMindsBlog = () => {
                           <img
                             src={post.image || "/placeholder.svg"}
                             alt={post.title}
-                            className="w-full h-56 sm:h-72 md:h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            className="w-full h-56 sm:h-72 max-h-[512px] md:h-full object-cover group-hover:scale-110 transition-transform duration-700"
                           />
                           <div className="absolute top-4 sm:top-6 left-4 sm:left-6">
                             <span className="px-3 sm:px-4 py-2 bg-[#5999a8] text-white text-sm font-bold rounded-full shadow-lg">

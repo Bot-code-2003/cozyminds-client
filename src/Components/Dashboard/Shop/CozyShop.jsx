@@ -162,7 +162,7 @@ const CozyShop = () => {
     <div className="min-h-screen bg-[var(--bg-secondary)] text-gray-900 dark:text-gray-100">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto py-8 px-2 sm:px-0">
         {/* Compact Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-center mb-6">Shop</h1>

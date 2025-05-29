@@ -104,14 +104,14 @@ const SecondStep = ({
 
   // Mood data
   const moods = [
-    { emoji: "😄", name: "Happy", color: "#10B981" },
-    { emoji: "😐", name: "Neutral", color: "#6B7280" },
-    { emoji: "😔", name: "Sad", color: "#3B82F6" },
-    { emoji: "😡", name: "Angry", color: "#EF4444" },
-    { emoji: "😰", name: "Anxious", color: "#8B5CF6" },
-    { emoji: "🥱", name: "Tired", color: "#64748B" },
-    { emoji: "🤔", name: "Reflective", color: "#059669" },
-    { emoji: "🥳", name: "Excited", color: "#F59E0B" },
+    { emoji: "😄", name: "Happy", color: "#3EACA8" },
+    { emoji: "😐", name: "Neutral", color: "#547AA5" },
+    { emoji: "😔", name: "Sad", color: "#6A67CE" },
+    { emoji: "😡", name: "Angry", color: "#E07A5F" },
+    { emoji: "😰", name: "Anxious", color: "#9B72CF" },
+    { emoji: "🥱", name: "Tired", color: "#718EBC" },
+    { emoji: "🤔", name: "Reflective", color: "#5D8A66" },
+    { emoji: "🥳", name: "Excited", color: "#F2B147" },
   ];
 
   const availableTags = filteredTags.filter(

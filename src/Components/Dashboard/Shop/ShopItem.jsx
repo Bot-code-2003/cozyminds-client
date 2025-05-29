@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Eye, X } from "lucide-react";
+import { Star, Eye, X, Mail } from "lucide-react";
 import { useState, useCallback } from "react";
 
 const ShopItem = ({
@@ -42,29 +42,6 @@ const ShopItem = ({
     [closeModal]
   );
 
-  // Get background styles
-  const getBackgroundStyle = () => {
-    if (item.isEmoji) return {};
-
-    if (item.image) {
-      return {
-        backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%), url(${item.image})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      };
-    }
-
-    if (item.gradient) {
-      return { backgroundImage: item.gradient };
-    }
-
-    if (item.color) {
-      return { backgroundColor: item.color };
-    }
-
-    return {};
-  };
-
   return (
     <>
       {/* Shop Item Card */}
@@ -72,18 +49,19 @@ const ShopItem = ({
         className={`
           relative group h-60 flex flex-col overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 
           bg-white dark:bg-gray-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer
-          ${item.featuredStyle || ""}
+          ${item.featuredStyle || ""} ${
+          item.cardClass || `card-${item.id.replace("theme_", "")}`
+        }
         `}
-        style={getBackgroundStyle()}
         role="button"
         tabIndex={0}
         aria-label={`${item.name} - ${item.price} coins`}
       >
         {/* Badges */}
-        <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10">
+        <div className="  flex justify-between items-start z-10">
           {/* Featured Badge */}
           {item.featured && (
-            <div className="flex items-center gap-1 px-2 py-1 bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-white text-xs font-medium rounded-full backdrop-blur-sm">
+            <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-white text-xs font-medium rounded-full backdrop-blur-sm">
               {item.featured === "Exclusive" && (
                 <Star size={10} className="text-yellow-500" />
               )}
@@ -92,8 +70,8 @@ const ShopItem = ({
           )}
 
           {/* Category Badge */}
-          <div className="px-2 py-1 bg-gray-900/80 text-white text-xs font-medium rounded-full backdrop-blur-sm">
-            {item.category}
+          <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 bg-gray-900/80 text-white text-xs font-medium rounded-full backdrop-blur-sm">
+            {item.category === "mailtheme" ? "Mail Theme" : item.category}
           </div>
         </div>
 
@@ -107,6 +85,13 @@ const ShopItem = ({
             >
               {item.image}
             </span>
+          </div>
+        )}
+
+        {/* Mail Theme Icon */}
+        {item.category === "mailtheme" && !item.isEmoji && (
+          <div className="flex-grow flex items-center justify-center">
+            <Mail size={40} />
           </div>
         )}
 
@@ -203,7 +188,10 @@ const ShopItem = ({
             {/* Modal Content */}
             <div className="prose prose-sm max-w-none dark:prose-invert">
               {item.previewHtml ? (
-                <div dangerouslySetInnerHTML={{ __html: item.previewHtml }} />
+                <div
+                  className={item.cardClass || `card-${item.id}`}
+                  dangerouslySetInnerHTML={{ __html: item.previewHtml }}
+                />
               ) : (
                 <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   Preview not available for this item.

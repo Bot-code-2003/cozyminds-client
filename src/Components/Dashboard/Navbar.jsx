@@ -108,7 +108,7 @@ const Navbar = ({
 
   return (
     <>
-      <nav className="w-full bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 py-3 px-4 md:px-6 flex justify-between items-center sticky top-0 z-20 shadow-sm">
+      <nav className="w-full bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 py-3 px-4 md:px-6 flex justify-between items-center sticky top-0 z-[999] shadow-sm">
         {/* Logo */}
         <button
           onClick={() => handleNavigation("/")}

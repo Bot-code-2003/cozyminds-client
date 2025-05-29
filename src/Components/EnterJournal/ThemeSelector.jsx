@@ -76,22 +76,6 @@ const ThemeSelector = ({
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
-            <button
-              onClick={() => setSelectedTheme(null)}
-              className={`group p-4 flex flex-col items-center justify-center rounded-xl transition-all duration-300 border-2 ${
-                !selectedTheme
-                  ? "ring-2 ring-offset-2 ring-purple-500 transform scale-105 shadow-lg border-purple-500"
-                  : "hover:bg-[var(--bg-primary)] hover:shadow-md hover:scale-105 border-[var(--border)] hover:border-purple-300"
-              }`}
-            >
-              <span className="text-2xl mb-2 transition-transform duration-200 group-hover:scale-110">
-                📝
-              </span>
-              <span className="text-sm font-medium text-[var(--text-primary)]">
-                None
-              </span>
-            </button>
-
             {availableThemes.map((theme) => (
               <button
                 key={theme.id}

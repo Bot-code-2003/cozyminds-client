@@ -198,7 +198,7 @@ const InGameMail = ({
   // Custom styles for deep sea fantasy theme
   const fantasyStyles = {
     modalBg:
-      "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md",
+      "fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md",
     mailContainer: `w-full max-w-md md:max-w-2xl lg:max-w-7xl min-h-[90vh] overflow-hidden border ${
       darkMode
         ? "bg-[#1a1a1a] border-[#404040] shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
