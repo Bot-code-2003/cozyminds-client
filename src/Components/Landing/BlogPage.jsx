@@ -25,7 +25,6 @@ import { useDarkMode } from "../../context/ThemeContext";
 
 const BlogPage = ({ onBack }) => {
   const { darkMode, setDarkMode } = useDarkMode();
-  // Get auth modal controls
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
   const [post, setPost] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,25 +34,20 @@ const BlogPage = ({ onBack }) => {
   const { slug } = useParams();
 
   // Parse content with proper formatting
-  // Parse content with proper formatting
-  // Parse content with proper formatting
   const parseContent = (content) => {
     if (!content) return [];
 
-    // Split by double or single newlines, preserving content structure
     const sections = content
-      .split(/\n{1,2}/) // Split by one or two newlines
+      .split(/\n{1,2}/)
       .map((section) => section.trim())
-      .filter(Boolean); // Remove empty sections
+      .filter(Boolean);
 
     let parsedSections = [];
     let currentList = null;
 
     sections.forEach((section, index) => {
-      // Handle headings with **text**
       if (section.startsWith("**") && section.endsWith("**")) {
         if (currentList) {
-          // Push any accumulated list before starting a new section
           parsedSections.push(currentList);
           currentList = null;
         }
@@ -65,7 +59,6 @@ const BlogPage = ({ onBack }) => {
         return;
       }
 
-      // Handle bullet lists (unordered)
       if (section.startsWith("- ") || section.startsWith("• ")) {
         if (!currentList || currentList.type !== "list") {
           if (currentList) {
@@ -81,7 +74,6 @@ const BlogPage = ({ onBack }) => {
         return;
       }
 
-      // Handle numbered lists (ordered)
       if (section.match(/^\d+\.\s/)) {
         if (!currentList || currentList.type !== "orderedList") {
           if (currentList) {
@@ -97,7 +89,6 @@ const BlogPage = ({ onBack }) => {
         return;
       }
 
-      // Handle regular paragraphs
       if (currentList) {
         parsedSections.push(currentList);
         currentList = null;
@@ -109,7 +100,6 @@ const BlogPage = ({ onBack }) => {
       });
     });
 
-    // Push any remaining list
     if (currentList) {
       parsedSections.push(currentList);
     }
@@ -117,8 +107,6 @@ const BlogPage = ({ onBack }) => {
     return parsedSections;
   };
 
-  // Format text with bold and italic
-  // Format text with bold, italic, and links
   const formatText = (text) => {
     return text
       .replace(
@@ -132,13 +120,11 @@ const BlogPage = ({ onBack }) => {
       );
   };
 
-  // Get post from slug parameter
   useEffect(() => {
     if (slug) {
       const foundPost = BlogPostData.find((post) => post.slug === slug);
       if (foundPost) {
         setPost(foundPost);
-        // Update page title
         document.title = `${foundPost.title} | Starlit Journals Blog`;
       }
     }
@@ -176,7 +162,6 @@ const BlogPage = ({ onBack }) => {
         url: window.location.href,
       });
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
       alert("Link copied to clipboard!");
     }
@@ -209,6 +194,20 @@ const BlogPage = ({ onBack }) => {
         <meta name="keywords" content={post.seo.keywords} />
         <meta name="author" content={post.author} />
         <link rel="canonical" href={post.seo.canonicalUrl} />
+        {/* Open Graph Meta Tags */}
+        <meta property="og:title" content={post.seo.ogTitle} />
+        <meta property="og:description" content={post.seo.ogDescription} />
+        <meta property="og:image" content={post.seo.ogImage} />
+        <meta property="og:url" content={post.seo.canonicalUrl} />
+        <meta property="og:type" content={post.seo.contentType} />
+        {/* Twitter Card Meta Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.seo.twitterTitle} />
+        <meta
+          name="twitter:description"
+          content={post.seo.twitterDescription}
+        />
+        <meta name="twitter:image" content={post.seo.twitterImage} />
       </head>
 
       {/* Enhanced Gradient Accents */}
@@ -544,20 +543,17 @@ const BlogPage = ({ onBack }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {(() => {
-              // Get related posts based on category and tags
               const relatedPosts = BlogPostData.filter((p) => {
-                if (p.id === post.id) return false; // Exclude current post
+                if (p.id === post.id) return false;
 
-                // Check if same category or has common tags
                 const sameCategory = p.category === post.category;
                 const commonTags = p.tags.some((tag) =>
                   post.tags.includes(tag)
                 );
 
                 return sameCategory || commonTags;
-              }).slice(0, 3); // Show max 3 recommendations
+              }).slice(0, 3);
 
-              // If we don't have enough related posts, fill with other posts
               if (relatedPosts.length < 3) {
                 const otherPosts = BlogPostData.filter(
                   (p) =>
