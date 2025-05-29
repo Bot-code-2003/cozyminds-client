@@ -3,34 +3,37 @@ import axios from "axios";
 import { FolderOpen, Plus, Calendar, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDarkMode } from "../../context/ThemeContext";
-import { useJournals } from "../../context/JournalContext"; // Import JournalContext
+import { useJournals } from "../../context/JournalContext";
 import Navbar from "./Navbar";
+import { getCardClass } from "./ThemeDetails";
 
 const Collections = () => {
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
   const { darkMode } = useDarkMode();
-  const { journalEntries, user, loading: isLoading, error } = useJournals(); // Use context to get data
+  const {
+    journalEntries,
+    user,
+    loading: isLoading,
+    error,
+    setError,
+    setJournalEntries,
+  } = useJournals();
   const [collections, setCollections] = useState(["All"]);
   const [userData, setUserData] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
   const navigate = useNavigate();
 
-  // Load user data and collections from context
+  // Load user data and collections
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      navigate("/");
       return;
     }
 
     setUserData(user);
-
-    // Set collections - always include "All" first
     const uniqueCollections = ["All"];
-
-    // Get all unique collections from journal entries
     journalEntries.forEach((journal) => {
       if (journal.collections && Array.isArray(journal.collections)) {
         journal.collections.forEach((collection) => {
@@ -40,27 +43,20 @@ const Collections = () => {
         });
       }
     });
-
     setCollections(uniqueCollections);
   }, [user, journalEntries, navigate]);
 
-  // Logout
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     navigate("/");
   };
 
-  // Navigate to journal entries of a specific collection
   const handleCollectionSelect = (collection) => {
     navigate(`/journal-entries/${encodeURIComponent(collection)}`);
   };
 
-  // Count entries for a collection
   const countEntriesInCollection = (collection) => {
-    if (collection === "All") {
-      return journalEntries.length;
-    }
-
+    if (collection === "All") return journalEntries.length;
     return journalEntries.filter(
       (entry) =>
         entry.collections &&
@@ -69,48 +65,70 @@ const Collections = () => {
     ).length;
   };
 
-  // Show delete confirmation modal
-  const handleDeleteClick = (e, collection) => {
-    e.stopPropagation(); // Prevent navigation to collection
+  // Get up to 4 unique themes for a collection
+  const getCollectionThemes = (collection) => {
+    let entries =
+      collection === "All"
+        ? journalEntries
+        : journalEntries.filter(
+            (entry) =>
+              entry.collections &&
+              Array.isArray(entry.collections) &&
+              entry.collections.includes(collection)
+          );
 
-    // Don't allow deleting the "All" collection
-    if (collection === "All") {
-      return;
+    // Get unique themes
+    const themesSet = new Set(
+      entries.filter((entry) => entry.theme).map((entry) => entry.theme)
+    );
+    let themes = Array.from(themesSet).slice(0, 4);
+
+    // If no themes, use default
+    if (themes.length === 0) {
+      themes = ["default"];
     }
 
+    return themes;
+  };
+
+  // Get dynamic grid classes based on number of themes
+  const getGridClasses = (themeCount) => {
+    switch (themeCount) {
+      case 1:
+        return "grid-cols-1 grid-rows-1";
+      case 2:
+        return "grid-cols-2 grid-rows-1";
+      case 3:
+        return "grid grid-cols-2 grid-rows-2"; // Custom layout for 3
+      case 4:
+        return "grid-cols-2 grid-rows-2";
+      default:
+        return "grid-cols-1 grid-rows-1";
+    }
+  };
+
+  const handleDeleteClick = (e, collection) => {
+    e.stopPropagation();
+    if (collection === "All") return;
     setCollectionToDelete(collection);
     setShowDeleteModal(true);
   };
 
-  // Cancel delete action
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
     setCollectionToDelete(null);
   };
 
-  // Confirm and execute delete action
   const handleConfirmDelete = async () => {
     if (!collectionToDelete || collectionToDelete === "All") return;
-
     setIsDeleting(true);
-
     try {
-      // Call API to delete the collection
       await API.delete(
         `/collection/${userData._id}/${encodeURIComponent(collectionToDelete)}`
       );
-
-      // Update the local state to reflect the change
       setCollections(collections.filter((c) => c !== collectionToDelete));
-
-      // Optionally refresh the journal entries by fetching again
       const response = await API.get(`/journals/${userData._id}`);
-      const updatedEntries = response.data.journals || [];
-      // Note: Since we're using context, ideally we'd update the context instead.
-      // For now, we'll just update the local state, but you might want to update the context as well.
-      setJournalEntries(updatedEntries);
-
-      // Close the modal
+      setJournalEntries(response.data.journals || []);
       setShowDeleteModal(false);
       setCollectionToDelete(null);
     } catch (err) {
@@ -122,8 +140,7 @@ const Collections = () => {
   };
 
   return (
-    <div>
-      {/* Top navigation bar */}
+    <div className={`min-h-screenbg-[var(--bg-primary)]`}>
       <Navbar
         userData={userData}
         handleLogout={handleLogout}
@@ -131,123 +148,185 @@ const Collections = () => {
         link="/journaling-alt"
       />
 
-      {/* Main content */}
-      <main className="max-w-7xl mt-10 mb-20 mx-auto py-3 px-6 transition-colors duration-300">
-        {/* Header section */}
-        <div className="mb-8">
-          <div className="text-center">
-            <h1 className="text-2xl mb-2">Journal Collections</h1>
-            <p className={"text-[var(--text-secondary)]"}>
-              Browse and manage your journal collections
-            </p>
-          </div>
-        </div>
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <header className="text-center mb-12">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Your Journal Collections
+          </h1>
+          <p className="mt-2 text-gray-500 dark:text-gray-400">
+            Discover and manage your journal memories
+          </p>
+        </header>
 
-        {/* Loading state */}
         {isLoading && (
-          <div>
-            <p className="text-lg">Loading collections...</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg aspect-[3/4] overflow-hidden"
+              >
+                <div className="grid grid-cols-2 grid-rows-2 gap-1 h-3/4">
+                  {[...Array(4)].map((_, j) => (
+                    <div
+                      key={j}
+                      className="bg-gray-300 dark:bg-gray-600 w-full h-full"
+                    ></div>
+                  ))}
+                </div>
+                <div className="h-1/4 bg-gray-300 dark:bg-gray-600 p-4"></div>
+              </div>
+            ))}
           </div>
         )}
 
-        {/* Error state */}
         {error && (
-          <div>
-            <p className="text-lg mb-2">Error</p>
-            <p className={`text-[var(--text-secondary)]`}>{error}</p>
+          <div className="text-center p-6 bg-red-100 dark:bg-red-900/30 rounded-lg">
+            <p className="text-lg font-semibold text-red-600 dark:text-red-400">
+              Error
+            </p>
+            <p className="text-gray-600 dark:text-gray-400">{error}</p>
           </div>
         )}
 
-        {/* Collections View */}
         {!isLoading && !error && (
-          <div className="mb-8">
-            <h2 className="text-lg font-bold mb-4">Your Collections</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {collections.map((collection) => (
-                <div
-                  key={collection}
-                  onClick={() => handleCollectionSelect(collection)}
-                  className="border border-[var(--border)] shadow-elegant p-6 rounded-lg cursor-pointer bg-[var(--bg-secondary)] hover:bg-[var(--bg-navbar)] transition-colors relative"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-medium">{collection}</h3>
-                    <div className="flex items-center">
-                      {collection !== "All" && (
-                        <button
-                          onClick={(e) => handleDeleteClick(e, collection)}
-                          className="mr-2 p-1 hover:text-red-500 transition-colors"
-                          title="Delete collection"
+          <section>
+            <h2 className="text-xl font-semibold mb-6">Your Collections</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {collections.map((collection) => {
+                const themes = getCollectionThemes(collection);
+                const gridClasses = getGridClasses(themes.length);
+                return (
+                  <div
+                    key={collection}
+                    onClick={() => handleCollectionSelect(collection)}
+                    className="group relative bg-[var(--bg-secondary)] border border-[var(--border)] curser-pointer rounded-lg aspect-[3/4] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleCollectionSelect(collection)
+                    }
+                  >
+                    <div className={`grid gap-1 h-3/4 ${gridClasses}`}>
+                      {themes.map((theme, i) => (
+                        <div
+                          key={`${collection}-theme-${i}`}
+                          className={`w-full h-full bg-cover bg-center ${getCardClass(
+                            theme
+                          )} ${
+                            themes.length === 3 && i === 0 ? "col-span-2" : ""
+                          }`}
+                          aria-label={`Theme preview ${
+                            i + 1
+                          } for ${collection}`}
                         >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
-                      <FolderOpen size={20} className="text-[var(--accent)]" />
+                          {theme === "default" && (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-600">
+                              <FolderOpen
+                                size={24}
+                                className="text-gray-400 dark:text-gray-500"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="h-1/4 p-4 flex items-center justify-between bg-white dark:bg-gray-800">
+                      <h3 className="text-lg font-medium truncate">
+                        {collection}
+                      </h3>
+                      <div className="flex items-center space-x-2">
+                        {collection !== "All" && (
+                          <button
+                            onClick={(e) => handleDeleteClick(e, collection)}
+                            className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                            title={`Delete ${collection} collection`}
+                            aria-label={`Delete ${collection} collection`}
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        )}
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                          {countEntriesInCollection(collection)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    {countEntriesInCollection(collection)} entries
-                  </p>
-                </div>
-              ))}
-
-              {/* New Collection Link */}
+                );
+              })}
               <Link
                 to="/journaling-alt"
-                className="border border-dashed bg-[var(--bg-secondary)] border-[var(--border)] shadow-elegant p-6 rounded-lg cursor-pointer hover:bg-[var(--bg-navbar)] transition-colors flex flex-col items-center justify-center text-center"
+                className="flex items-center justify-center bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg aspect-[3/4] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                aria-label="Create new collection"
               >
-                <Plus size={24} className="text-[var(--accent)] mb-2" />
-                <h3 className="text-lg font-medium">New Collection</h3>
-                <p className="text-sm text-[var(--text-secondary)]">
-                  Create a new journal entry in a new collection
-                </p>
+                <div className="text-center">
+                  <Plus size={32} className="text-blue-500 mx-auto mb-2" />
+                  <h3 className="text-lg font-medium">New Collection</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Start a new journal entry
+                  </p>
+                </div>
               </Link>
+            </div>
+          </section>
+        )}
+
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-2xl animate-fade-in">
+              <h3 className="text-xl font-bold mb-4">Delete Collection</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Are you sure you want to delete the "
+                <span className="font-semibold">{collectionToDelete}</span>"
+                collection? This will remove it from all journal entries, but
+                the entries will remain.
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={handleCancelDelete}
+                  className="px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                  disabled={isDeleting}
+                  aria-label={
+                    isDeleting
+                      ? "Deleting collection"
+                      : "Confirm delete collection"
+                  }
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+              </div>
             </div>
           </div>
         )}
+
+        <Link
+          to="/journaling-alt"
+          className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-all duration-300"
+          aria-label="Create new journal entry"
+        >
+          <Calendar size={24} />
+        </Link>
       </main>
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--bg-primary)] p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Delete Collection</h3>
-            <p className="mb-6">
-              Are you sure you want to delete the "{collectionToDelete}"
-              collection? This will remove this collection from all journal
-              entries, but the entries themselves will remain in your journal.
-            </p>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={handleCancelDelete}
-                className="px-4 py-2 border border-[var(--border)] rounded-md hover:bg-[var(--bg-navbar)]"
-                disabled={isDeleting}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                disabled={isDeleting}
-              >
-                {isDeleting ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Mobile action button */}
-      <Link
-        to="/journaling-alt"
-        className={`md:hidden fixed bottom-6 right-6 w-12 h-12 bg-[var(--accent)] flex items-center justify-center shadow-elegant`}
-      >
-        <Calendar size={24} className="text-white" />
-      </Link>
-
-      {/* Custom CSS */}
       <style jsx>{`
-        .shadow-elegant {
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
         }
       `}</style>
     </div>

@@ -159,7 +159,7 @@ const CozyShop = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-secondary)] text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-gray-900 dark:text-gray-100">
       <Navbar />
 
       <div className="max-w-7xl mx-auto py-8 px-2 sm:px-0">
