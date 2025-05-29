@@ -7,6 +7,7 @@ import { useDarkMode } from "../context/ThemeContext";
 import { Tag, BarChart2, ArrowLeft } from "lucide-react";
 import axios from "axios";
 import { getCardClass, getThemeDetails } from "./Dashboard/ThemeDetails";
+import { useNavigate } from "react-router-dom";
 
 // Mood styling configurations
 const moodStyles = {
@@ -73,6 +74,7 @@ const JournalEntry = () => {
   const [entry, setEntry] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJournalEntry = async () => {
@@ -163,13 +165,13 @@ const JournalEntry = () => {
       {/* Main Content Container */}
       <div className="w-full max-w-5xl z-10">
         {/* Back Button */}
-        <Link
-          to="/"
+        <button
+          onClick={() => navigate("/")}
           className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-md bg-[var(--accent)]/90 hover:bg-[var(--accent)] transition-all duration-200 backdrop-blur-sm"
         >
           <ArrowLeft size={16} />
           <span className="text-sm font-medium tracking-wider">BACK</span>
-        </Link>
+        </button>
 
         {/* Journal Container */}
         <div className="bg-[var(--bg-primary)]/70 backdrop-blur-sm rounded-xl shadow-lg border border-[var(--border)] overflow-hidden">
