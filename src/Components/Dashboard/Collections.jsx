@@ -165,7 +165,7 @@ const Collections = () => {
                 key={i}
                 className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg aspect-[3/4] overflow-hidden"
               >
-                <div className="grid grid-cols-2 grid-rows-2 gap-1 h-3/4">
+                <div className="grid grid-cols-2 grid-rows-2  h-3/4">
                   {[...Array(4)].map((_, j) => (
                     <div
                       key={j}
@@ -206,7 +206,7 @@ const Collections = () => {
                       e.key === "Enter" && handleCollectionSelect(collection)
                     }
                   >
-                    <div className={`grid gap-1 h-3/4 ${gridClasses}`}>
+                    <div className={`grid  h-3/4 ${gridClasses}`}>
                       {themes.map((theme, i) => (
                         <div
                           key={`${collection}-theme-${i}`}

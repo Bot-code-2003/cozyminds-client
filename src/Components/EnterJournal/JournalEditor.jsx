@@ -24,17 +24,7 @@ const JournalEditor = ({
   }, []);
 
   return (
-    <div className="mx-auto space-y-8 max-w-7xl">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold text-black dark:text-white">
-          Write Your Entry
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          Capture your thoughts and experiences
-        </p>
-      </div>
-
+    <div className="mx-auto space-y-2 max-w-7xl">
       {/* Main Editor Card */}
       <div className="bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border)] p-6">
         {/* Title Section */}
@@ -47,9 +37,6 @@ const JournalEditor = ({
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Entry Title
               </h2>
-              <p className="text-sm text-[var(--text-secondary)]">
-                Give your entry a memorable title
-              </p>
             </div>
           </div>
 
@@ -59,7 +46,7 @@ const JournalEditor = ({
             value={journalTitle}
             onChange={(e) => setJournalTitle(e.target.value)}
             placeholder="What's on your mind today?"
-            className="w-full px-4 py-3 text-xl font-semibold border border-[var(--border)] rounded-xl bg-transparent text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+            className="w-full px-4 py-3 text-xl font-semibold border border-[var(--border)] rounded-xl bg-transparent text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-1 focus:border-transparent transition-all duration-200"
           />
         </div>
 
@@ -73,9 +60,6 @@ const JournalEditor = ({
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Your Thoughts
               </h2>
-              <p className="text-sm text-[var(--text-secondary)]">
-                Express yourself freely
-              </p>
             </div>
           </div>
 
@@ -84,7 +68,7 @@ const JournalEditor = ({
             value={journalText}
             onChange={(e) => setJournalText(e.target.value)}
             placeholder="Start writing your thoughts, experiences, or reflections..."
-            className="w-full min-h-[350px] resize-none border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] text-base leading-relaxed bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            className="w-full min-h-[350px] resize-none border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] text-base leading-relaxed bg-transparent focus:outline-none focus:ring-1  focus:border-transparent transition-all duration-200"
           />
         </div>
 

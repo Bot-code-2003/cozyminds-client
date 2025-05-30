@@ -123,16 +123,6 @@ const SecondStep = ({
 
   return (
     <div className="mx-auto space-y-8 max-w-7xl">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold text-black dark:text-white">
-          Customize Your Entry
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          Add mood, tags, and organize into collections
-        </p>
-      </div>
-
       {/* Mood Selector - Prominent placement */}
       <div className="bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border)] p-6">
         <div className="flex items-center gap-3 mb-6">

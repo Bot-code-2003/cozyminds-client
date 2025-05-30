@@ -245,7 +245,7 @@ const JournalingAlt = () => {
         )}
 
         {/* <StepIndicator currentStep={currentStep} totalSteps={3} /> */}
-        <div className="mt-6">{renderCurrentStep()}</div>
+        <div className="mt-1">{renderCurrentStep()}</div>
       </main>
     </div>
   );

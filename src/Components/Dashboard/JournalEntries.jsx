@@ -106,11 +106,6 @@ const JournalEntries = () => {
 
   // Load user data and filter journal entries by collection
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
     setUserData(user);
 
     // Filter journal entries by the current collection
