@@ -158,7 +158,7 @@ const JournalingAlt = () => {
       };
       await API.post("/saveJournal", journalEntry);
       setIsSaved(true);
-      setTimeout(() => navigate("/collections"), 1000);
+      setTimeout(() => window.location.replace("/collections"), 1000);
     } catch (error) {
       setSaveError(error.response?.data?.message || "Failed to save journal.");
       setIsSaving(false);

@@ -122,7 +122,7 @@ const SecondStep = ({
   );
 
   return (
-    <div className="mx-auto space-y-8 max-w-7xl">
+    <div className="mx-auto space-y-8">
       {/* Mood Selector - Prominent placement */}
       <div className="bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border)] p-6">
         <div className="flex items-center gap-3 mb-6">

@@ -23,24 +23,27 @@ const MainSection = ({
   const quickActions = [
     {
       to: "/journaling-alt",
-      icon: <Plus size={28} />,
+      icon: <Plus size={24} />,
       title: "New Entry",
       description: "Start writing today",
-      gradient: "linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)",
+      bgColor: "#e0c3fc", // Soft lavender
+      hoverColor: "#d1b3f5",
     },
     {
       to: "/profile-settings",
-      icon: <User size={28} />,
+      icon: <User size={24} />,
       title: "Profile",
       description: "Personalize your space",
-      gradient: "linear-gradient(135deg, #f97316 0%, #facc15 100%)",
+      bgColor: "#ffd4a3", // Warm peach
+      hoverColor: "#ffcc8a",
     },
     {
       to: "/collections",
-      icon: <BookOpen size={28} />,
+      icon: <BookOpen size={24} />,
       title: "Library",
       description: "Revisit your stories",
-      gradient: "linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)",
+      bgColor: "#a8e6cf", // Mint green
+      hoverColor: "#96ddc2",
     },
   ];
 
@@ -53,21 +56,24 @@ const MainSection = ({
         transition={{ duration: 0.5 }}
         className="mb-12 text-center relative"
       >
-        <div className="absolute inset-0 flex items-center justify-center opacity-10">
+        <div className="absolute inset-0 flex items-center justify-center opacity-5">
           <motion.div
             animate={{
-              scale: [1, 1.05, 1],
-              rotate: [0, 5, -5, 0],
+              scale: [1, 1.02, 1],
+              rotate: [0, 2, -2, 0],
             }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
-            {/* <Sparkles size={120} className="text-[var(--accent)]" /> */}
+            <Sparkles size={100} className="text-[var(--accent)]" />
           </motion.div>
         </div>
         <div className="relative">
-          <h1 className="text-3xl md:text-5xl font-serif font-bold mb-3 bg-gradient-to-r from-[var(--accent)] to-[var(--text-primary)] bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-5xl font-serif font-bold mb-3 bg-gradient-to-r from-[var(--accent)] to-[var(--text-primary)] bg-clip-text text-transparent leading-tight">
             Welcome, {userData?.nickname || "Traveler"}
           </h1>
+          <p className="text-[var(--text-secondary)] text-lg font-light">
+            Continue your journey of self-discovery
+          </p>
         </div>
       </motion.div>
 
@@ -81,35 +87,42 @@ const MainSection = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               <Link
                 to={action.to}
-                className="block relative p-6 bg-[var(--bg-secondary)] rounded-xl shadow-md overflow-hidden group"
+                className="block relative p-6 rounded-2xl shadow-sm border border-gray-100/50 overflow-hidden group transition-all duration-300 hover:shadow-lg"
+                style={{
+                  backgroundColor: action.bgColor,
+                }}
               >
-                {/* Gradient Background */}
+                {/* Hover overlay */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-                  style={{ background: action.gradient }}
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ backgroundColor: action.hoverColor }}
                 />
+
                 {/* Content */}
-                <div className="relative flex flex-col gap-4">
-                  <div
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-white"
-                    style={{ background: action.gradient }}
-                  >
+                <div className="relative flex items-start gap-4">
+                  {/* Icon */}
+                  <div className="flex-shrink-0 text-white drop-shadow-sm">
                     {action.icon}
                   </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
+
+                  {/* Text Content */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-1 group-hover:text-gray-900 transition-colors">
                       {action.title}
                     </h3>
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-sm text-gray-600 group-hover:text-gray-700 leading-relaxed transition-colors">
                       {action.description}
                     </p>
                   </div>
                 </div>
-                {/* Subtle Border Animation */}
-                <div className="absolute inset-0 border-2 border-transparent group-hover:border-[var(--accent)]/30 rounded-xl transition-all duration-300" />
+
+                {/* Subtle accent line */}
+                <div className="absolute bottom-0 left-6 right-6 h-0.5 bg-white/20 rounded-full" />
               </Link>
             </motion.div>
           ))}
@@ -120,7 +133,7 @@ const MainSection = ({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
       >
         <StreakCard
           journalEntries={journalEntries}

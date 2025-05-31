@@ -39,17 +39,7 @@ const ThemeSelector = ({
   }, []);
 
   return (
-    <div className="mx-auto space-y-8 max-w-7xl">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold text-black dark:text-white">
-          Choose Your Theme
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          Select a visual style for your journal entry
-        </p>
-      </div>
-
+    <div className="mx-auto space-y-8">
       {/* Main grid layout for side-by-side display */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
         {/* Left side: Theme selection */}

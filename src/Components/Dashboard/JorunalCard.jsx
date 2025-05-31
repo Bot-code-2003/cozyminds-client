@@ -1,4 +1,5 @@
-// JournalCard.jsx
+"use client";
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
@@ -51,7 +52,7 @@ const JournalCard = ({
     <>
       <Link
         to={`/journal/${entry._id}`}
-        className="group relative block rounded-2xl overflow-hidden border border-[var(--border)] transition-all duration-500"
+        className="group relative block rounded-2xl overflow-hidden border border-[var(--border)] transition-all duration-500 h-[400px] max-h-[400px]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         style={{
@@ -84,7 +85,7 @@ const JournalCard = ({
         </div>
 
         {/* Bottom portion: Main content */}
-        <div className="relative p-6 bg-[var(--bg-secondary)] flex flex-col min-h-[300px]">
+        <div className="relative p-6 bg-[var(--bg-secondary)] flex flex-col h-[208px]">
           {/* Header with date and mood */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 text-xs font-medium text-[var(--text-secondary)]">
@@ -135,20 +136,25 @@ const JournalCard = ({
           )}
 
           {/* Content preview with enhanced styling */}
-          <div className="flex-1">
-            <div className="relative">
+          <div className="flex-1 overflow-hidden pb-12">
+            <div className="relative h-full">
               <div
                 className="absolute left-0 top-0 w-1 h-full rounded-full opacity-60"
                 style={{ backgroundColor: moodData?.color || "var(--accent)" }}
               />
-              <p className="text-sm text-[var(--text-secondary)] line-clamp-3 pl-4 leading-relaxed">
-                {entry.content || "No content available."}
-              </p>
+              <div className="pl-4 h-full overflow-hidden">
+                <div
+                  className="text-sm text-[var(--text-secondary)] journal-card-content"
+                  dangerouslySetInnerHTML={{
+                    __html: entry.content || "No content available.",
+                  }}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Enhanced read more section with delete button */}
-          <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]">
+          {/* Enhanced read more section with delete button - Absolute positioned */}
+          <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between p-6 pt-4 border-t border-[var(--border)] bg-[var(--bg-secondary)]">
             <div className="text-xs text-[var(--text-secondary)]">
               {entry.wordCount ? `${entry.wordCount} words` : ""}
             </div>
@@ -239,7 +245,10 @@ const JournalCard = ({
                     <>
                       <motion.span
                         animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1 }}
+                        transition={{
+                          repeat: Number.POSITIVE_INFINITY,
+                          duration: 1,
+                        }}
                       >
                         ⟳
                       </motion.span>
@@ -257,6 +266,60 @@ const JournalCard = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Card content styling */}
+      <style jsx global>{`
+        .journal-card-content {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 4;
+          -webkit-box-orient: vertical;
+          line-height: 1.5;
+          max-height: 6rem;
+        }
+
+        .journal-card-content * {
+          display: inline;
+          margin: 0;
+          padding: 0;
+          border: 0;
+          font-size: 100%;
+          font: inherit;
+          vertical-align: baseline;
+        }
+
+        .journal-card-content h1,
+        .journal-card-content h2,
+        .journal-card-content h3,
+        .journal-card-content h4,
+        .journal-card-content h5,
+        .journal-card-content h6,
+        .journal-card-content p,
+        .journal-card-content ul,
+        .journal-card-content ol,
+        .journal-card-content li,
+        .journal-card-content blockquote {
+          display: inline;
+        }
+
+        .journal-card-content br {
+          display: none;
+        }
+
+        .journal-card-content strong {
+          font-weight: bold;
+        }
+
+        .journal-card-content em {
+          font-style: italic;
+        }
+
+        .journal-card-content img,
+        .journal-card-content figure {
+          display: none;
+        }
+      `}</style>
     </>
   );
 };

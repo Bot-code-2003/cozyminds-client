@@ -27,11 +27,6 @@ const Collections = () => {
 
   // Load user data and collections
   useEffect(() => {
-    if (!user) {
-      navigate("/");
-      return;
-    }
-
     setUserData(user);
     const uniqueCollections = ["All"];
     journalEntries.forEach((journal) => {
@@ -191,7 +186,7 @@ const Collections = () => {
         {!isLoading && !error && (
           <section>
             <h2 className="text-xl font-semibold mb-6">Your Collections</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 cursor-pointer sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {collections.map((collection) => {
                 const themes = getCollectionThemes(collection);
                 const gridClasses = getGridClasses(themes.length);
@@ -199,7 +194,7 @@ const Collections = () => {
                   <div
                     key={collection}
                     onClick={() => handleCollectionSelect(collection)}
-                    className="group relative bg-[var(--bg-secondary)] border border-[var(--border)] curser-pointer rounded-lg aspect-[3/4] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                    className="group relative bg-[var(--bg-secondary)] border border-[var(--border)]  rounded-lg aspect-[3/4] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) =>
