@@ -106,18 +106,110 @@ const JournalEntry = () => {
       }
     };
 
-    fetchJournalEntry();
+    if (id) {
+      fetchJournalEntry();
+    } else {
+      setError("Invalid journal entry ID");
+      setLoading(false);
+    }
   }, [id]);
 
   // Format date function
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    try {
+      return new Date(dateString).toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid date";
+    }
+  };
+
+  // Process content to handle image dimensions and recreate editor styling
+  const processContent = (content) => {
+    if (!content) return "No content available.";
+
+    try {
+      // Create a temporary div to parse the HTML
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = content;
+
+      // Find all images and ensure they have the proper container structure
+      const images = tempDiv.querySelectorAll("img");
+      images.forEach((img) => {
+        const width = img.getAttribute("width");
+        const height = img.getAttribute("height");
+
+        // Check if image is already in a resizable container
+        if (!img.closest(".resizable-image-container")) {
+          // Create the container structure that matches the editor
+          const container = document.createElement("div");
+          container.className = "resizable-image-container";
+
+          // Apply the exact same styling as the editor
+          container.style.cssText = `
+          position: relative;
+          display: inline-block;
+          margin: 16px 8px 16px 0;
+          vertical-align: top;
+          min-width: 50px;
+          min-height: 50px;
+          max-width: 100%;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(156, 163, 175, 0.2);
+        `;
+
+          // Set dimensions if available
+          if (width) {
+            container.style.width = width + "px";
+          } else {
+            container.style.width = "300px"; // default width
+          }
+
+          if (height) {
+            container.style.height = height + "px";
+          } else {
+            container.style.height = "200px"; // default height
+          }
+
+          // Wrap the image
+          img.parentNode.insertBefore(container, img);
+          container.appendChild(img);
+
+          // Style the image to fill the container exactly like in editor
+          img.style.cssText = `
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 0;
+          margin: 0;
+          padding: 0;
+        `;
+
+          // Remove width/height attributes from img since container handles sizing
+          img.removeAttribute("width");
+          img.removeAttribute("height");
+        } else {
+          // If already in container, just ensure proper styling
+          const container = img.closest(".resizable-image-container");
+          if (width) container.style.width = width + "px";
+          if (height) container.style.height = height + "px";
+        }
+      });
+
+      return tempDiv.innerHTML;
+    } catch (error) {
+      console.error("Error processing content:", error);
+      return content;
+    }
   };
 
   if (loading) {
@@ -162,13 +254,19 @@ const JournalEntry = () => {
     );
   }
 
-  // Get mood styling
+  // Get mood styling with fallback
   const moodStyle = entry.mood
     ? moodStyles[entry.mood] || moodStyles.default
     : moodStyles.default;
 
-  // Get theme details
-  const currentTheme = getThemeDetails(entry.theme);
+  // Get theme details with error handling
+  let currentTheme;
+  try {
+    currentTheme = getThemeDetails(entry.theme);
+  } catch (error) {
+    console.error("Error getting theme details:", error);
+    currentTheme = { icon: "📝", dateIcon: "📅" };
+  }
 
   return (
     <div
@@ -177,6 +275,7 @@ const JournalEntry = () => {
       )} ${
         darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
       }`}
+      style={{ backgroundAttachment: "fixed" }}
     >
       {/* Background decorative elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -202,7 +301,7 @@ const JournalEntry = () => {
         </div>
 
         {/* Journal Container */}
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
             {/* Theme Header Banner */}
             <div className={`h-3 bg-gradient-to-r ${moodStyle.gradient}`}></div>
@@ -212,8 +311,8 @@ const JournalEntry = () => {
               {/* Title and Theme Info */}
               <div className="flex items-start justify-between mb-6">
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight">
-                    {entry.title}
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight break-words">
+                    {entry.title || "Untitled Entry"}
                   </h1>
                   <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="text-lg">{currentTheme.icon}</span>
@@ -248,7 +347,7 @@ const JournalEntry = () => {
                 {/* Word Count */}
                 <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium">
                   <BarChart2 size={16} />
-                  <span>{entry.wordCount} words</span>
+                  <span>{entry.wordCount || 0} words</span>
                 </div>
               </div>
 
@@ -273,18 +372,15 @@ const JournalEntry = () => {
             </div>
 
             {/* Content Section */}
-            <div className="p-6 sm:p-8 text-gray-900 dark:text-gray-100">
+            <div className="p-2 sm:p-4 text-gray-900 dark:text-gray-100">
               <div className="relative">
-                <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b  from-blue-500 to-purple-500 rounded-full"></div>
-                <div className="pl-6">
-                  <div className="prose prose-gray dark:prose-invert max-w-none prose-lg">
-                    <div
-                      className="journal-content-display"
-                      dangerouslySetInnerHTML={{
-                        __html: entry.content || "No content available.",
-                      }}
-                    />
-                  </div>
+                <div className="prose prose-gray dark:prose-invert max-w-none prose-lg">
+                  <div
+                    className="journal-content-display"
+                    dangerouslySetInnerHTML={{
+                      __html: processContent(entry.content),
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -296,11 +392,13 @@ const JournalEntry = () => {
       <style jsx global>{`
         .journal-content-display {
           line-height: 1.8;
-          color: rgb(17, 24, 39); /* gray-900 for light mode */
+          color: rgb(17, 24, 39);
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
 
         .dark .journal-content-display {
-          color: rgb(243, 244, 246); /* gray-100 for dark mode */
+          color: rgb(243, 244, 246);
         }
 
         .journal-content-display p {
@@ -314,6 +412,7 @@ const JournalEntry = () => {
           font-weight: 700;
           margin: 2rem 0 1rem 0;
           color: inherit;
+          word-wrap: break-word;
         }
 
         .journal-content-display h1 {
@@ -389,6 +488,7 @@ const JournalEntry = () => {
           font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
           font-size: 0.875rem;
           border: 1px solid rgba(156, 163, 175, 0.2);
+          word-break: break-all;
         }
 
         .journal-content-display pre {
@@ -404,77 +504,91 @@ const JournalEntry = () => {
           background: none;
           padding: 0;
           border: none;
+          word-break: normal;
         }
 
         .journal-content-display a {
           color: #3b82f6;
           text-decoration: underline;
           transition: opacity 0.2s;
+          word-break: break-all;
         }
 
         .journal-content-display a:hover {
           opacity: 0.8;
         }
 
+        /* Image handling - exact match to editor styling */
         .journal-content-display img {
-          max-width: 100%;
-          height: auto;
           border-radius: 0.75rem;
-          margin: 1.5rem 0;
           box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1),
             0 4px 6px -2px rgba(0, 0, 0, 0.05);
           border: 1px solid rgba(156, 163, 175, 0.2);
+          margin: 16px 0;
+          display: block;
+          max-width: 100%;
+          height: auto;
         }
 
+        /* Resizable image containers - exact match to editor */
         .journal-content-display .resizable-image-container {
+          position: relative;
           display: inline-block;
-          margin: 1.5rem 0;
+          margin: 16px 8px 16px 0;
           vertical-align: top;
+          min-width: 50px;
+          min-height: 50px;
+          max-width: 100%;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(156, 163, 175, 0.2);
         }
 
         .journal-content-display .resizable-image-container img {
-          margin: 0;
-          display: block;
+          margin: 0 !important;
+          display: block !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          border: none !important;
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          padding: 0 !important;
         }
 
-        .journal-content-display [style*="text-align: center"] {
-          text-align: center;
+        /* Handle paragraphs containing images */
+        .journal-content-display p:has(.resizable-image-container) {
+          line-height: 0;
+          margin: 1.5rem 0;
         }
 
-        .journal-content-display [style*="text-align: right"] {
-          text-align: right;
+        /* Dark mode adjustments for images */
+        .dark .journal-content-display .resizable-image-container {
+          border-color: rgba(75, 85, 99, 0.5);
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
         }
 
-        .journal-content-display [style*="text-align: left"] {
-          text-align: left;
-        }
-
-        .journal-content-display li p {
-          margin: 0.5rem 0 !important;
-        }
-
-        /* Dark mode adjustments */
-        .dark .journal-content-display blockquote {
-          background: rgba(59, 130, 246, 0.1);
-          border-left-color: #60a5fa;
-        }
-
-        .dark .journal-content-display code {
-          background: rgba(75, 85, 99, 0.3);
+        .dark .journal-content-display img:not(.resizable-image-container img) {
           border-color: rgba(75, 85, 99, 0.5);
         }
 
-        .dark .journal-content-display pre {
-          background: rgba(75, 85, 99, 0.3);
-          border-color: rgba(75, 85, 99, 0.5);
-        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+          .journal-content-display .resizable-image-container {
+            display: block !important;
+            margin: 16px 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            min-height: auto !important;
+          }
 
-        .dark .journal-content-display img {
-          border-color: rgba(75, 85, 99, 0.5);
-        }
-
-        .dark .journal-content-display a {
-          color: #60a5fa;
+          .journal-content-display .resizable-image-container img {
+            width: 100% !important;
+            height: auto !important;
+            object-fit: contain !important;
+          }
         }
       `}</style>
     </div>

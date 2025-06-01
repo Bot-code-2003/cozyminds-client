@@ -52,7 +52,7 @@ const JournalCard = ({
     <>
       <Link
         to={`/journal/${entry._id}`}
-        className="group relative block rounded-2xl overflow-hidden border border-[var(--border)] transition-all duration-500 h-[400px] max-h-[400px]"
+        className="group relative block rounded-2xl overflow-hidden border border-[var(--border)] transition-all duration-500 max-h-[500px]"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         style={{
@@ -85,7 +85,7 @@ const JournalCard = ({
         </div>
 
         {/* Bottom portion: Main content */}
-        <div className="relative p-6 bg-[var(--bg-secondary)] flex flex-col h-[208px]">
+        <div className="relative p-6 bg-[var(--bg-secondary)] flex flex-col min-h-[300px]">
           {/* Header with date and mood */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 text-xs font-medium text-[var(--text-secondary)]">

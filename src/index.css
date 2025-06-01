@@ -3,7 +3,7 @@
 
 /* Reset for sharp corners */
 * {
-  /* border-radius: 4px !important; */
+  border-radius: 3px !important;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
@@ -446,7 +446,7 @@ button:hover {
   background-position: center;
   position: relative;
   color: white !important;
-  background-attachment: fixed;
+  /* background-attachment: fixed; */
 }
 
 .card-forest::before,

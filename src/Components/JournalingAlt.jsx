@@ -275,7 +275,7 @@ const JournalingAlt = () => {
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans transition-colors duration-300">
       <Navbar handleLogout={handleLogout} name="Dashboard" link={"/"} />
 
-      <main className="max-w-[95%] mx-auto px-4 py-6">
+      <main className=" mx-auto px-4 py-6">
         {saveError && (
           <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border-l-4 border-red-500 rounded-md text-sm">
             {saveError}
