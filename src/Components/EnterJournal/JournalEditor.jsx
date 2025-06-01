@@ -736,18 +736,6 @@ const JournalEditor = ({
                 <Redo size={18} />
               </ToolbarButton>
             </div>
-
-            <button
-              onClick={onNext}
-              disabled={!journalTitle.trim() && editor.isEmpty}
-              className="hidden group px-6 py-3 bg-[var(--accent)] text-white rounded-xl sm:flex items-center text-sm font-medium hover:bg-[var(--accent)]/90 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
-            >
-              Continue
-              <ArrowRight
-                size={16}
-                className="ml-2 transition-transform duration-200 group-hover:translate-x-0.5"
-              />
-            </button>
           </div>
 
           <input
@@ -952,21 +940,9 @@ const JournalEditor = ({
         </div>
 
         {/* Footer with word count and status */}
-        <div className="flex sm:hidden justify-between items-center p-4 border-t border-[var(--border)]">
+        <div className="flex justify-between items-center p-4 border-t border-[var(--border)]">
           <div className="flex items-center justify-between gap-4 w-full">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-[var(--accent)] rounded-full opacity-60"></div>
-                <span className="text-sm font-medium text-[var(--text-secondary)]">
-                  {words} words
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full opacity-60"></div>
-                <span className="text-sm font-medium text-[var(--text-secondary)]">
-                  {characters} characters
-                </span>
-              </div>
               {(journalTitle.trim() || !editor.isEmpty) && (
                 <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
                   Draft ready
