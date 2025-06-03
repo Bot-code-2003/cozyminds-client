@@ -5,51 +5,66 @@
   <!-- Main Pages -->
   <url>
     <loc>https://starlitjournals.vercel.app/</loc>
-    <changefreq>daily</changefreq>
+    <changefreq>daily
+    <lastmod>2025-06-03</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/terms-of-service</loc>
-    <changefreq>yearly</changefreq>
+    <changefreq>yearly
+    <lastmod>2025-06-03</lastmod>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/privacy-policy</loc>
-    <changefreq>yearly</changefreq>
+    <changefreq>yearly
+    <lastmod>2025-06-03</lastmod>
     <priority>0.3</priority>
   </url>
 
   <!-- Blog List Page -->
   <url>
-    <loc>https://starlitjournals.vercel.app/starlitjournals-blog</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://starlitjournals.vercel.app/starlitblogs</loc>
+    <changefreq>weekly
+    <lastmod>2025-06-03</lastmod>
     <priority>0.7</priority>
   </url>
 
   <!-- Individual Blogs -->
   <url>
     <loc>https://starlitjournals.vercel.app/blog/easy-journaling-prompts-feel-happier</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>monthly
+    <lastmod>2025-06-03</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/journal-like-pro-keep-cozy</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>monthly
+    <lastmod>2025-06-03</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/writing-about-pets-feel-calm</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>monthly
+    <lastmod>2025-06-03</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/cozy-journaling-spot-you-love</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>monthly
+    <lastmod>2025-06-03</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/fun-gratitude-prompts-smile</loc>
-    <changefreq>monthly</changefreq>
+    <changefreq>monthly
+    <lastmod>2025-06-03</lastmod>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/blog/morning-journaling-rituals-calm-productive-day</loc>
+    <lastmod>2025-06-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

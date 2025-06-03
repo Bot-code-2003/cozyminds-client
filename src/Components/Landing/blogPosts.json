@@ -193,5 +193,44 @@
       "readingLevel": "beginner",
       "contentType": "article"
     }
+  },
+  {
+    "id": 6,
+    "title": "Morning Journaling Rituals for a Calm and Productive Day",
+    "slug": "morning-journaling-rituals-calm-productive-day",
+    "excerpt": "Start your day with these simple morning journaling rituals to feel calm, focused, and ready to shine. Perfect for beginners and cozy vibes lovers!",
+    "metaDescription": "Discover morning journaling rituals to start your day with calm and productivity. Easy, cozy tips for beginners to create a mindful routine.",
+    "content": "Mornings can set the tone for your entire day, and journaling is the perfect way to start with calm and focus. These morning rituals are easy, cozy, and great for anyone wanting a happier day.\n\n**Why Morning Journaling Works:**\n- **Clears Your Mind:** Writing first thing helps you let go of worries.\n- **Sets Intentions:** It’s like a map for a productive day.\n- **Cozy Start:** Pair it with your morning tea for extra warmth.\n\n**Morning Rituals to Try:**\n1. **Write 3 Things You’re Grateful For:** Start with positivity, like your cozy bed or the sunrise.\n2. **Set a Tiny Goal for the Day:** Something simple, like “smile more” or “drink water.”\n3. **What’s One Thing You’re Excited About?** Maybe a fun lunch or a sunny walk.\n4. **How Do You Want to Feel Today?** Write “calm” or “energized” and let it guide you.\n5. **Doodle Your Mood:** Draw a little sun or cloud—it’s a fun way to check in.\n\n**Make It Extra Cozy:**\n- Sit by a window with soft sunlight.\n- Sip a warm drink, like herbal tea or coffee.\n- Use a fluffy pen or your Cozy Minds app for a digital touch.\n\nWant more gratitude ideas? Check out our post on [10 Fun Gratitude Prompts to Make You Smile](https://starlitjournals.vercel.app/blog/fun-gratitude-prompts-smile). In Cozy Minds, tag your morning entries ‘calm start’ and watch your day bloom with peace!",
+    "author": "Cozy Quill",
+    "authorBio": "Loves writing simple, happy things and snuggling with pets. Once wrote a poem about a cozy sock and smiled all day.",
+    "date": "June 03, 2025",
+    "lastUpdated": "June 03, 2025",
+    "readTime": "5 min read",
+    "wordCount": 260,
+    "category": "Productivity",
+    "tags": [
+      "morning rituals",
+      "journaling for productivity",
+      "calm start",
+      "self-care",
+      "cozy vibes",
+      "mindfulness",
+      "beginner journaling"
+    ],
+    "icon": "Sunrise",
+    "image": "https://img.freepik.com/free-vector/flat-illustration-morning-routine_23-2149153456.jpg?uid=R201444264&ga=GA1.1.1839204378.1747916333&semt=ais_hybrid&w=740",
+    "featured": false,
+    "seo": {
+      "canonicalUrl": "https://starlitjournals.vercel.app/blog/morning-journaling-rituals-calm-productive-day",
+      "ogTitle": "Morning Journaling Rituals for a Calm and Productive Day",
+      "ogDescription": "Start your day with calm and focus using these cozy morning journaling rituals. Perfect for beginners!",
+      "ogImage": "https://img.freepik.com/free-vector/flat-illustration-morning-routine_23-2149153456.jpg?uid=R201444264&ga=GA1.1.1839204378.1747916333&semt=ais_hybrid&w=740",
+      "twitterTitle": "Morning Journaling for a Calm Day",
+      "twitterDescription": "Try these easy morning journaling rituals to feel calm and productive. So cozy!",
+      "twitterImage": "https://img.freepik.com/free-vector/flat-illustration-morning-routine_23-2149153456.jpg?uid=R201444264&ga=GA1.1.1839204378.1747916333&semt=ais_hybrid&w=740",
+      "keywords": "morning rituals, journaling for productivity, calm start, self-care, cozy journaling, mindfulness, beginner journaling",
+      "readingLevel": "beginner",
+      "contentType": "article"
+    }
   }
 ]
