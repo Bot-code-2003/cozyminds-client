@@ -381,7 +381,7 @@ const BlogPage = ({ onBack }) => {
         {/* Enhanced Article Header */}
         <header className="mb-10 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-start gap-6 sm:gap-8 mb-6 sm:mb-8">
-            <div className="p-4 sm:p-5 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl bg-[#5999a8]/15 dark:bg-[#5999a8]/25 w-fit shadow-lg">
+            <div className="hidden sm:block p-4 sm:p-5 dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl bg-[#5999a8]/15 dark:bg-[#5999a8]/25 w-fit shadow-lg">
               {getIcon(post.icon)}
             </div>
             <div className="flex-1">
@@ -415,7 +415,7 @@ const BlogPage = ({ onBack }) => {
           </div>
 
           {/* Enhanced Tags */}
-          <div className="flex flex-wrap gap-3 mb-8 sm:mb-10">
+          {/* <div className="flex flex-wrap gap-3 mb-8 sm:mb-10">
             {post.tags.map((tag) => (
               <span
                 key={tag}
@@ -425,12 +425,12 @@ const BlogPage = ({ onBack }) => {
                 {tag}
               </span>
             ))}
-          </div>
+          </div> */}
         </header>
 
         {/* Enhanced Article Content */}
         <article className="prose prose-sm sm:prose-lg max-w-none mb-12 sm:mb-16">
-          <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md shadow-xl">
+          <div className=" dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md shadow-xl">
             {parsedContent.map((section) => {
               switch (section.type) {
                 case "heading":
@@ -490,11 +490,26 @@ const BlogPage = ({ onBack }) => {
                   return null;
               }
             })}
+            {/* Enhanced Article Footer */}
+            <footer className=" dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 sm:mb-12 bg-white/40 dark:bg-[#2A2A2A]/40 ">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 text-sm sm:text-base opacity-75 font-medium">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                  <span>Published: {post.date}</span>
+                  {post.lastUpdated !== post.date && (
+                    <span>Updated: {post.lastUpdated}</span>
+                  )}
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                  <span>Reading Level: {post.seo.readingLevel}</span>
+                  <span>Category: {post.category}</span>
+                </div>
+              </div>
+            </footer>
           </div>
         </article>
 
         {/* Enhanced Author Bio */}
-        <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 bg-gradient-to-br from-[#5999a8]/10 via-white/50 to-[#5999a8]/5 dark:from-[#5999a8]/10 dark:via-[#2A2A2A]/50 dark:to-[#5999a8]/5 backdrop-blur-md shadow-xl">
+        <div className=" dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 bg-gradient-to-br from-[#5999a8]/10 via-white/50 to-[#5999a8]/5 dark:from-[#5999a8]/10 dark:via-[#2A2A2A]/50 dark:to-[#5999a8]/5 backdrop-blur-md shadow-xl">
           <h3 className="text-xl sm:text-2xl md:text-3xl font-black mb-4 sm:mb-6">
             About the Author
           </h3>
@@ -512,22 +527,6 @@ const BlogPage = ({ onBack }) => {
             </div>
           </div>
         </div>
-
-        {/* Enhanced Article Footer */}
-        <footer className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 sm:mb-12 bg-white/40 dark:bg-[#2A2A2A]/40 backdrop-blur-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 text-sm sm:text-base opacity-75 font-medium">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-              <span>Published: {post.date}</span>
-              {post.lastUpdated !== post.date && (
-                <span>Updated: {post.lastUpdated}</span>
-              )}
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-              <span>Reading Level: {post.seo.readingLevel}</span>
-              <span>Category: {post.category}</span>
-            </div>
-          </div>
-        </footer>
 
         {/* Recommendations Section */}
         <div className="mb-8 sm:mb-12">

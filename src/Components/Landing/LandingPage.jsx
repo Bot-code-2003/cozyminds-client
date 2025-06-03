@@ -106,15 +106,14 @@ const LandingPage = () => {
     <div
       className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative overflow-hidden transition-colors duration-300`}
     >
-      {/* SEO Metadata */}
-      <title>Starlit Journals - A place to dream and write.</title>
+      <title>Starlit Journals - Dream, Write, Track Moods</title>
       <meta
         name="description"
-        content="Starlit Journals offers a serene space for guided journaling and mindfulness practices to foster mental clarity and personal growth."
+        content="Write with a rich text editor, track moods, tag entries, and earn coins for custom backgrounds and fun mail templates in Starlit Journals!"
       />
       <meta
         name="keywords"
-        content="mental wellness, guided journaling, mindfulness, mental health, self-care, meditation, personal growth"
+        content="journaling app, mood tracker, creative writing, rich text editor, gamified journaling, mental health, self-expression, journal backgrounds"
       />
       <meta name="author" content="Starlit Journals Team" />
       <meta name="robots" content="index, follow" />

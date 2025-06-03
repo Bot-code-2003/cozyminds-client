@@ -9,7 +9,7 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
       {/* Call-to-Action Section */}
       <section className="relative z-10 w-full max-w-7xl py-12 mb-12 mx-auto px-1 sm:px-6">
         <div
-          className={`w-full p-6 md:p-12 ${
+          className={`w-full rounded-2xl p-6 md:p-12 ${
             darkMode ? "bg-[#2A2A2A]" : "bg-[#1A1A1A] text-white"
           } shadow-sharp`}
         >
@@ -29,7 +29,7 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
             </div>
             <button
               onClick={() => setShowLoginModal(true)}
-              className={`px-6 py-3 md:px-8 md:py-4 text-sm md:text-base ${
+              className={`px-6 rounded-2xl py-3 md:px-8 md:py-4 text-sm md:text-base ${
                 darkMode ? "bg-[#5999a8] text-white" : "bg-white text-black"
               } hover:opacity-90 transition-opacity whitespace-nowrap`}
             >

@@ -411,7 +411,9 @@ const ProfileSettings = () => {
                         <span className="text-sm font-medium opacity-70">
                           {item.label}:
                         </span>
-                        <span className="font-semibold">{item.value}</span>
+                        <span className="font-semibold max-w-[60%] truncate block text-right">
+                          {item.value}
+                        </span>
                       </div>
                     ))}
                   </div>

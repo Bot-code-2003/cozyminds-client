@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { X, Star, Eye, Package, Mail } from "lucide-react";
 import { shopItems } from "./ShopItems"; // Adjust the import path as needed
+import { getCardClass } from "../ThemeDetails";
 
 const ShopInventory = ({
   inventory,
@@ -16,7 +17,7 @@ const ShopInventory = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Map shop item IDs to CSS classes
-  const getCardClass = useCallback((item) => {
+  const getItemCardClass = useCallback((item) => {
     if (item.cardClass) {
       return item.cardClass;
     }
@@ -72,6 +73,8 @@ const ShopInventory = ({
     }
     return acc;
   }, []);
+
+  console.log("Grouped inventory:", groupedInventory);
 
   const handleActivateMailTheme = useCallback(
     (theme) => {
@@ -165,7 +168,7 @@ const ShopInventory = ({
                 className={`
                   relative group h-60 flex flex-col overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 
                   bg-white dark:bg-gray-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 
-                  ${item.featuredStyle || ""} ${getCardClass(item)} 
+                  ${item.featuredStyle || ""} ${getItemCardClass(item)} 
                   ${item.isConceptPackGroup ? "cursor-pointer" : ""}
                 `}
                 onClick={() => {
@@ -203,10 +206,23 @@ const ShopInventory = ({
                       {item.items.slice(0, 3).map((conceptItem, index) => (
                         <div
                           key={index}
-                          className={`relative overflow-hidden ${
-                            conceptItem.cardClass || `card-${conceptItem.id}`
-                          }`}
-                        />
+                          className="relative overflow-hidden bg-cover bg-center"
+                          style={{
+                            backgroundImage: conceptItem.image
+                              ? `url(${conceptItem.image})`
+                              : "none",
+                          }}
+                        >
+                          {/* Fallback CSS class styling if no image */}
+                          {!conceptItem.image && (
+                            <div
+                              className={`w-full h-full ${
+                                getCardClass(conceptItem.id) ||
+                                getItemCardClass(conceptItem)
+                              }`}
+                            />
+                          )}
+                        </div>
                       ))}
                       {Array.from({
                         length: Math.max(0, 3 - (item.items?.length || 0)),
@@ -348,11 +364,23 @@ const ShopInventory = ({
                   ).map((image, index) => (
                     <div
                       key={index}
-                      className={`rounded-lg overflow-hidden shadow-md ${
-                        image.cardClass || `card-${image.id}`
-                      }`}
+                      className="rounded-lg overflow-hidden shadow-md bg-cover bg-center"
+                      style={{
+                        backgroundImage: image.image
+                          ? `url(${image.image})`
+                          : "none",
+                      }}
                     >
-                      <div className="w-full h-48" />
+                      <div className="w-full h-48">
+                        {/* Fallback CSS styling if no image */}
+                        {!image.image && (
+                          <div
+                            className={`w-full h-full ${
+                              image.cardClass || getCardClass(image.id)
+                            }`}
+                          />
+                        )}
+                      </div>
                       <div className="p-4 bg-[var(--bg-primary)]">
                         <h3 className="font-medium text-[var(--text-primary)] mb-2 text-sm">
                           {image.name}

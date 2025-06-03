@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import {
   Calendar,
   Clock,
@@ -12,9 +11,6 @@ import {
   Brain,
   Sunrise,
   Moon,
-  Sun,
-  Menu,
-  X,
   ChevronLeft,
   ChevronRight,
   Smile,
@@ -23,7 +19,6 @@ import {
   Lamp,
 } from "lucide-react";
 import blogPostsData from "./blogPosts.json";
-import BlogPage from "./BlogPage";
 import AuthModals from "./AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
@@ -323,21 +318,38 @@ const CozyMindsBlog = () => {
                 </div>
               </div>
 
-              {/* Carousel Controls */}
+              {/* Carousel Controls - Repositioned for Mobile */}
               {featuredPosts.length > 1 && (
                 <>
+                  {/* Desktop Controls - Side positioned */}
                   <button
                     onClick={prevFeatured}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                    className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
                   >
                     <ChevronLeft size={20} />
                   </button>
                   <button
                     onClick={nextFeatured}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                    className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
                   >
                     <ChevronRight size={20} />
                   </button>
+
+                  {/* Mobile Controls - Bottom positioned */}
+                  <div className="sm:hidden flex justify-center gap-4 mt-4">
+                    <button
+                      onClick={prevFeatured}
+                      className="p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button
+                      onClick={nextFeatured}
+                      className="p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </div>
 
                   {/* Carousel Indicators */}
                   <div className="flex justify-center gap-2 mt-6">
