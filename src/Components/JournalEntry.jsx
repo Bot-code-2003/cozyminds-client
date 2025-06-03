@@ -301,7 +301,7 @@ const JournalEntry = () => {
         </div>
 
         {/* Journal Container */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto flex justify-center">
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
             {/* Theme Header Banner */}
             <div className={`h-3 bg-gradient-to-r ${moodStyle.gradient}`}></div>

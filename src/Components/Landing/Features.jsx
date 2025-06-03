@@ -1,191 +1,225 @@
-import { Sparkles, Smile } from "lucide-react";
-import { Link } from "react-router-dom";
-
-import Home from "../../assets/home3.png";
-import Reward from "../../assets/reward.png";
-import MailIG from "../../assets/mail.png";
-import Shop from "../../assets/shop.png";
-import Mood from "../../assets/mood.png";
-import AI from "../../assets/AI.png";
-
+"use client";
+import { useState } from "react";
+import {
+  Mail,
+  Edit3,
+  BookOpen,
+  BarChart3,
+  Gift,
+  ArrowRight,
+  Layers,
+  Palette,
+  Book,
+} from "lucide-react";
 import { useDarkMode } from "../../context/ThemeContext";
+import MailImg from "../../assets/mailing-d.png";
+import EditorImg from "../../assets/editor-d.png";
+import MoodGraphPreview from "../../assets/mooding.png";
+import RewardImg from "../../assets/reward.png";
+import CollectionsPreview from "../../assets/collections.png";
+import ThemeSelectStepPreview from "../../assets/preview.png";
+import EntriesPreview from "../../assets/entries.png";
+import Shop from "../../assets/shop-d.png";
 
-import { Gift, BarChart3, Mail, ShoppingBag, ChevronRight } from "lucide-react";
-const Features = () => {
-  const { darkMode, setDarkMode } = useDarkMode();
+const Features = ({ setShowLoginModal }) => {
+  const { darkMode } = useDarkMode();
+  const [activeFeature, setActiveFeature] = useState(0);
+
+  const mainFeatures = [
+    {
+      icon: <Edit3 size={20} />,
+      title: "Rich Text Editor",
+      description:
+        "Express yourself with a powerful, intuitive editor featuring clean formatting and seamless content organization.",
+      image: EditorImg,
+    },
+    {
+      icon: <BookOpen size={20} />,
+      title: "Beautiful Journals",
+      description:
+        "Create stunning journal entries with customizable templates and layouts that reflect your personal style.",
+      image: Shop,
+    },
+    {
+      icon: <BarChart3 size={20} />,
+      title: "Mood Analytics",
+      description:
+        "Track your emotional patterns with comprehensive mood analysis and insights for better wellbeing.",
+      image: MoodGraphPreview,
+    },
+    {
+      icon: <Mail size={20} />,
+      title: "In Site Mails",
+      description:
+        "Get rewards, encouragement messages and much more from charming in-world personalities.",
+      image: MailImg,
+    },
+  ];
+
+  const additionalFeatures = [
+    {
+      icon: <Gift size={24} />,
+      title: "Achievement System",
+      description:
+        "Stay motivated with rewards that celebrate your journaling milestones and consistency.",
+      image: RewardImg,
+    },
+    {
+      icon: <Layers size={24} />,
+      title: "Smart Collections",
+      description:
+        "Organize entries with intelligent tagging and powerful search capabilities.",
+      image: CollectionsPreview,
+    },
+    {
+      icon: <Palette size={24} />,
+      title: "Custom Themes",
+      description:
+        "Personalize your experience with beautiful themes and customization options.",
+      image: ThemeSelectStepPreview,
+    },
+    {
+      icon: <Book size={24} />,
+      title: "Entry Management",
+      description:
+        "Browse and manage your entries with powerful filtering and organization tools.",
+      image: EntriesPreview,
+    },
+  ];
+
   return (
-    <div className="relative z-10 px-1 sm:px-6 ">
-      {/* Features Section */}
-      <section className="relative z-10 w-full py-12 sm:py-24 ">
-        <div className="text-center mb-20">
-          <div className="inline-block mb-6 px-4 py-1.5 bg-[#f0e6d9] dark:bg-[#2a2520] rounded-full text-xs font-medium tracking-wider text-[#5999a8] dark:text-[#7ab8c7] shadow-sm">
-            STANDOUT FEATURES
+    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+      {/* Header */}
+      <div className="text-center mb-16">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+          Everything you need to journal beautifully
+        </h2>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          Discover powerful tools designed to make your journaling experience
+          effortless and inspiring.
+        </p>
+      </div>
+
+      {/* Main Features */}
+      <div className="mb-20">
+        {/* Feature Navigation */}
+        <div className="flex flex-wrap justify-center gap-2 mb-12">
+          {mainFeatures.map((feature, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveFeature(index)}
+              className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeFeature === index
+                  ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+            >
+              {feature.icon}
+              <span className="hidden sm:inline">{feature.title}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Active Feature Display */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+          <div className="grid lg:grid-cols-5 gap-0">
+            {/* Content */}
+            <div className="lg:col-span-2 p-8 lg:p-12 flex flex-col justify-center">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400">
+                  {mainFeatures[activeFeature].icon}
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {mainFeatures[activeFeature].title}
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
+                {mainFeatures[activeFeature].description}
+              </p>
+            </div>
+
+            {/* Large Image */}
+            <div className="lg:col-span-3 p-4">
+              <div className="w-full h-80 lg:h-96 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                <img
+                  src={
+                    mainFeatures[activeFeature].image ||
+                    "/placeholder.svg?height=400&width=600"
+                  }
+                  alt={mainFeatures[activeFeature].title}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 font-serif">
-            Cozy Features
-          </h2>
-          <p className="text-lg opacity-70 max-w-xl mx-auto">
-            Designed to bring clarity and peace to your daily routine
+        </div>
+      </div>
+
+      {/* Additional Features - 2 Column Layout */}
+      <div className="mb-16">
+        <div className="text-center mb-12">
+          <h3 className="text-2xl sm:text-3xl font-bold mb-3 text-gray-900 dark:text-white">
+            More powerful features
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+            Additional tools to enhance your journaling experience.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {[
-            {
-              icon: <Gift size={32} />,
-              image: Reward,
-              label: "REWARDS",
-              title: "Daily Journaling Rewards",
-              description:
-                "Earn coins every day you write. Hit streaks for surprise bonuses and limited collectibles!",
-              color: "6BC9B5", // Ocean jade
-              bgLight: "DAD8DC", // Deeper aqua tide
-              bgDark: "123C3A", // Deep kelp night
-            },
-            {
-              icon: <BarChart3 size={32} />,
-              image: Mood,
-              label: "INSIGHTS",
-              title: "Mood Insights",
-              description:
-                "Visualize how your moods shift over time with beautiful charts. Reflect deeper with every entry you make.",
-              color: "6BC9B5",
-              bgLight: "DAD8DC",
-              bgDark: "123C3A",
-            },
-            {
-              icon: <Mail size={32} />,
-              image: MailIG,
-              label: "MAIL",
-              title: "In-Site Mail",
-              description:
-                "Receive heartwarming greetings, seasonal tales, and delightful surprise gifts from the charming characters of Starlit Journals, right in your in-site mailbox.",
-              color: "6BC9B5",
-              bgLight: "DAD8DC",
-              bgDark: "123C3A",
-            },
-            {
-              icon: <ShoppingBag size={32} />,
-              image: Shop,
-              label: "SHOP",
-              title: "Inventory & Shop",
-              description:
-                "Buy sticker packs, journal themes, and magical mail styles. Activate, customize, and make it yours.",
-              color: "6BC9B5",
-              bgLight: "DAD8DC",
-              bgDark: "123C3A",
-            },
-          ].map((feature, index) => (
+        <div className="grid gap-8 sm:grid-cols-1 lg:grid-cols-2">
+          {additionalFeatures.map((feature, index) => (
             <div
               key={index}
-              className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border-2"
+              className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-colors duration-200"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#5999A8]/10 to-transparent rounded-bl-full"></div>
-
-              <div className="p-8 flex flex-col md:flex-row gap-6">
-                <div className="md:w-1/2 flex flex-col justify-between">
-                  <div>
-                    <div className="mb-6 px-3 py-1.5 inline-block rounded-full text-xs font-bold bg-[#1A1A1A]/10 dark:bg-[#F8F1E9]/10">
-                      {feature.label}
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 font-serif">
-                      {feature.title}
-                    </h3>
-                    <p className="opacity-80 mb-6">{feature.description}</p>
-                  </div>
-
-                  {/* <Link
-                    to={`/features/${feature.title
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")}`}
-                    className="inline-flex items-center text-sm font-medium text-[#5999a8] dark:text-[#7ab8c7] hover:underline group"
-                  >
-                    <span>Learn more</span>
-                    <ChevronRight
-                      size={16}
-                      className="ml-1 group-hover:translate-x-1 transition-transform"
-                    />
-                  </Link> */}
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 flex-shrink-0">
+                  {feature.icon}
                 </div>
-
-                <div className="md:w-1/2 aspect-square rounded-xl overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-lg">
-                  <img
-                    src={feature.image || "/placeholder.svg"}
-                    alt={`Illustration for ${feature.title}`}
-                    className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-                  />
+                <div>
+                  <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    {feature.title}
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
+              </div>
+
+              {/* Large Image for Additional Features */}
+              <div className="w-full rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                <img
+                  src={feature.image || "/placeholder.svg?height=200&width=400"}
+                  alt={feature.title}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </div>
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* Coming Soon Section */}
-      <section className="w-full py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#5999a8]/10 to-[#7ab8c7]/10 dark:from-[#5999a8]/5 dark:to-[#7ab8c7]/5"></div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-block mb-6 px-4 py-1.5 bg-[#f0e6d9] dark:bg-[#2a2520] rounded-full text-xs font-medium tracking-wider text-[#5999a8] dark:text-[#7ab8c7] shadow-sm">
-                COMING SOON
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 font-serif">
-                AI-Powered Cozy Assistant
-              </h2>
-              <p className="text-lg opacity-80 mb-8 leading-relaxed">
-                A gentle companion to guide your journaling with thoughtful
-                prompts, mood insights, and cozy tips—crafted for calm and
-                clarity.
-              </p>
-
-              {/* <form className="flex flex-col sm:flex-row gap-3 max-w-md">
-                <input
-                  type="email"
-                  placeholder="Enter your email for early access"
-                  className="flex-1 px-4 py-3 rounded-lg border-2 border-[#5999a8]/20 dark:border-[#7ab8c7]/20 bg-white/80 dark:bg-[#2a2520]/80 backdrop-blur-sm focus:outline-none focus:border-[#5999a8] dark:focus:border-[#7ab8c7] transition-all duration-300"
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-gradient-to-r from-[#5999a8] to-[#7ab8c7] text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 whitespace-nowrap"
-                >
-                  Notify Me
-                </button>
-              </form> */}
-            </div>
-
-            <div className="relative">
-              <div className="aspect-square max-w-md mx-auto relative">
-                {/* Decorative elements */}
-                <div className="absolute -top-6 -left-6 w-full h-full bg-[#f0e6d9] dark:bg-[#2a2520] rounded-2xl -rotate-3 transform"></div>
-                <div className="absolute -top-3 -left-3 w-full h-full border-2 border-[#5999a8] dark:border-[#7ab8c7] rounded-2xl rotate-1 transform"></div>
-
-                {/* Main image */}
-                <div className="relative z-10 w-full h-full rounded-2xl overflow-hidden shadow-xl">
-                  <img
-                    src={AI || "/placeholder.svg"}
-                    alt="AI assistant concept - a friendly, cozy AI character helping with journaling"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* Floating elements */}
-                <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-[#f0e6d9] dark:bg-[#2a2520] rounded-full shadow-lg z-20 flex items-center justify-center">
-                  <div className="text-center">
-                    <Sparkles
-                      size={20}
-                      className="mx-auto mb-1 text-[#5999a8] dark:text-[#7ab8c7]"
-                    />
-                    <span className="text-xs font-medium">AI Magic</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Call to Action */}
+      <div className="text-center">
+        <div className="inline-block p-8 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            Start journaling today
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            Join thousands who have transformed their journaling experience.
+          </p>
+          <button
+            onClick={() => setShowLoginModal(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors duration-200 font-medium"
+          >
+            Get Started
+            <ArrowRight size={16} />
+          </button>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 };
 

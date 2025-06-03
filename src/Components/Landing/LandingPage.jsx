@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowRight, BookImage, Notebook, Clock, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BookImage,
+  Notebook,
+  Clock,
+  Users,
+  Gift,
+} from "lucide-react";
 import Navbar from "./Navbar";
 import { useDarkMode } from "../../context/ThemeContext";
 import Footer from "./Footer";
@@ -157,11 +164,11 @@ const LandingPage = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="order-2 md:order-1">
             <div className="inline-block mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
-              MENTAL CLARITY
+              GAMIFIED
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
               <span className="relative">
-                Starlit<span className="text-[#5999a8]">Journals</span>
+                Unleash Your Thoughts with Starlit Journals!
                 <svg
                   className="absolute -bottom-2 left-0 w-full h-2 text-[#5999a8] dark:text-[#5999a8]"
                   viewBox="0 0 100 10"
@@ -177,8 +184,7 @@ const LandingPage = () => {
               </span>
             </h1>
             <p className="mt-4 text-lg md:text-xl opacity-80 font-medium sm:max-w-xl">
-              Illuminate your thoughts with Starlit Journals. A serene space for
-              guided journaling and mindfulness to foster mental clarity.
+              Write, Track Moods, and Earn Rewards in a Fun, Creative Space.
             </p>
             <div className="mt-10">
               <button
@@ -191,7 +197,7 @@ const LandingPage = () => {
                 aria-label="Begin your journaling journey"
               >
                 <span className="flex items-center gap-2">
-                  Begin your Journey
+                  Start Free – Get 50 Coins!
                   <ArrowRight
                     size={16}
                     className="group-hover:translate-x-1 transition-transform"
@@ -210,7 +216,7 @@ const LandingPage = () => {
                 <img
                   src={Home || "/placeholder.svg"}
                   className="w-full h-full object-cover rounded-2xl"
-                  alt="Starlit Journals app interface showing guided journaling"
+                  alt="Cozy journaling space - Starlit Journals"
                   loading="lazy"
                 />
               </div>
@@ -244,7 +250,7 @@ const LandingPage = () => {
                     ) : (
                       userCount
                     ),
-                  label: "Active Users",
+                  label: "Creative Writers",
                   icon: <Users size={28} />,
                   description:
                     "Join our growing community of mindful journalers",
@@ -258,16 +264,15 @@ const LandingPage = () => {
                     ) : (
                       journalCount
                     ),
-                  label: "Entries Written",
+                  label: "Heartfelt Entries",
                   icon: <Notebook size={28} />,
                   description: "Total journal entries created by our community",
                 },
                 {
-                  number: "5 mins",
-                  label: "To a More Serene Mind",
+                  number: "1 Entry",
+                  label: "Daily Writing Goal",
                   icon: <Clock size={28} />,
-                  description:
-                    "That's all it takes to start your daily practice",
+                  description: "Write one entry a day to build your habit!",
                 },
               ].map((stat, index) => (
                 <div
@@ -296,7 +301,7 @@ const LandingPage = () => {
         <Features />
 
         {/* How It Works Section */}
-        <HowItWorks setShowLoginModal={openLoginModal} />
+        {/* <HowItWorks setShowLoginModal={openLoginModal} /> */}
       </main>
 
       {/* Testimonials */}

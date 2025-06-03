@@ -43,12 +43,9 @@ const Testimonials = ({ darkMode }) => {
           TESTIMONIALS
         </div>
         <h2 className="text-3xl md:text-5xl font-bold mb-4">
-          What Our Users Say
+          See why they love it
         </h2>
-        <p className="text-lg opacity-70 max-w-xl mx-auto">
-          Join thousands who have transformed their mental clarity with our
-          minimalist approach.
-        </p>
+        <p className="text-lg opacity-70 max-w-xl mx-auto">Join today!</p>
 
         {/* Large quote icon */}
         <Quote
