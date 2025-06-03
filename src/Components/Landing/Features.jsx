@@ -88,7 +88,7 @@ const Features = ({ setShowLoginModal }) => {
   ];
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+    <section className="w-full max-w-7xl mx-auto py-16 sm:py-20">
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
@@ -110,7 +110,7 @@ const Features = ({ setShowLoginModal }) => {
               onClick={() => setActiveFeature(index)}
               className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                 activeFeature === index
-                  ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
+                  ? "bg-gray-900 dark:bg-gray-100 shadow-2xl text-white dark:text-gray-900"
                   : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
@@ -121,7 +121,7 @@ const Features = ({ setShowLoginModal }) => {
         </div>
 
         {/* Active Feature Display */}
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div className="bg-gray-100 shadow-2xl dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
           <div className="grid lg:grid-cols-5 gap-0">
             {/* Content */}
             <div className="lg:col-span-2 p-8 lg:p-12 flex flex-col justify-center">
@@ -171,7 +171,7 @@ const Features = ({ setShowLoginModal }) => {
           {additionalFeatures.map((feature, index) => (
             <div
               key={index}
-              className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-colors duration-200"
+              className="bg-gray-100 shadow-2xl dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-colors duration-200"
             >
               <div className="flex items-start gap-4 mb-6">
                 <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 flex-shrink-0">
@@ -203,7 +203,7 @@ const Features = ({ setShowLoginModal }) => {
 
       {/* Call to Action */}
       <div className="text-center">
-        <div className="inline-block p-8 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="inline-block p-8 bg-gray-100 shadow-2xl dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
           <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Start journaling today
           </h3>
@@ -212,7 +212,7 @@ const Features = ({ setShowLoginModal }) => {
           </p>
           <button
             onClick={() => setShowLoginModal(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors duration-200 font-medium"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-gray-100 shadow-2xl text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors duration-200 font-medium"
           >
             Get Started
             <ArrowRight size={16} />
