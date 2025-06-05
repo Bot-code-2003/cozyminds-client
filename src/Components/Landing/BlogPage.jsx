@@ -186,7 +186,7 @@ const BlogPage = ({ onBack }) => {
   const parsedContent = parseContent(post.content);
 
   return (
-    <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans transition-colors duration-300">
+    <div className="min-h-screen  dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans transition-colors duration-300">
       {/* SEO Meta Tags */}
       <head>
         <title>{post.seo.ogTitle} | Starlit Journals Blog</title>
@@ -268,7 +268,7 @@ const BlogPage = ({ onBack }) => {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Mobile Navigation */}
         <div className="flex items-center justify-between mb-8 sm:hidden">
           <button

@@ -290,7 +290,7 @@ const JournalEntry = () => {
       {/* Main Container */}
       <div className="relative z-10 min-h-screen p-4 sm:p-6 lg:p-8">
         {/* Back Button */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <Link
             to="/"
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white "
@@ -298,11 +298,11 @@ const JournalEntry = () => {
             <ArrowLeft size={16} />
             Back to Dashboard
           </Link>
-        </div>
+        </div> */}
 
         {/* Journal Container */}
         <div className="max-w-4xl mx-auto flex justify-center">
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+          <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
             {/* Theme Header Banner */}
             <div className={`h-3 bg-gradient-to-r ${moodStyle.gradient}`}></div>
 

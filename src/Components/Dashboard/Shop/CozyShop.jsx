@@ -6,7 +6,16 @@ import { useCoins } from "../../../context/CoinContext.jsx";
 import { useDarkMode } from "../../../context/ThemeContext.jsx";
 
 import Navbar from "../Navbar.jsx";
-import { Package, Tag, BookOpen, Mail, Coins, Gift, Crown } from "lucide-react";
+import {
+  Package,
+  Tag,
+  BookOpen,
+  Mail,
+  Coins,
+  Gift,
+  Crown,
+  Scroll,
+} from "lucide-react";
 import ShopItem from "./ShopItem.jsx";
 import ShopInventory from "./ShopInventory";
 import ConceptPackItem from "./ConceptPackItem.jsx";
@@ -40,7 +49,9 @@ const CozyShop = () => {
   }, []);
 
   const isOneTimePurchase = (category) => {
-    return ["theme", "badge", "conceptpack", "mailtheme"].includes(category);
+    return ["theme", "badge", "conceptpack", "mailtheme", "story"].includes(
+      category
+    );
   };
 
   const isItemSoldOut = (item) => {
@@ -132,12 +143,16 @@ const CozyShop = () => {
         case "mailtheme":
           items = items.filter((item) => item.category === "mailtheme");
           break;
+        case "story":
+          items = items.filter((item) => item.category === "story");
+          break;
         case "regular":
           items = items.filter(
             (item) =>
               !item.featured &&
               item.category !== "conceptpack" &&
-              item.category !== "mailtheme"
+              item.category !== "mailtheme" &&
+              item.category !== "story"
           );
           break;
       }
@@ -151,6 +166,7 @@ const CozyShop = () => {
     { id: "exclusive", name: "Exclusive", icon: <Crown size={16} /> },
     { id: "conceptpack", name: "Concept Packs", icon: <BookOpen size={16} /> },
     { id: "mailtheme", name: "Mail Themes", icon: <Mail size={16} /> },
+    { id: "story", name: "Stories", icon: <Scroll size={16} /> },
     { id: "regular", name: "Regular", icon: <Tag size={16} /> },
   ];
 
@@ -238,8 +254,6 @@ const CozyShop = () => {
         {/* Shop Content */}
         {activeTab === "shop" && (
           <>
-            {/* Simple Categories */}
-
             {/* Items */}
             <div>
               <h2 className="text-xl font-semibold mb-4">

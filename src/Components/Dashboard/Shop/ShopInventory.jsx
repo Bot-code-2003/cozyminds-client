@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { X, Star, Eye, Package, Mail } from "lucide-react";
-import { shopItems } from "./ShopItems"; // Adjust the import path as needed
+import { X, Package, Mail, Crown, BookOpen, Tag, Scroll } from "lucide-react";
+import { shopItems } from "./ShopItems";
 import { getCardClass } from "../ThemeDetails";
+import ShopItem from "./ShopItem";
 
 const ShopInventory = ({
   inventory,
@@ -11,24 +12,9 @@ const ShopInventory = ({
   isOneTimePurchase,
   activateMailTheme,
 }) => {
-  const [previewMailTheme, setPreviewMailTheme] = useState(null);
   const [showConceptModal, setShowConceptModal] = useState(false);
   const [selectedConceptPack, setSelectedConceptPack] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Map shop item IDs to CSS classes
-  const getItemCardClass = useCallback((item) => {
-    if (item.cardClass) {
-      return item.cardClass;
-    }
-    if (item.isMailTheme) {
-      return `card-${item.id}`;
-    }
-    if (item.isConceptPackGroup) {
-      return `card-${item.parentPackId}`;
-    }
-    return `card-${item.id.replace("theme_", "")}`;
-  }, []);
+  const [activeCategory, setActiveCategory] = useState("all");
 
   // Group concept pack items
   const groupedInventory = inventory.reduce((acc, item) => {
@@ -74,7 +60,49 @@ const ShopInventory = ({
     return acc;
   }, []);
 
-  console.log("Grouped inventory:", groupedInventory);
+  // Filter items based on category
+  const filteredInventory = (() => {
+    if (activeCategory === "all") {
+      return groupedInventory;
+    }
+
+    switch (activeCategory) {
+      case "exclusive":
+        return groupedInventory.filter((item) => item.featured === "Exclusive");
+      case "conceptpack":
+        return groupedInventory.filter(
+          (item) => item.category === "conceptpack" || item.isConceptPackGroup
+        );
+      case "mailtheme":
+        return groupedInventory.filter(
+          (item) => item.category === "mailtheme" || item.isMailTheme
+        );
+      case "story":
+        return groupedInventory.filter((item) => item.category === "story");
+      case "regular":
+        return groupedInventory.filter(
+          (item) =>
+            !item.featured &&
+            item.category !== "conceptpack" &&
+            item.category !== "mailtheme" &&
+            item.category !== "story" &&
+            !item.isConceptPackGroup &&
+            !item.isMailTheme
+        );
+      default:
+        return groupedInventory;
+    }
+  })();
+
+  // Categories for filtering
+  const categories = [
+    { id: "all", name: "All", icon: <Package size={14} /> },
+    { id: "exclusive", name: "Exclusive", icon: <Crown size={14} /> },
+    { id: "conceptpack", name: "Concept Packs", icon: <BookOpen size={14} /> },
+    { id: "mailtheme", name: "Mail Themes", icon: <Mail size={14} /> },
+    { id: "story", name: "Stories", icon: <Scroll size={14} /> },
+    { id: "regular", name: "Regular", icon: <Tag size={14} /> },
+  ];
 
   const handleActivateMailTheme = useCallback(
     (theme) => {
@@ -83,16 +111,6 @@ const ShopInventory = ({
     },
     [activateMailTheme]
   );
-
-  const handlePreviewMailTheme = useCallback((theme) => {
-    setPreviewMailTheme(theme);
-    setIsModalOpen(true);
-  }, []);
-
-  const closePreview = useCallback(() => {
-    setPreviewMailTheme(null);
-    setIsModalOpen(false);
-  }, []);
 
   const openConceptModal = useCallback((conceptPack) => {
     const originalPack = shopItems.find(
@@ -121,11 +139,10 @@ const ShopInventory = ({
   const handleKeyDown = useCallback(
     (e) => {
       if (e.key === "Escape") {
-        closePreview();
         closeConceptModal();
       }
     },
-    [closePreview, closeConceptModal]
+    [closeConceptModal]
   );
 
   return (
@@ -152,159 +169,62 @@ const ShopInventory = ({
       ) : (
         <>
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-              My Collection
-            </h2>
-            <p className="text-[var(--text-secondary)]">
-              Items you've purchased from the Starlit Shop <br /> Write a new
-              entry to use these items
-            </p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
+                  My Collection
+                </h2>
+                <p className="text-[var(--text-secondary)] text-sm">
+                  Items you've purchased from the Starlit Shop
+                </p>
+              </div>
+
+              {/* Compact Category Filter */}
+              <div className="flex flex-wrap gap-1">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveCategory(category.id)}
+                    className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+                      activeCategory === category.id
+                        ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    {category.icon}
+                    <span className="hidden sm:inline">{category.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groupedInventory.map((item) => (
-              <article
+            {filteredInventory.map((item) => (
+              <ShopItem
                 key={item.id}
-                className={`
-                  relative group h-60 flex flex-col overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 
-                  bg-white dark:bg-gray-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 
-                  ${item.featuredStyle || ""} ${getItemCardClass(item)} 
-                  ${item.isConceptPackGroup ? "cursor-pointer" : ""}
-                `}
-                onClick={() => {
-                  if (item.isConceptPackGroup) {
-                    openConceptModal(item);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-label={item.name}
-              >
-                {/* Badges */}
-                <div className="flex justify-between items-start z-10">
-                  {/* Featured Badge */}
-                  {item.featured && (
-                    <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-white text-xs font-medium rounded-full backdrop-blur-sm">
-                      {item.featured === "Exclusive" && (
-                        <Star size={10} className="text-yellow-500" />
-                      )}
-                      {item.featured}
-                    </div>
-                  )}
-
-                  {/* Category Badge */}
-                  <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 bg-gray-900/80 text-white text-xs font-medium rounded-full backdrop-blur-sm">
-                    {item.isMailTheme ? "Mail Theme" : item.category}
-                  </div>
-                </div>
-
-                {/* Concept Pack Group - Display grid of images */}
-                {item.isConceptPackGroup &&
-                  item.items &&
-                  item.items.length > 0 && (
-                    <div className="absolute inset-0 grid grid-cols-3 gap-0">
-                      {item.items.slice(0, 3).map((conceptItem, index) => (
-                        <div
-                          key={index}
-                          className="relative overflow-hidden bg-cover bg-center"
-                          style={{
-                            backgroundImage: conceptItem.image
-                              ? `url(${conceptItem.image})`
-                              : "none",
-                          }}
-                        >
-                          {/* Fallback CSS class styling if no image */}
-                          {!conceptItem.image && (
-                            <div
-                              className={`w-full h-full ${
-                                getCardClass(conceptItem.id) ||
-                                getItemCardClass(conceptItem)
-                              }`}
-                            />
-                          )}
-                        </div>
-                      ))}
-                      {Array.from({
-                        length: Math.max(0, 3 - (item.items?.length || 0)),
-                      }).map((_, index) => (
-                        <div
-                          key={`placeholder-${index}`}
-                          className="relative overflow-hidden bg-gray-800"
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                {/* Emoji Display */}
-                {item.isEmoji && (
-                  <div className="flex-grow flex items-center justify-center">
-                    <span
-                      className="text-6xl transform group-hover:scale-110 transition-transform duration-300"
-                      role="img"
-                      aria-label={item.name}
-                    >
-                      {item.emoji || item.image}
-                    </span>
-                  </div>
-                )}
-
-                {/* Mail Theme Icon */}
-                {item.isMailTheme && !item.isEmoji && (
-                  <div className="flex-grow flex items-center justify-center">
-                    <Mail size={40} className="text-white opacity-70" />
-                  </div>
-                )}
-
-                {/* Content Area */}
-                <div className="mt-auto p-4 flex flex-col items-center text-center z-10">
-                  <h3 className="text-lg font-semibold text-white mb-2 drop-shadow-md line-clamp-1">
-                    {item.name}
-                  </h3>
-                  <p className="text-white/90 text-sm mb-4 drop-shadow-sm line-clamp-2 leading-relaxed">
-                    {item.description}
-                  </p>
-
-                  {/* Action Buttons */}
-                  {item.isMailTheme && (
-                    <div className="flex justify-center items-center w-full gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePreviewMailTheme(item);
-                        }}
-                        className="flex items-center gap-1 px-3 py-2 bg-white/80 hover:bg-white/90 text-gray-900 text-sm font-medium rounded-md transition-all duration-200 backdrop-blur-sm"
-                        aria-label={`Preview ${item.name}`}
-                      >
-                        <Eye size={14} />
-                        Preview
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleActivateMailTheme(item);
-                        }}
-                        className="px-4 py-2 bg-blue-500/80 hover:bg-blue-500/90 text-white text-sm font-medium rounded-md transition-all duration-200 backdrop-blur-sm"
-                        aria-label={`Activate ${item.name}`}
-                      >
-                        Activate
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Inventory Count */}
-                  {!isOneTimePurchase(item.category) &&
-                    !item.isConceptPackGroup && (
-                      <div className="mt-2 text-xs text-white/80 font-medium">
-                        Owned: {item.quantity}
-                      </div>
-                    )}
-                </div>
-
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              </article>
+                item={item}
+                isInventoryMode={true}
+                onActivateMailTheme={handleActivateMailTheme}
+                onOpenConceptModal={openConceptModal}
+                isOneTimePurchase={isOneTimePurchase}
+              />
             ))}
           </div>
+
+          {/* Show message when no items match filter */}
+          {filteredInventory.length === 0 && (
+            <div className="text-center py-12">
+              <Package size={48} className="mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+                No items in this category
+              </h3>
+              <p className="text-gray-500 dark:text-gray-500">
+                Try selecting a different category or purchase more items from
+                the shop.
+              </p>
+            </div>
+          )}
 
           {/* Concept Pack Modal */}
           {showConceptModal && selectedConceptPack && (
@@ -397,78 +317,6 @@ const ShopInventory = ({
                     className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200"
                   >
                     Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Mail Theme Preview Modal */}
-          {isModalOpen && previewMailTheme && (
-            <div
-              className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999] p-4"
-              onClick={closePreview}
-              onKeyDown={handleKeyDown}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="mail-modal-title"
-            >
-              <div
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Modal Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <h2
-                    id="mail-modal-title"
-                    className="text-xl font-semibold text-gray-900 dark:text-white"
-                  >
-                    {previewMailTheme.name} Preview
-                  </h2>
-                  <button
-                    onClick={closePreview}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
-                    aria-label="Close preview"
-                  >
-                    <X size={20} className="text-gray-500 dark:text-gray-400" />
-                  </button>
-                </div>
-
-                {/* Modal Content */}
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  {previewMailTheme.previewHtml ? (
-                    <div
-                      className={
-                        previewMailTheme.cardClass ||
-                        `card-${previewMailTheme.id}`
-                      }
-                      dangerouslySetInnerHTML={{
-                        __html: previewMailTheme.previewHtml,
-                      }}
-                    />
-                  ) : (
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      Preview not available for this item.
-                    </div>
-                  )}
-                </div>
-
-                {/* Modal Footer */}
-                <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button
-                    onClick={closePreview}
-                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200"
-                  >
-                    Close
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleActivateMailTheme(previewMailTheme);
-                      closePreview();
-                    }}
-                    className="px-6 py-2 rounded-lg font-medium transition-all duration-200 bg-blue-500 hover:bg-blue-600 text-white"
-                  >
-                    Activate
                   </button>
                 </div>
               </div>

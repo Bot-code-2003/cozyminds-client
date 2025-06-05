@@ -108,6 +108,22 @@ export const shopItems = [
       },
     ],
   },
+
+  // Stories
+  {
+    id: "story_andy_the_sailor",
+    name: "Andy the Sailor",
+    abstract:
+      "A sailor named Andy sets out alone on his ship, the Moonwake, leaving behind everything he knows. Through letters to a distant friend, he writes about storms, strange lights, quiet islands, and ghost ships. The sea feels alive—whispering, testing, guiding. As he sails farther, he begins to face the memories he once ran from. This is not just a journey across water, but through feeling, memory, and healing. Somewhere between stars and silence, Andy searches for peace—and perhaps, a way home.",
+    price: 450,
+    category: "story",
+    genre: "Adventure",
+    featured: "Adventure",
+    featuredStyle: "feature-card",
+    isEmoji: false,
+    cardClass: "card-andy-the-sailor",
+  },
+
   // Original shop items
   {
     id: "theme_christmas",

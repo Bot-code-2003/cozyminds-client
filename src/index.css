@@ -143,6 +143,10 @@ button:hover {
   background-image: url("./assets/wifu.png");
 }
 
+.card-andy-the-sailor {
+  background-image: url("./assets/andy_the_sailor.png");
+}
+
 .card-default {
   background-color: var(--accent);
   color: var(--card-txt);
@@ -440,6 +444,7 @@ button:hover {
 .card-christmas,
 .card-elf-theme,
 .card-waifu-theme,
+.card-andy-the-sailor,
 .card-default {
   background-repeat: no-repeat;
   background-size: cover;
@@ -479,6 +484,7 @@ button:hover {
 .card-christmas::before,
 .card-elf-theme::before,
 .card-waifu-theme::before,
+.card-andy-the-sailor::before,
 .card-default::before {
   content: "";
   position: absolute;
@@ -520,6 +526,7 @@ button:hover {
 .card-christmas > *,
 .card-elf-theme > *,
 .card-waifu-theme > *,
+.card-andy-the-sailor > *,
 .card-default > * {
   position: relative;
   z-index: 2;
