@@ -9,6 +9,7 @@ import {
   RefreshCw,
   Mail,
   Calendar,
+  Copyright,
 } from "lucide-react";
 
 const Terms = ({ darkMode }) => {
@@ -27,6 +28,12 @@ const Terms = ({ darkMode }) => {
       title: "Content Ownership",
       content:
         "Your journal entries and data belong to you. We don't claim ownership over anything you write or upload to your account.",
+    },
+    {
+      icon: <Copyright size={24} />,
+      title: "Intellectual Property",
+      content:
+        "All images, stories (including *Moonwake Adventures*), and unique features of Starlit Journals, such as the daily story delivery system, are the exclusive property of Cozy Minds. These materials are protected by copyright and other intellectual property laws. You may not reproduce, distribute, or use them without explicit written permission from Cozy Minds.",
     },
     {
       icon: <Shield size={24} />,
@@ -132,7 +139,7 @@ const Terms = ({ darkMode }) => {
               </div>
             </div>
             <h2 className="text-3xl font-bold mb-4 tracking-tight">
-              5. Contact Us
+              6. Contact Us
             </h2>
             <p className="text-lg opacity-80 mb-6 max-w-xl mx-auto">
               Questions? We're here to help and would love to hear from you.

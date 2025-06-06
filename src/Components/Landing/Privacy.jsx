@@ -9,6 +9,7 @@ import {
   UserCheck,
   Mail,
   Calendar,
+  User,
 } from "lucide-react";
 
 const Privacy = ({ darkMode }) => {
@@ -20,25 +21,31 @@ const Privacy = ({ darkMode }) => {
       icon: <Database size={24} />,
       title: "Data We Collect",
       content:
-        "We do not collect any personal identifying information unless you choose to provide it via email or feedback. Your journal entries are yours alone — stored securely and never shared or sold.",
+        "We collect only the information you choose to provide during signup, such as nickname, email, password, age, gender, and subscription preferences. Your journal entries are stored securely and remain private, never shared or sold. We collect this data solely to provide and improve your experience with Cozy Minds.",
+    },
+    {
+      icon: <User size={24} />,
+      title: "User Consent and Data Usage",
+      content:
+        "We use your information (e.g., nickname, email, age, gender) to personalize your experience, deliver features like daily story chapters (e.g., *Moonwake Adventures*), and send relevant in-app mails. By signing up, you consent to this data usage. If you do not agree, you cannot create an account. You can withdraw consent and request data deletion at any time.",
     },
     {
       icon: <BarChart3 size={24} />,
       title: "Analytics",
       content:
-        "We use basic analytics tools (like Google Analytics) to understand how people use Cozy Minds — which pages are visited, how long users stay, and where they came from. This data is anonymized and helps us improve the app.",
+        "We use anonymized analytics (via tools like Google Analytics) to track app usage, such as page visits and session duration. This helps us enhance Cozy Minds. Your personal data is never linked to analytics or shared with third parties beyond what’s necessary for these tools.",
     },
     {
       icon: <Cookie size={24} />,
       title: "Cookies",
       content:
-        "Cozy Minds uses cookies to keep you logged in and ensure daily rewards and features work correctly. Nothing sneaky, just the cozy essentials.",
+        "Cozy Minds uses cookies to maintain your login session, enable daily rewards, and support core features. We don’t use cookies for tracking or advertising purposes, only for essential functionality.",
     },
     {
       icon: <UserCheck size={24} />,
       title: "Your Rights",
       content:
-        "You can request to view, edit, or delete your data anytime. Just reach out to us and we'll help you manage your information.",
+        "You can view, edit, or delete your data at any time by contacting us. We comply with the Digital Personal Data Protection Act, 2023, ensuring your data is handled transparently. Data like in-app mails is automatically deleted after 10 days, and we don’t use your data to train AI models.",
     },
   ];
 
@@ -132,7 +139,7 @@ const Privacy = ({ darkMode }) => {
               </div>
             </div>
             <h2 className="text-3xl font-bold mb-4 tracking-tight">
-              5. Contact
+              6. Contact
             </h2>
             <p className="text-lg opacity-80 mb-6 max-w-xl mx-auto">
               Questions or concerns? Drop us an email and we'll get back to you
