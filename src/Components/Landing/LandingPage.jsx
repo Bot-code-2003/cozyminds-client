@@ -298,7 +298,10 @@ const LandingPage = () => {
         </section>
 
         {/* Features Section */}
-        <Features setShowLoginModal={openLoginModal} />
+        <Features
+          setShowLoginModal={openLoginModal}
+          setShowSignupModal={openSignupModal}
+        />
 
         {/* How It Works Section */}
         {/* <HowItWorks setShowLoginModal={openLoginModal} /> */}

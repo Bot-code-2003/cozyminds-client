@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Mail,
   Edit3,
@@ -10,6 +10,7 @@ import {
   Layers,
   Palette,
   Book,
+  Anchor,
 } from "lucide-react";
 import { useDarkMode } from "../../context/ThemeContext";
 import MailImg from "../../assets/mailing-d.png";
@@ -20,10 +21,14 @@ import CollectionsPreview from "../../assets/collections.png";
 import ThemeSelectStepPreview from "../../assets/preview.png";
 import EntriesPreview from "../../assets/entries.png";
 import Shop from "../../assets/shop-d.png";
+import StoryMailPreview from "../../assets/andy_the_sailor.png";
+import StoryMailPreview2 from "../../assets/story-d.png";
 
-const Features = ({ setShowLoginModal }) => {
+const Features = ({ setShowLoginModal, setShowSignupModal }) => {
   const { darkMode } = useDarkMode();
   const [activeFeature, setActiveFeature] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const storyImages = [StoryMailPreview, StoryMailPreview2]; //
 
   const mainFeatures = [
     {
@@ -87,8 +92,16 @@ const Features = ({ setShowLoginModal }) => {
     },
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % storyImages.length);
+    }, 3000); // Rotate every 3 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
+
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+    <section className="w-full max-w-7xl mx-auto sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
       {/* Header */}
       <header className="text-center mb-12 sm:mb-16">
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">
@@ -218,26 +231,65 @@ const Features = ({ setShowLoginModal }) => {
         </div>
       </div>
 
-      {/* Call to Action */}
-      <div className="text-center">
-        <div className="inline-block max-w-md mx-auto p-6 sm:p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-            Start journaling today
+      {/* Signature Feature: Daily Story Chapters */}
+      <div className="mb-12 sm:mb-16">
+        <header className="text-center mb-8 sm:mb-12">
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 text-gray-900 dark:text-white">
+            Our Signature Story Experience
           </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base leading-relaxed">
-            Join thousands who have transformed their journaling experience.
+          <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto text-sm sm:text-base">
+            Immerse yourself in a unique storytelling journey delivered to your
+            in-site mailbox.
           </p>
-          <button
-            onClick={() => setShowLoginModal(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-gray-400"
-            aria-label="Get started with journaling"
-          >
-            Get Started
-            <ArrowRight
-              size={16}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </button>
+        </header>
+
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+          <div className="grid lg:grid-cols-5 gap-0">
+            {/* Content */}
+            <div className="lg:col-span-2 p-6 sm:p-8 lg:p-12 flex flex-col justify-center order-2 lg:order-1">
+              <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 flex-shrink-0">
+                  <Anchor size={20} />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white leading-tight">
+                  Daily Story Chapters
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-base sm:text-lg mb-6">
+                Purchase a captivating story and receive a new chapter each day
+                in your in-site mailbox, crafted by engaging characters to
+                inspire your journaling journey.
+              </p>
+              <button
+                onClick={() => setShowSignupModal(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-gray-400"
+                aria-label="Claim your first free story chapter"
+              >
+                Claim Your First Free Chapter
+                <ArrowRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </button>
+            </div>
+
+            {/* Image with Rotation */}
+            <div className="lg:col-span-3 p-4 sm:p-6 order-1 lg:order-2">
+              <div className="w-full aspect-video sm:aspect-[4/3] lg:aspect-video rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 relative">
+                {storyImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image || "/placeholder.svg?height=400&width=600"}
+                    alt={`Daily Story Chapters preview ${index + 1}`}
+                    className={`w-full h-full object-contain sm:object-cover absolute top-0 left-0 transition-opacity duration-500 ${
+                      index === currentImageIndex ? "opacity-100" : "opacity-0"
+                    }`}
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
