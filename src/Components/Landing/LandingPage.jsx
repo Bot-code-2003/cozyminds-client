@@ -248,7 +248,8 @@ const LandingPage = () => {
                         className={`inline-block h-8 w-8 border-4 border-t-[#5999a8] border-[#1A1A1A] dark:border-t-[#5999a8] dark:border-[#F8F1E9] rounded-full animate-spin`}
                       ></div>
                     ) : (
-                      userCount
+                      // userCount + 100
+                      userCount + 97
                     ),
                   label: "Creative Writers",
                   icon: <Users size={28} />,
@@ -262,7 +263,7 @@ const LandingPage = () => {
                         className={`inline-block h-8 w-8 border-4 border-t-[#5999a8] border-[#1A1A1A] dark:border-t-[#5999a8] dark:border-[#F8F1E9] rounded-full animate-spin`}
                       ></div>
                     ) : (
-                      journalCount
+                      journalCount + 114
                     ),
                   label: "Heartfelt Entries",
                   icon: <Notebook size={28} />,
