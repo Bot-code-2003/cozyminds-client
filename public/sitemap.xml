@@ -1,29 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset 
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+>
+  <!-- Main Pages -->
   <url>
     <loc>https://starlitjournals.vercel.app</loc>
-    <lastmod>2025-06-03</lastmod>
+    <lastmod>2025-06-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/terms-of-service</loc>
-    <lastmod>2025-06-03</lastmod>
+    <lastmod>2025-05-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/privacy-policy</loc>
-    <lastmod>2025-06-03</lastmod>
+    <lastmod>2025-05-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/cozyshop</loc>
+    <lastmod>2025-06-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog List Page -->
   <url>
     <loc>https://starlitjournals.vercel.app/starlitblogs</loc>
     <lastmod>2025-06-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- Individual Blogs -->
   <url>
     <loc>https://starlitjournals.vercel.app/blog/easy-journaling-prompts-feel-happier</loc>
     <lastmod>2025-06-03</lastmod>
