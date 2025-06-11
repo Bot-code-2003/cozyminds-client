@@ -31,14 +31,13 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   const dropdownRef = useRef(null);
   const { darkMode, setDarkMode } = useDarkMode();
   const { coins } = useCoins();
-  const { mails, setMails, user: userData, hasUnreadMails } = useMails(); // Use hasUnreadMails from context
+  const { mails, setMails, user: userData, hasUnreadMails } = useMails();
 
   const isRootPath = location.pathname === "/";
   const isJournalingAlt = location.pathname === "/journaling-alt";
 
   const userId = userData?._id;
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -65,9 +64,13 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
     setMobileMenuOpen(false);
   };
 
+  const currentLoc = location.pathname.split("/")[1];
+
+  console.log(currentLoc);
+
   return (
     <>
-      <nav className="w-full bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 py-3 px-4 md:px-6 flex justify-between items-center sticky top-0 z-[999] shadow-sm">
+      <nav className="w-full bg-white/70 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 py-3 px-4 md:px-6 flex justify-between items-center sticky top-0 z-[999] shadow-sm">
         {/* Logo */}
         <button
           onClick={() => handleNavigation("/")}
@@ -160,7 +163,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
           {/* User Dropdown */}
           {userData && (
-            <div className="relative" ref={dropdownRef}>
+            <div ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-[#5999a8] transition-all duration-200 group"
@@ -179,7 +182,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               </button>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-30">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-[1000]">
                   <button
                     onClick={() => {
                       handleNavigation("/profile-settings");
@@ -219,7 +222,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[73px] bg-white/95 dark:bg-[#1A1A1A]/95 backdrop-blur-md z-30">
+        <div className="md:hidden fixed inset-0 top-[73px] bg-white/95 dark:bg-[#1A1A1A]/95 backdrop-blur-md z-[1000]">
           <div className="p-4 space-y-4">
             {/* Coins Display Mobile */}
             {

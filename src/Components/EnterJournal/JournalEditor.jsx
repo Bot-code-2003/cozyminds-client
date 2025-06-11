@@ -33,246 +33,72 @@ import ImageExtension from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
 
-// Enhanced Resizable Image Extension with better dimension handling
-const ResizableImageExtension = ImageExtension.extend({
-  addAttributes() {
-    return {
-      ...this.parent?.(),
-      width: {
-        default: null,
-        parseHTML: (element) => {
-          const width = element.getAttribute("width");
-          return width ? Number.parseInt(width, 10) : null;
-        },
-        renderHTML: (attributes) => {
-          if (!attributes.width) return {};
-          return { width: attributes.width };
-        },
-      },
-      height: {
-        default: null,
-        parseHTML: (element) => {
-          const height = element.getAttribute("height");
-          return height ? Number.parseInt(height, 10) : null;
-        },
-        renderHTML: (attributes) => {
-          if (!attributes.height) return {};
-          return { height: attributes.height };
-        },
-      },
-    };
-  },
-
+// Enhanced Full-Width Image Extension with better cursor positioning
+const FullWidthImageExtension = ImageExtension.extend({
   addNodeView() {
     return ({ node, HTMLAttributes, getPos, editor }) => {
       const container = document.createElement("div");
-      container.className = "resizable-image-container";
+      container.className = "full-width-image-container";
       container.style.cssText = `
         position: relative;
-        display: inline-block;
-        margin: 16px 8px 16px 0;
-        vertical-align: top;
-        min-width: 50px;
-        min-height: 50px;
-        max-width: 100%;
-        border-radius: 8px;
+        display: block;
+        width: 100%;
+        margin: 32px 0;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
         border: 1px solid rgba(156, 163, 175, 0.2);
+        background: transparent;
       `;
 
       const img = document.createElement("img");
       img.src = node.attrs.src;
       img.alt = node.attrs.alt || "";
       img.style.cssText = `
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 0;
-        margin: 0;
-        padding: 0;
-      `;
-
-      // Set initial dimensions
-      const initialWidth = node.attrs.width || 300;
-      const initialHeight = node.attrs.height || 200;
-
-      container.style.width = initialWidth + "px";
-      container.style.height = initialHeight + "px";
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  max-height: 500px;
+  border-radius: 12px;
+  margin: 0 auto;
+  background: transparent;
+`;
 
       // Error handling for broken images
       img.onerror = () => {
-        img.style.display = "none";
-        const errorDiv = document.createElement("div");
-        errorDiv.style.cssText = `
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 100%;
-          background: rgba(239, 68, 68, 0.1);
-          color: rgba(239, 68, 68, 0.8);
-          font-size: 14px;
-          text-align: center;
-          padding: 16px;
-        `;
-        errorDiv.innerHTML = `
-          <div>
-            <div style="margin-bottom: 8px;">⚠️</div>
-            <div>Failed to load image</div>
+        container.innerHTML = `
+          <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: rgba(239, 68, 68, 0.8);
+            text-align: center;
+            min-height: 200px;
+          ">
+            <div style="font-size: 24px; margin-bottom: 8px;">⚠️</div>
+            <div style="font-size: 14px;">Failed to load image</div>
           </div>
         `;
-        container.appendChild(errorDiv);
-      };
-
-      // Resize handle
-      const resizeHandle = document.createElement("div");
-      resizeHandle.className = "resize-handle";
-      resizeHandle.style.cssText = `
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 20px;
-        height: 20px;
-        background: var(--accent, #3b82f6);
-        cursor: se-resize;
-        border-radius: 0 0 8px 0;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        z-index: 10;
-      `;
-
-      // Resize handle indicator
-      const handleIndicator = document.createElement("div");
-      handleIndicator.style.cssText = `
-        position: absolute;
-        bottom: 2px;
-        right: 2px;
-        width: 0;
-        height: 0;
-        border-left: 8px solid transparent;
-        border-bottom: 8px solid white;
-        pointer-events: none;
-      `;
-      resizeHandle.appendChild(handleIndicator);
-
-      // Show/hide handle on hover
-      container.addEventListener("mouseenter", () => {
-        resizeHandle.style.opacity = "0.8";
-      });
-      container.addEventListener("mouseleave", () => {
-        resizeHandle.style.opacity = "0";
-      });
-
-      // Resize functionality with improved handling
-      let isResizing = false;
-      let startX, startY, startWidth, startHeight, aspectRatio;
-
-      const startResize = (e) => {
-        isResizing = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        startWidth = Number.parseInt(container.style.width, 10);
-        startHeight = Number.parseInt(container.style.height, 10);
-        aspectRatio = startWidth / startHeight;
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Add visual feedback
-        container.style.outline = "2px solid var(--accent, #3b82f6)";
-        document.body.style.cursor = "se-resize";
-        document.body.style.userSelect = "none";
-      };
-
-      const doResize = (e) => {
-        if (!isResizing) return;
-
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
-
-        // Calculate new dimensions
-        let newWidth = Math.max(50, startWidth + deltaX);
-        let newHeight = Math.max(50, startHeight + deltaY);
-
-        // Maintain aspect ratio if shift is held
-        if (e.shiftKey) {
-          newHeight = newWidth / aspectRatio;
-        }
-
-        // Apply constraints
-        const maxWidth = container.parentElement?.offsetWidth || 800;
-        newWidth = Math.min(newWidth, maxWidth);
-        newHeight = Math.min(newHeight, 600);
-
-        container.style.width = newWidth + "px";
-        container.style.height = newHeight + "px";
-      };
-
-      const stopResize = () => {
-        if (!isResizing) return;
-
-        isResizing = false;
-
-        // Remove visual feedback
-        container.style.outline = "none";
-        document.body.style.cursor = "";
-        document.body.style.userSelect = "";
-
-        const finalWidth = Number.parseInt(container.style.width, 10);
-        const finalHeight = Number.parseInt(container.style.height, 10);
-
-        // Update the node attributes
-        if (typeof getPos === "function") {
-          try {
-            editor.commands.updateAttributes("image", {
-              width: finalWidth,
-              height: finalHeight,
-            });
-          } catch (error) {
-            console.error("Error updating image attributes:", error);
-          }
-        }
-      };
-
-      // Event listeners
-      resizeHandle.addEventListener("mousedown", startResize);
-      document.addEventListener("mousemove", doResize);
-      document.addEventListener("mouseup", stopResize);
-
-      // Cleanup function
-      const cleanup = () => {
-        document.removeEventListener("mousemove", doResize);
-        document.removeEventListener("mouseup", stopResize);
       };
 
       container.appendChild(img);
-      container.appendChild(resizeHandle);
 
       return {
         dom: container,
         update: (updatedNode) => {
           if (updatedNode.type.name !== "image") return false;
-
           try {
             img.src = updatedNode.attrs.src;
             img.alt = updatedNode.attrs.alt || "";
-
-            if (updatedNode.attrs.width) {
-              container.style.width = updatedNode.attrs.width + "px";
-            }
-            if (updatedNode.attrs.height) {
-              container.style.height = updatedNode.attrs.height + "px";
-            }
-
             return true;
           } catch (error) {
             console.error("Error updating image node:", error);
             return false;
           }
         },
-        destroy: cleanup,
       };
     };
   },
@@ -338,6 +164,11 @@ const JournalEditor = ({
         heading: {
           levels: [1, 2, 3],
         },
+        paragraph: {
+          HTMLAttributes: {
+            class: "editor-paragraph",
+          },
+        },
       }),
       UnderlineExtension,
       CharacterCount.configure({
@@ -354,11 +185,11 @@ const JournalEditor = ({
         protocols: ["http", "https"],
         validate: (href) => /^https?:\/\//.test(href),
       }),
-      ResizableImageExtension.configure({
+      FullWidthImageExtension.configure({
         inline: false,
         allowBase64: false,
         HTMLAttributes: {
-          class: "resizable-image",
+          class: "full-width-image",
         },
       }),
       Placeholder.configure({
@@ -380,21 +211,6 @@ const JournalEditor = ({
       attributes: {
         class:
           "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] max-w-none",
-      },
-      handleDrop: (view, event, slice, moved) => {
-        // Handle image drops
-        const files = Array.from(event.dataTransfer?.files || []);
-        const imageFiles = files.filter((file) =>
-          file.type.startsWith("image/")
-        );
-
-        if (imageFiles.length > 0) {
-          event.preventDefault();
-          // You could implement file upload here
-          console.log("Image files dropped:", imageFiles);
-          return true;
-        }
-        return false;
       },
     },
   });
@@ -460,7 +276,7 @@ const JournalEditor = ({
     }
   }, [editor]);
 
-  const addImage = useCallback(async () => {
+  const addImage = useCallback(() => {
     if (!editor || !imageUrl.trim()) return;
 
     const validationError = validateImageUrl(imageUrl);
@@ -473,35 +289,26 @@ const JournalEditor = ({
     setImageError("");
 
     try {
-      // Test if image loads
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = imageUrl;
-      });
-
-      // Add image to editor
+      // Directly add the image URL to the editor without pre-loading
       editor
         .chain()
         .focus()
         .setImage({
-          src: imageUrl,
-          width: 300,
-          height: 200,
+          src: imageUrl, // Use the raw URL provided by the user
         })
         .run();
+
+      // Add a paragraph after the image and position cursor there
+      setTimeout(() => {
+        editor.chain().focus().createParagraphNear().focus().run();
+      }, 100);
 
       setIsImageMenuOpen(false);
       setImageUrl("");
       setImageError("");
     } catch (error) {
-      console.error("Error loading image:", error);
-      setImageError(
-        "Failed to load image. Please check the URL and try again."
-      );
+      console.error("Error adding image:", error);
+      setImageError("Failed to add image. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -712,7 +519,7 @@ const JournalEditor = ({
               <ToolbarButton
                 onClick={() => setIsImageMenuOpen(!isImageMenuOpen)}
                 active={isImageMenuOpen}
-                title="Add Resizable Image"
+                title="Add Full-Width Image"
               >
                 <ImageIcon size={18} />
               </ToolbarButton>
@@ -848,9 +655,9 @@ const JournalEditor = ({
               <div className="text-xs text-[var(--text-secondary)]">
                 <p>💡 Tips:</p>
                 <ul className="list-disc list-inside space-y-1 mt-1">
+                  <li>Images will appear full-width in your journal</li>
+                  <li>Cursor will automatically move below the image</li>
                   <li>Use direct image URLs (ending in .jpg, .png, etc.)</li>
-                  <li>Drag the corner handle to resize images</li>
-                  <li>Hold Shift while resizing to maintain aspect ratio</li>
                 </ul>
               </div>
             </div>
@@ -979,61 +786,42 @@ const JournalEditor = ({
           height: 0;
         }
 
-        .journal-editor-content .ProseMirror img {
-          max-width: 100%;
-          height: auto;
-          border-radius: 8px;
-          margin: 16px 0;
+        /* Enhanced paragraph spacing */
+        .journal-editor-content .ProseMirror .editor-paragraph {
+          margin: 20px 0 !important;
+          line-height: 1.8 !important;
         }
 
-        .resizable-image-container {
+        .journal-editor-content .ProseMirror .editor-paragraph:first-child {
+          margin-top: 0 !important;
+        }
+
+        .journal-editor-content .ProseMirror .editor-paragraph:last-child {
+          margin-bottom: 0 !important;
+        }
+
+        /* Full-width image styling with better spacing */
+        .full-width-image-container {
           position: relative;
-          display: inline-block;
-          margin: 16px 8px 16px 0;
-          vertical-align: top;
-          min-width: 50px;
-          min-height: 50px;
-          max-width: 100%;
-          border-radius: 8px;
+          display: block;
+          width: 100%;
+          margin: 32px 0 !important;
+          border-radius: 12px;
           overflow: hidden;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
           border: 1px solid rgba(156, 163, 175, 0.2);
+          background: white;
         }
 
-        .resizable-image-container:hover .resize-handle {
-          opacity: 0.8 !important;
-        }
-
-        .resize-handle {
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          width: 20px;
-          height: 20px;
-          background: var(--accent, #3b82f6);
-          cursor: se-resize;
-          border-radius: 0 0 8px 0;
-          opacity: 0;
-          transition: opacity 0.2s ease;
-          z-index: 10;
-        }
-
-        .resize-handle::before {
-          content: "";
-          position: absolute;
-          bottom: 2px;
-          right: 2px;
-          width: 0;
-          height: 0;
-          border-left: 8px solid transparent;
-          border-bottom: 8px solid white;
-          pointer-events: none;
+        /* Ensure proper spacing after images */
+        .full-width-image-container + p {
+          margin-top: 32px !important;
         }
 
         .journal-editor-content .ProseMirror blockquote {
           border-left: 4px solid var(--accent);
           padding-left: 16px;
-          margin: 16px 0;
+          margin: 24px 0;
           font-style: italic;
           color: var(--text-secondary);
         }
@@ -1050,7 +838,7 @@ const JournalEditor = ({
           padding: 16px;
           border-radius: 8px;
           overflow-x: auto;
-          margin: 16px 0;
+          margin: 24px 0;
         }
 
         .journal-editor-content .ProseMirror pre code {
@@ -1078,13 +866,13 @@ const JournalEditor = ({
         .journal-editor-content .ProseMirror ul {
           list-style-type: disc !important;
           padding-left: 24px !important;
-          margin: 16px 0 !important;
+          margin: 20px 0 !important;
         }
 
         .journal-editor-content .ProseMirror ol {
           list-style-type: decimal !important;
           padding-left: 24px !important;
-          margin: 16px 0 !important;
+          margin: 20px 0 !important;
         }
 
         .journal-editor-content .ProseMirror ul ul {
@@ -1096,7 +884,7 @@ const JournalEditor = ({
         }
 
         .journal-editor-content .ProseMirror li {
-          margin: 4px 0 !important;
+          margin: 6px 0 !important;
           display: list-item !important;
         }
 
@@ -1107,7 +895,7 @@ const JournalEditor = ({
         .journal-editor-content .ProseMirror h1,
         .journal-editor-content .ProseMirror h2,
         .journal-editor-content .ProseMirror h3 {
-          margin: 24px 0 16px 0;
+          margin: 32px 0 20px 0;
           font-weight: 600;
         }
 
@@ -1124,7 +912,7 @@ const JournalEditor = ({
         }
 
         .journal-editor-content .ProseMirror p {
-          margin: 12px 0;
+          margin: 20px 0;
         }
 
         /* Selection styles */
@@ -1140,9 +928,8 @@ const JournalEditor = ({
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
-          .resizable-image-container {
-            max-width: 100% !important;
-            margin: 16px 0 !important;
+          .full-width-image-container {
+            margin: 24px 0 !important;
           }
         }
       `}</style>

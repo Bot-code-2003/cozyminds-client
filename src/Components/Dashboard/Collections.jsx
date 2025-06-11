@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FolderOpen, Plus, Calendar, Trash2 } from "lucide-react";
@@ -60,17 +62,51 @@ const Collections = () => {
     ).length;
   };
 
+  // Get entries for a collection
+  const getCollectionEntries = (collection) => {
+    return collection === "All"
+      ? journalEntries
+      : journalEntries.filter(
+          (entry) =>
+            entry.collections &&
+            Array.isArray(entry.collections) &&
+            entry.collections.includes(collection)
+        );
+  };
+
+  // Extract first image from content
+  const getFirstImageFromContent = (content) => {
+    if (!content) return null;
+    try {
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = content;
+      const img = tempDiv.querySelector("img");
+      return img ? img.src : null;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  // Get images for a collection (up to 4)
+  const getCollectionImages = (collection) => {
+    const entries = getCollectionEntries(collection);
+    const images = [];
+
+    // Try to find images in entries
+    for (const entry of entries) {
+      if (images.length >= 4) break;
+      const imageUrl = getFirstImageFromContent(entry.content);
+      if (imageUrl && !images.includes(imageUrl)) {
+        images.push(imageUrl);
+      }
+    }
+
+    return images;
+  };
+
   // Get up to 4 unique themes for a collection
   const getCollectionThemes = (collection) => {
-    let entries =
-      collection === "All"
-        ? journalEntries
-        : journalEntries.filter(
-            (entry) =>
-              entry.collections &&
-              Array.isArray(entry.collections) &&
-              entry.collections.includes(collection)
-          );
+    const entries = getCollectionEntries(collection);
 
     // Get unique themes
     const themesSet = new Set(
@@ -190,6 +226,9 @@ const Collections = () => {
               {collections.map((collection) => {
                 const themes = getCollectionThemes(collection);
                 const gridClasses = getGridClasses(themes.length);
+                const images = getCollectionImages(collection);
+                const hasImages = images.length > 0;
+
                 return (
                   <div
                     key={collection}
@@ -201,29 +240,52 @@ const Collections = () => {
                       e.key === "Enter" && handleCollectionSelect(collection)
                     }
                   >
-                    <div className={`grid  h-3/4 ${gridClasses}`}>
-                      {themes.map((theme, i) => (
-                        <div
-                          key={`${collection}-theme-${i}`}
-                          className={`w-full h-full bg-cover bg-center ${getCardClass(
-                            theme
-                          )} ${
-                            themes.length === 3 && i === 0 ? "col-span-2" : ""
-                          }`}
-                          aria-label={`Theme preview ${
-                            i + 1
-                          } for ${collection}`}
-                        >
-                          {theme === "default" && (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-600">
-                              <FolderOpen
-                                size={24}
-                                className="text-gray-400 dark:text-gray-500"
-                              />
+                    <div
+                      className={`grid h-3/4 ${
+                        hasImages ? gridClasses : gridClasses
+                      }`}
+                    >
+                      {hasImages
+                        ? // Show images if available
+                          images.map((imageUrl, i) => (
+                            <div
+                              key={`${collection}-image-${i}`}
+                              className={`w-full h-full bg-cover bg-center ${
+                                images.length === 3 && i === 0
+                                  ? "col-span-2"
+                                  : ""
+                              }`}
+                              style={{ backgroundImage: `url(${imageUrl})` }}
+                              aria-label={`Image preview ${
+                                i + 1
+                              } for ${collection}`}
+                            />
+                          ))
+                        : // Fall back to themes if no images
+                          themes.map((theme, i) => (
+                            <div
+                              key={`${collection}-theme-${i}`}
+                              className={`w-full h-full bg-cover bg-center ${getCardClass(
+                                theme
+                              )} ${
+                                themes.length === 3 && i === 0
+                                  ? "col-span-2"
+                                  : ""
+                              }`}
+                              aria-label={`Theme preview ${
+                                i + 1
+                              } for ${collection}`}
+                            >
+                              {theme === "default" && (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-600">
+                                  <FolderOpen
+                                    size={24}
+                                    className="text-gray-400 dark:text-gray-500"
+                                  />
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      ))}
+                          ))}
                     </div>
                     <div className="h-1/4 p-4 flex items-center justify-between bg-white dark:bg-gray-800">
                       <h3 className="text-lg font-medium truncate">

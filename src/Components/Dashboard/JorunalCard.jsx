@@ -22,6 +22,22 @@ const JournalCard = ({
 
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
+  // Extract first image from content
+  const getFirstImage = (content) => {
+    if (!content) return null;
+    try {
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = content;
+      const img = tempDiv.querySelector("img");
+      return img ? img.src : null;
+    } catch (error) {
+      console.error("Error extracting image:", error);
+      return null;
+    }
+  };
+
+  const firstImage = getFirstImage(entry.content);
+
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
@@ -64,24 +80,40 @@ const JournalCard = ({
             : "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
         }}
       >
-        {/* Top portion: Background image */}
+        {/* Top portion: Background image or theme background */}
         <div
-          className={`relative w-full h-48 ${cardClass}`}
-          style={{
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
+          className={`relative w-full h-48 ${firstImage ? "" : cardClass}`}
+          style={
+            firstImage
+              ? {
+                  backgroundImage: `url(${firstImage})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }
+              : {
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }
+          }
         >
-          {/* Animated background gradient */}
-          <div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-            style={{
-              background: `linear-gradient(135deg, ${
-                moodData?.color || "var(--accent)"
-              }15, ${moodData?.color || "var(--accent)"}05)`,
-            }}
-          />
+          {/* Overlay for better text readability when there's an image */}
+          {firstImage && (
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-500" />
+          )}
+
+          {/* Animated background gradient for non-image cards */}
+          {!firstImage && (
+            <div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background: `linear-gradient(135deg, ${
+                  moodData?.color || "var(--accent)"
+                }15, ${moodData?.color || "var(--accent)"}05)`,
+              }}
+            />
+          )}
         </div>
 
         {/* Bottom portion: Main content */}
@@ -118,7 +150,7 @@ const JournalCard = ({
           {/* Tags with improved design */}
           {entry.tags && entry.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
-              {entry.tags.slice(0, 3).map((tag, index) => (
+              {entry.tags.slice(0, 2).map((tag, index) => (
                 <span
                   key={tag}
                   className="text-xs px-3 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 transform group-hover:scale-105 transition-transform duration-300"
@@ -127,9 +159,9 @@ const JournalCard = ({
                   #{tag}
                 </span>
               ))}
-              {entry.tags.length > 3 && (
+              {entry.tags.length > 2 && (
                 <span className="text-xs px-3 py-1 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)]">
-                  +{entry.tags.length - 3}
+                  +{entry.tags.length - 2}
                 </span>
               )}
             </div>
