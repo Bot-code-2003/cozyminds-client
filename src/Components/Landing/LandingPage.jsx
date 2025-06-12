@@ -24,6 +24,9 @@ const LandingPage = () => {
     baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
   });
 
+  const [animatedUserCount, setAnimatedUserCount] = useState(0);
+  const [animatedJournalCount, setAnimatedJournalCount] = useState(0);
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [userCount, setUserCount] = useState(null); // Initialize as null to indicate loading
   const [journalCount, setJournalCount] = useState(null); // State for journal entries count
@@ -34,6 +37,27 @@ const LandingPage = () => {
 
   // Get auth modal controls
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
+
+  const animateCount = (finalValue, setFn, duration = 3000) => {
+    const startTime = performance.now();
+
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3); // Smooth curve
+
+    const update = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easeOutCubic(progress);
+      const currentValue = Math.floor(easedProgress * finalValue);
+
+      setFn(currentValue);
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    };
+
+    requestAnimationFrame(update);
+  };
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -51,59 +75,56 @@ const LandingPage = () => {
     }, 2000);
   };
 
-  // Handle scroll effect and fetch user and journal counts
   useEffect(() => {
-    // Fetch user count
-    const fetchUserCount = async () => {
+    let userInterval, journalInterval;
+
+    // Start placeholder animation from 0 → 100
+    userInterval = setInterval(() => {
+      setAnimatedUserCount((prev) => (prev < 100 ? prev + 1 : prev));
+    }, 20);
+
+    journalInterval = setInterval(() => {
+      setAnimatedJournalCount((prev) => (prev < 100 ? prev + 1 : prev));
+    }, 20);
+
+    const fetchCounts = async () => {
       try {
-        const response = await API.get("/users");
-        console.log("Number of users:", response.data.users);
-        setUserCount(response.data.users);
+        const userRes = await API.get("/users");
+        const journalRes = await API.get("/journals/journalscount");
+
+        const userFinal = userRes.data.users + 97; // or +97 if you want boost
+        const journalFinal = journalRes.data.count + 114;
+
+        setUserCount(userFinal);
+        setJournalCount(journalFinal);
+
+        // Stop the dummy animation
+        clearInterval(userInterval);
+        clearInterval(journalInterval);
+
+        // Animate from current value to real value
+        animateCount(userFinal, setAnimatedUserCount, 3000);
+        animateCount(journalFinal, setAnimatedJournalCount, 3000);
       } catch (err) {
-        console.error("Error fetching user count:", err);
-        setUserCount(0); // Fallback to 0 on error
+        console.error("Error fetching stats:", err);
       }
     };
 
-    // Fetch journal count
-    const fetchJournalCount = async () => {
-      console.log("⏳ Fetching journal count...");
-      try {
-        const response = await API.get("/journals/journalscount");
-        console.log("✅ Journal count:", response.data.count);
-        setJournalCount(response.data.count);
-      } catch (err) {
-        console.error(
-          "❌ Error fetching journal count:",
-          err.response?.data || err.message
-        );
-        setJournalCount(0);
-      }
-    };
+    fetchCounts();
 
-    fetchUserCount();
-    fetchJournalCount();
-
+    // Scroll and login event listeners
     const storedUser = JSON.parse(sessionStorage.getItem("user"));
-    console.log("Stored User:", storedUser);
+    if (storedUser) setUser(storedUser);
 
-    if (storedUser) {
-      setUser(storedUser);
-    }
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    // Listen for login events
-    const handleUserLogin = (event) => {
-      setUser(event.detail.user);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleUserLogin = (event) => setUser(event.detail.user);
 
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("user-logged-in", handleUserLogin);
 
     return () => {
+      clearInterval(userInterval);
+      clearInterval(journalInterval);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("user-logged-in", handleUserLogin);
     };
@@ -242,29 +263,16 @@ const LandingPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3">
               {[
                 {
-                  number:
-                    userCount === null ? (
-                      <div
-                        className={`inline-block h-8 w-8 border-4 border-t-[#5999a8] border-[#1A1A1A] dark:border-t-[#5999a8] dark:border-[#F8F1E9] rounded-full animate-spin`}
-                      ></div>
-                    ) : (
-                      // userCount + 100
-                      userCount + 97
-                    ),
+                  number: animatedUserCount,
+
                   label: "Creative Writers",
                   icon: <Users size={28} />,
                   description:
                     "Join our growing community of mindful journalers",
                 },
                 {
-                  number:
-                    journalCount === null ? (
-                      <div
-                        className={`inline-block h-8 w-8 border-4 border-t-[#5999a8] border-[#1A1A1A] dark:border-t-[#5999a8] dark:border-[#F8F1E9] rounded-full animate-spin`}
-                      ></div>
-                    ) : (
-                      journalCount + 114
-                    ),
+                  number: animatedJournalCount,
+
                   label: "Heartfelt Entries",
                   icon: <Notebook size={28} />,
                   description: "Total journal entries created by our community",
