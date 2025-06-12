@@ -26,10 +26,12 @@ const LandingPage = () => {
 
   const [animatedUserCount, setAnimatedUserCount] = useState(0);
   const [animatedJournalCount, setAnimatedJournalCount] = useState(0);
+  const [isUserCountLoading, setIsUserCountLoading] = useState(true);
+  const [isJournalCountLoading, setIsJournalCountLoading] = useState(true);
 
   const [isScrolled, setIsScrolled] = useState(false);
-  const [userCount, setUserCount] = useState(null); // Initialize as null to indicate loading
-  const [journalCount, setJournalCount] = useState(null); // State for journal entries count
+  const [userCount, setUserCount] = useState(null);
+  const [journalCount, setJournalCount] = useState(null);
   const [email, setEmail] = useState("");
   const [category, setCategory] = useState("Peace");
   const { darkMode, setDarkMode } = useDarkMode();
@@ -38,25 +40,38 @@ const LandingPage = () => {
   // Get auth modal controls
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
-  const animateCount = (finalValue, setFn, duration = 5000) => {
+  // Slot machine animation - rapidly changing numbers
+  const startSlotMachineAnimation = (setterFn, maxRange = 999) => {
+    const interval = setInterval(() => {
+      setterFn(Math.floor(Math.random() * maxRange));
+    }, 50); // Change number every 50ms for rapid effect
+    return interval;
+  };
+
+  // Smooth settle animation to final value
+  const settleToFinalValue = (finalValue, setterFn, duration = 2000) => {
     const startTime = performance.now();
+    const startValue = Math.floor(Math.random() * 100); // Random starting point for settlement
 
-    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3); // Smooth curve
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
-    const update = (currentTime) => {
+    const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easedProgress = easeOutCubic(progress);
-      const currentValue = Math.floor(easedProgress * finalValue);
 
-      setFn(currentValue);
+      const currentValue = Math.floor(
+        startValue + (finalValue - startValue) * easedProgress
+      );
+
+      setterFn(currentValue);
 
       if (progress < 1) {
-        requestAnimationFrame(update);
+        requestAnimationFrame(animate);
       }
     };
 
-    requestAnimationFrame(update);
+    requestAnimationFrame(animate);
   };
 
   // Handle form submission
@@ -76,16 +91,14 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
-    let userInterval, journalInterval;
+    let userSlotInterval, journalSlotInterval;
 
-    // Start placeholder animation from 0 → 100
-    userInterval = setInterval(() => {
-      setAnimatedUserCount((prev) => (prev < 100 ? prev + 1 : prev));
-    }, 20);
-
-    journalInterval = setInterval(() => {
-      setAnimatedJournalCount((prev) => (prev < 100 ? prev + 1 : prev));
-    }, 20);
+    // Start slot machine animations immediately
+    userSlotInterval = startSlotMachineAnimation(setAnimatedUserCount, 500);
+    journalSlotInterval = startSlotMachineAnimation(
+      setAnimatedJournalCount,
+      1000
+    );
 
     const fetchCounts = async () => {
       try {
@@ -98,15 +111,39 @@ const LandingPage = () => {
         setUserCount(userFinal);
         setJournalCount(journalFinal);
 
-        // Stop the dummy animation
-        clearInterval(userInterval);
-        clearInterval(journalInterval);
+        // Stop slot machine animations and settle to final values
+        clearInterval(userSlotInterval);
+        clearInterval(journalSlotInterval);
 
-        // Animate from current value to real value
-        animateCount(userFinal, setAnimatedUserCount, 5000);
-        animateCount(journalFinal, setAnimatedJournalCount, 5000);
+        setIsUserCountLoading(false);
+        setIsJournalCountLoading(false);
+
+        // Smooth settle animations with slight delays for better effect
+        setTimeout(() => {
+          settleToFinalValue(userFinal, setAnimatedUserCount, 2000);
+        }, 100);
+
+        setTimeout(() => {
+          settleToFinalValue(journalFinal, setAnimatedJournalCount, 2000);
+        }, 200);
       } catch (err) {
         console.error("Error fetching stats:", err);
+
+        // Even on error, stop the slot machine and show fallback numbers
+        clearInterval(userSlotInterval);
+        clearInterval(journalSlotInterval);
+
+        setIsUserCountLoading(false);
+        setIsJournalCountLoading(false);
+
+        // Fallback to some nice numbers
+        setTimeout(() => {
+          settleToFinalValue(150, setAnimatedUserCount, 2000);
+        }, 100);
+
+        setTimeout(() => {
+          settleToFinalValue(300, setAnimatedJournalCount, 2000);
+        }, 200);
       }
     };
 
@@ -123,8 +160,8 @@ const LandingPage = () => {
     window.addEventListener("user-logged-in", handleUserLogin);
 
     return () => {
-      clearInterval(userInterval);
-      clearInterval(journalInterval);
+      clearInterval(userSlotInterval);
+      clearInterval(journalSlotInterval);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("user-logged-in", handleUserLogin);
     };
@@ -264,7 +301,7 @@ const LandingPage = () => {
               {[
                 {
                   number: animatedUserCount,
-
+                  isLoading: isUserCountLoading,
                   label: "Creative Writers",
                   icon: <Users size={28} />,
                   description:
@@ -272,13 +309,14 @@ const LandingPage = () => {
                 },
                 {
                   number: animatedJournalCount,
-
+                  isLoading: isJournalCountLoading,
                   label: "Heartfelt Entries",
                   icon: <Notebook size={28} />,
                   description: "Total journal entries created by our community",
                 },
                 {
                   number: "1 Entry",
+                  isLoading: false,
                   label: "Daily Writing Goal",
                   icon: <Clock size={28} />,
                   description: "Write one entry a day to build your habit!",
@@ -297,7 +335,15 @@ const LandingPage = () => {
                   <div className="mb-4 rounded-2xl p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] inline-block">
                     {stat.icon}
                   </div>
-                  <div className="text-4xl font-bold mb-2">{stat.number}</div>
+                  <div
+                    className={`text-4xl font-bold mb-2 transition-colors duration-300 ${
+                      stat.isLoading ? "text-[#5999a8] animate-pulse" : ""
+                    }`}
+                  >
+                    {typeof stat.number === "number"
+                      ? stat.number.toLocaleString()
+                      : stat.number}
+                  </div>
                   <p className="text-lg font-medium mb-2">{stat.label}</p>
                   <p className="text-sm opacity-70">{stat.description}</p>
                 </div>
