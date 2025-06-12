@@ -103,8 +103,8 @@ const LandingPage = () => {
         clearInterval(journalInterval);
 
         // Animate from current value to real value
-        animateCount(userFinal, setAnimatedUserCount, 3000);
-        animateCount(journalFinal, setAnimatedJournalCount, 3000);
+        animateCount(userFinal, setAnimatedUserCount, 5000);
+        animateCount(journalFinal, setAnimatedJournalCount, 5000);
       } catch (err) {
         console.error("Error fetching stats:", err);
       }
