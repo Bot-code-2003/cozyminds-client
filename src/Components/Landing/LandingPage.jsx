@@ -38,7 +38,7 @@ const LandingPage = () => {
   // Get auth modal controls
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
-  const animateCount = (finalValue, setFn, duration = 3000) => {
+  const animateCount = (finalValue, setFn, duration = 5000) => {
     const startTime = performance.now();
 
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3); // Smooth curve
