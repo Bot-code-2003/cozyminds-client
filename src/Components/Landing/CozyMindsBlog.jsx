@@ -87,7 +87,7 @@ const CozyMindsBlog = () => {
   }
 
   const featuredPosts = blogPostsData.filter((post) => post.featured);
-  const regularPosts = blogPostsData.filter((post) => !post.featured);
+  const regularPosts = blogPostsData;
 
   // Auto-rotate carousel for featured posts
   useEffect(() => {
@@ -183,7 +183,7 @@ const CozyMindsBlog = () => {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="sm:hidden mb-6 p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl bg-white/80 dark:bg-[#2A2A2A]/80 backdrop-blur-md shadow-xl">
@@ -373,58 +373,60 @@ const CozyMindsBlog = () => {
 
         {/* Enhanced Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 mb-12 sm:mb-20">
-          {regularPosts.map((post, index) => (
-            <article
-              key={post.id}
-              className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl overflow-hidden bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
-              onClick={() => openBlogPost(post)}
-              style={{
-                animationDelay: `${index * 100}ms`,
-              }}
-            >
-              <div className="relative overflow-hidden">
-                <img
-                  src={post.image || "/placeholder.svg"}
-                  alt={post.title}
-                  className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
-                  <div className="p-2 sm:p-3 bg-white/95 dark:bg-[#1A1A1A]/95 rounded-2xl border border-[#1A1A1A] dark:border-[#F8F1E9] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                    {getIcon(post.icon)}
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </div>
-              <div className="p-5 sm:p-7">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-xs sm:text-sm font-bold px-3 py-1.5 bg-[#5999a8]/15 dark:bg-[#5999a8]/25 rounded-full border border-[#5999a8]/30">
-                    {post.category}
-                  </span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-black mb-4 leading-tight group-hover:text-[#5999a8] transition-colors duration-300">
-                  {post.title}
-                </h3>
-                <p className="text-sm sm:text-base opacity-85 mb-5 leading-relaxed line-clamp-3">
-                  {post.excerpt}
-                </p>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 text-xs sm:text-sm opacity-75">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1.5">
-                      <User size={14} className="sm:w-4 sm:h-4" />
-                      <span className="font-medium">{post.author}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock size={14} className="sm:w-4 sm:h-4" />
-                      <span>{post.readTime}</span>
+          {regularPosts
+            .sort((a, b) => b.id - a.id) // Sort in descending order by id
+            .map((post, index) => (
+              <article
+                key={post.id}
+                className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl overflow-hidden bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
+                onClick={() => openBlogPost(post)}
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                }}
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    src={post.image || "/placeholder.svg"}
+                    alt={post.title}
+                    className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
+                    <div className="p-2 sm:p-3 bg-white/95 dark:bg-[#1A1A1A]/95 rounded-2xl border border-[#1A1A1A] dark:border-[#F8F1E9] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                      {getIcon(post.icon)}
                     </div>
                   </div>
-                  <span className="text-right sm:text-left font-medium">
-                    {post.date}
-                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
-              </div>
-            </article>
-          ))}
+                <div className="p-5 sm:p-7">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xs sm:text-sm font-bold px-3 py-1.5 bg-[#5999a8]/15 dark:bg-[#5999a8]/25 rounded-full border border-[#5999a8]/30">
+                      {post.category}
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black mb-4 leading-tight group-hover:text-[#5999a8] transition-colors duration-300">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm sm:text-base opacity-85 mb-5 leading-relaxed line-clamp-3">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 text-xs sm:text-sm opacity-75">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1.5">
+                        <User size={14} className="sm:w-4 sm:h-4" />
+                        <span className="font-medium">{post.author}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={14} className="sm:w-4 sm:h-4" />
+                        <span>{post.readTime}</span>
+                      </div>
+                    </div>
+                    <span className="text-right sm:text-left font-medium">
+                      {post.date}
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
         </div>
 
         {/* Enhanced Signup CTA */}
