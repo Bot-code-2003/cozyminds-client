@@ -29,6 +29,8 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
       const res = await API.post("/login", loginForm);
       const { user, coinsEarned } = res.data;
 
+      // console.log(user);
+
       console.log("Login successful, coins earned:", coinsEarned);
 
       const coinsEarnedNum = Number.parseInt(coinsEarned || 0, 10);

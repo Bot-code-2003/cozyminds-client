@@ -15,16 +15,18 @@ import {
   Star,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useDarkMode } from "../../context/ThemeContext";
+
 const Navbar = ({
   isScrolled,
-  darkMode,
-  setDarkMode,
   user,
   openLoginModal,
   openSignupModal,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const {darkMode, setDarkMode} = useDarkMode();
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
@@ -42,13 +44,11 @@ const Navbar = ({
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "py-3 bg-white/80 dark:bg-[#1A1A1A]/80 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 shadow-sm"
-          : "py-4 bg-transparent"
-      }`}
+      className={`w-full sticky top-0 z-[999] transition-all duration-300 h-16
+        ${isScrolled ? "shadow-lg bg-white/90 dark:bg-[#1A1A1A]/90" : "bg-white/70 dark:bg-[#1A1A1A]/80"}
+        backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 flex items-center`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto flex justify-between items-center w-full px-4 sm:px-6">
         {/* Logo */}
         <button
           onClick={() => handleNavigation("/")}
@@ -140,11 +140,22 @@ const Navbar = ({
             <Menu size={24} className="text-gray-700 dark:text-gray-300" />
           )}
         </button>
+
+        {/* Public Journals Link */}
+        <div className="hidden md:flex items-center space-x-3">
+          <Link
+            to="/public-journals"
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-[#5999a8] dark:hover:text-[#5999a8] transition-all duration-200"
+          >
+            <BookOpen size={16} />
+            Public Journals
+          </Link>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-[#1A1A1A]/95 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 shadow-lg">
+        <div className="md:hidden fixed inset-0 top-16 bg-white/95 dark:bg-[#1A1A1A]/95 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 shadow-lg z-[1000]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             {/* Mobile Navigation */}
             <div className="space-y-2 mb-4">
@@ -205,6 +216,17 @@ const Navbar = ({
                   </button>
                 </div>
               )}
+            </div>
+
+            {/* Public Journals Link Mobile */}
+            <div className="mt-4">
+              <Link
+                to="/public-journals"
+                className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-left font-medium text-gray-700 dark:text-gray-300 hover:text-[#5999a8] dark:hover:text-[#5999a8] hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-200"
+              >
+                <BookOpen size={18} />
+                Public Journals
+              </Link>
             </div>
           </div>
         </div>

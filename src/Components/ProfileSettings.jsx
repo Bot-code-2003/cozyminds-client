@@ -57,6 +57,7 @@ const ProfileSettings = () => {
       try {
         const user = JSON.parse(sessionStorage.getItem("user") || "null");
         if (!user) return navigate("/login");
+        console.log(user);
         setUserData(user);
         setForm({
           nickname: user.nickname || "",

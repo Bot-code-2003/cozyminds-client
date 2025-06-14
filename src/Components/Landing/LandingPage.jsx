@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   ArrowRight,
   BookImage,
@@ -28,7 +28,6 @@ const LandingPage = () => {
   const [animatedJournalCount, setAnimatedJournalCount] = useState(0);
   const [isUserCountLoading, setIsUserCountLoading] = useState(true);
   const [isJournalCountLoading, setIsJournalCountLoading] = useState(true);
-
   const [isScrolled, setIsScrolled] = useState(false);
   const [userCount, setUserCount] = useState(null);
   const [journalCount, setJournalCount] = useState(null);
@@ -44,14 +43,14 @@ const LandingPage = () => {
   const startSlotMachineAnimation = (setterFn, maxRange = 999) => {
     const interval = setInterval(() => {
       setterFn(Math.floor(Math.random() * maxRange));
-    }, 50); // Change number every 50ms for rapid effect
+    }, 50);
     return interval;
   };
 
   // Smooth settle animation to final value
   const settleToFinalValue = (finalValue, setterFn, duration = 2000) => {
     const startTime = performance.now();
-    const startValue = Math.floor(Math.random() * 100); // Random starting point for settlement
+    const startValue = Math.floor(Math.random() * 100);
 
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
@@ -79,7 +78,6 @@ const LandingPage = () => {
     e.preventDefault();
     console.log(`Subscribed: ${email} to ${category}`);
 
-    // Show success message
     const button = e.target.querySelector("button");
     const originalText = button.innerHTML;
     button.innerHTML = "Success!";
@@ -93,32 +91,27 @@ const LandingPage = () => {
   useEffect(() => {
     let userSlotInterval, journalSlotInterval;
 
-    // Start slot machine animations immediately
+    // Start slot machine animations
     userSlotInterval = startSlotMachineAnimation(setAnimatedUserCount, 500);
-    journalSlotInterval = startSlotMachineAnimation(
-      setAnimatedJournalCount,
-      1000
-    );
+    journalSlotInterval = startSlotMachineAnimation(setAnimatedJournalCount, 1000);
 
     const fetchCounts = async () => {
       try {
         const userRes = await API.get("/users");
         const journalRes = await API.get("/journals/journalscount");
 
-        const userFinal = userRes.data.users + 97; // or +97 if you want boost
+        const userFinal = userRes.data.users + 97;
         const journalFinal = journalRes.data.count + 114;
 
         setUserCount(userFinal);
         setJournalCount(journalFinal);
 
-        // Stop slot machine animations and settle to final values
         clearInterval(userSlotInterval);
         clearInterval(journalSlotInterval);
 
         setIsUserCountLoading(false);
         setIsJournalCountLoading(false);
 
-        // Smooth settle animations with slight delays for better effect
         setTimeout(() => {
           settleToFinalValue(userFinal, setAnimatedUserCount, 2000);
         }, 100);
@@ -129,14 +122,12 @@ const LandingPage = () => {
       } catch (err) {
         console.error("Error fetching stats:", err);
 
-        // Even on error, stop the slot machine and show fallback numbers
         clearInterval(userSlotInterval);
         clearInterval(journalSlotInterval);
 
         setIsUserCountLoading(false);
         setIsJournalCountLoading(false);
 
-        // Fallback to some nice numbers
         setTimeout(() => {
           settleToFinalValue(150, setAnimatedUserCount, 2000);
         }, 100);
@@ -153,23 +144,30 @@ const LandingPage = () => {
     const storedUser = JSON.parse(sessionStorage.getItem("user"));
     if (storedUser) setUser(storedUser);
 
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    
+
     const handleUserLogin = (event) => setUser(event.detail.user);
 
-    window.addEventListener("scroll", handleScroll);
     window.addEventListener("user-logged-in", handleUserLogin);
 
+    // Ensure sufficient content height for scrolling
+    document.body.style.minHeight = "200vh"; // Debugging: Force scrollable content
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
     return () => {
       clearInterval(userSlotInterval);
       clearInterval(journalSlotInterval);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("user-logged-in", handleUserLogin);
+      document.body.style.minHeight = ""; // Clean up
     };
   }, []);
 
   return (
     <div
-      className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative overflow-hidden transition-colors duration-300`}
+      className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative transition-colors duration-300`}
     >
       <title>Starlit Journals - Dream, Write, Track Moods</title>
       <meta
@@ -209,16 +207,16 @@ const LandingPage = () => {
 
       {/* Navbar */}
       <Navbar
-        user={user}
-        isScrolled={isScrolled}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        openLoginModal={openLoginModal}
-        openSignupModal={openSignupModal}
+       isScrolled={isScrolled}
+       darkMode={darkMode}
+       setDarkMode={setDarkMode}
+       user={user}
+       openLoginModal={openLoginModal}
+       openSignupModal={openSignupModal}
       />
 
       {/* Header */}
-      <header className="z-10 w-full max-w-6xl mt-32 mb-16 px-2 sm:px-6">
+      <header className="w-full max-w-6xl mt-32 mb-16 px-2 sm:px-6">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="order-2 md:order-1">
             <div className="inline-block mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Sun,
   Moon,
@@ -16,6 +16,8 @@ import {
   Menu,
   X,
   Star,
+  BookOpen,
+  Bell,
 } from "lucide-react";
 import InGameMail from "./Mail/InGameMail";
 import { useDarkMode } from "../../context/ThemeContext";
@@ -91,6 +93,18 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
         <div className="hidden md:flex items-center space-x-3">
           {/* Action Buttons */}
           <div className="flex items-center space-x-2">
+            {/* Public Journals Button */}
+            <button
+              onClick={() => handleNavigation("/public-journals")}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-200 group"
+              aria-label="Public Journals"
+            >
+              <BookOpen
+                size={18}
+                className="text-gray-600 dark:text-gray-400 group-hover:text-[#5999a8]"
+              />
+            </button>
+
             {/* Shop Button */}
             <button
               onClick={() => handleNavigation("/cozyshop")}
@@ -239,6 +253,14 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
             {/* Mobile Action Buttons */}
             <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => handleNavigation("/public-journals")}
+                className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-[#5999a8] transition-all duration-200"
+              >
+                <BookOpen size={18} className="mr-2" />
+                Public Journals
+              </button>
+
               <button
                 onClick={() => handleNavigation("/cozyshop")}
                 className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-[#5999a8] transition-all duration-200"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, Check, Save, Palette, Eye } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Save, Palette, Eye } from "lucide-react";
 import { getThemeDetails, getCardClass } from "../Dashboard/ThemeDetails";
 import JournalEntry from "./JournalEntryPreview";
 
@@ -10,9 +10,7 @@ const ThemeSelector = ({
   setSelectedTheme,
   availableThemes,
   onBack,
-  onSave,
-  isSaving,
-  isSaved,
+  onNext,
   entryData,
 }) => {
   // Default preview content if no entryData is provided
@@ -127,46 +125,21 @@ const ThemeSelector = ({
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className="bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border)] p-6">
-        <div className="flex justify-between items-center">
-          <button
-            onClick={onBack}
-            className="px-6 py-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl flex items-center text-sm font-medium text-gray-700 hover:shadow-md transition-all duration-200 hover:scale-105"
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            Back
-          </button>
-
-          <div className="flex items-center gap-4">
-            {selectedTheme && (
-              <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-lg">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium text-green-700">
-                  Theme selected
-                </span>
-              </div>
-            )}
-
-            <button
-              onClick={onSave}
-              disabled={isSaving}
-              className="group px-6 py-3 bg-[var(--accent)] text-white rounded-xl flex items-center text-sm font-medium hover:bg-[var(--accent)]/90 transition-all duration-300 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {isSaved ? (
-                <Check size={16} className="mr-2" />
-              ) : isSaving ? (
-                <span className="mr-2 animate-spin">⏳</span>
-              ) : (
-                <Save
-                  size={16}
-                  className="mr-2 transition-transform duration-200 group-hover:scale-110"
-                />
-              )}
-              {isSaved ? "Saved" : isSaving ? "Saving..." : "Save Journal"}
-            </button>
-          </div>
-        </div>
+      <div className="mt-8 flex justify-between items-center">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+        >
+          <ArrowLeft size={20} />
+          Back
+        </button>
+        <button
+          onClick={onNext}
+          className="flex items-center gap-2 px-6 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent)]/90 transition-colors"
+        >
+          Next
+          <ArrowRight size={20} />
+        </button>
       </div>
     </div>
   );

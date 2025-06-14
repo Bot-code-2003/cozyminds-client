@@ -10,8 +10,10 @@ import JournalEditor from "./JournalEditor";
 import ThemeSelector from "./ThemeSelector";
 import { getThemeDetails } from "../Dashboard/ThemeDetails";
 import SecondStep from "./SecondStep";
+import PrivacySelection from "./PrivacySelection";
+import { generateAnonymousName } from "../../utils/anonymousName";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Save } from "lucide-react";
 
 const JournalingAlt = () => {
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -40,6 +42,10 @@ const JournalingAlt = () => {
   const [existingTags, setExistingTags] = useState([]);
   const [existingCollections, setExistingCollections] = useState(["All"]);
   const [availableThemes, setAvailableThemes] = useState([]);
+
+  // Privacy state
+  const [isPublic, setIsPublic] = useState(false);
+  const [authorName, setAuthorName] = useState("");
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
@@ -124,7 +130,20 @@ const JournalingAlt = () => {
     if (isSaved) setIsSaved(false); // Reset saved state on content change
   }, [journalText, journalTitle]);
 
-  // Handle save
+  // Handle privacy selection
+  const handlePrivacySelect = (privacy) => {
+    setIsPublic(privacy === "public");
+    if (privacy === "public") {
+      const userData = JSON.parse(sessionStorage.getItem("user"));
+      if (userData && userData.nickname) {
+        setAuthorName(generateAnonymousName(userData.nickname));
+      }
+    } else {
+      setAuthorName("");
+    }
+  };
+
+  // Update handleSave to include privacy and author name
   const handleSave = async () => {
     if (!journalTitle.trim() || !journalText.trim()) {
       setSaveError("Please add a title and content.");
@@ -155,6 +174,8 @@ const JournalingAlt = () => {
         tags: selectedTags.map((tag) => tag.toUpperCase()),
         collections: selectedCollections,
         theme: selectedTheme,
+        isPublic,
+        authorName: isPublic ? authorName : null
       };
       await API.post("/saveJournal", journalEntry);
       setIsSaved(true);
@@ -177,7 +198,7 @@ const JournalingAlt = () => {
     }
 
     setSaveError(null);
-    setCurrentStep((prev) => Math.min(prev + 1, 3));
+    setCurrentStep((prev) => Math.min(prev + 1, 4));
   };
 
   const goToPreviousStep = () => {
@@ -222,10 +243,48 @@ const JournalingAlt = () => {
               setSelectedTheme={setSelectedTheme}
               availableThemes={availableThemes}
               onBack={goToPreviousStep}
-              onSave={handleSave}
-              isSaving={isSaving}
-              isSaved={isSaved}
+              onNext={goToNextStep}
             />
+          </div>
+        );
+      case 4:
+        return (
+          <div className="max-w-4xl mx-auto">
+            <PrivacySelection
+              onSelect={handlePrivacySelect}
+              initialValue={isPublic ? "public" : "private"}
+            />
+            <div className="mt-8 flex justify-between items-center">
+              <button
+                onClick={() => setCurrentStep(3)}
+                className="flex items-center gap-2 px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              >
+                <ArrowLeft size={20} />
+                Back
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-6 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent)]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSaving ? (
+                  <>
+                    <span className="animate-spin">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save size={20} />
+                    Save Journal
+                  </>
+                )}
+              </button>
+            </div>
+            {saveError && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                {saveError}
+              </div>
+            )}
           </div>
         );
       default:
