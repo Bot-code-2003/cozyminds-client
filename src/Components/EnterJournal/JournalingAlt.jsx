@@ -123,6 +123,7 @@ const JournalingAlt = () => {
 
   // Update word count and reset isSaved
   useEffect(() => {
+    
     const words = journalText.trim()
       ? journalText.trim().split(/\s+/).length
       : 0;
@@ -136,7 +137,7 @@ const JournalingAlt = () => {
     if (privacy === "public") {
       const userData = JSON.parse(sessionStorage.getItem("user"));
       if (userData && userData.nickname) {
-        setAuthorName(generateAnonymousName(userData.nickname));
+        setAuthorName(userData.anonymousName);
       }
     } else {
       setAuthorName("");
@@ -159,6 +160,8 @@ const JournalingAlt = () => {
     setSaveError(null);
     try {
       const userData = JSON.parse(sessionStorage.getItem("user"));
+      // console.log(userData._id);
+      
       if (!userData || !userData._id) {
         setSaveError("User not found. Please log in.");
         setIsSaving(false);

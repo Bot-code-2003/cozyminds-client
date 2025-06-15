@@ -87,17 +87,22 @@ const Collections = () => {
     }
   };
 
-  // Get images for a collection (up to 4)
+  // Get images or themes for a collection (up to 4)
   const getCollectionImages = (collection) => {
     const entries = getCollectionEntries(collection);
     const images = [];
 
-    // Try to find images in entries
+    // Try to find images or themes in entries
     for (const entry of entries) {
       if (images.length >= 4) break;
       const imageUrl = getFirstImageFromContent(entry.content);
       if (imageUrl && !images.includes(imageUrl)) {
-        images.push(imageUrl);
+        images.push({ type: "image", value: imageUrl });
+      } else if (
+        entry.theme &&
+        !images.find((img) => img.value === entry.theme)
+      ) {
+        images.push({ type: "theme", value: entry.theme });
       }
     }
 
@@ -122,15 +127,15 @@ const Collections = () => {
     return themes;
   };
 
-  // Get dynamic grid classes based on number of themes
-  const getGridClasses = (themeCount) => {
-    switch (themeCount) {
+  // Get dynamic grid classes based on number of items
+  const getGridClasses = (itemCount) => {
+    switch (itemCount) {
       case 1:
         return "grid-cols-1 grid-rows-1";
       case 2:
         return "grid-cols-2 grid-rows-1";
       case 3:
-        return "grid grid-cols-2 grid-rows-2"; // Custom layout for 3
+        return "grid grid-cols-2 grid-rows-2";
       case 4:
         return "grid-cols-2 grid-rows-2";
       default:
@@ -171,7 +176,7 @@ const Collections = () => {
   };
 
   return (
-    <div className={`min-h-screenbg-[var(--bg-primary)]`}>
+    <div className={`min-h-screen bg-[var(--bg-primary)]`}>
       <Navbar
         userData={userData}
         handleLogout={handleLogout}
@@ -196,7 +201,7 @@ const Collections = () => {
                 key={i}
                 className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg aspect-[3/4] overflow-hidden"
               >
-                <div className="grid grid-cols-2 grid-rows-2  h-3/4">
+                <div className="grid grid-cols-2 grid-rows-2 h-3/4">
                   {[...Array(4)].map((_, j) => (
                     <div
                       key={j}
@@ -224,16 +229,16 @@ const Collections = () => {
             <h2 className="text-xl font-semibold mb-6">Your Collections</h2>
             <div className="grid grid-cols-1 cursor-pointer sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {collections.map((collection) => {
+                const items = getCollectionImages(collection);
+                const gridClasses = getGridClasses(items.length || 1);
+                const hasItems = items.length > 0;
                 const themes = getCollectionThemes(collection);
-                const gridClasses = getGridClasses(themes.length);
-                const images = getCollectionImages(collection);
-                const hasImages = images.length > 0;
 
                 return (
                   <div
                     key={collection}
                     onClick={() => handleCollectionSelect(collection)}
-                    className="group relative bg-[var(--bg-secondary)] border border-[var(--border)]  rounded-lg aspect-[3/4] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                    className="group relative bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg aspect-[3/4] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) =>
@@ -242,30 +247,46 @@ const Collections = () => {
                   >
                     <div
                       className={`grid h-3/4 ${
-                        hasImages ? gridClasses : gridClasses
+                        hasItems ? gridClasses : "grid-cols-1 grid-rows-1"
                       }`}
                     >
-                      {hasImages
-                        ? // Show images if available
-                          images.map((imageUrl, i) => (
+                      {hasItems
+                        ? items.map((item, i) => (
                             <div
-                              key={`${collection}-image-${i}`}
-                              className={`w-full h-full bg-cover bg-center ${
-                                images.length === 3 && i === 0
-                                  ? "col-span-2"
-                                  : ""
+                              key={`${collection}-${item.type}-${i}`}
+                              className={`w-full h-full ${
+                                item.type === "theme"
+                                  ? getCardClass(item.value)
+                                  : `bg-cover bg-center ${
+                                      items.length === 3 && i === 0
+                                        ? "col-span-2"
+                                        : ""
+                                    }`
                               }`}
-                              style={{ backgroundImage: `url(${imageUrl})` }}
-                              aria-label={`Image preview ${
-                                i + 1
-                              } for ${collection}`}
-                            />
+                              style={
+                                item.type === "image"
+                                  ? { backgroundImage: `url(${item.value})` }
+                                  : {}
+                              }
+                              aria-label={`${
+                                item.type === "image" ? "Image" : "Theme"
+                              } preview ${i + 1} for ${collection}`}
+                            >
+                              {item.type === "theme" &&
+                                item.value === "default" && (
+                                  <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-600">
+                                    <FolderOpen
+                                      size={24}
+                                      className="text-gray-400 dark:text-gray-500"
+                                    />
+                                  </div>
+                                )}
+                            </div>
                           ))
-                        : // Fall back to themes if no images
-                          themes.map((theme, i) => (
+                        : themes.map((theme, i) => (
                             <div
                               key={`${collection}-theme-${i}`}
-                              className={`w-full h-full bg-cover bg-center ${getCardClass(
+                              className={`w-full h-full ${getCardClass(
                                 theme
                               )} ${
                                 themes.length === 3 && i === 0

@@ -147,9 +147,13 @@ const RecommendationCard = ({ entry, formatDate, getThemeDetails }) => {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 flex items-center justify-center">
+          <div
+            className={`${getCardClass(
+              entry.theme
+            )} w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 flex items-center justify-center`}
+          >
             <span className="text-3xl sm:text-4xl">
-              {currentTheme?.icon || "📝"}
+              {/* {currentTheme?.icon || "📝"} */}
             </span>
           </div>
         )}
@@ -676,7 +680,7 @@ const JournalEntry = () => {
             border: none !important;
             width: 100% !important;
             height: auto !important;
-            object-fit: contain !important;
+            object-fit: cover !important;
             padding: 0 !important;
             max-height: 400px !important;
           }

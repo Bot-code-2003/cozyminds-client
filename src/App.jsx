@@ -7,6 +7,7 @@ import { ThemeProvider } from "./context/ThemeContext"
 import { CoinProvider } from "./context/CoinContext"
 import { JournalProvider } from "./context/JournalContext"
 import { MailProvider } from "./context/MailContext"
+import { PublicJournalsProvider } from './context/PublicJournalsContext'
 
 // Components
 import LandingPage from "./Components/Landing/LandingPage"
@@ -27,6 +28,7 @@ import BlogPage from "./Components/Landing/BlogPage"
 import AboutUs from "./Components/Landing/AboutUs"
 import PublicJournals from "./Components/PublicJournals/PublicJournals"
 import PublicJournalEntry from "./Components/PublicJournals/PublicJournalEntry"
+import PublicProfile from "./Components/PublicJournals/PublicProfile"
 
 import "./index.css"
 
@@ -46,33 +48,36 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <JournalProvider>
-        <MailProvider>
-          <CoinProvider>
-            <div>
-              <Routes>
-                <Route path="/" element={user ? <Dashboard /> : <LandingPage />} />
-                <Route path="/aboutus" element={<AboutUs />} />
-                <Route path="/journaling-alt" element={<JournalingAlt />} />
-                <Route path="/journal/:id" element={<JournalEntry />} />
-                <Route path="/cozyshop" element={<CozyShop />} />
-                <Route path="/journal-entries/:collection" element={<JournalEntries />} />
-                <Route path="/privacy-policy" element={<Privacy />} />
-                <Route path="/terms-of-service" element={<Terms />} />
-                <Route path="/starlitblogs" element={<CozyMindsBlog />} />
-                <Route path="/blog/:slug" element={<BlogPage />} />
-                <Route path="/collections" element={<Collections />} />
-                <Route path="/profile-settings" element={<ProfileSettings />} />
-                <Route path="/features" element={<Features />} />
-                <Route path="/mood-distributions" element={<DetailedMoodDistributions />} />
-                <Route path="/sitemaster" element={<SiteMaster />} />
-                <Route path="/public-journals" element={<PublicJournals />} />
-                <Route path="/publicjournal/:slug" element={<PublicJournalEntry />} />
-              </Routes>
-            </div>
-          </CoinProvider>
-        </MailProvider>
-      </JournalProvider>
+      <PublicJournalsProvider>
+        <JournalProvider>
+          <MailProvider>
+            <CoinProvider>
+              <div>
+                <Routes>
+                  <Route path="/" element={user ? <Dashboard /> : <LandingPage />} />
+                  <Route path="/aboutus" element={<AboutUs />} />
+                  <Route path="/journaling-alt" element={<JournalingAlt />} />
+                  <Route path="/journal/:id" element={<JournalEntry />} />
+                  <Route path="/cozyshop" element={<CozyShop />} />
+                  <Route path="/journal-entries/:collection" element={<JournalEntries />} />
+                  <Route path="/privacy-policy" element={<Privacy />} />
+                  <Route path="/terms-of-service" element={<Terms />} />
+                  <Route path="/starlitblogs" element={<CozyMindsBlog />} />
+                  <Route path="/blog/:slug" element={<BlogPage />} />
+                  <Route path="/collections" element={<Collections />} />
+                  <Route path="/profile-settings" element={<ProfileSettings />} />
+                  <Route path="/features" element={<Features />} />
+                  <Route path="/mood-distributions" element={<DetailedMoodDistributions />} />
+                  <Route path="/sitemaster" element={<SiteMaster />} />
+                  <Route path="/public-journals" element={<PublicJournals />} />
+                  <Route path="/publicjournal/:slug" element={<PublicJournalEntry />} />
+                  <Route path="/profile/:anonymousName" element={<PublicProfile />} />
+                </Routes>
+              </div>
+            </CoinProvider>
+          </MailProvider>
+        </JournalProvider>
+      </PublicJournalsProvider>
     </ThemeProvider>
   )
 }

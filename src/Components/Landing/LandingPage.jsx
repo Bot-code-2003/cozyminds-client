@@ -93,7 +93,10 @@ const LandingPage = () => {
 
     // Start slot machine animations
     userSlotInterval = startSlotMachineAnimation(setAnimatedUserCount, 500);
-    journalSlotInterval = startSlotMachineAnimation(setAnimatedJournalCount, 1000);
+    journalSlotInterval = startSlotMachineAnimation(
+      setAnimatedJournalCount,
+      1000
+    );
 
     const fetchCounts = async () => {
       try {
@@ -144,8 +147,6 @@ const LandingPage = () => {
     const storedUser = JSON.parse(sessionStorage.getItem("user"));
     if (storedUser) setUser(storedUser);
 
-    
-
     const handleUserLogin = (event) => setUser(event.detail.user);
 
     window.addEventListener("user-logged-in", handleUserLogin);
@@ -186,7 +187,7 @@ const LandingPage = () => {
       <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
 
       {/* Grid Pattern Background */}
-      <div className="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none">
+      <div className="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none ">
         <div className="absolute inset-0 grid grid-cols-12 gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
             <div
@@ -207,16 +208,16 @@ const LandingPage = () => {
 
       {/* Navbar */}
       <Navbar
-       isScrolled={isScrolled}
-       darkMode={darkMode}
-       setDarkMode={setDarkMode}
-       user={user}
-       openLoginModal={openLoginModal}
-       openSignupModal={openSignupModal}
+        isScrolled={isScrolled}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        user={user}
+        openLoginModal={openLoginModal}
+        openSignupModal={openSignupModal}
       />
 
       {/* Header */}
-      <header className="w-full max-w-6xl mt-32 mb-16 px-2 sm:px-6">
+      <header className="w-full max-w-6xl mt-32 mb-16 px-2 sm:px-6 z-[99]">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="order-2 md:order-1">
             <div className="inline-block mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
@@ -248,7 +249,7 @@ const LandingPage = () => {
                   darkMode
                     ? "bg-[#5999a8] text-white"
                     : "bg-[#1A1A1A] text-white"
-                } hover:opacity-90 transition-opacity w-full sm:w-fit rounded-md flex items-center gap-2 group border-2 border-transparent`}
+                } hover:opacity-90 transition-opacity z-[999] w-full sm:w-fit rounded-md flex items-center gap-2 group border-2 border-transparent`}
                 onClick={openLoginModal}
                 aria-label="Begin your journaling journey"
               >
