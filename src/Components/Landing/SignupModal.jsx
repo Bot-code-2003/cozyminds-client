@@ -85,7 +85,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
         <div className="relative flex flex-col lg:flex-row min-h-[600px]">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors z-10"
+            className="absolute top-4 right-4 p-2 bg-black/20 dark:bg-white/20 rounded-full transition-colors z-10"
             aria-label="Close signup modal"
           >
             <X size={20} className="text-white" />
