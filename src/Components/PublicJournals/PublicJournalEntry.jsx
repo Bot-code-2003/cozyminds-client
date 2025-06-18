@@ -1,19 +1,31 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react"
-import { useParams, useLocation, Link } from "react-router-dom"
-import axios from "axios"
-import { Heart, Share2, BarChart2, Tag, Loader2, Users, Calendar, Flame, Clock, Eye } from "lucide-react"
-import { getCardClass, getThemeDetails } from "../Dashboard/ThemeDetails"
-import Navbar from "../Dashboard/Navbar"
-import LandingNavbar from "../Landing/Navbar"
-import { useDarkMode } from "../../context/ThemeContext"
-import { useNavigate } from "react-router-dom"
-import { usePublicJournals } from "../../context/PublicJournalsContext"
-import AuthModals from "../Landing/AuthModals"
-import Comments from "./Comments"
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useParams, useLocation, Link } from "react-router-dom";
+import axios from "axios";
+import {
+  Heart,
+  Share2,
+  BarChart2,
+  Tag,
+  Loader2,
+  Users,
+  Calendar,
+  Flame,
+  Clock,
+  Eye,
+} from "lucide-react";
+import { getCardClass, getThemeDetails } from "../Dashboard/ThemeDetails";
+import Navbar from "../Dashboard/Navbar";
+import LandingNavbar from "../Landing/Navbar";
+import { useDarkMode } from "../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
+import { usePublicJournals } from "../../context/PublicJournalsContext";
+import AuthModals from "../Landing/AuthModals";
+import Comments from "./Comments";
+import { Helmet } from "react-helmet";
 
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL })
+const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 const moodStyles = {
   Happy: {
@@ -70,87 +82,90 @@ const moodStyles = {
     borderColor: "border-orange-200 dark:border-orange-800",
     emoji: "😶",
   },
-}
+};
 
 const PublicJournalEntry = () => {
-  const navigate = useNavigate()
-  const { slug } = useParams()
-  const location = useLocation()
-  const { darkMode } = useDarkMode()
-  const { modals, openLoginModal } = AuthModals({ darkMode })
+  const navigate = useNavigate();
+  const { slug } = useParams();
+  const location = useLocation();
+  const { darkMode, setDarkMode } = useDarkMode();
+  const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
   // Use PublicJournals context for single journal fetching and state
-  const { fetchSingleJournalBySlug, singleJournalLoading, singleJournalError } = usePublicJournals()
+  const { fetchSingleJournalBySlug, singleJournalLoading, singleJournalError } =
+    usePublicJournals();
 
-  const [journal, setJournal] = useState(location.state?.journal || null)
-  const [authorProfile, setAuthorProfile] = useState(null)
-  const [isLiked, setIsLiked] = useState(false)
-  const [isSubscribed, setIsSubscribed] = useState(false)
-  const [subscribing, setSubscribing] = useState(false)
+  const [journal, setJournal] = useState(location.state?.journal || null);
+  const [authorProfile, setAuthorProfile] = useState(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
 
   // Memoize current user
   const currentUser = useMemo(() => {
     try {
-      const userData = sessionStorage.getItem("user")
-      return userData ? JSON.parse(userData) : null
+      const userData = sessionStorage.getItem("user");
+      return userData ? JSON.parse(userData) : null;
     } catch (error) {
-      console.error("Error parsing user data:", error)
-      return null
+      console.error("Error parsing user data:", error);
+      return null;
     }
-  }, [])
+  }, []);
 
-  const isLoggedIn = useMemo(() => !!currentUser, [currentUser])
+  const isLoggedIn = useMemo(() => !!currentUser, [currentUser]);
 
   // Use the context's fetchSingleJournalBySlug
   const loadJournal = useCallback(async () => {
     if (journal && journal.slug === slug) {
-      return
+      return;
     }
     try {
-      const entry = await fetchSingleJournalBySlug(slug)
-      setJournal(entry)
+      const entry = await fetchSingleJournalBySlug(slug);
+      setJournal(entry);
     } catch (err) {
-      console.error("Error loading journal:", err)
+      console.error("Error loading journal:", err);
     }
-  }, [slug, fetchSingleJournalBySlug, journal])
+  }, [slug, fetchSingleJournalBySlug, journal]);
 
   const fetchAuthorProfile = useCallback(async () => {
-    if (!journal?.authorName) return
+    if (!journal?.authorName) return;
 
     try {
-      const response = await API.get(`/profile/${journal.authorName}`)
-      setAuthorProfile(response.data.profile)
+      const response = await API.get(`/profile/${journal.authorName}`);
+      setAuthorProfile(response.data.profile);
 
       // Check subscription status
       if (currentUser && currentUser._id !== response.data.profile._id) {
-        const subResponse = await API.get(`/subscription-status/${currentUser._id}/${response.data.profile._id}`)
-        setIsSubscribed(subResponse.data.isSubscribed)
+        const subResponse = await API.get(
+          `/subscription-status/${currentUser._id}/${response.data.profile._id}`
+        );
+        setIsSubscribed(subResponse.data.isSubscribed);
       }
     } catch (error) {
-      console.error("Error fetching author profile:", error)
+      console.error("Error fetching author profile:", error);
     }
-  }, [journal?.authorName, currentUser])
+  }, [journal?.authorName, currentUser]);
 
   useEffect(() => {
-    loadJournal()
-  }, [slug, loadJournal])
+    loadJournal();
+  }, [slug, loadJournal]);
 
   useEffect(() => {
-    fetchAuthorProfile()
-  }, [fetchAuthorProfile])
+    fetchAuthorProfile();
+  }, [fetchAuthorProfile]);
 
   useEffect(() => {
     if (journal && currentUser) {
-      setIsLiked(journal.likes?.includes(currentUser._id) || false)
+      setIsLiked(journal.likes?.includes(currentUser._id) || false);
     }
-  }, [journal, currentUser])
+  }, [journal, currentUser]);
 
   // Scroll to top when component mounts or journal changes
   useEffect(() => {
     window.scrollTo({
       top: 0,
-    })
-  }, [])
+    });
+  }, []);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -174,16 +189,16 @@ const PublicJournalEntry = () => {
 
   const handleLike = useCallback(async () => {
     if (!currentUser) {
-      openLoginModal()
-      return
+      openLoginModal();
+      return;
     }
 
-    if (!journal) return
+    if (!journal) return;
 
     try {
       const response = await API.post(`/journals/${journal._id}/like`, {
         userId: currentUser._id,
-      })
+      });
 
       setJournal((prev) => ({
         ...prev,
@@ -191,53 +206,55 @@ const PublicJournalEntry = () => {
           ? [...prev.likes, currentUser._id]
           : prev.likes.filter((id) => id !== currentUser._id),
         likeCount: response.data.likeCount,
-      }))
-      setIsLiked(response.data.isLiked)
+      }));
+      setIsLiked(response.data.isLiked);
     } catch (error) {
-      console.error("Error liking journal:", error)
+      console.error("Error liking journal:", error);
     }
-  }, [currentUser, journal, openLoginModal])
+  }, [currentUser, journal, openLoginModal]);
 
   const handleShare = useCallback(() => {
-    navigator.clipboard.writeText(window.location.href)
+    navigator.clipboard.writeText(window.location.href);
     // You could add a toast notification here
-  }, [])
+  }, []);
 
   const handleSubscribe = useCallback(async () => {
-    if (!currentUser || !authorProfile) return
+    if (!currentUser || !authorProfile) return;
 
     try {
-      setSubscribing(true)
+      setSubscribing(true);
       const response = await API.post("/subscribe", {
         subscriberId: currentUser._id,
         targetUserId: authorProfile._id,
-      })
-      setIsSubscribed(response.data.subscribed)
+      });
+      setIsSubscribed(response.data.subscribed);
 
       setAuthorProfile((prev) => ({
         ...prev,
-        subscriberCount: prev.subscriberCount + (response.data.subscribed ? 1 : -1),
-      }))
+        subscriberCount:
+          prev.subscriberCount + (response.data.subscribed ? 1 : -1),
+      }));
     } catch (error) {
-      console.error("Error handling subscription:", error)
+      console.error("Error handling subscription:", error);
     } finally {
-      setSubscribing(false)
+      setSubscribing(false);
     }
-  }, [currentUser, authorProfile])
+  }, [currentUser, authorProfile]);
 
   const processContent = useCallback((content) => {
-    if (!content) return "No content available."
+    if (!content) return "No content available.";
 
     try {
-      const tempDiv = document.createElement("div")
-      tempDiv.innerHTML = content
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = content;
 
-      const images = tempDiv.querySelectorAll("img")
+      const images = tempDiv.querySelectorAll("img");
       images.forEach((img) => {
-        if (img.parentElement.classList.contains("full-width-image-container")) return
+        if (img.parentElement.classList.contains("full-width-image-container"))
+          return;
 
-        const container = document.createElement("div")
-        container.className = "full-width-image-container"
+        const container = document.createElement("div");
+        container.className = "full-width-image-container";
         container.style.cssText = `
            position: relative;
            display: block;
@@ -247,7 +264,7 @@ const PublicJournalEntry = () => {
            overflow: hidden;
            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
            border: 1px solid rgba(156, 163, 175, 0.2);
-         `
+         `;
 
         img.style.cssText = `
            width: 100%;
@@ -256,71 +273,100 @@ const PublicJournalEntry = () => {
            object-fit: contain;
            max-height: 600px;
            margin: 0 auto;
-         `
+         `;
 
-        img.parentNode.insertBefore(container, img)
-        container.appendChild(img)
-      })
+        img.parentNode.insertBefore(container, img);
+        container.appendChild(img);
+      });
 
-      return tempDiv.innerHTML
+      return tempDiv.innerHTML;
     } catch (error) {
-      console.error("Error processing content:", error)
-      return content
+      console.error("Error processing content:", error);
+      return content;
     }
-  }, [])
+  }, []);
 
   const moodStyle = useMemo(
-    () => (journal?.mood ? moodStyles[journal.mood] || moodStyles.default : moodStyles.default),
-    [journal?.mood],
-  )
+    () =>
+      journal?.mood
+        ? moodStyles[journal.mood] || moodStyles.default
+        : moodStyles.default,
+    [journal?.mood]
+  );
 
   const currentTheme = useMemo(() => {
     try {
-      return getThemeDetails(journal?.theme)
+      return getThemeDetails(journal?.theme);
     } catch (error) {
-      console.error("Error getting theme details:", error)
-      return { icon: "📝", dateIcon: "📅" }
+      console.error("Error getting theme details:", error);
+      return { icon: "📝", dateIcon: "📅" };
     }
-  }, [journal?.theme])
+  }, [journal?.theme]);
 
   const readingTime = useMemo(() => {
-    if (!journal?.content) return 0
-    const wordCount = journal.content.split(" ").length
-    return Math.max(1, Math.ceil(wordCount / 200))
-  }, [journal?.content])
+    if (!journal?.content) return 0;
+    const wordCount = journal.content.split(" ").length;
+    return Math.max(1, Math.ceil(wordCount / 200));
+  }, [journal?.content]);
 
   const canSubscribe = useMemo(
     () => currentUser && authorProfile && currentUser._id !== authorProfile._id,
-    [currentUser, authorProfile],
-  )
+    [currentUser, authorProfile]
+  );
 
   if (singleJournalLoading) {
     return (
       <>
-        {isLoggedIn ? <Navbar /> : <LandingNavbar />}
+        {isLoggedIn ? (
+          <Navbar name="New Entry" link="/journaling-alt" />
+        ) : (
+          <LandingNavbar
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+            user={currentUser}
+            openLoginModal={openLoginModal}
+            openSignupModal={openSignupModal}
+          />
+        )}
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm w-full mx-4">
             <div className="flex items-center justify-center space-x-3">
               <Loader2 className="h-6 w-6 animate-spin text-blue-600 dark:text-blue-400" />
-              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Loading journal...</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Loading journal...
+              </p>
             </div>
           </div>
         </div>
       </>
-    )
+    );
   }
 
   if (singleJournalError) {
     return (
       <>
-        {isLoggedIn ? <Navbar /> : <LandingNavbar />}
+        {isLoggedIn ? (
+          <Navbar name="New Entry" link="/journaling-alt" />
+        ) : (
+          <LandingNavbar
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+            user={currentUser}
+            openLoginModal={openLoginModal}
+            openSignupModal={openSignupModal}
+          />
+        )}
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-md w-full mx-4 text-center">
             <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">⚠️</span>
             </div>
-            <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Error Loading Journal</h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">{singleJournalError}</p>
+            <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+              Error Loading Journal
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
+              {singleJournalError}
+            </p>
             <button
               onClick={() => navigate(-1)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -330,64 +376,90 @@ const PublicJournalEntry = () => {
           </div>
         </div>
       </>
-    )
+    );
   }
 
   if (!journal) {
     return (
       <>
-        {isLoggedIn ? <Navbar /> : <LandingNavbar />}
+        {isLoggedIn ? (
+          <Navbar name="New Entry" link="/journaling-alt" />
+        ) : (
+          <LandingNavbar
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+            user={currentUser}
+            openLoginModal={openLoginModal}
+            openSignupModal={openSignupModal}
+          />
+        )}
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-md w-full mx-4 text-center">
             <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">📝</span>
             </div>
-            <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Journal Not Found</h2>
+            <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+              Journal Not Found
+            </h2>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
               This journal entry doesn't exist or has been removed.
             </p>
           </div>
         </div>
       </>
-    )
+    );
   }
 
   return (
     <>
-      {isLoggedIn ? <Navbar /> : <LandingNavbar />}
-      <title>{journal.title ? `${journal.title} | Starlit Journals` : "Starlit Journals"}</title>
-      <meta
-        name="description"
-        content={
-          journal.content
-            ? journal.content
-                .replace(/<[^>]+>/g, "")
-                .replace(/\s+/g, " ")
-                .trim()
-                .slice(0, 160) + "..."
-            : "Read inspiring journal entries on Starlit Journals."
-        }
-      />
-      <meta name="keywords" content={journal.tags?.join(", ") || "journal, writing, reflection"} />
-      <meta property="og:title" content={journal.title || "Starlit Journals"} />
-      <meta
-        property="og:description"
-        content={
-          journal.content
-            ? journal.content
-                .replace(/<[^>]+>/g, "")
-                .replace(/\s+/g, " ")
-                .trim()
-                .slice(0, 160) + "..."
-            : "Read inspiring journal entries on Starlit Journals."
-        }
-      />
-      <meta property="og:type" content="article" />
-      <meta property="og:site_name" content="Starlit Journals" />
-
+      <Helmet>
+        <title>{journal?.title ? `${journal.title} | Starlit Journals` : "Starlit Journals"}</title>
+        <meta
+          name="description"
+          content={
+            journal?.content
+              ? journal.content.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 160) + "..."
+              : "Read inspiring journal entries on Starlit Journals."
+          }
+        />
+        <meta name="keywords" content={journal?.tags?.join(", ") || "journal, writing, reflection"} />
+        <meta property="og:title" content={journal?.title || "Starlit Journals"} />
+        <meta
+          property="og:description"
+          content={
+            journal?.content
+              ? journal.content.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 160) + "..."
+              : "Read inspiring journal entries on Starlit Journals."
+          }
+        />
+        <meta
+          property="og:image"
+          content={
+            journal?.featuredImage || "https://starlitjournals.vercel.app/static/images/default-preview.jpg"
+          }
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content={`https://starlitjournals.vercel.app/journal/${slug}`} />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Starlit Journals" />
+      </Helmet>
+      {isLoggedIn ? (
+        <Navbar name="New Entry" link="/journaling-alt" />
+      ) : (
+        <LandingNavbar
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          user={currentUser}
+          openLoginModal={openLoginModal}
+          openSignupModal={openSignupModal}
+        />
+      )}
       <div
         style={{ backgroundAttachment: "fixed" }}
-        className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${getCardClass(journal.theme)}`}
+        className={`mt-16 min-h-screen bg-gray-50 dark:bg-gray-900 ${getCardClass(
+          journal.theme
+        )}`}
       >
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -468,7 +540,9 @@ const PublicJournalEntry = () => {
                           isLiked ? "fill-red-500 text-red-500" : ""
                         }`}
                       />
-                      <span className="text-sm font-medium">{journal.likes?.length || 0}</span>
+                      <span className="text-sm font-medium">
+                        {journal.likes?.length || 0}
+                      </span>
                     </button>
 
                     <button
@@ -481,9 +555,9 @@ const PublicJournalEntry = () => {
                   </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="p-6 sm:p-8 text-gray-900 dark:text-gray-100">
-                  <div className="prose prose-gray dark:prose-invert max-w-none prose-lg">
+                {/* Content Section - Reduced padding on mobile */}
+                <div className="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
+                  <div className="prose prose-gray dark:prose-invert max-w-none prose-sm sm:prose-lg">
                     <div
                       className="journal-content-display"
                       dangerouslySetInnerHTML={{
@@ -491,22 +565,91 @@ const PublicJournalEntry = () => {
                       }}
                     />
                   </div>
+
+                  {/* Mobile Author Card - Only visible on mobile */}
+                  <div className="lg:hidden mt-8">
+                    {authorProfile && (
+                      <div className="bg-gray-50/80 dark:bg-gray-800/80 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-sm">
+                            {authorProfile.anonymousName?.charAt(0).toUpperCase() || "A"}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-base">
+                              {authorProfile.anonymousName}
+                            </h4>
+                            <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              <span className="flex items-center gap-1">
+                                <Users className="w-3 h-3" />
+                                {authorProfile.subscriberCount || 0}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Flame className="w-3 h-3" />
+                                {authorProfile.currentStreak || 0}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {authorProfile.bio && (
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                            {authorProfile.bio}
+                          </p>
+                        )}
+
+                        <div className="flex gap-2">
+                          {canSubscribe && (
+                            <button
+                              onClick={handleSubscribe}
+                              disabled={subscribing}
+                              className={`flex-1 px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
+                                isSubscribed
+                                  ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                  : "bg-red-500 text-white hover:bg-red-600"
+                              } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                            >
+                              {subscribing ? (
+                                <div className="flex items-center justify-center gap-1">
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                  <span>...</span>
+                                </div>
+                              ) : isSubscribed ? (
+                                "Subscribed"
+                              ) : (
+                                "Subscribe"
+                              )}
+                            </button>
+                          )}
+                          <Link
+                            to={`/profile/${authorProfile.anonymousName}`}
+                            className="px-3 py-2 text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
+                          >
+                            Profile
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Comments Section */}
-                <Comments journalId={journal._id} currentUser={currentUser} onLoginRequired={openLoginModal} />
+                <Comments
+                  journalId={journal._id}
+                  currentUser={currentUser}
+                  onLoginRequired={openLoginModal}
+                />
               </article>
             </div>
 
             {/* Sidebar - Author Profile */}
-            <div className="lg:col-span-1 h-fit">
+            <div className="hidden lg:block lg:col-span-1 h-fit">
               <div className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
                 {!authorProfile ? (
                   // Skeleton Loading State
                   <div className="bg-white/70 dark:bg-black/70 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
                     <div className="animate-pulse">
                       <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
-                      
+
                       {/* Author Info Skeleton */}
                       <div className="flex items-start gap-4 mb-6">
                         <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
@@ -545,7 +688,9 @@ const PublicJournalEntry = () => {
                   </div>
                 ) : (
                   <div className="bg-white/70 dark:bg-black/70 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 className="text-lg font-semibold mb-6 text-gray-900 dark:text-gray-100">About the Author</h3>
+                    <h3 className="text-lg font-semibold mb-6 text-gray-900 dark:text-gray-100">
+                      About the Author
+                    </h3>
 
                     {/* Author Info */}
                     <Link
@@ -555,7 +700,9 @@ const PublicJournalEntry = () => {
                       <div className="flex items-start gap-4">
                         {/* Avatar */}
                         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-md">
-                          {authorProfile.anonymousName?.charAt(0).toUpperCase() || "A"}
+                          {authorProfile.anonymousName
+                            ?.charAt(0)
+                            .toUpperCase() || "A"}
                         </div>
 
                         {/* Details */}
@@ -583,7 +730,9 @@ const PublicJournalEntry = () => {
                         <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                           {authorProfile.subscriberCount || 0}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Subscribers</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Subscribers
+                        </p>
                       </div>
 
                       <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -593,7 +742,9 @@ const PublicJournalEntry = () => {
                         <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                           {authorProfile.currentStreak || 0}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Day Streak</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Day Streak
+                        </p>
                       </div>
                     </div>
 
@@ -602,10 +753,13 @@ const PublicJournalEntry = () => {
                         <Calendar className="w-4 h-4" />
                         <span>
                           Joined{" "}
-                          {new Date(authorProfile.createdAt).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                          })}
+                          {new Date(authorProfile.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                            }
+                          )}
                         </span>
                       </div>
                     </div>
@@ -620,7 +774,9 @@ const PublicJournalEntry = () => {
                             isSubscribed
                               ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                               : "bg-red-500 text-white hover:bg-red-600 shadow-lg hover:shadow-xl"
-                          } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                          } ${
+                            subscribing ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
                         >
                           {subscribing ? (
                             <div className="flex items-center justify-center gap-2">
@@ -732,7 +888,7 @@ const PublicJournalEntry = () => {
           }
 
           .journal-content-display blockquote {
-            border-left: 4px solid #5B8A9E;
+            border-left: 4px solid #5b8a9e;
             padding-left: 1.5rem;
             margin: 2rem 0;
             font-style: italic;
@@ -768,7 +924,7 @@ const PublicJournalEntry = () => {
           }
 
           .journal-content-display a {
-            color: #5B8A9E;
+            color: #5b8a9e;
             text-decoration: underline;
             transition: opacity 0.2s;
             word-break: break-all;
@@ -852,7 +1008,7 @@ const PublicJournalEntry = () => {
       </div>
       {modals}
     </>
-  )
-}
+  );
+};
 
-export default PublicJournalEntry
+export default PublicJournalEntry;
