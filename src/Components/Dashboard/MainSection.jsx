@@ -9,12 +9,6 @@ import {
   Sparkles,
   TrendingUp,
   Calendar,
-  PenTool,
-  Settings,
-  Library,
-  Heart,
-  Target,
-  Zap,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import StreakCard from "../StreakCard";
@@ -29,120 +23,91 @@ const MainSection = ({
   const quickActions = [
     {
       to: "/journaling-alt",
-      icon: <PenTool size={28} />,
+      icon: <Plus size={24} />,
       title: "New Entry",
-      description: "Start your daily reflection",
-      color: "from-blue-500 to-indigo-600",
-      bgColor: "bg-blue-50 dark:bg-blue-950/30",
-      borderColor: "border-blue-200 dark:border-blue-800/50",
+      description: "Start writing today",
+      className: "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400",
     },
     {
-      to: "/public-journals",
-      icon: <Heart size={28} />,
-      title: "Discover",
-      description: "Explore community stories",
-      color: "from-pink-500 to-rose-600",
-      bgColor: "bg-pink-50 dark:bg-pink-950/30",
-      borderColor: "border-pink-200 dark:border-pink-800/50",
+      to: "/profile-settings",
+      icon: <User size={24} />,
+      title: "Profile",
+      description: "Personalize your space",
+      className: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400",
     },
     {
       to: "/collections",
-      icon: <Library size={28} />,
+      icon: <BookOpen size={24} />,
       title: "Library",
-      description: "Your personal archive",
-      color: "from-emerald-500 to-teal-600",
-      bgColor: "bg-emerald-50 dark:bg-emerald-950/30",
-      borderColor: "border-emerald-200 dark:border-emerald-800/50",
-    },
-    {
-      to: "/cozyshop",
-      icon: <Sparkles size={28} />,
-      title: "Shop",
-      description: "Enhance your experience",
-      color: "from-purple-500 to-violet-600",
-      bgColor: "bg-purple-50 dark:bg-purple-950/30",
-      borderColor: "border-purple-200 dark:border-purple-800/50",
-    },
-  ];
-
-  const stats = [
-    {
-      icon: <Target size={20} />,
-      label: "Current Streak",
-      value: userData?.currentStreak || 0,
-      unit: "days",
-      color: "text-orange-600 dark:text-orange-400",
-    },
-    {
-      icon: <TrendingUp size={20} />,
-      label: "Total Entries",
-      value: journalEntries?.length || 0,
-      unit: "entries",
-      color: "text-blue-600 dark:text-blue-400",
-    },
-    {
-      icon: <Zap size={20} />,
-      label: "Words Written",
-      value: wordCountStats?.totalWords || 0,
-      unit: "words",
-      color: "text-green-600 dark:text-green-400",
+      description: "Revisit your stories",
+      className: "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400",
     },
   ];
 
   return (
-    <main className="max-w-6xl mx-auto py-8 md:py-12">
+    <main className="max-w-6xl mx-auto py-12 md:py-16">
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="mb-12 text-center"
+        transition={{ duration: 0.5 }}
+        className="mb-16 text-center relative"
       >
-        <div className="mb-6">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 dark:text-white mb-3 tracking-tight">
-            Welcome back, {userData?.nickname || "Traveler"}
+        <div className="absolute inset-0 flex items-center justify-center opacity-5">
+          <motion.div
+            animate={{
+              scale: [1, 1.02, 1],
+              rotate: [0, 2, -2, 0],
+            }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Sparkles size={120} className="text-[var(--accent)]" />
+          </motion.div>
+        </div>
+        <div className="relative">
+          <h1 className="text-4xl md:text-display font-serif font-bold mb-4 bg-gradient-to-r from-[var(--accent)] to-[var(--text-primary)] bg-clip-text text-transparent leading-tight tracking-tight">
+            Welcome, {userData?.nickname || "Traveler"}
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-light">
-            Ready to continue your journey?
+          <p className="text-xl text-[var(--text-secondary)] font-light">
+            Continue your journey of self-discovery
           </p>
         </div>
       </motion.div>
 
-      {/* Quick Actions Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         <AnimatePresence>
           {quickActions.map((action, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -2, scale: 1.02 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              whileHover={{ y: -4, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <Link
                 to={action.to}
-                className={`block relative p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg group ${action.bgColor} ${action.borderColor}`}
+                className={`block relative p-8 rounded-xl shadow-lg overflow-hidden group transition-all duration-300 hover:shadow-xl ${action.className}`}
               >
-                {/* Icon */}
-                <div className={`flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <div className="text-white">
+                {/* Content */}
+                <div className="relative flex items-start gap-6">
+                  {/* Icon */}
+                  <div className="flex-shrink-0">
                     {action.icon}
                   </div>
-                </div>
 
-                {/* Content */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    {action.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {action.description}
-                  </p>
+                  {/* Text Content */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-2xl font-semibold mb-2 transition-colors tracking-tight">
+                      {action.title}
+                    </h3>
+                    <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed transition-colors">
+                      {action.description}
+                    </p>
+                  </div>
                 </div>
-
-                {/* Subtle glow effect */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
               </Link>
             </motion.div>
           ))}
@@ -153,7 +118,7 @@ const MainSection = ({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
       >
         <StreakCard
           journalEntries={journalEntries}

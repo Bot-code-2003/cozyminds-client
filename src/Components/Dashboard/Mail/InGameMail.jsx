@@ -3,15 +3,6 @@ import { Mail, X, Inbox, Trash2, Star } from "lucide-react";
 import { useMails } from "../../../context/MailContext";
 import { useCoins } from "../../../context/CoinContext";
 
-/** Utility to strip all inline style attributes from HTML */
-function stripInlineStyles(html) {
-  if (!html) return '';
-  // Remove all style="..." attributes
-  return html.replace(/ style="[^"]*"/g, '')
-    // Add mail-link class to all <a> tags
-    .replace(/<a /g, '<a class="mail-link" ');
-}
-
 const InGameMail = ({ toggleMailModal }) => {
   const { mails, user, error, claimReward, markAsRead, deleteMail } = useMails();
   const { showCoinAward } = useCoins();
@@ -92,38 +83,6 @@ const InGameMail = ({ toggleMailModal }) => {
     } catch (err) {
       setMailStateError(err.message);
     }
-  };
-
-  // Custom content rendering function
-  const renderContent = (content) => {
-    // Split content by double newlines to separate paragraphs
-    const paragraphs = content.split('\n\n').map((paragraph, index) => {
-      // Check if the paragraph is a list (starts with an emoji followed by **text**)
-      const lines = paragraph.split('\n');
-      const isList = lines.every(line => line.match(/^[📝📅🎯😊📊🎨]/));
-
-      if (isList) {
-        return (
-          <ul key={index} className="list-disc list-outside ml-4 mb-4">
-            {lines.map((line, lineIndex) => {
-              // Replace **text** with <strong>text</strong>
-              const formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong className="font-bold">$1</strong>');
-              return (
-                <li key={lineIndex} className="mb-2" dangerouslySetInnerHTML={{ __html: formattedLine }} />
-              );
-            })}
-          </ul>
-        );
-      }
-
-      // For non-list paragraphs, replace **text** with <strong>text</strong>
-      const formattedParagraph = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong className="font-bold">$1</strong>');
-      return (
-        <p key={index} className="mb-4" dangerouslySetInnerHTML={{ __html: formattedParagraph }} />
-      );
-    });
-
-    return <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300 mb-6">{paragraphs}</div>;
   };
 
   return (
@@ -237,7 +196,7 @@ const InGameMail = ({ toggleMailModal }) => {
                     
                     <div
                       className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300"
-                      dangerouslySetInnerHTML={{ __html: stripInlineStyles(selectedMail.content) }}
+                      dangerouslySetInnerHTML={{ __html: selectedMail.content }}
                     />
                     
                     {['streak', 'milestone', 'reward'].includes(selectedMail.mailType) && selectedMail.rewardAmount > 0 && (
@@ -376,7 +335,7 @@ const InGameMail = ({ toggleMailModal }) => {
                   <div className="flex-1 px-8 py-6">
                     <div
                       className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300"
-                      dangerouslySetInnerHTML={{ __html: stripInlineStyles(selectedMail.content) }}
+                      dangerouslySetInnerHTML={{ __html: selectedMail.content }}
                     />
                     
                     {['streak', 'milestone', 'reward'].includes(selectedMail.mailType) && selectedMail.rewardAmount > 0 && (
@@ -436,13 +395,19 @@ const InGameMail = ({ toggleMailModal }) => {
         )}
       </div>
       <style>{`
-      .mail-link {
-        color: #2563eb;
-        text-decoration: underline;
-      }
-      .dark .mail-link {
-        color: #60a5fa;
-      }
+        .prose a {
+          color: #2563eb !important;
+          text-decoration: underline;
+        }
+        .dark .prose a {
+          color: #60a5fa !important;
+        }
+        .prose a:hover {
+          color: #1d4ed8 !important;
+        }
+        .dark .prose a:hover {
+          color: #3b82f6 !important;
+        }
       `}</style>
     </div>
   );

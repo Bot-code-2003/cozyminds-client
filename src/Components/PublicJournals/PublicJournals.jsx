@@ -151,8 +151,9 @@ const ErrorState = ({ error, onRetry }) => (
 );
 
 const PublicJournals = () => {
-  const [hasSubscriptionNotifications, setHasSubscriptionNotifications] = useState(false);
-  
+  const [hasSubscriptionNotifications, setHasSubscriptionNotifications] =
+    useState(false);
+
   const {
     journals,
     loading,
@@ -187,11 +188,11 @@ const PublicJournals = () => {
   // Fetch subscription notifications
   const fetchSubscriptionNotifications = useCallback(async () => {
     if (!user?._id) return;
-    
+
     try {
       const response = await API.get(`/subscriptions/${user._id}`);
       const subscriptions = response.data.subscriptions || [];
-      const hasNotifications = subscriptions.some(sub => sub.hasNewContent);
+      const hasNotifications = subscriptions.some((sub) => sub.hasNewContent);
       setHasSubscriptionNotifications(hasNotifications);
     } catch (error) {
       console.error("Error fetching subscription notifications:", error);
@@ -277,7 +278,7 @@ const PublicJournals = () => {
         />
       )}
 
-      <div className=" min-h-screen text-[var(--text-primary)] bg-[var(--bg-primary)]">
+      <div className="mt-16 min-h-screen text-[var(--text-primary)] bg-[var(--bg-primary)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <Header
             showFollowingOnly={showFollowingOnly}

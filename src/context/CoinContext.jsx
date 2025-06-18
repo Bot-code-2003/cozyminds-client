@@ -164,6 +164,7 @@ export const CoinProvider = ({ children }) => {
           storyName: storyName,
           currentChapter: 1,
           lastSent: null,
+          isComplete: false,
         };
         
         // Add story to inventory
