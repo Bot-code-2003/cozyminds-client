@@ -19,7 +19,9 @@ import {
   Type,
   X,
   AlertCircle,
-  Edit3,
+  Lightbulb,
+  Check,
+  Sparkles,
 } from "lucide-react";
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -30,7 +32,7 @@ import ImageExtension from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
 
-// Enhanced Full-Width Image Extension with better cursor positioning
+// Enhanced Full-Width Image Extension
 const FullWidthImageExtension = ImageExtension.extend({
   addNodeView() {
     return ({ node, HTMLAttributes, getPos, editor }) => {
@@ -40,29 +42,29 @@ const FullWidthImageExtension = ImageExtension.extend({
         position: relative;
         display: block;
         width: 100%;
-        margin: 32px 0;
+        margin: 2rem 0;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(156, 163, 175, 0.2);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
         background: transparent;
+        transition: all 0.2s ease;
       `;
 
       const img = document.createElement("img");
       img.src = node.attrs.src;
       img.alt = node.attrs.alt || "";
       img.style.cssText = `
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  max-height: 500px;
-  border-radius: 12px;
-  margin: 0 auto;
-  background: transparent;
-`;
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+        max-height: 500px;
+        border-radius: 12px;
+        margin: 0 auto;
+        background: transparent;
+      `;
 
-      // Error handling for broken images
       img.onerror = () => {
         container.innerHTML = `
           <div style="
@@ -70,13 +72,15 @@ const FullWidthImageExtension = ImageExtension.extend({
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px;
-            color: rgba(239, 68, 68, 0.8);
+            padding: 3rem;
+            color: var(--text-secondary);
             text-align: center;
             min-height: 200px;
+            background: var(--bg-tertiary);
           ">
-            <div style="font-size: 24px; margin-bottom: 8px;">⚠️</div>
-            <div style="font-size: 14px;">Failed to load image</div>
+            <div style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.6;">📷</div>
+            <div style="font-size: 0.875rem; font-weight: 500;">Image failed to load</div>
+            <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">Please check the URL and try again</div>
           </div>
         `;
       };
@@ -191,7 +195,7 @@ const JournalEditor = ({
       }),
       Placeholder.configure({
         placeholder:
-          "Start writing your thoughts, experiences, or reflections...",
+          "Begin writing your thoughts...",
         emptyEditorClass: "is-editor-empty",
       }),
     ],
@@ -207,7 +211,7 @@ const JournalEditor = ({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] max-w-none",
+          "prose prose-lg max-w-none focus:outline-none min-h-[400px]",
       },
     },
   });
@@ -286,16 +290,14 @@ const JournalEditor = ({
     setImageError("");
 
     try {
-      // Directly add the image URL to the editor without pre-loading
       editor
         .chain()
         .focus()
         .setImage({
-          src: imageUrl, // Use the raw URL provided by the user
+          src: imageUrl,
         })
         .run();
 
-      // Add a paragraph after the image and position cursor there
       setTimeout(() => {
         editor.chain().focus().createParagraphNear().focus().run();
       }, 100);
@@ -311,6 +313,19 @@ const JournalEditor = ({
     }
   }, [editor, imageUrl, validateImageUrl]);
 
+  const handleOpenLinkMenu = () => {
+    setIsLinkMenuOpen((prev) => {
+      if (!prev) setIsImageMenuOpen(false);
+      return !prev;
+    });
+  };
+  const handleOpenImageMenu = () => {
+    setIsImageMenuOpen((prev) => {
+      if (!prev) setIsLinkMenuOpen(false);
+      return !prev;
+    });
+  };
+
   const ToolbarButton = ({ onClick, active, disabled, children, title }) => (
     <button
       type="button"
@@ -320,29 +335,35 @@ const JournalEditor = ({
       }}
       disabled={disabled}
       title={title}
-      className={`p-2 rounded-lg transition-all duration-200 ${
-        active
+      className={`
+        relative p-2 rounded-lg transition-all duration-200 
+        ${active
           ? "bg-[var(--accent)] text-white shadow-sm"
-          : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
-      } ${disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"}`}
+          : "text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[var(--accent)] dark:hover:text-white"
+        } 
+        ${disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-95"}
+        group
+      `}
     >
       {children}
     </button>
   );
 
   const ToolbarDivider = () => (
-    <div className="w-px h-6 mx-2 bg-[var(--border)] opacity-50" />
+    <div className="w-px h-6 mx-1 bg-gray-200 dark:bg-gray-700" />
   );
 
   if (!editor) {
     return (
-      <div className="mx-auto space-y-2 max-w-4xl">
-        <div className="bg-[var(--bg-secondary)] rounded-apple border border-[var(--border)] p-6">
-          <div className="animate-pulse">
-            <div className="h-4 bg-[var(--bg-hover)] rounded w-1/4 mb-4"></div>
-            <div className="h-12 bg-[var(--bg-hover)] rounded mb-6"></div>
-            <div className="h-4 bg-[var(--bg-hover)] rounded w-1/4 mb-4"></div>
-            <div className="h-64 bg-[var(--bg-hover)] rounded"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-apple-lg border border-gray-200 dark:border-gray-700 p-8 shadow-apple">
+            <div className="animate-pulse space-y-6">
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg w-1/3"></div>
+              <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg w-1/4"></div>
+              <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -352,218 +373,214 @@ const JournalEditor = ({
   // Get word and character counts safely
   const characterCount = editor.storage.characterCount || {};
   const words = characterCount.words ? characterCount.words() : 0;
-  const characters = characterCount.characters
-    ? characterCount.characters()
-    : 0;
+  const characters = characterCount.characters ? characterCount.characters() : 0;
+  const hasContent = journalTitle.trim() || !editor.isEmpty;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
-      {/* Main Editor Card */}
-      <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-2xl shadow-sm overflow-hidden">
-        {/* Content Section */}
-        <div className="mb-4">
-          {/* Rich Text Editor Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-1.5 p-2 sm:p-4 mb-0 border-b border-[var(--border)] bg-[var(--bg-secondary)]">
-            {/* Text Formatting */}
-            <div className="flex items-center flex-wrap gap-1">
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleBold().run()}
-                active={editor.isActive("bold")}
-                title="Bold (Ctrl+B)"
-              >
-                <Bold size={18} />
-              </ToolbarButton>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 ">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+      
 
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-                active={editor.isActive("italic")}
-                title="Italic (Ctrl+I)"
-              >
-                <Italic size={18} />
-              </ToolbarButton>
+        {/* Main Editor Card */}
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-apple-lg shadow-apple-lg overflow-hidden">
+          {/* Toolbar */}
+          <div className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-750 px-2 py-2 sm:px-4 sm:py-4">
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Text Formatting Group */}
+              <div className="flex items-center gap-1 p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  active={editor.isActive("bold")}
+                  title="Bold (⌘B)"
+                >
+                  <Bold size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  active={editor.isActive("italic")}
+                  title="Italic (⌘I)"
+                >
+                  <Italic size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().toggleUnderline().run()}
+                  active={editor.isActive("underline")}
+                  title="Underline (⌘U)"
+                >
+                  <Underline size={16} />
+                </ToolbarButton>
+              </div>
 
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleUnderline().run()}
-                active={editor.isActive("underline")}
-                title="Underline (Ctrl+U)"
-              >
-                <Underline size={18} />
-              </ToolbarButton>
+              {/* Headings Group */}
+              <div className="flex items-center gap-1 p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level: 1 }).run()
+                  }
+                  active={editor.isActive("heading", { level: 1 })}
+                  title="Heading 1"
+                >
+                  <Heading1 size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level: 2 }).run()
+                  }
+                  active={editor.isActive("heading", { level: 2 })}
+                  title="Heading 2"
+                >
+                  <Heading2 size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level: 3 }).run()
+                  }
+                  active={editor.isActive("heading", { level: 3 })}
+                  title="Heading 3"
+                >
+                  <Heading3 size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().setParagraph().run()}
+                  active={editor.isActive("paragraph")}
+                  title="Paragraph"
+                >
+                  <Type size={16} />
+                </ToolbarButton>
+              </div>
 
-              <ToolbarDivider />
+              {/* Lists Group */}
+              <div className="flex items-center gap-1 p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().toggleBulletList().run()}
+                  active={editor.isActive("bulletList")}
+                  title="Bullet List"
+                >
+                  <List size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                  active={editor.isActive("orderedList")}
+                  title="Numbered List"
+                >
+                  <ListOrdered size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                  active={editor.isActive("blockquote")}
+                  title="Quote"
+                >
+                  <Quote size={16} />
+                </ToolbarButton>
+              </div>
 
-              {/* Headings */}
-              <ToolbarButton
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 1 }).run()
-                }
-                active={editor.isActive("heading", { level: 1 })}
-                title="Heading 1"
-              >
-                <Heading1 size={18} />
-              </ToolbarButton>
+              {/* Media Group */}
+              <div className="flex items-center gap-1 p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <ToolbarButton
+                  onClick={handleOpenLinkMenu}
+                  active={editor.isActive("link") || isLinkMenuOpen}
+                  title="Add Link"
+                >
+                  <LinkIcon size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={handleOpenImageMenu}
+                  active={isImageMenuOpen}
+                  title="Add Image"
+                >
+                  <ImageIcon size={16} />
+                </ToolbarButton>
+              </div>
 
-              <ToolbarButton
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 2 }).run()
-                }
-                active={editor.isActive("heading", { level: 2 })}
-                title="Heading 2"
-              >
-                <Heading2 size={18} />
-              </ToolbarButton>
-
-              <ToolbarButton
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 3 }).run()
-                }
-                active={editor.isActive("heading", { level: 3 })}
-                title="Heading 3"
-              >
-                <Heading3 size={18} />
-              </ToolbarButton>
-
-              <ToolbarButton
-                onClick={() => editor.chain().focus().setParagraph().run()}
-                active={editor.isActive("paragraph")}
-                title="Paragraph"
-              >
-                <Type size={18} />
-              </ToolbarButton>
-
-              <ToolbarDivider />
-
-              {/* Lists */}
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-                active={editor.isActive("bulletList")}
-                title="Bullet List"
-              >
-                <List size={18} />
-              </ToolbarButton>
-
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                active={editor.isActive("orderedList")}
-                title="Numbered List"
-              >
-                <ListOrdered size={18} />
-              </ToolbarButton>
-
-              <ToolbarDivider />
-
-              {/* Special Formatting */}
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                active={editor.isActive("blockquote")}
-                title="Quote"
-              >
-                <Quote size={18} />
-              </ToolbarButton>
-
-              <ToolbarDivider />
-
-              {/* Media */}
-              <ToolbarButton
-                onClick={() => setIsLinkMenuOpen(!isLinkMenuOpen)}
-                active={editor.isActive("link") || isLinkMenuOpen}
-                title="Add Link"
-              >
-                <LinkIcon size={18} />
-              </ToolbarButton>
-
-              <ToolbarButton
-                onClick={() => setIsImageMenuOpen(!isImageMenuOpen)}
-                active={isImageMenuOpen}
-                title="Add Full-Width Image"
-              >
-                <ImageIcon size={18} />
-              </ToolbarButton>
-
-              <ToolbarDivider />
-
-              {/* Undo/Redo */}
-              <ToolbarButton
-                onClick={() => editor.chain().focus().undo().run()}
-                disabled={!editor.can().undo()}
-                title="Undo (Ctrl+Z)"
-              >
-                <Undo size={18} />
-              </ToolbarButton>
-
-              <ToolbarButton
-                onClick={() => editor.chain().focus().redo().run()}
-                disabled={!editor.can().redo()}
-                title="Redo (Ctrl+Y)"
-              >
-                <Redo size={18} />
-              </ToolbarButton>
+              {/* History Group */}
+              <div className="flex items-center gap-1 p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().undo().run()}
+                  disabled={!editor.can().undo()}
+                  title="Undo (⌘Z)"
+                >
+                  <Undo size={16} />
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => editor.chain().focus().redo().run()}
+                  disabled={!editor.can().redo()}
+                  title="Redo (⌘⇧Z)"
+                >
+                  <Redo size={16} />
+                </ToolbarButton>
+              </div>
             </div>
           </div>
 
-          <input
-            ref={titleRef}
-            type="text"
-            value={journalTitle}
-            onChange={(e) => setJournalTitle(e.target.value)}
-            placeholder="What's on your mind today?"
-            className="w-full px-4 sm:px-6 py-3 sm:py-4 text-xl sm:text-2xl font-medium border-b border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none transition-all duration-200"
-            maxLength={200}
-          />
+          {/* Title Input */}
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <input
+              ref={titleRef}
+              type="text"
+              value={journalTitle}
+              onChange={(e) => setJournalTitle(e.target.value)}
+              placeholder="Give your entry a title..."
+              className="w-full text-3xl font-bold bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none"
+              maxLength={200}
+            />
+          </div>
 
           {/* Link Menu */}
           {isLinkMenuOpen && (
-            <div className="flex flex-col sm:flex-row items-center gap-2 p-3 sm:p-4 border-x border-[var(--border)] bg-[var(--bg-tertiary)]">
-              <input
-                type="text"
-                value={linkUrl}
-                onChange={(e) => setLinkUrl(e.target.value)}
-                placeholder="Enter URL (e.g., https://example.com)"
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-[var(--border)] rounded-xl bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]"
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    setLink();
-                  } else if (e.key === "Escape") {
-                    setIsLinkMenuOpen(false);
-                    setLinkUrl("");
-                  }
-                }}
-              />
-              <div className="flex gap-2 w-full sm:w-auto">
-                <button
-                  onClick={setLink}
-                  className="flex-1 sm:flex-none px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-medium text-white bg-[var(--accent)] rounded-xl hover:bg-[var(--accent-hover)] transition-colors"
-                >
-                  Add Link
-                </button>
-                {editor.isActive("link") && (
-                  <button
-                    onClick={removeLink}
-                    className="flex-1 sm:flex-none px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-medium text-[var(--error)] bg-red-50 dark:bg-red-900/20 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
-                  >
-                    Remove
-                  </button>
-                )}
-                <button
-                  onClick={() => {
-                    setIsLinkMenuOpen(false);
-                    setLinkUrl("");
+            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                  placeholder="Enter URL (e.g., https://example.com)"
+                  className="flex-1 px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      setLink();
+                    } else if (e.key === "Escape") {
+                      setIsLinkMenuOpen(false);
+                      setLinkUrl("");
+                    }
                   }}
-                  className="p-2 sm:p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-xl transition-colors"
-                >
-                  <X size={16} />
-                </button>
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={setLink}
+                    className="px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Add Link
+                  </button>
+                  {editor.isActive("link") && (
+                    <button
+                      onClick={removeLink}
+                      className="px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setIsLinkMenuOpen(false);
+                      setLinkUrl("");
+                    }}
+                    className="p-2.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           )}
 
           {/* Image Menu */}
           {isImageMenuOpen && (
-            <div className="p-3 sm:p-4 border-x border-[var(--border)] bg-[var(--bg-tertiary)]">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                <div className="flex-1 flex flex-col sm:flex-row gap-2">
+            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-purple-50 dark:bg-purple-900/20">
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
                     value={imageUrl}
@@ -572,7 +589,7 @@ const JournalEditor = ({
                       setImageError("");
                     }}
                     placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
-                    className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-[var(--border)] rounded-xl bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)]"
+                    className="flex-1 px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -589,9 +606,9 @@ const JournalEditor = ({
                     <button
                       onClick={addImage}
                       disabled={isLoading}
-                      className="flex-1 sm:flex-none px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-medium text-white bg-[var(--accent)] rounded-xl hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2.5 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isLoading ? "Loading..." : "Add Image"}
+                      {isLoading ? "Adding..." : "Add Image"}
                     </button>
                     <button
                       onClick={() => {
@@ -599,42 +616,72 @@ const JournalEditor = ({
                         setImageUrl("");
                         setImageError("");
                       }}
-                      className="p-2 sm:p-2.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-xl transition-colors"
+                      className="p-2.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     >
                       <X size={16} />
                     </button>
                   </div>
                 </div>
-              </div>
 
-              {imageError && (
-                <div className="mt-3 sm:mt-4 flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-xl text-[var(--error)] text-sm">
-                  <AlertCircle size={16} />
-                  <span>{imageError}</span>
-                </div>
-              )}
-
-              <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border)]">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-[var(--accent)]/10 rounded-lg">
-                    <Edit3 size={16} className="text-[var(--accent)]" />
+                {imageError && (
+                  <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-lg text-red-700 dark:text-red-300 text-sm">
+                    <AlertCircle size={16} />
+                    <span>{imageError}</span>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-[var(--text-primary)] mb-2">Image Tips</h4>
-                    <ul className="space-y-1.5 sm:space-y-2 text-sm text-[var(--text-secondary)]">
-                      <li className="flex items-start gap-2">
-                        <span className="text-[var(--accent)]">•</span>
-                        <span>Images will appear full-width in your journal</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-[var(--accent)]">•</span>
-                        <span>Cursor will automatically move below the image</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-[var(--accent)]">•</span>
-                        <span>Use direct image URLs (ending in .jpg, .png, etc.)</span>
-                      </li>
-                    </ul>
+                )}
+
+                <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                      <Lightbulb size={16} className="text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                        Image Resources
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Free Stock Photos:
+                          </p>
+                          <ul className="space-y-1 text-gray-600 dark:text-gray-400">
+                            <li>
+                              <a
+                                href="https://unsplash.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-purple-600 dark:text-purple-400 hover:underline"
+                              >
+                                Unsplash
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                href="https://www.pexels.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-purple-600 dark:text-purple-400 hover:underline"
+                              >
+                                Pexels
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Upload Your Own:
+                          </p>
+                          <a
+                            href="https://imgur.com/upload"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-600 dark:text-purple-400 hover:underline"
+                          >
+                            Imgur Upload
+                          </a>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -642,13 +689,13 @@ const JournalEditor = ({
           )}
 
           {/* Editor Content */}
-          <div className="relative rounded-b-2xl bg-[var(--bg-primary)]">
+          <div className="relative">
             <EditorContent
               editor={editor}
-              className="min-h-[450px] sm:min-h-[500px] px-3 sm:px-6 py-3 sm:py-4 text-[var(--text-primary)] text-base leading-relaxed focus-within:outline-none journal-editor-content"
+              className="min-h-[500px] px-6 py-6 text-gray-900 dark:text-gray-100 leading-relaxed focus-within:outline-none journal-editor-content"
             />
 
-            {/* Bubble Menu for selected text */}
+            {/* Bubble Menu */}
             {editor && (
               <BubbleMenu
                 editor={editor}
@@ -656,7 +703,7 @@ const JournalEditor = ({
                   duration: 100,
                   placement: "top",
                 }}
-                className="flex items-center gap-1.5 p-2 rounded-xl shadow-lg bg-[var(--bg-secondary)] border border-[var(--border)]"
+                className="flex items-center gap-1 p-2 rounded-lg shadow-lg bg-gray-900 dark:bg-gray-700 border border-gray-700 dark:border-gray-600"
               >
                 <button
                   type="button"
@@ -666,12 +713,12 @@ const JournalEditor = ({
                   }}
                   className={`p-2 rounded-md transition-colors ${
                     editor.isActive("bold")
-                      ? "bg-[var(--accent)] text-white"
-                      : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-300 hover:bg-gray-800 dark:hover:bg-gray-600"
                   }`}
                   title="Bold"
                 >
-                  <Bold size={16} />
+                  <Bold size={14} />
                 </button>
                 <button
                   type="button"
@@ -681,12 +728,12 @@ const JournalEditor = ({
                   }}
                   className={`p-2 rounded-md transition-colors ${
                     editor.isActive("italic")
-                      ? "bg-[var(--accent)] text-white"
-                      : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-300 hover:bg-gray-800 dark:hover:bg-gray-600"
                   }`}
                   title="Italic"
                 >
-                  <Italic size={16} />
+                  <Italic size={14} />
                 </button>
                 <button
                   type="button"
@@ -696,14 +743,14 @@ const JournalEditor = ({
                   }}
                   className={`p-2 rounded-md transition-colors ${
                     editor.isActive("underline")
-                      ? "bg-[var(--accent)] text-white"
-                      : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-300 hover:bg-gray-800 dark:hover:bg-gray-600"
                   }`}
                   title="Underline"
                 >
-                  <Underline size={16} />
+                  <Underline size={14} />
                 </button>
-                <div className="w-px h-6 mx-1 bg-[var(--border)]" />
+                <div className="w-px h-6 mx-1 bg-gray-600" />
                 <button
                   type="button"
                   onMouseDown={(e) => {
@@ -712,40 +759,46 @@ const JournalEditor = ({
                   }}
                   className={`p-2 rounded-md transition-colors ${
                     editor.isActive("link")
-                      ? "bg-[var(--accent)] text-white"
-                      : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-300 hover:bg-gray-800 dark:hover:bg-gray-600"
                   }`}
                   title="Add Link"
                 >
-                  <LinkIcon size={16} />
+                  <LinkIcon size={14} />
                 </button>
               </BubbleMenu>
             )}
           </div>
-        </div>
 
-        {/* Footer with word count and status */}
-        <div className="flex justify-between items-center p-3 sm:p-6 border-t border-[var(--border)]">
-          <div className="flex items-center justify-between gap-4 w-full">
-            <div className="flex items-center gap-4">
-              {(journalTitle.trim() || !editor.isEmpty) && (
-                <span className="px-3 sm:px-4 py-1 sm:py-1.5 bg-[var(--success)]/10 text-[var(--success)] text-sm font-medium rounded-full">
-                  Draft ready
-                </span>
-              )}
-            </div>
-            <button
-              onClick={onNext}
-              disabled={!journalTitle.trim() && editor.isEmpty}
-              className="group px-4 sm:px-6 py-2.5 sm:py-3 bg-[var(--accent)] text-white rounded-xl flex items-center text-sm font-medium hover:bg-[var(--accent-hover)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
-            >
-              Continue
-              <ArrowRight
-                size={16}
-                className="ml-2 transition-transform duration-200 group-hover:translate-x-0.5"
-              />
-            </button>
-          </div>
+          {/* Footer */}
+<div className="w-full border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-750 px-4 sm:px-6 py-4">
+  <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+      {hasContent && (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-sm font-medium rounded-full">
+          <Check size={14} />
+          Draft Ready
+        </div>
+      )}
+      <div className="text-sm text-gray-500 dark:text-gray-400">
+        {words} words • {characters} characters
+      </div>
+    </div>
+
+    <button
+      onClick={onNext}
+      disabled={!hasContent}
+      className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-medium hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+    >
+      Continue
+      <ArrowRight
+        size={16}
+        className="ml-2 transition-transform duration-200 group-hover:translate-x-0.5"
+      />
+    </button>
+  </div>
+</div>
+
         </div>
       </div>
 
@@ -753,184 +806,136 @@ const JournalEditor = ({
       <style jsx global>{`
         .journal-editor-content .ProseMirror {
           outline: none;
+          font-size: 1.125rem;
+          line-height: 1.8;
         }
 
         .journal-editor-content .ProseMirror.is-editor-empty:first-child::before {
           content: attr(data-placeholder);
           float: left;
-          color: var(--text-secondary);
+          color: #9ca3af;
           pointer-events: none;
           height: 0;
+          font-style: italic;
         }
 
-        /* Enhanced paragraph spacing */
-        .journal-editor-content .ProseMirror .editor-paragraph {
-          margin: 24px 0 !important;
-          line-height: 1.8 !important;
-          font-size: 1.125rem;
+        .journal-editor-content .ProseMirror p {
+          margin: 1.5rem 0 !important;
           color: var(--text-primary);
         }
 
-        .journal-editor-content .ProseMirror .editor-paragraph:first-child {
+        .journal-editor-content .ProseMirror p:first-child {
           margin-top: 0 !important;
         }
 
-        .journal-editor-content .ProseMirror .editor-paragraph:last-child {
+        .journal-editor-content .ProseMirror p:last-child {
           margin-bottom: 0 !important;
         }
 
-        /* Full-width image styling with better spacing */
         .full-width-image-container {
-          position: relative;
-          display: block;
-          width: 100%;
-          margin: 40px 0 !important;
-          border-radius: 16px;
-          overflow: hidden;
-          box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.1);
-          border: 1px solid var(--border);
-          background: var(--bg-primary);
-        }
-
-        /* Ensure proper spacing after images */
-        .full-width-image-container + p {
-          margin-top: 40px !important;
-        }
-
-        .journal-editor-content .ProseMirror blockquote {
-          border-left: 4px solid var(--accent);
-          padding: 16px 24px;
-          margin: 32px 0;
-          font-style: italic;
-          color: var(--text-secondary);
-          background: var(--bg-secondary);
-          border-radius: 0 12px 12px 0;
-        }
-
-        .journal-editor-content .ProseMirror code {
-          background-color: var(--bg-hover);
-          padding: 3px 8px;
-          border-radius: 6px;
-          font-family: "SF Mono", "Monaco", "Menlo", "Ubuntu Mono", monospace;
-          font-size: 0.9em;
-          color: var(--text-primary);
-        }
-
-        .journal-editor-content .ProseMirror pre {
-          background-color: var(--bg-hover);
-          padding: 20px;
+          margin: 2.5rem 0 !important;
           border-radius: 12px;
-          overflow-x: auto;
-          margin: 32px 0;
-          border: 1px solid var(--border);
-        }
-
-        .journal-editor-content .ProseMirror pre code {
-          background: none;
-          padding: 0;
-        }
-
-        .journal-editor-content .ProseMirror a {
-          color: var(--accent);
-          text-decoration: none;
-          border-bottom: 1px solid var(--accent);
+          overflow: hidden;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+          border: 1px solid #e5e7eb;
           transition: all 0.2s ease;
         }
 
-        .journal-editor-content .ProseMirror a:hover {
-          opacity: 0.8;
+        .full-width-image-container:hover {
+          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
-        .journal-editor-content .ProseMirror em {
-          font-style: italic !important;
+        .journal-editor-content .ProseMirror blockquote {
+          border-left: 4px solid #3b82f6;
+          padding: 1rem 1.5rem;
+          margin: 2rem 0;
+          background: #f8fafc;
+          border-radius: 0 8px 8px 0;
+          font-style: italic;
+          color: #64748b;
         }
 
-        .journal-editor-content .ProseMirror strong {
-          font-weight: 600 !important;
+        .dark .journal-editor-content .ProseMirror blockquote {
+          background: #1e293b;
+          color: #94a3b8;
         }
 
-        .journal-editor-content .ProseMirror ul {
-          list-style-type: disc !important;
-          padding-left: 28px !important;
-          margin: 24px 0 !important;
+        .journal-editor-content .ProseMirror h1,
+        .journal-editor-content .ProseMirror h2,
+        .journal-editor-content .ProseMirror h3 {
+          margin: 2.5rem 0 1.5rem 0;
+          font-weight: 700;
+          line-height: 1.3;
+          color: var(--text-primary);
         }
 
+        .journal-editor-content .ProseMirror h1 {
+          font-size: 2.25rem;
+        }
+
+        .journal-editor-content .ProseMirror h2 {
+          font-size: 1.875rem;
+        }
+
+        .journal-editor-content .ProseMirror h3 {
+          font-size: 1.5rem;
+        }
+
+        .journal-editor-content .ProseMirror ul,
         .journal-editor-content .ProseMirror ol {
-          list-style-type: decimal !important;
-          padding-left: 28px !important;
-          margin: 24px 0 !important;
-        }
-
-        .journal-editor-content .ProseMirror ul ul {
-          list-style-type: circle !important;
-        }
-
-        .journal-editor-content .ProseMirror ul ul ul {
-          list-style-type: square !important;
+          padding-left: 1.75rem !important;
+          margin: 1.5rem 0 !important;
         }
 
         .journal-editor-content .ProseMirror li {
-          margin: 8px 0 !important;
+          margin: 0.5rem 0 !important;
           display: list-item !important;
-          color: var(--text-primary);
         }
 
         .journal-editor-content .ProseMirror li p {
           margin: 0 !important;
         }
 
-        .journal-editor-content .ProseMirror h1,
-        .journal-editor-content .ProseMirror h2,
-        .journal-editor-content .ProseMirror h3 {
-          margin: 40px 0 24px 0;
-          font-weight: 600;
-          line-height: 1.3;
-          color: var(--text-primary);
+        .journal-editor-content .ProseMirror a {
+          color: #3b82f6;
+          text-decoration: none;
+          border-bottom: 1px solid #3b82f6;
+          transition: all 0.2s ease;
         }
 
-        .journal-editor-content .ProseMirror h1 {
-          font-size: 2.5em;
+        .journal-editor-content .ProseMirror a:hover {
+          background: rgba(59, 130, 246, 0.1);
         }
 
-        .journal-editor-content .ProseMirror h2 {
-          font-size: 2em;
+        .journal-editor-content .ProseMirror code {
+          background: #f1f5f9;
+          color: #334155;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-family: 'SF Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+          font-size: 0.875em;
         }
 
-        .journal-editor-content .ProseMirror h3 {
-          font-size: 1.5em;
+        .dark .journal-editor-content .ProseMirror code {
+          background: #374151;
+          color: #d1d5db;
         }
 
-        .journal-editor-content .ProseMirror p {
-          margin: 24px 0;
-        }
-
-        /* Selection styles */
         .journal-editor-content .ProseMirror ::selection {
-          background: var(--accent);
-          color: white;
+          background: rgba(59, 130, 246, 0.2);
         }
 
-        /* Focus styles */
-        .journal-editor-content .ProseMirror:focus {
-          outline: none;
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
-          .full-width-image-container {
-            margin: 32px 0 !important;
-          }
-          
           .journal-editor-content .ProseMirror h1 {
-            font-size: 2em;
+            font-size: 1.875rem;
           }
           
           .journal-editor-content .ProseMirror h2 {
-            font-size: 1.75em;
+            font-size: 1.5rem;
           }
           
           .journal-editor-content .ProseMirror h3 {
-            font-size: 1.35em;
+            font-size: 1.25rem;
           }
         }
       `}</style>

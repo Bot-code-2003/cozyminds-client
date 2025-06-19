@@ -52,7 +52,7 @@ export default {
         'title': ['2.25rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }],
       },
       borderRadius: {
-        'apple': '1rem',
+        'apple': '0.7rem',
         'apple-lg': '1.5rem',
       },
       animation: {

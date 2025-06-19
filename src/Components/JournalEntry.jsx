@@ -420,9 +420,11 @@ const JournalEntry = () => {
       />
       <div
         style={{ backgroundAttachment: "fixed" }}
-        className={`min-h-screen transition-colors duration-300 text-[var(--text-primary)] bg-[var(--bg-primary)] ${getCardClass(
-          entry.theme
-        )} `}
+        className={`min-h-screen transition-colors duration-300 text-[var(--text-primary)] bg-[var(--bg-primary)] ${
+          entry.theme === "theme_default"
+            ? "bg-white dark:bg-black"
+            : getCardClass(entry.theme)
+        } `}
       >
         {/* Background decorative elements */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
@@ -435,7 +437,7 @@ const JournalEntry = () => {
         <div className=" p-4 sm:p-6 lg:p-8">
           {/* Journal Container */}
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden mb-8">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden mb-8">
               {/* Header Section */}
               <div className="p-6 sm:p-8 border-b border-gray-200 dark:border-gray-700">
                 {/* Title */}

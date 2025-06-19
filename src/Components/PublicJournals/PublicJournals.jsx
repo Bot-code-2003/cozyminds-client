@@ -29,7 +29,7 @@ const Header = ({ showFollowingOnly, isLoggedIn, onBackToAll }) => (
     {showFollowingOnly && (
       <button
         onClick={onBackToAll}
-        className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium mb-6 transition-colors group"
+        className="flex items-center gap-2 text-[var(--accent)] font-medium mb-6 transition-colors group"
       >
         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
         <span>Back to All Journals</span>
@@ -118,7 +118,7 @@ const ControlPanel = ({
               
               <Link
                 to="/journaling-alt"
-                className="flex items-center justify-center w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all duration-200 shadow-sm"
+                className="flex items-center justify-center w-10 h-10 bg-[var(--accent)] text-white rounded-xl transition-all duration-200 shadow-sm"
               >
                 <BookOpen className="w-4 h-4" />
               </Link>
@@ -140,7 +140,7 @@ const ControlPanel = ({
                 onClick={toggleFollowingOnly}
                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                   showFollowingOnly
-                    ? "bg-blue-500 text-white shadow-md"
+                    ? "bg-[var(--accent)] text-white shadow-md"
                     : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
                 }`}
               >
@@ -150,7 +150,7 @@ const ControlPanel = ({
                 onClick={toggleFollowingOnly}
                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                   !showFollowingOnly
-                    ? "bg-blue-500 text-white shadow-md"
+                    ? "bg-[var(--accent)] text-white shadow-md"
                     : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
                 }`}
               >
@@ -186,7 +186,7 @@ const ControlPanel = ({
             
             <Link
               to="/journaling-alt"
-              className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
             >
               <BookOpen className="w-4 h-4" />
               <span>Write</span>
@@ -220,7 +220,7 @@ const EmptyState = ({ showFollowingOnly, toggleFollowingOnly, isLoggedIn }) => (
         <div className="pt-4">
           <button
             onClick={toggleFollowingOnly}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[var(--accent)] to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
           >
             <BookOpen className="w-5 h-5" />
             <span>Explore All Journals</span>
@@ -235,8 +235,8 @@ const LoadingState = () => (
   <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
     <div className="flex flex-col items-center gap-4 bg-white dark:bg-slate-800 px-8 py-12 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
       <div className="relative">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-        <div className="absolute inset-0 h-8 w-8 animate-ping rounded-full bg-blue-500 opacity-20" />
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--accent)]" />
+        <div className="absolute inset-0 h-8 w-8 animate-ping rounded-full bg-[var(--accent)] opacity-20" />
       </div>
       <div className="text-center">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
@@ -266,7 +266,7 @@ const ErrorState = ({ error, onRetry }) => (
 
       <button
         onClick={onRetry}
-        className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-colors font-medium shadow-lg hover:shadow-xl"
+        className="px-6 py-3 bg-[var(--accent)] text-white rounded-xl transition-colors font-medium shadow-lg hover:shadow-xl"
       >
         Try Again
       </button>
@@ -297,7 +297,7 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
     return (
       <div className="text-center mt-12 lg:mt-16">
         <div className="inline-flex items-center gap-3 px-6 py-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
-          <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+          <Loader2 className="h-5 w-5 animate-spin text-[var(--accent)]" />
           <span className="text-gray-600 dark:text-gray-400 font-medium">
             Loading more journals...
           </span>
@@ -310,7 +310,7 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
     <div className="text-center mt-12 lg:mt-16">
       <button
         onClick={onLoadMore}
-        className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-lg"
+        className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-700 dark:text-gray-300 dark:hover:text-blue-400 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-lg"
       >
         <span>Load More Journals</span>
         <div className="flex gap-1">

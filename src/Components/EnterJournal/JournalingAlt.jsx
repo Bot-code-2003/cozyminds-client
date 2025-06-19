@@ -273,7 +273,7 @@ const JournalingAlt = () => {
         toggleDarkMode={toggleDarkMode}
         onLogout={handleLogout}
       />
-      <div className="mx-auto pt-24 pb-12 px-4">
+      <div className="mx-auto pb-12 px-2 sm:px-4">
         {renderCurrentStep()}
         {saveError && (
           <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">

@@ -51,11 +51,11 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
           onClick={() => handleNavigation("/")}
           className="flex items-center gap-2 group cursor-pointer"
         >
-          <div className="w-8 h-8 bg-[#5999a8] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 ease-in-out">
+          <div className="w-8 h-8 bg-[var(--accent)] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 ease-in-out">
             <Star size={16} className="text-white" />
           </div>
           <div className="text-xl font-bold tracking-tight">
-            <span className="text-[#5999a8]">Starlit</span>{" "}
+            <span className="text-[var(--accent)]">Starlit</span>{" "}
             <span className="text-[#1A1A1A] dark:text-[#F8F1E9]">Journals</span>
           </div>
         </button>
@@ -116,7 +116,7 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
               </button>
               <button
                 onClick={openSignupModal}
-                className="flex items-center gap-2 px-4 py-2 bg-[#5999a8] text-white rounded-xl hover:bg-[#468b97] transition-all duration-500 ease-in-out font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-xl hover:bg-[#468b97] transition-all duration-500 ease-in-out font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <UserPlus size={16} />
                 Sign Up
