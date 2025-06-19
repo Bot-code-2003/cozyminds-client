@@ -56,7 +56,7 @@ const ControlPanel = ({
   handleFeedTypeChange,
   hasNotifications,
 }) => (
-  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 mb-8 overflow-hidden">
+  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 mb-8">
     {/* Mobile Layout */}
     <div className="block lg:hidden">
       {/* Top Section - Feed Toggle (if logged in) */}
@@ -482,7 +482,7 @@ const PublicJournals = () => {
         />
       )}
 
-      <div className="min-h-screen bg-[var(--bg-primary)]">
+      <div className={`min-h-screen bg-[var(--bg-primary)] ${!isLoggedIn ? 'pt-16' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <Header
             showFollowingOnly={showFollowingOnly}

@@ -498,9 +498,7 @@ const PublicJournalEntry = () => {
       )}
       <div
         style={{ backgroundAttachment: "fixed" }}
-        className={` min-h-screen bg-gray-50 dark:bg-gray-900 ${getCardClass(
-          journal.theme
-        )}`}
+        className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${getCardClass(journal.theme)} ${!isLoggedIn ? 'pt-16' : ''}`}
       >
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -44,7 +44,7 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
   };
 
   return (
-    <nav className="w-full bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl border-b border-gray-900/10 dark:border-white/10 py-3 px-8 flex justify-between items-center sticky top-0 z-[999]">
+    <nav className="w-full bg-white dark:bg-[#1A1A1A] border-b border-gray-200/20 dark:border-gray-700/20 py-3 px-4 md:px-6 fixed top-0 left-0 z-[999] shadow-sm">
       <div className="max-w-7xl mx-auto flex justify-between items-center w-full px-4 sm:px-6">
         {/* Logo */}
         <button
