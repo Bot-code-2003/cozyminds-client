@@ -47,12 +47,6 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
         setShowLoadingScreen(false);
         return;
       }
-      if (password.length < 6) {
-        setLoginError("Password must be at least 6 characters long.");
-        setIsLoading(false);
-        setShowLoadingScreen(false);
-        return;
-      }
 
       try {
         const loginPromise = API.post("/login", { email, password });
