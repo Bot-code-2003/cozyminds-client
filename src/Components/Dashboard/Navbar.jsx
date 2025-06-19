@@ -115,7 +115,10 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           {/* Navigation Links */}
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => handleNavigation("/public-journals")}
+              onClick={() => {
+                handleNavigation("/public-journals");
+                window.scrollTo(0, 0);
+              }}
               className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 relative"
             >
               <BookOpen size={16} className="mr-2" />
@@ -174,7 +177,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           {!isJournalingAlt && (
             <button
               onClick={() => handleNavigation(link)}
-              className="flex items-center px-4 py-2 bg-[#5999a8] text-white rounded-lg hover:bg-[#4a8b9a] transition-all duration-200 font-medium text-sm"
+              className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium text-sm"
             >
               <Plus size={16} className="mr-2" />
               {name}
@@ -322,7 +325,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             {!isJournalingAlt && (
               <button
                 onClick={() => handleNavigation(link)}
-                className="flex items-center justify-center w-full px-4 py-3 bg-[#5999a8] text-white rounded-xl hover:bg-[#4a8b9a] transition-all duration-200 font-medium"
+                className="flex items-center justify-center w-full px-4 py-3 bg-[var(--accent)] text-white rounded-xl hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium"
               >
                 <Plus size={18} className="mr-2" />
                 {name}

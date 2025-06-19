@@ -13,11 +13,11 @@ export const MailProvider = ({ children }) => {
 
   // Fetch mails and user data
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (loginUser = null) => {
       setLoading(true);
       setError(null);
       try {
-        const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
+        const storedUser = loginUser || JSON.parse(sessionStorage.getItem("user") || "null");
         if (!storedUser) return;
         setUser(storedUser);
         const response = await API.get(`/mails/${storedUser._id}`);
@@ -30,6 +30,17 @@ export const MailProvider = ({ children }) => {
       }
     };
     fetchData();
+
+    // Listen for login event
+    const handleUserLoggedIn = (event) => {
+      const newUser = event.detail.user;
+      fetchData(newUser);
+    };
+    window.addEventListener("user-logged-in", handleUserLoggedIn);
+
+    return () => {
+      window.removeEventListener("user-logged-in", handleUserLoggedIn);
+    };
   }, []);
 
   // Update hasUnreadMails whenever mails change

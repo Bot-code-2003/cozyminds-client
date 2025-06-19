@@ -160,7 +160,7 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
               <div className={`w-full h-full ${cardClass} relative overflow-hidden`}>
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
                 <motion.div
-                  className="absolute inset-0 opacity-40"
+                  className="absolute inset-0 "
                   animate={{
                     background: isHovered 
                       ? `radial-gradient(circle at 50% 50%, ${moodDetails?.color}20, transparent 70%)`

@@ -15,20 +15,17 @@ import {
   AlertCircle,
   Users,
   ArrowLeft,
-  Sparkles,
   BookOpen,
-  TrendingUp,
+  Bell,
+  Filter,
+  Grid,
+  List,
 } from "lucide-react";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
-const Header = ({
-  showFollowingOnly,
-  isLoggedIn,
-  onBackToAll,
-  hasNotifications,
-}) => (
-  <div className="mb-12">
+const Header = ({ showFollowingOnly, isLoggedIn, onBackToAll }) => (
+  <div className="mb-8">
     {showFollowingOnly && (
       <button
         onClick={onBackToAll}
@@ -39,40 +36,167 @@ const Header = ({
       </button>
     )}
 
-    <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100">
-              {showFollowingOnly ? "Your Feed" : "Discover"}
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mt-1">
-              {showFollowingOnly
-                ? "Latest posts from writers you follow"
-                : "Explore stories and thoughts from our community"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {isLoggedIn && !showFollowingOnly && (
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Link
-            to="/subscriptions"
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md relative"
-          >
-            <Users className="w-5 h-5" />
-            <span>Subscribed Users</span>
-            {hasNotifications && (
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            )}
-          </Link>
-        </div>
-      )}
+    <div className="text-center mb-8">
+      <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+        {showFollowingOnly ? "Your Feed" : "Discover Journals"}
+      </h1>
+      <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        {showFollowingOnly
+          ? "Latest posts from writers you follow"
+          : "Explore stories and thoughts from our vibrant community of writers"}
+      </p>
     </div>
   </div>
 );
+const ControlPanel = ({
+  isLoggedIn,
+  showFollowingOnly,
+  toggleFollowingOnly,
+  feedType,
+  handleFeedTypeChange,
+  hasNotifications,
+}) => (
+  <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 mb-8 overflow-hidden">
+    {/* Mobile Layout */}
+    <div className="block lg:hidden">
+      {/* Top Section - Feed Toggle (if logged in) */}
+      {isLoggedIn && (
+        <div className="p-4 border-b border-gray-100 dark:border-slate-700">
+          <div className="flex gap-1 bg-gray-50 dark:bg-slate-700 rounded-xl p-1">
+            
+            <button
+              onClick={() => showFollowingOnly && toggleFollowingOnly()}
+              className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 text-sm ${
+                !showFollowingOnly
+                  ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-gray-400"
+              }`}
+            >
+              All Journals
+            </button>
+            <button
+              onClick={() => !showFollowingOnly && toggleFollowingOnly()}
+              className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 text-sm ${
+                showFollowingOnly
+                  ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-gray-400"
+              }`}
+            >
+              Following
+            </button>
+          </div>
+        </div>
+      )}
 
+      {/* Bottom Section - Filters and Actions */}
+      <div className="p-4">
+        <div className="flex items-center justify-between">
+          {/* Filter Section - Only show when not in following mode */}
+          <div className="flex-1">
+            {!showFollowingOnly && (
+              <FilterSection
+                feedType={feedType}
+                handleFeedTypeChange={handleFeedTypeChange}
+              />
+            )}
+          </div>
+
+          {/* User Actions - Compact mobile version */}
+          {isLoggedIn && (
+            <div className="flex gap-2 ml-4">
+              <Link
+                to="/subscriptions"
+                className="flex items-center justify-center w-10 h-10 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-600 transition-all duration-200 relative"
+              >
+                <Users className="w-4 h-4" />
+                {hasNotifications && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full">
+                    <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
+                  </div>
+                )}
+              </Link>
+              
+              <Link
+                to="/journaling-alt"
+                className="flex items-center justify-center w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all duration-200 shadow-sm"
+              >
+                <BookOpen className="w-4 h-4" />
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {/* Desktop Layout */}
+    <div className="hidden lg:block p-6">
+      <div className="flex items-center justify-between">
+        {/* Left side - Feed Controls */}
+        <div className="flex items-center gap-6">
+          {/* Feed Toggle Buttons */}
+          {isLoggedIn && (
+            <div className="flex gap-2">
+              <button
+                onClick={toggleFollowingOnly}
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  showFollowingOnly
+                    ? "bg-blue-500 text-white shadow-md"
+                    : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
+                }`}
+              >
+                Following
+              </button>
+              <button
+                onClick={toggleFollowingOnly}
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  !showFollowingOnly
+                    ? "bg-blue-500 text-white shadow-md"
+                    : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
+                }`}
+              >
+                All Journals
+              </button>
+            </div>
+          )}
+
+          {/* Filter Section - Only show when not in following mode */}
+          {!showFollowingOnly && (
+            <FilterSection
+              feedType={feedType}
+              handleFeedTypeChange={handleFeedTypeChange}
+            />
+          )}
+        </div>
+
+        {/* Right side - User Actions */}
+        {isLoggedIn && (
+          <div className="flex gap-3">
+            <Link
+              to="/subscriptions"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-600 transition-all duration-200 font-medium relative"
+            >
+              <Users className="w-4 h-4" />
+              <span>Subscriptions</span>
+              {hasNotifications && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full">
+                  <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
+                </div>
+              )}
+            </Link>
+            
+            <Link
+              to="/journaling-alt"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>Write</span>
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+);
 const EmptyState = ({ showFollowingOnly, toggleFollowingOnly, isLoggedIn }) => (
   <div className="text-center py-20">
     <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
@@ -150,9 +274,57 @@ const ErrorState = ({ error, onRetry }) => (
   </div>
 );
 
+const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
+  if (!hasMore) {
+    return (
+      <div className="text-center py-8">
+        <div className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl border border-green-200 dark:border-green-800">
+          <span className="text-2xl">🎉</span>
+          <div className="text-left">
+            <p className="font-semibold text-gray-900 dark:text-gray-100">
+              You've reached the end!
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Thanks for exploring our community
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadingMore) {
+    return (
+      <div className="text-center mt-12 lg:mt-16">
+        <div className="inline-flex items-center gap-3 px-6 py-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
+          <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+          <span className="text-gray-600 dark:text-gray-400 font-medium">
+            Loading more journals...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-center mt-12 lg:mt-16">
+      <button
+        onClick={onLoadMore}
+        className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-lg"
+      >
+        <span>Load More Journals</span>
+        <div className="flex gap-1">
+          <div className="w-1 h-1 bg-current rounded-full opacity-60" />
+          <div className="w-1 h-1 bg-current rounded-full opacity-40" />
+          <div className="w-1 h-1 bg-current rounded-full opacity-20" />
+        </div>
+      </button>
+    </div>
+  );
+};
+
 const PublicJournals = () => {
-  const [hasSubscriptionNotifications, setHasSubscriptionNotifications] =
-    useState(false);
+  const [hasSubscriptionNotifications, setHasSubscriptionNotifications] = useState(false);
 
   const {
     journals,
@@ -278,21 +450,21 @@ const PublicJournals = () => {
         />
       )}
 
-      <div className="mt-16 min-h-screen text-[var(--text-primary)] bg-[var(--bg-primary)]">
+      <div className="min-h-screen bg-[var(--bg-primary)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <Header
             showFollowingOnly={showFollowingOnly}
             isLoggedIn={isLoggedIn}
             onBackToAll={handleBackToAll}
-            hasNotifications={hasSubscriptionNotifications}
           />
 
-          <FilterSection
+          <ControlPanel
+            isLoggedIn={isLoggedIn}
+            showFollowingOnly={showFollowingOnly}
+            toggleFollowingOnly={toggleFollowingOnly}
             feedType={feedType}
             handleFeedTypeChange={handleFeedTypeChange}
-            isLoggedIn={isLoggedIn}
-            toggleFollowingOnly={toggleFollowingOnly}
-            showFollowingOnly={showFollowingOnly}
+            hasNotifications={hasSubscriptionNotifications}
           />
 
           {journals.length === 0 ? (
@@ -304,7 +476,7 @@ const PublicJournals = () => {
           ) : (
             <>
               {/* Journal Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                 {journals.map((journal) => (
                   <div key={journal._id} className="h-full">
                     <PublicJournalCard
@@ -317,47 +489,11 @@ const PublicJournals = () => {
                 ))}
               </div>
 
-              {/* Load More Section */}
-              {hasMore && !loadingMore && (
-                <div className="text-center mt-12 lg:mt-16">
-                  <button
-                    onClick={loadMore}
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-lg"
-                  >
-                    <span>Load More Journals</span>
-                    <div className="w-1 h-1 bg-current rounded-full opacity-60" />
-                    <div className="w-1 h-1 bg-current rounded-full opacity-40" />
-                    <div className="w-1 h-1 bg-current rounded-full opacity-20" />
-                  </button>
-                </div>
-              )}
-
-              {loadingMore && (
-                <div className="text-center mt-12 lg:mt-16">
-                  <div className="inline-flex items-center gap-3 px-6 py-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
-                    <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
-                    <span className="text-gray-600 dark:text-gray-400 font-medium">
-                      Loading more journals...
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {!hasMore && (
-                <div className="text-center mt-12 lg:mt-16 py-8">
-                  <div className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl border border-green-200 dark:border-green-800">
-                    <span className="text-2xl">🎉</span>
-                    <div className="text-left">
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">
-                        You've reached the end!
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Thanks for exploring our community
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <LoadMoreButton
+                loadingMore={loadingMore}
+                hasMore={hasMore}
+                onLoadMore={loadMore}
+              />
             </>
           )}
         </div>

@@ -43,6 +43,16 @@ const App = () => {
       setUser(JSON.parse(storedUser))
     }
     setLoading(false)
+
+    // Listen for login event
+    const handleUserLoggedIn = (event) => {
+      setUser(event.detail.user)
+    }
+    window.addEventListener("user-logged-in", handleUserLoggedIn)
+
+    return () => {
+      window.removeEventListener("user-logged-in", handleUserLoggedIn)
+    }
   }, [])
 
   if (loading) return <div>Loading...</div>

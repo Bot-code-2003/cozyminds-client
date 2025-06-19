@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import Signin from "../../assets/signin.png";
+import { useNavigate } from "react-router-dom";
 
 const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [loginError, setLoginError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const API = axios.create({
     baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
@@ -24,21 +28,23 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
     e.preventDefault();
     setLoginError(null);
     setIsLoading(true);
+    setShowLoadingScreen(true);
 
     try {
-      const res = await API.post("/login", loginForm);
-      const { user, coinsEarned } = res.data;
+      // Start backend request and 3-second timer in parallel
+      const loginPromise = API.post("/login", loginForm);
+      const timerPromise = new Promise((resolve) => setTimeout(resolve, 3000));
 
-      // console.log(user);
+      // Wait for both to complete
+      const [loginRes] = await Promise.all([loginPromise, timerPromise]);
 
-      console.log("Login successful, coins earned:", coinsEarned);
-
+      const { user, coinsEarned } = loginRes.data;
       const coinsEarnedNum = Number.parseInt(coinsEarned || 0, 10);
 
-      // Store user data
-      sessionStorage.setItem("user", JSON.stringify(user));
+      // Store minimal data for dashboard
+      localStorage.setItem("userId", user._id); // For dashboard to fetch user data
+      sessionStorage.setItem("user", JSON.stringify(user)); // Temporary for current session
 
-      // Dispatch custom event for other components to listen
       window.dispatchEvent(
         new CustomEvent("user-logged-in", {
           detail: {
@@ -48,14 +54,29 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
         })
       );
 
-      onClose();
-      window.location.href = "/"; // Refresh to show dashboard
+      // Mark login as successful
+      setLoginSuccess(true);
     } catch (err) {
       setLoginError(err?.response?.data?.message || "Login failed. Try again.");
-    } finally {
       setIsLoading(false);
+      setShowLoadingScreen(false);
+      setLoginSuccess(false);
     }
   };
+
+  // Handle navigation after loading screen and successful login
+  useEffect(() => {
+    if (loginSuccess && showLoadingScreen) {
+      // Ensure loading screen stays for at least 3 seconds
+      const timer = setTimeout(() => {
+        setShowLoadingScreen(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else if (loginSuccess && !showLoadingScreen) {
+      onClose();
+      navigate("/", { replace: true }); // Navigate to dashboard
+    }
+  }, [loginSuccess, showLoadingScreen, onClose, navigate]);
 
   const handleSwitchToSignup = (e) => {
     e.preventDefault();
@@ -63,6 +84,126 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
   };
 
   if (!isOpen) return null;
+
+  if (showLoadingScreen) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-900 dark:via-black dark:to-gray-900">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.03),transparent_50%)]"></div>
+        
+        <div className="relative flex flex-col items-center justify-center space-y-8 animate-[fadeInUp_0.8s_ease-out]">
+          {/* Apple-style logo/icon */}
+          <div className="relative">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#5999a8] to-[#4a8ba0] shadow-2xl shadow-[#5999a8]/20 flex items-center justify-center animate-[float_3s_ease-in-out_infinite]">
+              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            
+            {/* Pulsing rings */}
+            <div className="absolute inset-0 rounded-2xl border-2 border-[#5999a8]/30 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] animation-delay-75"></div>
+            <div className="absolute inset-0 rounded-2xl border-2 border-[#5999a8]/20 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] animation-delay-150"></div>
+          </div>
+  
+          {/* Progress indicator */}
+          <div className="relative w-64">
+            <div className="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-[#5999a8] to-[#4a8ba0] rounded-full animate-[loading_2s_ease-in-out_infinite]"></div>
+            </div>
+          </div>
+  
+          {/* Text content */}
+          <div className="text-center space-y-2 animate-[fadeIn_1s_ease-out_0.3s_both]">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
+              Starlit Journals
+            </h2>
+            <p className="text-base text-gray-600 dark:text-gray-400 font-medium">
+              Signing you in...
+            </p>
+          </div>
+  
+          {/* Subtle dots indicator */}
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-[#5999a8] rounded-full animate-[bounce_1.4s_ease-in-out_infinite] animation-delay-0"></div>
+            <div className="w-2 h-2 bg-[#5999a8] rounded-full animate-[bounce_1.4s_ease-in-out_infinite] animation-delay-200"></div>
+            <div className="w-2 h-2 bg-[#5999a8] rounded-full animate-[bounce_1.4s_ease-in-out_infinite] animation-delay-400"></div>
+          </div>
+        </div>
+        
+        <style jsx>{`
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+          }
+          
+          @keyframes float {
+            0%, 100% {
+              transform: translateY(0px);
+            }
+            50% {
+              transform: translateY(-10px);
+            }
+          }
+          
+          @keyframes loading {
+            0% {
+              transform: translateX(-100%);
+            }
+            50% {
+              transform: translateX(0%);
+            }
+            100% {
+              transform: translateX(100%);
+            }
+          }
+          
+          @keyframes bounce {
+            0%, 80%, 100% {
+              transform: scale(0);
+            }
+            40% {
+              transform: scale(1);
+            }
+          }
+          
+          .animation-delay-75 {
+            animation-delay: 0.075s;
+          }
+          
+          .animation-delay-150 {
+            animation-delay: 0.15s;
+          }
+          
+          .animation-delay-0 {
+            animation-delay: 0ms;
+          }
+          
+          .animation-delay-200 {
+            animation-delay: 200ms;
+          }
+          
+          .animation-delay-400 {
+            animation-delay: 400ms;
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -76,7 +217,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
             className="absolute top-4 right-4 p-2 bg-black/20 dark:bg-white/20 rounded-full transition-colors z-10"
             aria-label="Close login modal"
           >
-            <X size={20} className="text-white"/>
+            <X size={20} className="text-white" />
           </button>
 
           {/* Background Image Section */}

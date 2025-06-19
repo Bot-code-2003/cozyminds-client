@@ -29,9 +29,11 @@ button:hover {
   --text-secondary: #86868b;
   --text-journal-title: #ffffff;
 
-  --accent: #5B8A9E;
-  --accent-rgb: 91, 138, 158;
-  --accent-hover: #6B9AAE;
+  --accent: #2563eb; /* Tailwind text-blue-600 */
+  --accent-rgb: 37, 99, 235;
+  --accent-hover: #1d4ed8; /* Tailwind hover:text-blue-700 */
+  --accent-light: #60a5fa; /* Tailwind text-blue-400 */
+  --accent-light-hover: #38bdf8; /* Tailwind hover:text-blue-300 */
 
   --highlight: #34c759;
   --highlight-rgb: 52, 199, 89;
@@ -60,9 +62,11 @@ button:hover {
   --text-secondary: #86868b;
   --text-journal-title: #ffffff;
 
-  --accent: #6B9AAE;
-  --accent-rgb: 107, 154, 174;
-  --accent-hover: #7BAABE;
+  --accent: #60a5fa; /* Tailwind text-blue-400 */
+  --accent-rgb: 96, 165, 250;
+  --accent-hover: #38bdf8; /* Tailwind hover:text-blue-300 */
+  --accent-dark: #2563eb; /* Tailwind text-blue-600 */
+  --accent-dark-hover: #1d4ed8; /* Tailwind hover:text-blue-700 */
 
   --highlight: #30d158;
   --highlight-rgb: 48, 209, 88;
