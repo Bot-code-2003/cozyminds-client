@@ -30,6 +30,7 @@ import PublicJournals from "./Components/PublicJournals/PublicJournals"
 import PublicJournalEntry from "./Components/PublicJournals/PublicJournalEntry"
 import PublicProfile from "./Components/PublicJournals/PublicProfile"
 import SubscriptionsView from "./Components/PublicJournals/SubscriptionsView"
+import SavedEntries from "./Components/PublicJournals/SavedEntries"
 
 import "./index.css"
 
@@ -84,6 +85,7 @@ const App = () => {
                   <Route path="/public-journal/:slug" element={<PublicJournalEntry />} />
                   <Route path="/profile/:anonymousName" element={<PublicProfile />} />
                   <Route path="/subscriptions" element={<SubscriptionsView />} />
+                  <Route path="/saved-entries" element={<SavedEntries />} />
                 </Routes>
               </div>
             </CoinProvider>

@@ -20,6 +20,7 @@ import {
   BookOpen,
   Bell,
   Users,
+  Bookmark,
 } from "lucide-react";
 import InGameMail from "./Mail/InGameMail";
 import { useDarkMode } from "../../context/ThemeContext";
@@ -119,7 +120,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 handleNavigation("/public-journals");
                 window.scrollTo(0, 0);
               }}
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 relative"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md font-medium text-gray-700 dark:text-gray-300 relative"
             >
               <BookOpen size={16} className="mr-2" />
               Public Journals
@@ -130,7 +131,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
             <button
               onClick={() => handleNavigation("/cozyshop")}
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md font-medium text-gray-700 dark:text-gray-300"
             >
               <ShoppingBag size={16} className="mr-2" />
               Shop
@@ -168,7 +169,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           {/* Coins Display */}
           <div className="flex items-center px-3 py-2 bg-gray-900/5 dark:bg-white/10 rounded-lg">
             <Coins size={16} className="text-yellow-600 dark:text-yellow-400 mr-2" />
-            <span className="font-medium text-gray-900 dark:text-white text-sm">
+            <span className="font-medium text-gray-900 dark:text-white text-md">
               {coins.toLocaleString()}
             </span>
           </div>
@@ -177,7 +178,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           {!isJournalingAlt && (
             <button
               onClick={() => handleNavigation(link)}
-              className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium text-sm"
+              className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium text-md"
             >
               <Plus size={16} className="mr-2" />
               {name}
@@ -192,7 +193,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200"
               >
                 <User size={16} className="mr-2 text-gray-600 dark:text-gray-400" />
-                <span className="text-gray-900 dark:text-white font-medium text-sm mr-1">
+                <span className="text-gray-900 dark:text-white font-medium text-md mr-1">
                   {userData.nickname || "User"}
                 </span>
                 <ChevronDown
@@ -210,7 +211,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                       handleNavigation("/profile-settings");
                       setDropdownOpen(false);
                     }}
-                    className="flex items-center w-full px-4 py-2.5 text-left text-gray-900 dark:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm"
+                    className="flex items-center w-full px-4 py-2.5 text-left text-gray-900 dark:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md"
                   >
                     <Settings size={16} className="mr-3" />
                     Profile Settings
@@ -220,7 +221,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                       handleNavigation("/subscriptions");
                       setDropdownOpen(false);
                     }}
-                    className="flex items-center w-full px-4 py-2.5 text-left text-gray-900 dark:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm relative"
+                    className="flex items-center w-full px-4 py-2.5 text-left text-gray-900 dark:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md relative"
                   >
                     <Users size={16} className="mr-3" />
                     Subscriptions
@@ -228,10 +229,20 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                     )}
                   </button>
+                  <button
+                    onClick={() => {
+                      handleNavigation("/saved-entries");
+                      setDropdownOpen(false);
+                    }}
+                    className="flex items-center w-full px-4 py-2.5 text-left text-gray-900 dark:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md"
+                  >
+                    <Bookmark size={16} className="mr-3" />
+                    Saved
+                  </button>
                   <div className="h-px bg-gray-900/10 dark:bg-white/10 mx-2 my-1"></div>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center w-full px-4 py-2.5 text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 text-sm"
+                    className="flex items-center w-full px-4 py-2.5 text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 text-md"
                   >
                     <LogOut size={16} className="mr-3" />
                     Logout
@@ -278,7 +289,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 className="flex flex-col items-center px-4 py-6 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 relative"
               >
                 <BookOpen size={24} className="mb-2 text-gray-900 dark:text-white" />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Public Journals</span>
+                <span className="text-md font-medium text-gray-900 dark:text-white">Public Journals</span>
                 {hasSubscriptionNotifications && (
                   <div className="absolute top-4 right-4 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
                 )}
@@ -289,7 +300,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 className="flex flex-col items-center px-4 py-6 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200"
               >
                 <ShoppingBag size={24} className="mb-2 text-gray-900 dark:text-white" />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Shop</span>
+                <span className="text-md font-medium text-gray-900 dark:text-white">Shop</span>
               </button>
 
               <button
@@ -300,7 +311,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 className="flex flex-col items-center px-4 py-6 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 relative"
               >
                 <Mail size={24} className="mb-2 text-gray-900 dark:text-white" />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Mail</span>
+                <span className="text-md font-medium text-gray-900 dark:text-white">Mail</span>
                 {hasUnreadMails && (
                   <span className="absolute top-4 right-8 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                 )}
@@ -315,7 +326,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 ) : (
                   <Moon size={24} className="mb-2 text-gray-900 dark:text-white" />
                 )}
-                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                <span className="text-md font-medium text-gray-900 dark:text-white">
                   {darkMode ? "Light Mode" : "Dark Mode"}
                 </span>
               </button>
@@ -354,6 +365,13 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                   {hasSubscriptionNotifications && (
                     <div className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                   )}
+                </button>
+                <button
+                  onClick={() => handleNavigation("/saved-entries")}
+                  className="flex items-center justify-center w-full px-4 py-3 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200"
+                >
+                  <Bookmark size={18} className="mr-2" />
+                  <span className="font-medium text-gray-900 dark:text-white">Saved</span>
                 </button>
                 <button
                   onClick={handleLogout}

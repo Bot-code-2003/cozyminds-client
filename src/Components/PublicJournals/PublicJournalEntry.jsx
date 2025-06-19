@@ -14,6 +14,8 @@ import {
   Flame,
   Clock,
   Eye,
+  Bookmark,
+  BookmarkCheck,
 } from "lucide-react";
 import { getCardClass, getThemeDetails } from "../Dashboard/ThemeDetails";
 import Navbar from "../Dashboard/Navbar";
@@ -23,6 +25,8 @@ import { useNavigate } from "react-router-dom";
 import { usePublicJournals } from "../../context/PublicJournalsContext";
 import AuthModals from "../Landing/AuthModals";
 import Comments from "./Comments";
+import { motion } from "framer-motion";
+
 import { Helmet } from "react-helmet";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -92,7 +96,7 @@ const PublicJournalEntry = () => {
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
   // Use PublicJournals context for single journal fetching and state
-  const { fetchSingleJournalBySlug, singleJournalLoading, singleJournalError } =
+  const { fetchSingleJournalBySlug, singleJournalLoading, singleJournalError, handleLike: contextHandleLike } =
     usePublicJournals();
 
   const [journal, setJournal] = useState(location.state?.journal || null);
@@ -100,6 +104,7 @@ const PublicJournalEntry = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   // Memoize current user
   const currentUser = useMemo(() => {
@@ -160,6 +165,12 @@ const PublicJournalEntry = () => {
     }
   }, [journal, currentUser]);
 
+  useEffect(() => {
+    if (journal && currentUser) {
+      setIsSaved(Array.isArray(journal.saved) && journal.saved.includes(currentUser._id));
+    }
+  }, [journal, currentUser]);
+
   // Scroll to top when component mounts or journal changes
   useEffect(() => {
     window.scrollTo({
@@ -192,26 +203,25 @@ const PublicJournalEntry = () => {
       openLoginModal();
       return;
     }
-
     if (!journal) return;
-
     try {
-      const response = await API.post(`/journals/${journal._id}/like`, {
-        userId: currentUser._id,
+      await contextHandleLike(journal._id);
+      setIsLiked((prev) => !prev);
+      setJournal((prev) => {
+        if (!prev) return prev;
+        const alreadyLiked = prev.likes?.includes(currentUser._id);
+        return {
+          ...prev,
+          likes: alreadyLiked
+            ? prev.likes.filter((id) => id !== currentUser._id)
+            : [...prev.likes, currentUser._id],
+          likeCount: alreadyLiked ? prev.likeCount - 1 : prev.likeCount + 1,
+        };
       });
-
-      setJournal((prev) => ({
-        ...prev,
-        likes: response.data.isLiked
-          ? [...prev.likes, currentUser._id]
-          : prev.likes.filter((id) => id !== currentUser._id),
-        likeCount: response.data.likeCount,
-      }));
-      setIsLiked(response.data.isLiked);
     } catch (error) {
       console.error("Error liking journal:", error);
     }
-  }, [currentUser, journal, openLoginModal]);
+  }, [currentUser, journal, openLoginModal, contextHandleLike]);
 
   const handleShare = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
@@ -240,6 +250,25 @@ const PublicJournalEntry = () => {
       setSubscribing(false);
     }
   }, [currentUser, authorProfile]);
+
+  const handleSave = useCallback(async () => {
+    if (!currentUser) {
+      openLoginModal();
+      return;
+    }
+    try {
+      // Call API to save/unsave
+      if (!isSaved) {
+        await API.post(`/users/${currentUser._id}/save-journal`, { journalId: journal._id });
+        setIsSaved(true);
+      } else {
+        await API.post(`/users/${currentUser._id}/unsave-journal`, { journalId: journal._id });
+        setIsSaved(false);
+      }
+    } catch (err) {
+      console.error("Error saving/unsaving journal:", err);
+    }
+  }, [currentUser, openLoginModal, isSaved, journal?._id]);
 
   const processContent = useCallback((content) => {
     if (!content) return "No content available.";
@@ -313,6 +342,18 @@ const PublicJournalEntry = () => {
     () => currentUser && authorProfile && currentUser._id !== authorProfile._id,
     [currentUser, authorProfile]
   );
+
+  const firstImage = useMemo(() => {
+    if (!journal?.content) return null;
+    try {
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = journal.content;
+      const img = tempDiv.querySelector("img");
+      return img?.src || null;
+    } catch (error) {
+      return null;
+    }
+  }, [journal?.content]);
 
   if (singleJournalLoading) {
     return (
@@ -457,7 +498,7 @@ const PublicJournalEntry = () => {
       )}
       <div
         style={{ backgroundAttachment: "fixed" }}
-        className={`mt-16 min-h-screen bg-gray-50 dark:bg-gray-900 ${getCardClass(
+        className={` min-h-screen bg-gray-50 dark:bg-gray-900 ${getCardClass(
           journal.theme
         )}`}
       >
@@ -465,95 +506,152 @@ const PublicJournalEntry = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <article className="bg-white/70 dark:bg-black/70 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <article className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                 {/* Header Section */}
-                <div className="p-6 sm:p-8 border-b border-gray-200 dark:border-gray-700">
-                  {/* Title */}
-                  <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6 leading-tight">
-                    {journal.title || "Untitled Entry"}
-                  </h1>
+                <div className="p-4 sm:p-8 border-b border-black/5 dark:border-white/10">
+      {/* Image */}
+      {firstImage && (
+        <div className="w-full aspect-[3/2] sm:aspect-[16/9]  flex items-center rounded-apple justify-center overflow-hidden mb-4 sm:mb-6 shadow-sm">
+          <img
+            src={firstImage}
+            alt={journal.title || "Journal image"}
+            className="w-full h-full object-cover object-center rounded-apple"
+            loading="lazy"
+          />
+        </div>
+      )}
 
-                  {/* Metadata Row */}
-                  <div className="flex flex-wrap items-center gap-3 mb-6">
-                    {/* Mood Badge */}
-                    {journal.mood && (
-                      <div
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border ${moodStyle.bgColor} ${moodStyle.textColor} ${moodStyle.borderColor} font-medium text-sm`}
-                      >
-                        <span className="text-base">{moodStyle.emoji}</span>
-                        <span>{journal.mood}</span>
-                      </div>
-                    )}
+      {/* Title */}
+      <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6 leading-snug tracking-tight">
+        {journal.title || "Untitled Entry"}
+      </h1>
 
-                    {/* Date */}
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium">
-                      <Clock className="w-4 h-4" />
-                      <span>
-                        {new Date(journal.createdAt).toLocaleString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
+      {/* Metadata & Tags Row */}
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+        {/* Mood Badge */}
+        {journal.mood && (
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border ${moodStyle.borderColor} ${moodStyle.textColor} font-medium text-xs sm:text-sm shadow-sm`}
+            title={`Mood: ${journal.mood}`}
+            aria-label={`Mood: ${journal.mood}`}
+          >
+            <span className="text-sm sm:text-base">{moodStyle.emoji}</span>
+            <span>{journal.mood}</span>
+          </motion.div>
+        )}
 
-                    {/* Reading Time */}
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium">
-                      <Eye className="w-4 h-4" />
-                      <span>{readingTime} min read</span>
-                    </div>
+        {/* Date */}
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="inline-flex items-center gap-1.5 px-2 py-1 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-black/5 dark:border-white/10 text-gray-700 dark:text-gray-300 rounded-lg text-xs sm:text-sm font-medium shadow-sm"
+          title={new Date(journal.createdAt).toLocaleString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+          aria-label={`Published on ${new Date(journal.createdAt).toLocaleString("en-US")}`}
+        >
+          <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span>
+            {new Date(journal.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </span>
+        </motion.div>
 
-                    {/* Word Count */}
-                    {journal.wordCount && (
-                      <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-full text-sm font-medium">
-                        <BarChart2 size={16} />
-                        <span>{journal.wordCount} words</span>
-                      </div>
-                    )}
-                  </div>
+        {/* Reading Time */}
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="inline-flex items-center gap-1.5 px-2 py-1 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-black/5 dark:border-white/10 text-gray-700 dark:text-gray-300 rounded-lg text-xs sm:text-sm font-medium shadow-sm"
+          title={`${readingTime} minute read`}
+          aria-label={`${readingTime} minute read`}
+        >
+          <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span>{readingTime}m</span>
+        </motion.div>
 
-                  {/* Tags Section */}
-                  {journal.tags && journal.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {journal.tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
-                        >
-                          <Tag size={12} />
-                          <span>#{tag}</span>
-                        </span>
-                      ))}
-                    </div>
-                  )}
+        {/* Word Count */}
+        {journal.wordCount && (
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="inline-flex items-center gap-1.5 px-2 py-1 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-black/5 dark:border-white/10 text-gray-700 dark:text-gray-300 rounded-lg text-xs sm:text-sm font-medium shadow-sm"
+            title={`${journal.wordCount} words`}
+            aria-label={`${journal.wordCount} words`}
+          >
+            <BarChart2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span>{journal.wordCount}</span>
+          </motion.div>
+        )}
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={handleLike}
-                      className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-all duration-300 group/like bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2"
-                    >
-                      <Heart
-                        className={`w-5 h-5 transition-transform duration-300 group-hover/like:scale-110 ${
-                          isLiked ? "fill-red-500 text-red-500" : ""
-                        }`}
-                      />
-                      <span className="text-sm font-medium">
-                        {journal.likes?.length || 0}
-                      </span>
-                    </button>
+        {/* Tags (limited to 3) */}
+        {journal.tags && journal.tags.length > 0 && (
+          <>
+            {journal.tags.slice(0, 3).map((tag, index) => (
+              <motion.span
+                key={index}
+                whileHover={{ scale: 1.05 }}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+                title={`Tag: ${tag}`}
+                aria-label={`Tag: ${tag}`}
+              >
+                <Tag className="w-3 h-3" />
+                <span>#{tag}</span>
+              </motion.span>
+            ))}
+            {journal.tags.length > 3 && (
+              <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg">
+                +{journal.tags.length - 3}
+              </span>
+            )}
+          </>
+        )}
+      </div>
 
-                    <button
-                      onClick={handleShare}
-                      className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-300 group/share bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2"
-                    >
-                      <Share2 className="w-5 h-5 transition-transform duration-300 group-hover/share:scale-110" />
-                      <span className="text-sm font-medium">Share</span>
-                    </button>
-                  </div>
-                </div>
+      {/* Action Buttons */}
+      <div className="flex items-center gap-2 sticky top-0 z-10 py-2">
+        <motion.button
+          onClick={handleLike}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`p-2 rounded-full transition-all duration-200 min-h-12 ${
+            isLiked
+              ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+              : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
+          } focus:ring-2 ring-blue-500`}
+          title={isLiked ? "Unlike journal" : "Like journal"}
+          aria-label={isLiked ? "Unlike journal" : "Like journal"}
+        >
+          <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
+        </motion.button>
+
+        <motion.button
+          onClick={handleShare}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
+          title="Share journal"
+          aria-label="Share journal"
+        >
+          <Share2 className="w-5 h-5" />
+        </motion.button>
+
+        <motion.button
+          onClick={handleSave}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
+          title={isSaved ? "Unsave journal" : "Save journal"}
+          aria-label={isSaved ? "Unsave journal" : "Save journal"}
+        >
+          {isSaved ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
+        </motion.button>
+      </div>
+    </div>
 
                 {/* Content Section - Reduced padding on mobile */}
                 <div className="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
@@ -641,167 +739,152 @@ const PublicJournalEntry = () => {
               </article>
             </div>
 
-            {/* Sidebar - Author Profile */}
             <div className="hidden lg:block lg:col-span-1 h-fit">
-              <div className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
-                {!authorProfile ? (
-                  // Skeleton Loading State
-                  <div className="bg-white/70 dark:bg-black/70 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-                    <div className="animate-pulse">
-                      <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
-
-                      {/* Author Info Skeleton */}
-                      <div className="flex items-start gap-4 mb-6">
-                        <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                        <div className="flex-1">
-                          <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                          <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded"></div>
-                          <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mt-2"></div>
-                        </div>
-                      </div>
-
-                      {/* Stats Grid Skeleton */}
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                          <div className="h-4 w-4 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-2"></div>
-                          <div className="h-6 w-12 bg-gray-200 dark:bg-gray-600 rounded mx-auto mb-1"></div>
-                          <div className="h-3 w-16 bg-gray-200 dark:bg-gray-600 rounded mx-auto"></div>
-                        </div>
-                        <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                          <div className="h-4 w-4 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-2"></div>
-                          <div className="h-6 w-12 bg-gray-200 dark:bg-gray-600 rounded mx-auto mb-1"></div>
-                          <div className="h-3 w-16 bg-gray-200 dark:bg-gray-600 rounded mx-auto"></div>
-                        </div>
-                      </div>
-
-                      {/* Join Date Skeleton */}
-                      <div className="text-center mb-6">
-                        <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded mx-auto"></div>
-                      </div>
-
-                      {/* Action Buttons Skeleton */}
-                      <div className="space-y-3">
-                        <div className="h-12 w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-                        <div className="h-12 w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-white/70 dark:bg-black/70 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 className="text-lg font-semibold mb-6 text-gray-900 dark:text-gray-100">
-                      About the Author
-                    </h3>
-
-                    {/* Author Info */}
-                    <Link
-                      to={`/profile/${authorProfile.anonymousName}`}
-                      className="block group hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl p-4 -m-4 transition-colors mb-6"
-                    >
-                      <div className="flex items-start gap-4">
-                        {/* Avatar */}
-                        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-md">
-                          {authorProfile.anonymousName
-                            ?.charAt(0)
-                            .toUpperCase() || "A"}
-                        </div>
-
-                        {/* Details */}
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-lg">
-                            {authorProfile.anonymousName}
-                          </h4>
-
-                          {/* Bio */}
-                          {authorProfile.bio && (
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
-                              {authorProfile.bio}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
-                          <Users className="w-4 h-4" />
-                        </div>
-                        <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                          {authorProfile.subscriberCount || 0}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Subscribers
-                        </p>
-                      </div>
-
-                      <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
-                          <Flame className="w-4 h-4" />
-                        </div>
-                        <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                          {authorProfile.currentStreak || 0}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Day Streak
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="text-center mb-6">
-                      <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
-                        <Calendar className="w-4 h-4" />
-                        <span>
-                          Joined{" "}
-                          {new Date(authorProfile.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "long",
-                            }
-                          )}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="space-y-3">
-                      {canSubscribe && (
-                        <button
-                          onClick={handleSubscribe}
-                          disabled={subscribing}
-                          className={`w-full px-4 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                            isSubscribed
-                              ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                              : "bg-red-500 text-white hover:bg-red-600 shadow-lg hover:shadow-xl"
-                          } ${
-                            subscribing ? "opacity-50 cursor-not-allowed" : ""
-                          }`}
-                        >
-                          {subscribing ? (
-                            <div className="flex items-center justify-center gap-2">
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                              <span>...</span>
-                            </div>
-                          ) : isSubscribed ? (
-                            "Subscribed"
-                          ) : (
-                            "Subscribe"
-                          )}
-                        </button>
-                      )}
-
-                      <Link
-                        to={`/profile/${authorProfile.anonymousName}`}
-                        className="block w-full px-4 py-3 text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
-                      >
-                        View Profile
-                      </Link>
-                    </div>
-                  </div>
-                )}
+      <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hidden">
+        {!authorProfile ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-apple shadow-apple border border-black/5 dark:border-white/10 p-4 sm:p-5"
+          >
+            <div className="animate-pulse">
+              <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded-apple mb-4"></div>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-14 h-14 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                <div className="flex-1">
+                  <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded-apple mb-2"></div>
+                  <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded-apple"></div>
+                  <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded-apple mt-2"></div>
+                </div>
+              </div>
+              <div className="flex gap-4 mb-4">
+                <div className="flex-1 p-3 bg-white/90 dark:bg-slate-900/90 rounded-apple">
+                  <div className="h-4 w-4 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-2"></div>
+                  <div className="h-6 w-12 bg-gray-200 dark:bg-gray-600 rounded-apple mx-auto mb-1"></div>
+                  <div className="h-3 w-16 bg-gray-200 dark:bg-gray-600 rounded-apple mx-auto"></div>
+                </div>
+                <div className="flex-1 p-3 bg-white/90 dark:bg-slate-900/90 rounded-apple">
+                  <div className="h-4 w-4 bg-gray-200 dark:bg-gray-600 rounded-full mx-auto mb-2"></div>
+                  <div className="h-6 w-12 bg-gray-200 dark:bg-gray-600 rounded-apple mx-auto mb-1"></div>
+                  <div className="h-3 w-16 bg-gray-200 dark:bg-gray-600 rounded-apple mx-auto"></div>
+                </div>
+              </div>
+              <div className="text-center mb-4">
+                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded-apple mx-auto"></div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-10 w-full bg-gray-200 dark:bg-gray-700 rounded-apple"></div>
+                <div className="h-10 w-full bg-gray-200 dark:bg-gray-700 rounded-apple"></div>
               </div>
             </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-apple shadow-apple border border-black/5 dark:border-white/10 p-4 sm:p-5 space-y-4"
+          >
+            <h3 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">
+              About the Author
+            </h3>
+
+            <Link
+              to={`/profile/${authorProfile.anonymousName}`}
+              className="block group hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-apple p-3 -m-3 transition-colors"
+            >
+              <div className="flex items-start gap-3">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-sm"
+                >
+                  {authorProfile.anonymousName?.charAt(0).toUpperCase() || "A"}
+                </motion.div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-extrabold text-gray-900 dark:text-gray-100 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors text-lg sm:text-xl truncate">
+                    {authorProfile.anonymousName}
+                  </h4>
+                  {authorProfile.bio && (
+                    <p className="text-base text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
+                      {authorProfile.bio}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Link>
+
+            <div className="flex gap-4">
+              <div className="flex-1 p-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-apple shadow-sm text-center">
+                <div className="flex items-center justify-center gap-1.5 text-gray-500 dark:text-gray-400 mb-1">
+                  <Users className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                  {authorProfile.subscriberCount || 0}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Subscribers</p>
+              </div>
+              <div className="flex-1 p-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-apple shadow-sm text-center">
+                <div className="flex items-center justify-center gap-1.5 text-gray-500 dark:text-gray-400 mb-1">
+                  <Flame className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                  {authorProfile.currentStreak || 0}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Day Streak</p>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1.5 text-gray-500 dark:text-gray-400 text-sm font-semibold">
+                <Calendar className="w-3.5 h-3.5" />
+                <span>
+                  Joined{" "}
+                  {new Date(authorProfile.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                  })}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              {canSubscribe && (
+                <motion.button
+                  onClick={handleSubscribe}
+                  disabled={subscribing}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`w-full px-4 py-2 rounded-apple font-semibold text-sm sm:text-base transition-all duration-200 min-h-12 shadow-sm focus:ring-2 ring-blue-500 ${
+                    isSubscribed
+                      ? "bg-blue-200 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 hover:bg-blue-300 dark:hover:bg-blue-900/30"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                  aria-label={isSubscribed ? "Unsubscribe" : "Subscribe"}
+                >
+                  {subscribing ? (
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>...</span>
+                    </div>
+                  ) : isSubscribed ? (
+                    "Subscribed"
+                  ) : (
+                    "Subscribe"
+                  )}
+                </motion.button>
+              )}
+              <Link
+                to={`/profile/${authorProfile.anonymousName}`}
+                className="w-full px-4 py-2 text-center border border-blue-500 text-blue-500 dark:text-blue-400 rounded-apple hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors font-semibold text-sm sm:text-base min-h-12 focus:ring-2 ring-blue-500"
+                aria-label="View author profile"
+              >
+                View Profile
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
           </div>
         </div>
 

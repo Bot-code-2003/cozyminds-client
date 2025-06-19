@@ -29,6 +29,15 @@ export const JournalProvider = ({ children }) => {
       }
     };
     fetchData();
+
+    // Re-fetch journals when user logs in
+    const handleUserLoggedIn = () => {
+      fetchData();
+    };
+    window.addEventListener("user-logged-in", handleUserLoggedIn);
+    return () => {
+      window.removeEventListener("user-logged-in", handleUserLoggedIn);
+    };
   }, []);
 
   return (

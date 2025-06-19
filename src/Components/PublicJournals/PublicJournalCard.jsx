@@ -2,31 +2,49 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Heart, Share2, Eye, MessageCircle, User } from "lucide-react";
+import { Heart, Share2, Eye, MessageCircle, User, Bookmark, BookmarkCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { getCardClass, getThemeDetails } from "../Dashboard/ThemeDetails";
 import { motion } from "framer-motion";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
 
-const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
+const PublicJournalCard = ({ journal, onLike, onShare, isLiked, isSaved: isSavedProp, onSave }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const { darkMode } = useDarkMode();
   const { modals, openLoginModal } = AuthModals({ darkMode });
+  const [isSaved, setIsSaved] = useState(isSavedProp || false);
 
   // Get user from session storage
-  const user = JSON.parse(sessionStorage.getItem("user") || "null");
-
-  // Memoized calculations
-  const moodDetails = useMemo(() => {
+  const user = useMemo(() => {
     try {
-      return getThemeDetails(journal.mood);
-    } catch (error) {
-      return { emoji: "😐", name: "Neutral", color: "#6b7280" };
+      return JSON.parse(sessionStorage.getItem("user") || "null");
+    } catch (err) {
+      console.error("Error parsing user data:", err);
+      return null;
     }
-  }, [journal.mood]);
+  }, []);
+
+  // Mood options
+  const moods = [
+    { emoji: "😄", name: "Happy", color: "#3EACA8" },
+    { emoji: "😐", name: "Neutral", color: "#547AA5" },
+    { emoji: "😔", name: "Sad", color: "#6A67CE" },
+    { emoji: "😡", name: "Angry", color: "#E07A5F" },
+    { emoji: "😰", name: "Anxious", color: "#9B72CF" },
+    { emoji: "🥱", name: "Tired", color: "#718EBC" },
+    { emoji: "🤔", name: "Reflective", color: "#5D8A66" },
+    { emoji: "🥳", name: "Excited", color: "#F2B147" },
+  ];
+
+  // Find mood details by name (case-insensitive)
+  const moodDetails = useMemo(() => 
+    moods.find((m) => m.name.toLowerCase() === (journal.mood?.toLowerCase() || "")) || 
+    { emoji: "😐", name: "Neutral", color: "#6b7280" },
+    [journal.mood]
+  );
 
   const formattedDate = useMemo(() => {
     try {
@@ -59,14 +77,14 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
       const images = tempDiv.querySelectorAll("img");
       images.forEach((img) => img.remove());
       const text = tempDiv.textContent || tempDiv.innerText || "";
-      return text.length > 120 ? text.slice(0, 120) + "..." : text;
+      return text;
     } catch (error) {
       return "Tap to read this journal entry...";
     }
   }, [journal.content]);
 
   const readingTime = useMemo(() => {
-    const wordCount = journal.content?.split(" ").length || 0;
+    const wordCount = journal.content?.split(/\s+/).filter(Boolean).length || 0;
     return Math.max(1, Math.ceil(wordCount / 200));
   }, [journal.content]);
 
@@ -78,44 +96,65 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
     }
   }, [journal.theme]);
 
-  const handleLike = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!user) {
-      openLoginModal();
-      return;
-    }
-    onLike(journal._id);
-  }, [onLike, journal._id, user, openLoginModal]);
-
-  const handleShare = useCallback(async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!user) {
-      openLoginModal();
-      return;
-    }
-
-    const shareUrl = `${window.location.origin}/public-journal/${journal.slug}`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: journal.title || "CozyMind Journal Entry",
-          url: shareUrl,
-        });
-      } catch (error) {
-        // User cancelled or error occurred
+  const handleLike = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!user) {
+        openLoginModal();
+        return;
       }
-    } else if (navigator.clipboard) {
-      try {
-        await navigator.clipboard.writeText(shareUrl);
-        // Could add a toast notification here
-      } catch (err) {
-        console.error("Failed to copy:", err);
+      onLike(journal._id);
+    },
+    [onLike, journal._id, user, openLoginModal]
+  );
+
+  const handleShare = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!user) {
+        openLoginModal();
+        return;
       }
-    }
-  }, [journal.slug, journal.title, user, openLoginModal]);
+
+      const shareUrl = `${window.location.origin}/public-journal/${journal.slug}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: journal.title || "CozyMind Journal Entry",
+            url: shareUrl,
+          });
+        } catch (error) {
+          // User cancelled or error occurred
+        }
+      } else if (navigator.clipboard) {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          // Could add a toast notification here
+        } catch (err) {
+          console.error("Failed to copy:", err);
+        }
+      }
+    },
+    [journal.slug, journal.title, user, openLoginModal]
+  );
+
+  const handleSave = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!user) {
+        openLoginModal();
+        return;
+      }
+      if (onSave) {
+        onSave(journal._id, !isSaved, setIsSaved);
+      }
+    },
+    [user, openLoginModal, onSave, journal._id, isSaved]
+  );
 
   return (
     <>
@@ -124,22 +163,20 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         whileHover={{ y: -8 }}
-        transition={{ 
-          duration: 0.4,
-          ease: [0.25, 0.46, 0.45, 0.94]
-        }}
+        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
         className="group relative w-full h-full"
       >
         <Link
           to={`/public-journal/${journal.slug}`}
-          className="block relative w-full h-full bg-white dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-black/5 dark:border-white/10 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col"
+          className="block relative w-full h-full bg-white dark:bg-slate-900/80 backdrop-blur-xl rounded-apple overflow-hidden border border-black/5 dark:border-white/10 shadow-apple hover:shadow-2xl transition-all duration-500 flex flex-col min-h-12"
           style={{
-            boxShadow: isHovered 
-              ? '0 32px 64px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.02)'
-              : '0 4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02)'
+            boxShadow: isHovered
+              ? "0 32px 64px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.02)"
+              : "0 4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02)",
           }}
+          aria-label={`Read journal by ${journal.authorName || "Anonymous"}`}
         >
           {/* Hero Section - Fixed Height */}
           <div className="relative h-52 overflow-hidden flex-shrink-0">
@@ -149,8 +186,8 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
                   src={firstImage}
                   alt=""
                   className={`w-full h-full object-cover transition-all duration-700 ${
-                    imageLoaded ? 'scale-100 blur-0' : 'scale-110 blur-sm'
-                  } ${isHovered ? 'scale-105' : 'scale-100'}`}
+                    imageLoaded ? "scale-100 blur-0" : "scale-110 blur-sm"
+                  } ${isHovered ? "scale-105" : "scale-100"}`}
                   onLoad={() => setImageLoaded(true)}
                   onError={() => setImageError(true)}
                 />
@@ -158,13 +195,12 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
               </div>
             ) : (
               <div className={`w-full h-full ${cardClass} relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
                 <motion.div
-                  className="absolute inset-0 "
+                  className="absolute inset-0"
                   animate={{
-                    background: isHovered 
-                      ? `radial-gradient(circle at 50% 50%, ${moodDetails?.color}20, transparent 70%)`
-                      : `radial-gradient(circle at 30% 30%, ${moodDetails?.color}10, transparent 70%)`
+                    background: isHovered
+                      ? `radial-gradient(circle at 50% 50%, ${moodDetails.color}20, transparent 70%)`
+                      : `radial-gradient(circle at 30% 30%, ${moodDetails.color}10, transparent 70%)`,
                   }}
                   transition={{ duration: 0.6 }}
                 />
@@ -172,7 +208,7 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
             )}
 
             {/* Floating Elements */}
-            <div className="absolute inset-0 p-5">
+            <div className="absolute inset-0 p-4 sm:p-5">
               {/* Top Row */}
               <div className="flex items-start justify-between">
                 {/* Author Badge */}
@@ -180,14 +216,14 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 }}
-                  className="flex items-center gap-2.5 px-3 py-2 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl shadow-lg border border-black/5 dark:border-white/10"
+                  className="flex items-center gap-2 px-2 py-2 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-apple shadow-sm border border-black/5 dark:border-white/10"
                 >
-                  <div className="w-7 h-7 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
+                  <div className="w-7 h-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
                     <span className="text-white font-semibold text-sm">
                       {journal.authorName?.charAt(0).toUpperCase() || "A"}
                     </span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {journal.authorName || "Anonymous"}
                   </span>
                 </motion.div>
@@ -197,7 +233,7 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="flex items-center gap-2 px-3 py-2 bg-black/70 backdrop-blur-xl rounded-2xl text-white shadow-lg"
+                  className="flex items-center gap-2 px-2 py-2 bg-black/70 backdrop-blur-xl rounded-apple text-white shadow-sm"
                 >
                   <Eye className="w-4 h-4" />
                   <span className="text-sm font-medium">{readingTime} min</span>
@@ -205,14 +241,14 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
               </div>
 
               {/* Bottom Row */}
-              <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+              <div className="absolute bottom-4 sm:bottom-5 left-4 sm:left-5 right-4 sm:right-5 flex items-end justify-between">
                 {/* Date & Mood */}
                 <div className="flex items-center gap-3">
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="px-3 py-1.5 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-black/5 dark:border-white/10"
+                    className="px-2 py-1.5 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-apple text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-black/5 dark:border-white/10"
                   >
                     {formattedDate}
                   </motion.div>
@@ -221,16 +257,16 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.1 }}
                       transition={{ delay: 0.4 }}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-white font-medium shadow-lg backdrop-blur-sm"
+                      className="flex items-center text-sm gap-2 px-2 py-1.5 rounded-apple text-white font-medium shadow-xl backdrop-blur-sm"
                       style={{
-                        backgroundColor: moodDetails?.color || "#6366f1",
-                        boxShadow: `0 8px 25px -8px ${moodDetails?.color || "#6366f1"}60`,
+                        backgroundColor: moodDetails.color || "#6366f1",
+                        boxShadow: `0 8px 25px -8px ${moodDetails.color || "#6366f1"}60`,
                       }}
                     >
-                      <span className="text-base">{moodDetails?.emoji}</span>
-                      <span className="text-sm">{moodDetails?.name}</span>
+                      <span>{moodDetails.emoji}</span>
+                      <span >{moodDetails.name}</span>
                     </motion.div>
                   )}
                 </div>
@@ -239,13 +275,13 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
           </div>
 
           {/* Content Section - Flexible but with min-height */}
-          <div className="p-6 space-y-4 flex-1 flex flex-col min-h-0">
+          <div className="p-4 sm:p-6 space-y-4 flex-1 flex flex-col min-h-0">
             {/* Title */}
-            <div className="space-y-2 flex-shrink-0">
+            <div className="space-y-3 flex-shrink-0">
               <motion.h3
-                className="text-xl font-bold text-gray-900 dark:text-gray-100 line-clamp-2 leading-tight"
-                style={{ 
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif'
+                className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug"
+                style={{
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif',
                 }}
               >
                 {journal.title || "Untitled Entry"}
@@ -253,20 +289,20 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
 
               {/* Tags */}
               {journal.tags && journal.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-3 border-t border-gray-100 dark:border-slate-800 pt-3">
                   {journal.tags.slice(0, 3).map((tag, index) => (
                     <motion.span
                       key={tag}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.1 * index }}
-                      className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-700"
+                      className="inline-flex items-center px-2.5 py-1 text-xs sm:text-sm font-medium rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-700"
                     >
                       #{tag}
                     </motion.span>
                   ))}
                   {journal.tags.length > 3 && (
-                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-lg bg-gray-50 dark:bg-slate-800/50 text-gray-500 dark:text-gray-400">
+                    <span className="inline-flex items-center px-2.5 py-1 text-xs sm:text-sm font-medium rounded-lg bg-gray-50 dark:bg-slate-800/50 text-gray-500 dark:text-gray-400">
                       +{journal.tags.length - 3}
                     </span>
                   )}
@@ -276,67 +312,90 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked }) => {
 
             {/* Preview Text - Flexible but with max height */}
             <div className="flex-1 flex flex-col min-h-0">
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3 text-sm flex-1">
+              <p className="text-md text-gray-600 dark:text-gray-400 line-clamp-4 flex-1">
                 {textPreview}
               </p>
 
               {/* Action Bar - Fixed at bottom */}
               <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-slate-800 mt-4 flex-shrink-0">
                 {/* Left Actions */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center">
                   {/* Like Button */}
                   <motion.button
                     onClick={handleLike}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all duration-200 ${
+                    className={`flex items-center gap-1.5 p-3 rounded-apple transition-all duration-200 min-h-12 ${
                       isLiked
-                        ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
-                        : 'hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400'
-                    }`}
+                        ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                        : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
+                    } focus:ring-2 ring-blue-500`}
+                    aria-label={isLiked ? "Unlike journal" : "Like journal"}
                   >
                     <Heart
-                      className={`w-4 h-4 transition-all duration-200 ${
+                      className={`w-5 h-5 transition-all duration-200 ${
                         isLiked ? "fill-current" : ""
                       }`}
                     />
-                    <span className="text-sm font-medium">
+                    <span className="text-sm sm:text-base font-medium">
                       {journal.likes?.length || 0}
                     </span>
                   </motion.button>
 
+                  
+
                   {/* Comments */}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // Navigate to the journal entry and scroll to comments
                       window.location.href = `/public-journal/${journal.slug}#comments`;
                     }}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 cursor-pointer"
+                    className="flex items-center gap-1.5 p-3 rounded-apple hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 cursor-pointer focus:ring-2 ring-blue-500"
+                    aria-label="View comments"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm font-medium">
+                    <span className="text-sm sm:text-base font-medium">
                       {journal.commentCount || 0}
                     </span>
                   </motion.div>
+
+                  {/* Save Button */}
+                  <motion.button
+                    onClick={handleSave}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`flex items-center gap-1.5 p-3 rounded-apple hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500`}
+                    aria-label={isSaved ? "Unsave journal" : "Save journal"}
+                  >
+                    {isSaved ? (
+                      <BookmarkCheck className="w-5 h-5" />
+                    ) : (
+                      <Bookmark className="w-5 h-5" />
+                    )}
+                    {/* <span className="text-sm sm:text-base font-medium">
+                      {isSaved ? "Saved" : "Save"}
+                    </span> */}
+                  </motion.button>
 
                   {/* Share */}
                   <motion.button
                     onClick={handleShare}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200"
+                    className="flex items-center gap-1.5 p-3 rounded-apple hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
+                    aria-label="Share journal"
                   >
                     <Share2 className="w-4 h-4" />
-                    <span className="text-sm font-medium">Share</span>
+                    {/* <span className="text-sm sm:text-base font-medium">Share</span> */}
                   </motion.button>
                 </div>
 
                 {/* Read More */}
                 <motion.div
-                  className="flex items-center text-indigo-600 dark:text-indigo-400 font-medium text-sm"
+                  className="flex items-center text-blue-500 dark:text-blue-400 font-medium text-sm sm:text-base"
                   whileHover={{ x: 4 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >

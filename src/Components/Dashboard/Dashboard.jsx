@@ -25,6 +25,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+    });
+  }, []);
+
+  useEffect(() => {
     if (!user) {
       navigate("/");
       return;

@@ -169,7 +169,7 @@ const LandingPage = () => {
 
   return (
     <div
-      className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative transition-colors duration-300`}
+      className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative transition-colors duration-300 pt-16`}
     >
       <title>Starlit Journals - Dream, Write, Track Moods</title>
       <meta

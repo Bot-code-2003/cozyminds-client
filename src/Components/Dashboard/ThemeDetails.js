@@ -50,7 +50,7 @@ export const themeDetails = {
     dateIcon: "✨",
     readMoreText: "Cast a spell",
   },
-  theme_nothern_lights: {
+  theme_northern_lights: {
     icon: "🌌",
     dateIcon: "❄️",
     readMoreText: "Feel the glow",
@@ -176,7 +176,7 @@ export const getCardClass = (theme) => {
       return "card-country-side";
     case "theme_magical_room":
       return "card-magical-room";
-    case "theme_nothern_lights":
+    case "theme_northern_lights":
       return "card-northern-lights";
     case "theme_post_apocalyptic":
       return "card-post-apocalyptic";

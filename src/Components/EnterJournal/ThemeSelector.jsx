@@ -63,7 +63,7 @@ const ThemeSelector = ({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="grid grid-2 lg:grid-cols-3 gap-2 mb-6 overflow-auto max-h-96">
             {availableThemes.map((theme) => (
               <button
                 key={theme.id}

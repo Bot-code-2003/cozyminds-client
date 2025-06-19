@@ -123,6 +123,12 @@ const CozyShop = () => {
     }
   };
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+    });
+  }, []);
+
   // Filter items
   const filteredItems = (() => {
     let items = shopItems.filter((item) => {
