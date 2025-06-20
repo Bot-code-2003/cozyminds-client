@@ -51,8 +51,15 @@ const App = () => {
     }
     window.addEventListener("user-logged-in", handleUserLoggedIn)
 
+    // Listen for signup event
+    const handleUserSignedUp = (event) => {
+      setUser(event.detail.user)
+    }
+    window.addEventListener("user-signed-up", handleUserSignedUp)
+
     return () => {
       window.removeEventListener("user-logged-in", handleUserLoggedIn)
+      window.removeEventListener("user-signed-up", handleUserSignedUp)
     }
   }, [])
 

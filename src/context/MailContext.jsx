@@ -38,8 +38,12 @@ export const MailProvider = ({ children }) => {
     };
     window.addEventListener("user-logged-in", handleUserLoggedIn);
 
+    // Listen for signup event as well
+    window.addEventListener("user-signed-up", handleUserLoggedIn);
+
     return () => {
       window.removeEventListener("user-logged-in", handleUserLoggedIn);
+      window.removeEventListener("user-signed-up", handleUserLoggedIn);
     };
   }, []);
 

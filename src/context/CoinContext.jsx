@@ -71,8 +71,13 @@ export const CoinProvider = ({ children }) => {
     };
 
     window.addEventListener("user-logged-in", handleLoginEvent);
+
+    // Listen for signup event as well
+    window.addEventListener("user-signed-up", handleLoginEvent);
+
     return () => {
       window.removeEventListener("user-logged-in", handleLoginEvent);
+      window.removeEventListener("user-signed-up", handleLoginEvent);
     };
   }, []);
 
