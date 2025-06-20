@@ -137,22 +137,22 @@ const JournalEditor = ({
       if (!url.trim()) return "Please enter an image URL";
       if (!isValidUrl(url)) return "Please enter a valid URL";
 
-      const imageExtensions = [
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".gif",
-        ".webp",
-        ".svg",
-        ".bmp",
-      ];
-      const hasImageExtension = imageExtensions.some((ext) =>
-        url.toLowerCase().includes(ext)
-      );
+      // const imageExtensions = [
+      //   ".jpg",
+      //   ".jpeg",
+      //   ".png",
+      //   ".gif",
+      //   ".webp",
+      //   ".svg",
+      //   ".bmp",
+      // ];
+      // const hasImageExtension = imageExtensions.some((ext) =>
+      //   url.toLowerCase().includes(ext)
+      // );
 
-      if (!hasImageExtension) {
-        return "URL should point to an image file";
-      }
+      // if (!hasImageExtension) {
+      //   return "URL should point to an image file";
+      // }
 
       return null;
     },
