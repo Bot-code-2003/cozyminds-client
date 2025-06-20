@@ -312,7 +312,7 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
         onClick={onLoadMore}
         className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-700 dark:text-gray-300 dark:hover:text-blue-400 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-lg"
       >
-        <span>Load More Journals</span>
+        <span>Load More </span>
         <div className="flex gap-1">
           <div className="w-1 h-1 bg-current rounded-full opacity-60" />
           <div className="w-1 h-1 bg-current rounded-full opacity-40" />

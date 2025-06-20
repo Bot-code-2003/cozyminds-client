@@ -162,11 +162,11 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked, isSaved: isSaved
       >
         <Link
           to={`/public-journal/${journal.slug}`}
-          className="block relative w-full h-full"
+          className="block relative w-full h-full "
           aria-label={`Read journal by ${journal.authorName || "Anonymous"}`}
         >
           {/* Main Card Container */}
-          <div className="relative h-full bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-slate-700/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20 flex flex-col">
+          <div className="relative h-full shadow-lg bg-[var(--bg-secondary)] backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-slate-700/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20 flex flex-col">
             
             {/* Mood Strip */}
             <div 
