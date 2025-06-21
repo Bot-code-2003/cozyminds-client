@@ -106,6 +106,12 @@ const moods = [
   { name: "Tired", emoji: "🥱", color: "#6b7280" },
   { name: "Reflective", emoji: "🤔", color: "#14b8a6" },
   { name: "Excited", emoji: "🥳", color: "#f59e0b" },
+  { name: "Grateful", emoji: "💖", color: "#FF6B9D" },
+  { name: "Funny", emoji: "😂", color: "#FFD93D" },
+  { name: "Inspired", emoji: "🤩", color: "#6BCF7F" },
+  { name: "Disappointed", emoji: "😞", color: "#A8A8A8" },
+  { name: "Scared", emoji: "😱", color: "#8B5CF6" },
+  { name: "Imaginative", emoji: "🧚", color: "#F59E0B" },
 ];
 
 const RecommendationCard = ({ entry, formatDate, getThemeDetails }) => {

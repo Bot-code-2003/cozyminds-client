@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Share2, Eye, MessageCircle, User, Bookmark, BookmarkCheck, Clock, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -13,9 +13,21 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked, isSaved: isSaved
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+  const [localIsLiked, setLocalIsLiked] = useState(isLiked);
+  const [localLikesCount, setLocalLikesCount] = useState(journal.likes?.length || 0);
   const { darkMode } = useDarkMode();
   const { modals, openLoginModal } = AuthModals({ darkMode });
   const [isSaved, setIsSaved] = useState(isSavedProp || false);
+
+  // Sync local state with prop changes
+  useEffect(() => {
+    setLocalIsLiked(isLiked);
+  }, [isLiked]);
+
+  useEffect(() => {
+    setLocalLikesCount(journal.likes?.length || 0);
+  }, [journal.likes]);
 
   // Get user from session storage
   const user = useMemo(() => {
@@ -37,6 +49,12 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked, isSaved: isSaved
     { emoji: "🥱", name: "Tired", color: "#718EBC" },
     { emoji: "🤔", name: "Reflective", color: "#5D8A66" },
     { emoji: "🥳", name: "Excited", color: "#F2B147" },
+    { emoji: "💖", name: "Grateful", color: "#FF6B9D" },
+    { emoji: "😂", name: "Funny", color: "#FFD93D" },
+    { emoji: "🤩", name: "Inspired", color: "#6BCF7F" },
+    { emoji: "😞", name: "Disappointed", color: "#A8A8A8" },
+    { emoji: "😱", name: "Scared", color: "#8B5CF6" },
+    { emoji: "🧚", name: "Imaginative", color: "#F59E0B" },
   ];
 
   // Find mood details by name (case-insensitive)
@@ -89,16 +107,33 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked, isSaved: isSaved
   }, [journal.content]);
 
   const handleLike = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
       e.stopPropagation();
       if (!user) {
         openLoginModal();
         return;
       }
-      onLike(journal._id);
+      
+      // Immediate UI update
+      setIsLiking(true);
+      const newLikedState = !localIsLiked;
+      setLocalIsLiked(newLikedState);
+      setLocalLikesCount(prev => newLikedState ? prev + 1 : prev - 1);
+      
+      try {
+        // Process backend in background
+        await onLike(journal._id);
+      } catch (error) {
+        // Revert on error
+        setLocalIsLiked(!newLikedState);
+        setLocalLikesCount(prev => !newLikedState ? prev + 1 : prev - 1);
+        console.error("Error liking journal:", error);
+      } finally {
+        setIsLiking(false);
+      }
     },
-    [onLike, journal._id, user, openLoginModal]
+    [onLike, journal._id, user, openLoginModal, localIsLiked]
   );
 
   const handleShare = useCallback(
@@ -270,20 +305,25 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked, isSaved: isSaved
                   onClick={handleLike}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  disabled={isLiking}
                   className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${
-                    isLiked
+                    localIsLiked
                       ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
                       : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
-                  }`}
-                  aria-label={isLiked ? "Unlike journal" : "Like journal"}
+                  } ${isLiking ? "opacity-75 cursor-not-allowed" : ""}`}
+                  aria-label={localIsLiked ? "Unlike journal" : "Like journal"}
                 >
-                  <Heart
-                    className={`w-4 h-4 transition-all duration-200 ${
-                      isLiked ? "fill-current" : ""
-                    }`}
-                  />
+                  {isLiking ? (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Heart
+                      className={`w-4 h-4 transition-all duration-200 ${
+                        localIsLiked ? "fill-red-600 text-red-600" : ""
+                      }`}
+                    />
+                  )}
                   <span className="text-sm font-medium">
-                    {journal.likes?.length || 0}
+                    {localLikesCount}
                   </span>
                 </motion.button>
 
@@ -310,11 +350,15 @@ const PublicJournalCard = ({ journal, onLike, onShare, isLiked, isSaved: isSaved
                   onClick={handleSave}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200"
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${
+                    isSaved
+                      ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                      : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
+                  }`}
                   aria-label={isSaved ? "Unsave journal" : "Save journal"}
                 >
                   {isSaved ? (
-                    <BookmarkCheck className="w-4 h-4" />
+                    <Bookmark className="w-4 h-4 fill-blue-600 text-blue-600" />
                   ) : (
                     <Bookmark className="w-4 h-4" />
                   )}

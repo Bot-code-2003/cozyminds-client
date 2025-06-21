@@ -13,6 +13,12 @@ const moods = [
   { emoji: "🥱", name: "Tired", color: "#718EBC" },
   { emoji: "🤔", name: "Reflective", color: "#5D8A66" },
   { emoji: "🥳", name: "Excited", color: "#F2B147" },
+  { emoji: "💖", name: "Grateful", color: "#FF6B9D" },
+  { emoji: "😂", name: "Funny", color: "#FFD93D" },
+  { emoji: "🤩", name: "Inspired", color: "#6BCF7F" },
+  { emoji: "😞", name: "Disappointed", color: "#A8A8A8" },
+  { emoji: "😱", name: "Scared", color: "#8B5CF6" },
+  { emoji: "🧚", name: "Imaginative", color: "#F59E0B" },
 ];
 
 const RecentJournals = ({ entries, darkMode, formatDate }) => {

@@ -36,7 +36,7 @@ const MOODS = [
     color: "#547AA5",
   },
   {
-    emoji: "☹️",
+    emoji: "😔",
     name: "Sad",
     description: "Feeling down or blue",
     color: "#6A67CE",
@@ -70,6 +70,42 @@ const MOODS = [
     name: "Excited",
     description: "Enthusiastic and energized",
     color: "#F2B147",
+  },
+  {
+    emoji: "💖",
+    name: "Grateful",
+    description: "Thankful and appreciative",
+    color: "#FF6B9D",
+  },
+  {
+    emoji: "😂",
+    name: "Funny",
+    description: "Amused and entertained",
+    color: "#FFD93D",
+  },
+  {
+    emoji: "🤩",
+    name: "Inspired",
+    description: "Creative and motivated",
+    color: "#6BCF7F",
+  },
+  {
+    emoji: "😞",
+    name: "Disappointed",
+    description: "Let down or unsatisfied",
+    color: "#A8A8A8",
+  },
+  {
+    emoji: "😱",
+    name: "Scared",
+    description: "Afraid or frightened",
+    color: "#8B5CF6",
+  },
+  {
+    emoji: "🧚",
+    name: "Imaginative",
+    description: "Creative and dreamy",
+    color: "#F59E0B",
   },
 ];
 

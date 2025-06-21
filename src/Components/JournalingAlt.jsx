@@ -50,6 +50,12 @@ const JournalingAlt = () => {
     { emoji: "🥱", name: "Tired", color: "#6B7280" },
     { emoji: "🤔", name: "Reflective", color: "#2ECC71" },
     { emoji: "🥳", name: "Excited", color: "#F4A261" },
+    { emoji: "💖", name: "Grateful", color: "#FF6B9D" },
+    { emoji: "😂", name: "Funny", color: "#FFD93D" },
+    { emoji: "🤩", name: "Inspired", color: "#6BCF7F" },
+    { emoji: "😞", name: "Disappointed", color: "#A8A8A8" },
+    { emoji: "😱", name: "Scared", color: "#8B5CF6" },
+    { emoji: "🧚", name: "Imaginative", color: "#F59E0B" },
   ];
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
