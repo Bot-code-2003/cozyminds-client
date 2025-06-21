@@ -1,75 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
   <url>
-    <loc>https://starlitjournals.vercel.app</loc>
-    <lastmod>2024-06-13</lastmod>
+    <loc>https://starlitjournals.vercel.app/</loc>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://starlitjournals.vercel.app/aboutus</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/cozyshop</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://starlitjournals.vercel.app/terms-of-service</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/privacy-policy</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://starlitjournals.vercel.app/cozyshop</loc>
-    <lastmod>2024-06-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://starlitjournals.vercel.app/starlitblogs</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://starlitjournals.vercel.app/public-journals</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/features</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://starlitjournals.vercel.app/blog/easy-journaling-prompts-feel-happier</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/journal-like-pro-keep-cozy</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/writing-about-pets-feel-calm</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/cozy-journaling-spot-you-love</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/fun-gratitude-prompts-smile</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/morning-journaling-rituals-calm-productive-day</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://starlitjournals.vercel.app/blog/cozy-evening-journaling-better-sleep</loc>
-    <lastmod>2024-06-13</lastmod>
+    <lastmod>2025-06-21</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/public-journal/why-doraemon-was-only-robot-cat-sent-help-nobita</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/public-journal/do-pets-think-we-are-pets</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/public-journal/sometimes-i-pretend-theres-hidden-camera-watching-me-it</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/public-journal/number-that-finds-me-every-day</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/public-journal/i-said-no-job-everyone-wanted-now-im-just-hoping-i-didnt</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://starlitjournals.vercel.app/public-journal/everyone-i-know-is-doing-something-im-just-staring-fridge</loc>
+    <lastmod>2025-06-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

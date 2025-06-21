@@ -370,6 +370,19 @@ const MoodDistribution = ({ journalEntries }) => {
             </div>
           </div>
         )}
+        
+        {/* Footer Actions */}
+        {totalEntries > 0 && (
+          <div className="flex justify-center mt-6">
+            <Link
+              to="/mood-distributions"
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent)]/80 transition-all"
+            >
+              <BarChart2 size={16} />
+              <span>View Full Analysis</span>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

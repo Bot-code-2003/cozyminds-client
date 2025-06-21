@@ -139,7 +139,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
             <div className="w-2 h-2 bg-[#5999a8] rounded-full animate-[bounce_1.4s_ease-in-out_infinite] animation-delay-400"></div>
           </div>
         </div>
-        <style jsx>{`
+        <style>{`
           @keyframes fadeInUp {
             from {
               opacity: 0;
