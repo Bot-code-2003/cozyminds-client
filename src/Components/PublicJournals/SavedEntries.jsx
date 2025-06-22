@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import PublicJournalCard from "./PublicJournalCard";
+import PublicJournalCard, { PublicJournalCardSkeleton } from "./PublicJournalCard";
 import { Loader2, AlertCircle, BookOpen } from "lucide-react";
 import Navbar from "../Dashboard/Navbar";
 import LandingNavbar from "../Landing/Navbar";
@@ -124,13 +124,15 @@ const SavedEntries = () => {
   return (
     <>
       <Navbar name="New Entry" link="/journaling-alt" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 bg-[var(--bg-primary)]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 bg-[var(--bg-primary)]">
         <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-gray-900 dark:text-gray-100">
           Saved Journals
         </h1>
         {loading && journals.length === 0 ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-blue-500" />
+          <div className="max-w-2xl mx-auto px-4 py-12">
+            {[...Array(4)].map((_, i) => (
+              <PublicJournalCardSkeleton key={i} />
+            ))}
           </div>
         ) : !loading && journals.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 sm:py-20">
@@ -153,7 +155,7 @@ const SavedEntries = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="grid grid-cols-1  gap-4 sm:gap-6 mb-6 sm:mb-8">
               {journals.map((journal) => (
                 <div key={journal._id} className="min-h-12">
                   <PublicJournalCard

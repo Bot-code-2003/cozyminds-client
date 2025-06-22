@@ -4,7 +4,7 @@ import { useEffect, useCallback, useMemo, useState } from "react";
 import { usePublicJournals } from "../../context/PublicJournalsContext";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
-import PublicJournalCard from "./PublicJournalCard";
+import PublicJournalCard, { PublicJournalCardSkeleton } from "./PublicJournalCard";
 import Sidebar from "./Sidebar";
 import Navbar from "../Dashboard/Navbar";
 import LandingNavbar from "../Landing/Navbar";
@@ -398,12 +398,13 @@ const PublicJournals = () => {
           <LandingNavbar
             darkMode={darkMode}
             setDarkMode={setDarkMode}
-            user={user}
-            openLoginModal={openLoginModal}
-            openSignupModal={openSignupModal}
           />
         )}
-        <LoadingState />
+        <div className="max-w-4xl mx-auto px-4 py-12">
+          {[...Array(4)].map((_, i) => (
+            <PublicJournalCardSkeleton key={i} />
+          ))}
+        </div>
       </>
     );
   }
@@ -417,9 +418,6 @@ const PublicJournals = () => {
           <LandingNavbar
             darkMode={darkMode}
             setDarkMode={setDarkMode}
-            user={user}
-            openLoginModal={openLoginModal}
-            openSignupModal={openSignupModal}
           />
         )}
         <ErrorState error={error} onRetry={() => fetchJournals(1)} />
@@ -435,9 +433,6 @@ const PublicJournals = () => {
         <LandingNavbar
           darkMode={darkMode}
           setDarkMode={setDarkMode}
-          user={user}
-          openLoginModal={openLoginModal}
-          openSignupModal={openSignupModal}
         />
       )}
 

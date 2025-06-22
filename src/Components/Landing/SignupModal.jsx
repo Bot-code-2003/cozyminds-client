@@ -224,6 +224,20 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                   </div>
 
                   <div className="space-y-2">
+                    <input type="number" name="age" placeholder="Age" value={signupForm.age} onChange={handleChange} required min={1} className="w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus:outline-none focus:ring-2 focus:ring-[#5999a8] transition-all" aria-label="Age" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <select name="gender" value={signupForm.gender} onChange={handleChange} required className="w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus:outline-none focus:ring-2 focus:ring-[#5999a8] transition-all" aria-label="Gender">
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                      <option value="prefer_not_to_say">Prefer not to say</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
                     <div className="relative flex items-center w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus-within:ring-2 focus-within:ring-[#5999a8] transition-all">
                       <input type={showPassword ? "text" : "password"} name="password" placeholder="Enter a strong password" value={signupForm.password} onChange={handleChange} required className="w-full bg-transparent focus:outline-none" aria-label="Password" />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="hover:opacity-70 transition-opacity" aria-label={showPassword ? "Hide password" : "Show password"}>

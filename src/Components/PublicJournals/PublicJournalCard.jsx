@@ -176,3 +176,34 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
 };
 
 export default PublicJournalCard;
+
+export const PublicJournalCardSkeleton = () => (
+  <div className="group block mb-8 animate-pulse">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+      {/* Text Content Skeleton */}
+      <div className="md:col-span-2 col-span-1">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full" />
+          <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+        </div>
+        <div className="h-7 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+        <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded mb-1" />
+        <div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
+        <div className="h-4 w-2/3 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center gap-4">
+            <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
+          </div>
+          <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+        </div>
+      </div>
+      {/* Image Content Skeleton */}
+      <div className="col-span-1 h-52 md:h-full w-full">
+        <div className="w-full h-full bg-gray-200 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700" />
+      </div>
+    </div>
+    <hr className="mt-8 border-1 border-[var(--border)]" />
+  </div>
+);
