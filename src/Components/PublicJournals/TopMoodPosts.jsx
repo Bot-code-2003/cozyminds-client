@@ -6,16 +6,20 @@ import { Loader2, ServerCrash, Heart, BookOpen } from "lucide-react";
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 const moodEmojis = {
-  Happy: "😊",
-  Grateful: "🙏",
-  Inspired: "💡",
-  Productive: "🚀",
-  Relaxed: "😌",
-  Hopeful: "🌱",
+  Happy: "😄",
+  Neutral: "😐",
+  Sad: "😔",
+  Angry: "😡",
+  Anxious: "😰",
+  Tired: "🥱",
   Reflective: "🤔",
-  Sad: "😢",
-  Anxious: "😟",
-  Tired: "😴",
+  Excited: "🥳",
+  Grateful: "💖",
+  Funny: "😂",
+  Inspired: "🤩",
+  Disappointed: "😞",
+  Scared: "😱",
+  Imaginative: "🧚",
 };
 
 // Helper to extract first image src from HTML content
