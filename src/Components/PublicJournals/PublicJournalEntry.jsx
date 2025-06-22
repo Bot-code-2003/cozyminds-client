@@ -610,108 +610,90 @@ const PublicJournalEntry = () => {
                       </>
                     )}
                   </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex items-center gap-2 sticky top-0 z-10 px-6 py-2">
-                  <motion.button
-                    onClick={handleLike}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`p-2 rounded-full transition-all duration-200 min-h-12 ${
-                      isLiked
-                        ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
-                        : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
-                    } focus:ring-2 ring-blue-500`}
-                    title={isLiked ? "Unlike journal" : "Like journal"}
-                    aria-label={isLiked ? "Unlike journal" : "Like journal"}
-                  >
-                    <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
-                  </motion.button>
-
-                  <motion.button
-                    onClick={handleShare}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
-                    title="Share journal"
-                    aria-label="Share journal"
-                  >
-                    <Share2 className="w-5 h-5" />
-                  </motion.button>
-
-                  <motion.button
-                    onClick={handleSave}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
-                    title={isSaved ? "Unsave journal" : "Save journal"}
-                    aria-label={isSaved ? "Unsave journal" : "Save journal"}
-                  >
-                    {isSaved ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
-                  </motion.button>
-                </div>
-
-                {/* Author Card (after action buttons, before content) - visible on all screens */}
-                <div className="mt-6 px-4">
+                  {/* Author + Actions Bar */}
+                <div className="flex items-center justify-between gap-4 mt-6 px-4 py-2 bg-white/80 dark:bg-slate-800/80 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm">
+                  {/* Author Profile (left) */}
                   {authorProfile && (
-                    <div className="bg-gray-50/80 dark:bg-gray-800/80 rounded-xl border border-gray-200/50 dark:border-gray-700/50 px-3 py-3 flex flex-col gap-2 shadow-sm">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-sm">
-                          {authorProfile.anonymousName?.charAt(0).toUpperCase() || "A"}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-base text-gray-900 dark:text-gray-100 truncate">
-                            {authorProfile.anonymousName}
-                          </h4>
-                          {authorProfile.bio && (
-                            <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1 truncate">{authorProfile.bio}</p>
-                          )}
-                        </div>
-                        <Link
-                          to={`/profile/${authorProfile.anonymousName}`}
-                          className="ml-2 px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
-                        >
-                          Profile
-                        </Link>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                        {authorProfile.anonymousName?.charAt(0).toUpperCase() || "A"}
                       </div>
-                      <div className="flex gap-4 justify-start mt-1">
-                        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                          <Users className="w-4 h-4" />
-                          <span>{authorProfile.subscriberCount || 0}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                          <Flame className="w-4 h-4" />
-                          <span>{authorProfile.currentStreak || 0}</span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 mt-1">
-                        {canSubscribe && (
-                          <button
-                            onClick={handleSubscribe}
-                            disabled={subscribing}
-                            className={`flex-1 py-1.5 rounded-lg font-medium text-xs transition-all duration-200 ${
-                              isSubscribed
-                                ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                                : "bg-red-500 text-white hover:bg-red-600"
-                            } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
-                          >
-                            {subscribing ? (
-                              <div className="flex items-center justify-center gap-1">
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                <span>...</span>
-                              </div>
-                            ) : isSubscribed ? (
-                              "Subscribed"
-                            ) : (
-                              "Subscribe"
-                            )}
-                          </button>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate">
+                          {authorProfile.anonymousName}
+                        </h4>
+                        {authorProfile.bio && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate line-clamp-1">{authorProfile.bio}</p>
                         )}
                       </div>
+                      <Link
+                        to={`/profile/${authorProfile.anonymousName}`}
+                        className="ml-2 px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
+                      >
+                        Profile
+                      </Link>
+                      {canSubscribe && (
+                        <button
+                          onClick={handleSubscribe}
+                          disabled={subscribing}
+                          className={`ml-2 px-3 py-1 text-xs rounded-md font-medium transition-all duration-200 whitespace-nowrap ${
+                            isSubscribed
+                              ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                              : "bg-blue-600 text-white hover:bg-blue-700"
+                          } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                        >
+                          {subscribing ? (
+                            <Loader2 className="w-4 h-4 animate-spin inline-block" />
+                          ) : isSubscribed ? (
+                            "Following"
+                          ) : (
+                            "Follow"
+                          )}
+                        </button>
+                      )}
                     </div>
                   )}
+                  {/* Action Buttons (right) */}
+                  <div className="flex items-center gap-2">
+                    <motion.button
+                      onClick={handleLike}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`p-2 rounded-full transition-all duration-200 min-h-12 ${
+                        isLiked
+                          ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                          : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
+                      } focus:ring-2 ring-blue-500`}
+                      title={isLiked ? "Unlike journal" : "Like journal"}
+                      aria-label={isLiked ? "Unlike journal" : "Like journal"}
+                    >
+                      <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
+                    </motion.button>
+                    <motion.button
+                      onClick={handleShare}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
+                      title="Share journal"
+                      aria-label="Share journal"
+                    >
+                      <Share2 className="w-5 h-5" />
+                    </motion.button>
+                    <motion.button
+                      onClick={handleSave}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
+                      title={isSaved ? "Unsave journal" : "Save journal"}
+                      aria-label={isSaved ? "Unsave journal" : "Save journal"}
+                    >
+                      {isSaved ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
+                    </motion.button>
+                  </div>
                 </div>
+                </div>
+
+                
 
                 {/* Content Section - Reduced padding on mobile */}
                 <div className="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
