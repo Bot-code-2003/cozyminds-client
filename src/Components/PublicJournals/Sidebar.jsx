@@ -1,10 +1,11 @@
-import { BookOpen, Sparkles, Lightbulb, ArrowRight, TrendingUp, Tag, Users } from "lucide-react";
+import { BookOpen, Sparkles, Lightbulb, ArrowRight, TrendingUp, Tag, Users, Smile } from "lucide-react";
 import { Link } from "react-router-dom";
 import PopularTopics from "./PopularTopics";
 import PopularWriters from "./PopularWriters";
 import TrendingJournals from "./TrendingJournals";
+import TopMoodPosts from "./TopMoodPosts";
 
-const SidebarSection = ({ icon, title, children }) => (
+const SidebarSection = ({ icon, title, children, noPadding = false }) => (
   <div className="bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm">
     <div className="p-4 border-b border-gray-200 dark:border-slate-700/50">
       <div className="flex items-center gap-3">
@@ -12,7 +13,7 @@ const SidebarSection = ({ icon, title, children }) => (
         <h3 className="font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
       </div>
     </div>
-    <div className="p-4">
+    <div className={noPadding ? "" : "p-4"}>
       {children}
     </div>
   </div>
@@ -35,31 +36,31 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
   return (
     <div className="w-full space-y-6">
       {isLoggedIn && (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm p-4">
+          <div className="flex items-center gap-3 mb-4">
             <Sparkles className="w-5 h-5 text-[var(--accent)]" />
             <h3 className="font-semibold text-gray-900 dark:text-gray-100">Quick Actions</h3>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Link
               to="/journaling-alt"
-              className="flex items-center justify-between p-3 rounded-xl bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-all duration-200 group"
+              className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-[var(--accent)] text-white hover:bg-blue-700 transition-all duration-200 group"
             >
               <div className="flex items-center gap-3">
                 <BookOpen className="w-5 h-5" />
-                <span className="font-medium">Write New Entry</span>
+                <span className="font-medium text-sm">Write New Entry</span>
               </div>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
             
             <Link
               to="/subscriptions"
-              className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 transition-all duration-200 group"
+              className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-gray-100 dark:bg-slate-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-all duration-200 group"
             >
               <div className="flex items-center gap-3">
                 <Lightbulb className="w-5 h-5" />
-                <span className="font-medium">Manage Subscriptions</span>
+                <span className="font-medium text-sm">Manage Subscriptions</span>
               </div>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
@@ -71,9 +72,13 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
         <TrendingJournals />
       </SidebarSection>
       
-      {/* <SidebarSection icon={<Tag className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Popular Topics">
+      <SidebarSection icon={<Tag className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Popular Topics">
         <PopularTopics onTopicClick={handleTopicClick} />
-      </SidebarSection> */}
+      </SidebarSection>
+      
+      <SidebarSection icon={<Smile className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Top Posts by Mood" noPadding>
+        <TopMoodPosts />
+      </SidebarSection>
       
       <SidebarSection icon={<Users className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Top Writers">
         <PopularWriters onWriterClick={handleWriterClick} isLoggedIn={isLoggedIn} />

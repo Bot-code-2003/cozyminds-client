@@ -84,9 +84,7 @@ const TrendingJournals = () => {
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs font-bold">
-                      {idx + 1}
-                    </div>
+                    
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {journal.title || "Untitled Entry"}
                     </h4>
@@ -118,13 +116,13 @@ const TrendingJournals = () => {
                       {journal.tags.slice(0, 2).map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg"
                         >
                           <Tag className="w-3 h-3" /> #{tag}
                         </span>
                       ))}
                       {journal.tags.length > 2 && (
-                        <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg">
+                        <span className="inline-flex items-center px-2 py-0.5 text-[5px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg">
                           +{journal.tags.length - 2}
                         </span>
                       )}

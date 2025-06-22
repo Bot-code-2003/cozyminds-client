@@ -50,6 +50,27 @@ const Header = ({ showFollowingOnly, isLoggedIn, onBackToAll }) => (
     </div>
   </div>
 );
+
+const TagHeader = ({ tag, onClear }) => (
+  <div className="mb-8">
+    <button
+      onClick={onClear}
+      className="flex items-center gap-2 text-[var(--accent)] font-medium mb-6 transition-colors group"
+    >
+      <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+      <span>Back to All Journals</span>
+    </button>
+    <div className="text-center">
+      <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3 capitalize">
+        Journals tagged with <span className="text-[var(--accent)]">#{tag.toLowerCase()}</span>
+      </h1>
+      <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        Exploring stories and thoughts about "{tag.toLowerCase()}" from our community.
+      </p>
+    </div>
+  </div>
+);
+
 const ControlPanel = ({
   isLoggedIn,
   showFollowingOnly,
@@ -250,13 +271,15 @@ const PublicJournals = () => {
     hasMore,
     loadingMore,
     likedJournals,
-    showFollowingOnly,
     feedType,
+    showFollowingOnly,
     fetchJournals,
     handleLike,
     handleFeedTypeChange,
     toggleFollowingOnly,
     loadMore,
+    selectedTag,
+    handleTagSelect,
   } = usePublicJournals();
 
   const { darkMode, setDarkMode } = useDarkMode();
@@ -347,7 +370,7 @@ const PublicJournals = () => {
 
   useEffect(() => {
     fetchJournals(1);
-  }, [fetchJournals]);
+  }, []);
 
   // Re-fetch journals when user logs in
   useEffect(() => {
@@ -420,65 +443,66 @@ const PublicJournals = () => {
 
       <div className={`min-h-screen bg-[var(--bg-primary)] ${!isLoggedIn ? 'pt-16' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-          <Header
-            showFollowingOnly={showFollowingOnly}
-            isLoggedIn={isLoggedIn}
-            onBackToAll={handleBackToAll}
-          />
-
-          
-
-          {journals.length === 0 ? (
-            <EmptyState
-              showFollowingOnly={showFollowingOnly}
-              toggleFollowingOnly={toggleFollowingOnly}
-              isLoggedIn={isLoggedIn}
-            />
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Main Content - 2 columns on desktop */}
-              <div className="lg:col-span-2">
-              <ControlPanel
-            isLoggedIn={isLoggedIn}
-            showFollowingOnly={showFollowingOnly}
-            toggleFollowingOnly={toggleFollowingOnly}
-            feedType={feedType}
-            handleFeedTypeChange={handleFeedTypeChange}
-            hasNotifications={hasSubscriptionNotifications}
-          />
-                {/* Journal Grid */}
-                <div className="grid grid-cols-1 gap-6 items-stretch">
-                  {journals.map((journal) => (
-                    <div key={journal._id} className="h-full">
-                      <PublicJournalCard
-                        journal={journal}
-                        onLike={() => handleLike(journal)}
-                        onShare={handleShare}
-                        isLiked={likedJournals.has(journal._id)}
-                        isSaved={user && journal.saved && Array.isArray(journal.saved) ? journal.saved.includes(user._id) : false}
-                        onSave={handleSave}
+          <div className="flex flex-col lg:flex-row gap-8">
+            <main className="flex-1">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-8">
+                  {selectedTag ? (
+                    <TagHeader tag={selectedTag} onClear={() => fetchJournals(1, feedType, false)} />
+                  ) : (
+                    <>
+                      <Header
+                        showFollowingOnly={showFollowingOnly}
+                        isLoggedIn={isLoggedIn}
+                        onBackToAll={toggleFollowingOnly}
                       />
+                      <ControlPanel
+                        isLoggedIn={isLoggedIn}
+                        showFollowingOnly={showFollowingOnly}
+                        toggleFollowingOnly={toggleFollowingOnly}
+                        feedType={feedType}
+                        handleFeedTypeChange={handleFeedTypeChange}
+                        hasNotifications={hasSubscriptionNotifications}
+                      />
+                    </>
+                  )}
+                  
+                  {journals.length === 0 && !loading ? (
+                    <EmptyState showFollowingOnly={showFollowingOnly} toggleFollowingOnly={toggleFollowingOnly} isLoggedIn={isLoggedIn} />
+                  ) : (
+                    <div className="grid grid-cols-1 gap-6 items-stretch">
+                      {journals.map((journal) => (
+                        <div key={journal._id} className="h-full">
+                          <PublicJournalCard
+                            journal={journal}
+                            onLike={() => handleLike(journal)}
+                            onShare={handleShare}
+                            isLiked={likedJournals.has(journal._id)}
+                            isSaved={user && journal.saved && Array.isArray(journal.saved) ? journal.saved.includes(user._id) : false}
+                            onSave={handleSave}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
+
+                  <LoadMoreButton
+                    loadingMore={loadingMore}
+                    hasMore={hasMore}
+                    onLoadMore={loadMore}
+                  />
                 </div>
 
-                <LoadMoreButton
-                  loadingMore={loadingMore}
-                  hasMore={hasMore}
-                  onLoadMore={loadMore}
-                />
+                <div className="lg:col-span-4">
+                  <Sidebar
+                    onTopicClick={handleTagSelect}
+                    onWriterClick={handleWriterClick}
+                    isLoggedIn={isLoggedIn}
+                  />
+                </div>
               </div>
-
-              {/* Sidebar - 1 column on desktop */}
-              <div className="lg:col-span-1">
-                <Sidebar
-                  onTopicClick={handleTopicClick}
-                  onWriterClick={handleWriterClick}
-                  isLoggedIn={isLoggedIn}
-                />
-              </div>
-            </div>
-          )}
+            </main>
+          </div>
         </div>
         {modals}
       </div>

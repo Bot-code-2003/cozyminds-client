@@ -18,10 +18,54 @@ export function PublicJournalsProvider({ children }) {
   const [singleJournalLoading, setSingleJournalLoading] = useState(false);
   const [singleJournalError, setSingleJournalError] = useState(null);
   const [showFollowingOnly, setShowFollowingOnly] = useState(false);
+  const [selectedTag, setSelectedTag] = useState(null);
+
+  const fetchJournalsByTag = useCallback(async (tag, pageNum = 1, append = false) => {
+    try {
+      setLoading(!append);
+      setLoadingMore(append);
+      setError(null);
+      setSelectedTag(tag);
+
+      const params = {
+        page: pageNum,
+        limit: 20,
+        sort: feedType,
+      };
+
+      const response = await API.get(`/journals/by-tag/${encodeURIComponent(tag)}`, { params });
+      const { journals: newJournals, hasMore: moreAvailable } = response.data;
+
+      setJournals(prev => append ? [...prev, ...newJournals] : newJournals);
+      setHasMore(moreAvailable);
+      setPage(pageNum);
+      
+      const userData = sessionStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        const likedSet = new Set(
+          newJournals
+            .filter((journal) => journal.likes?.includes(user._id))
+            .map((journal) => journal._id)
+        );
+        setLikedJournals(prev => append ? new Set([...prev, ...likedSet]) : likedSet);
+      }
+    } catch (error) {
+      console.error("Error fetching journals by tag:", error);
+      setError("Failed to fetch journals for this tag. Please try again.");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [feedType]);
 
   const fetchJournals = useCallback(async (pageNum, currentFeedType = feedType, append = false) => {
-    if (hasInitialFetch && pageNum === 1 && !append && currentFeedType === feedType) {
+    if (hasInitialFetch && pageNum === 1 && !append && currentFeedType === feedType && !selectedTag) {
       return;
+    }
+
+    if (pageNum === 1 && !append) {
+      setSelectedTag(null);
     }
 
     try {
@@ -68,7 +112,7 @@ export function PublicJournalsProvider({ children }) {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [feedType, hasInitialFetch, showFollowingOnly]);
+  }, [feedType, hasInitialFetch, showFollowingOnly, selectedTag]);
 
   const fetchSingleJournalBySlug = useCallback(async (slug) => {
     const existingJournal = journals.find(journal => journal.slug === slug);
@@ -153,6 +197,7 @@ export function PublicJournalsProvider({ children }) {
 
   const handleFeedTypeChange = useCallback((newFeedType) => {
     if (newFeedType !== feedType) {
+      setFeedType(newFeedType);
       fetchJournals(1, newFeedType, false);
     }
   }, [feedType, fetchJournals]);
@@ -165,9 +210,18 @@ export function PublicJournalsProvider({ children }) {
 
   const loadMore = useCallback(() => {
     if (hasMore && !loadingMore) {
-      fetchJournals(page + 1, feedType, true);
+      if (selectedTag) {
+        fetchJournalsByTag(selectedTag, page + 1, true);
+      } else {
+        fetchJournals(page + 1, feedType, true);
+      }
     }
-  }, [page, hasMore, loadingMore, feedType, fetchJournals]);
+  }, [page, hasMore, loadingMore, feedType, fetchJournals, selectedTag, fetchJournalsByTag]);
+
+  const handleTagSelect = useCallback((tag) => {
+    fetchJournalsByTag(tag, 1, false);
+    window.scrollTo(0, 0);
+  }, [fetchJournalsByTag]);
 
   const value = {
     journals,
@@ -186,6 +240,8 @@ export function PublicJournalsProvider({ children }) {
     fetchSingleJournalBySlug,
     singleJournalLoading,
     singleJournalError,
+    selectedTag,
+    handleTagSelect,
   };
 
   return (
