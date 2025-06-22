@@ -3,6 +3,14 @@ import ConceptImage1 from "../../../assets/concept_sheep.png";
 import ConceptImage2 from "../../../assets/concept_sheep1.png";
 import ConceptImage3 from "../../../assets/concept_sheep2.png";
 
+import ChutuluImage1 from "../../../assets/chutulu1.jpg";
+import ChutuluImage2 from "../../../assets/chutulu2.jpg";
+import ChutuluImage3 from "../../../assets/chutulu3.jpg";
+import ChutuluImage4 from "../../../assets/chutulu4.jpg";
+import ChutuluImage5 from "../../../assets/chutulu5.jpg";
+import ChutuluImage6 from "../../../assets/chutulu6.jpg";
+
+
 // Mail theme preview image
 import ElfMailPreview from "../../../assets/elf.png";
 import WifeMailPreview from "../../../assets/wifu.png";
@@ -108,6 +116,78 @@ export const shopItems = [
       },
     ],
   },
+
+  {
+    id: "concept_pack_chutulu_1",
+    name: "Chutulu-1: The Deep Awakens",
+    description: "Set of 3 Surreal Horror Scenes",
+    story:
+      "In the shadowed corners of forgotten dreams, the Chutulu stirs. Each image in this pack is a glimpse into the abyss—where ancient eyes open, tentacles writhe, and reality unravels. The sea is not empty; it remembers. And sometimes, it calls you back.",
+    price: 600,
+    category: "conceptpack",
+    featured: "New",
+    featuredStyle: "feature-card",
+    conceptImages: [
+      {
+        id: "chutulu1",
+        image: ChutuluImage1,
+        name: "The Awakening",
+        description: "The first stirrings beneath the waves.",
+        parentPack: "concept_pack_chutulu_1",
+      },
+      {
+        id: "chutulu2",
+        image: ChutuluImage2,
+        name: "The Descent",
+        description: "A plunge into the abyssal dark.",
+        parentPack: "concept_pack_chutulu_1",
+      },
+      {
+        id: "chutulu3",
+        image: ChutuluImage3,
+        name: "The Watcher",
+        description: "Eyes that see beyond time.",
+        parentPack: "concept_pack_chutulu_1",
+      },
+    ],
+  },
+
+  {
+    id: "concept_pack_chutulu_2",
+    name: "Chutulu-2: The Abyss Beckons",
+    description: "Set of 3 Surreal Horror Scenes",
+    story:
+      "The call grows louder. In the depths, new horrors awaken—shapes that twist the mind and shadows that hunger for the light. Each image in this pack is a descent further into the unknown, where the sea's secrets are revealed only to those who dare to look.",
+    price: 600,
+    category: "conceptpack",
+    featured: "New",
+    featuredStyle: "feature-card",
+    conceptImages: [
+      {
+        id: "chutulu4",
+        image: ChutuluImage4,
+        name: "The Maw",
+        description: "A gaping abyss, waiting to consume.",
+        parentPack: "concept_pack_chutulu_2",
+      },
+      {
+        id: "chutulu5",
+        image: ChutuluImage5,
+        name: "The Summoning",
+        description: "Rituals in the deep, calling forth the ancient.",
+        parentPack: "concept_pack_chutulu_2",
+      },
+      {
+        id: "chutulu6",
+        image: ChutuluImage6,
+        name: "The Return",
+        description: "When the abyss gazes back, something returns.",
+        parentPack: "concept_pack_chutulu_2",
+      },
+    ],
+  },
+
+  
 
   // Stories
   {

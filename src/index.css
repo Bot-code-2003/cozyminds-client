@@ -155,6 +155,27 @@ button:hover {
   padding: 16px;
 }
 
+.card-chutulu1{
+  background-image: url("./assets/chutulu1.jpg");
+}
+
+.card-chutulu2{
+  background-image: url("./assets/chutulu2.jpg");
+}
+.card-chutulu3{
+  background-image: url("./assets/chutulu3.jpg");
+}
+.card-chutulu4{
+  background-image: url("./assets/chutulu4.jpg");
+}
+.card-chutulu5{
+  background-image: url("./assets/chutulu5.jpg");
+}
+.card-chutulu6{
+  background-image: url("./assets/chutulu6.jpg");
+}
+
+
 .card-forest {
   background-image: url("./assets/forest.png");
 }
@@ -521,7 +542,13 @@ button:hover {
 .card-elf-theme,
 .card-waifu-theme,
 .card-andy-the-sailor,
-.card-default {
+.card-default,
+.card-chutulu1,
+.card-chutulu2,
+.card-chutulu3,
+.card-chutulu4,
+.card-chutulu5,
+.card-chutulu6 {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -561,7 +588,13 @@ button:hover {
 .card-elf-theme::before,
 .card-waifu-theme::before,
 .card-andy-the-sailor::before,
-.card-default::before {
+.card-default::before,
+.card-chutulu1::before,
+.card-chutulu2::before,
+.card-chutulu3::before,
+.card-chutulu4::before,
+.card-chutulu5::before,
+.card-chutulu6::before {
   content: "";
   position: absolute;
   top: 0;
@@ -603,7 +636,13 @@ button:hover {
 .card-elf-theme > *,
 .card-waifu-theme > *,
 .card-andy-the-sailor > *,
-.card-default > * {
+.card-default > *,
+.card-chutulu1 > *,
+.card-chutulu2 > *,
+.card-chutulu3 > *,
+.card-chutulu4 > *,
+.card-chutulu5 > *,
+.card-chutulu6 > * {
   position: relative;
   z-index: 2;
 }

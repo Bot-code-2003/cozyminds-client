@@ -150,6 +150,38 @@ export const themeDetails = {
     dateIcon: "📅",
     readMoreText: "Read more",
   },
+
+  // Chutulu concept pack themes (for concept art cards, not journal themes)
+  chutulu1: {
+    icon: "🐙",
+    dateIcon: "🌊",
+    readMoreText: "Peer into the abyss",
+  },
+  chutulu2: {
+    icon: "👁️",
+    dateIcon: "🌑",
+    readMoreText: "Descend further",
+  },
+  chutulu3: {
+    icon: "🦑",
+    dateIcon: "👁️",
+    readMoreText: "Gaze beyond",
+  },
+  chutulu4: {
+    icon: "🕳️",
+    dateIcon: "🌊",
+    readMoreText: "Face the maw",
+  },
+  chutulu5: {
+    icon: "🔱",
+    dateIcon: "🕯️",
+    readMoreText: "Summon the deep",
+  },
+  chutulu6: {
+    icon: "👾",
+    dateIcon: "🌌",
+    readMoreText: "Return from darkness",
+  },
 };
 
 // Function to get card class based on theme
@@ -214,6 +246,19 @@ export const getCardClass = (theme) => {
       return "card-maple-wolly-glowpath-wanderers";
     case "maple_wolly_dragons_lair":
       return "card-maple-wolly-dragons-lair";
+
+    case "chutulu1":
+      return "card-chutulu1";
+    case "chutulu2":
+      return "card-chutulu2";
+    case "chutulu3":
+      return "card-chutulu3";
+    case "chutulu4":
+      return "card-chutulu4";
+    case "chutulu5":
+      return "card-chutulu5";
+    case "chutulu6":
+      return "card-chutulu6";
 
     // seasonal
     case "theme_christmas":
