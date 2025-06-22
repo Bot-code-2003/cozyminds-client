@@ -13,6 +13,7 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
   const [error, setError] = useState(null);
   const [followedWriters, setFollowedWriters] = useState(new Set());
   const [updatingFollow, setUpdatingFollow] = useState(new Set());
+  const [writerFollowStatus, setWriterFollowStatus] = useState({});
 
   const { darkMode } = useDarkMode();
   const { modals, openLoginModal } = AuthModals({ darkMode });
@@ -27,25 +28,42 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
     }
   }, [isLoggedIn]);
 
+  const fetchPopularWriters = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await API.get("/popular-writers?limit=6");
+      setPopularWriters(response.data.popularWriters || []);
+    } catch (err) {
+      setError("Failed to load writers");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (user?.subscribedTo) {
       setFollowedWriters(new Set(user.subscribedTo));
     }
-
-    const fetchPopularWriters = async () => {
-      try {
-        setLoading(true);
-        const response = await API.get("/popular-writers?limit=6");
-        setPopularWriters(response.data.popularWriters || []);
-      } catch (err) {
-        setError("Failed to load writers");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPopularWriters();
-  }, [user]);
+  }, [user, fetchPopularWriters]);
+
+  useEffect(() => {
+    if (!user || !popularWriters.length) return;
+    const fetchStatuses = async () => {
+      const statusMap = {};
+      await Promise.all(popularWriters.map(async (writer) => {
+        if (writer.userId === user._id) return; // skip self
+        try {
+          const res = await API.get(`/subscription-status/${user._id}/${writer.userId}`);
+          statusMap[writer.userId] = res.data.isSubscribed;
+        } catch {
+          statusMap[writer.userId] = false;
+        }
+      }));
+      setWriterFollowStatus(statusMap);
+    };
+    fetchStatuses();
+  }, [user, popularWriters]);
 
   const handleFollow = useCallback(async (e, targetUserId) => {
     e.preventDefault();
@@ -56,42 +74,18 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
       return;
     }
 
-    const isCurrentlyFollowed = followedWriters.has(targetUserId);
     setUpdatingFollow(prev => new Set(prev).add(targetUserId));
 
-    // Optimistic update
-    setFollowedWriters(prev => {
-      const newSet = new Set(prev);
-      if (isCurrentlyFollowed) {
-        newSet.delete(targetUserId);
-      } else {
-        newSet.add(targetUserId);
-      }
-      return newSet;
-    });
-
     try {
-      const endpoint = isCurrentlyFollowed ? '/subscriptions/unsubscribe' : '/subscriptions/subscribe';
-      await API.post(endpoint, { userId: user._id, targetUserId });
-
-      // Update session storage for persistence across the app
-      const updatedUser = {
-        ...user,
-        subscribedTo: Array.from(followedWriters)
-      };
-      sessionStorage.setItem('user', JSON.stringify(updatedUser));
-
-    } catch (err) {
-      // Revert on error
-      setFollowedWriters(prev => {
-        const newSet = new Set(prev);
-        if (isCurrentlyFollowed) {
-          newSet.add(targetUserId);
-        } else {
-          newSet.delete(targetUserId);
-        }
-        return newSet;
+      const response = await API.post('/subscribe', {
+        subscriberId: user._id,
+        targetUserId
       });
+      const isNowSubscribed = response.data.subscribed;
+      setWriterFollowStatus(prev => ({ ...prev, [targetUserId]: isNowSubscribed }));
+      fetchPopularWriters();
+    } catch (err) {
+      // Optionally show error
     } finally {
       setUpdatingFollow(prev => {
         const newSet = new Set(prev);
@@ -99,7 +93,7 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
         return newSet;
       });
     }
-  }, [user, openLoginModal, followedWriters]);
+  }, [user, openLoginModal, fetchPopularWriters]);
 
   if (loading) return <div>Loading writers...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -108,7 +102,7 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
     <>
       <div className="space-y-2">
         {popularWriters.map((writer) => {
-          const isFollowed = followedWriters.has(writer.userId);
+          const isFollowed = writerFollowStatus[writer.userId] || false;
           const isUpdating = updatingFollow.has(writer.userId);
           const isSelf = user?.anonymousName === writer.anonymousName;
 
