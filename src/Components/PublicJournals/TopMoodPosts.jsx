@@ -18,6 +18,19 @@ const moodEmojis = {
   Tired: "😴",
 };
 
+// Helper to extract first image src from HTML content
+function getFirstImage(html) {
+  if (!html) return null;
+  try {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    const img = tempDiv.querySelector("img");
+    return img?.src || null;
+  } catch {
+    return null;
+  }
+}
+
 const TopMoodPosts = () => {
   const [moodPosts, setMoodPosts] = useState({});
   const [loading, setLoading] = useState(true);
@@ -28,6 +41,8 @@ const TopMoodPosts = () => {
       try {
         setLoading(true);
         const response = await API.get("/journals/top-by-mood");
+        // console.log(response.data); // <-- add this
+
         setMoodPosts(response.data);
       } catch (err) {
         console.error("Error fetching top mood posts:", err);
@@ -81,13 +96,24 @@ const TopMoodPosts = () => {
             {journals.map((journal) => (
               <li key={journal.slug}>
                 <Link
-                  to={`/publicjournal/${journal.slug}`}
+                  to={`/public-journal/${journal.slug}`}
                   className="block group p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-all"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg flex-shrink-0 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    </div>
+                    {(() => {
+                      const firstImage = getFirstImage(journal.content);
+                      return firstImage ? (
+                        <img
+                          src={firstImage}
+                          alt={journal.title}
+                          className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg flex-shrink-0 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center">
+                          <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        </div>
+                      );
+                    })()}
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-[var(--accent)] transition-colors truncate">
                         {journal.title}

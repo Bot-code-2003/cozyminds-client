@@ -130,7 +130,7 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
                     {writer.anonymousName || "Anonymous"}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {writer.totalLikes} likes
+                    {writer.journalCount} {writer.journalCount === 1 ? 'entry' : 'entries'}
                   </p>
                 </div>
               </Link>
