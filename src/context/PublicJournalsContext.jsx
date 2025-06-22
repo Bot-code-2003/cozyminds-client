@@ -13,17 +13,14 @@ export function PublicJournalsProvider({ children }) {
   const [likedJournals, setLikedJournals] = useState(new Set());
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [feedType, setFeedType] = useState('recent');
+  const [feedType, setFeedType] = useState('-createdAt');
   const [hasInitialFetch, setHasInitialFetch] = useState(false);
   const [singleJournalLoading, setSingleJournalLoading] = useState(false);
   const [singleJournalError, setSingleJournalError] = useState(null);
   const [showFollowingOnly, setShowFollowingOnly] = useState(false);
 
-  const fetchJournals = useCallback(async (pageNum, append = false) => {
-    console.log(`fetchJournals called: pageNum=${pageNum}, append=${append}, hasInitialFetch=${hasInitialFetch}, feedType=${feedType}, showFollowingOnly=${showFollowingOnly}`);
-    // If we already have journals and this is the first page, don't fetch again
-    if (hasInitialFetch && pageNum === 1 && !append) {
-      console.log("Preventing re-fetch due to hasInitialFetch.");
+  const fetchJournals = useCallback(async (pageNum, currentFeedType = feedType, append = false) => {
+    if (hasInitialFetch && pageNum === 1 && !append && currentFeedType === feedType) {
       return;
     }
 
@@ -36,18 +33,16 @@ export function PublicJournalsProvider({ children }) {
       const userData = sessionStorage.getItem("user");
       const user = userData ? JSON.parse(userData) : null;
 
+      const params = {
+        page: pageNum,
+        limit: 20,
+        sort: currentFeedType,
+      };
+
       if (showFollowingOnly && user) {
-        response = await API.get(`/feed/${user._id}`, {
-          params: { page: pageNum, limit: 9 },
-        });
+        response = await API.get(`/feed/${user._id}`, { params });
       } else {
-        response = await API.get("/journals/public", {
-          params: { 
-            page: pageNum, 
-            limit: 9, 
-            sort: feedType === 'most-liked' ? 'likeCount' : feedType === 'oldest' ? 'createdAt' : '-createdAt'
-          },
-        });
+        response = await API.get("/journals/public", { params });
       }
 
       const { journals: newJournals, hasMore: moreAvailable } = response.data;
@@ -56,8 +51,8 @@ export function PublicJournalsProvider({ children }) {
       setHasMore(moreAvailable);
       setPage(pageNum);
       setHasInitialFetch(true);
+      setFeedType(currentFeedType);
 
-      // Update liked journals if user is logged in
       if (user) {
         const likedSet = new Set(
           newJournals
@@ -78,14 +73,12 @@ export function PublicJournalsProvider({ children }) {
   const fetchSingleJournalBySlug = useCallback(async (slug) => {
     const existingJournal = journals.find(journal => journal.slug === slug);
     if (existingJournal) {
-      console.log(`Journal with slug ${slug} found in PublicJournalsContext. Returning cached version.`);
       return existingJournal;
     }
 
     try {
       setSingleJournalLoading(true);
       setSingleJournalError(null);
-      console.log(`Fetching single public journal with slug: ${slug}`);
       const response = await API.get(`/journals/singlepublic/${slug}`);
       const fetchedJournal = response.data;
 
@@ -106,70 +99,75 @@ export function PublicJournalsProvider({ children }) {
     }
   }, [journals]);
 
-  const handleLike = useCallback(async (journalId) => {
+  const handleLike = useCallback(async (journal) => {
     const userData = sessionStorage.getItem("user");
-    const user = userData ? JSON.parse(userData) : null;
-    
-    if (!user) {
-      throw new Error("User not logged in");
+    if (!userData) {
+      // Handle not logged in case if needed
+      return;
     }
+    const user = JSON.parse(userData);
+    const journalId = journal._id;
+    const currentIsLiked = likedJournals.has(journalId);
+
+    // Optimistic update
+    setLikedJournals(prev => {
+      const newSet = new Set(prev);
+      if (currentIsLiked) {
+        newSet.delete(journalId);
+      } else {
+        newSet.add(journalId);
+      }
+      return newSet;
+    });
+    setJournals(prevJournals => 
+      prevJournals.map(j => 
+        j._id === journalId 
+          ? { ...j, likeCount: j.likeCount + (currentIsLiked ? -1 : 1) }
+          : j
+      )
+    );
 
     try {
-      const response = await API.post(`/journals/${journalId}/like`, {
-        userId: user._id,
-      });
-
-      setJournals(prev => 
-        prev.map((journal) =>
-          journal._id === journalId
-            ? {
-                ...journal,
-                likes: response.data.isLiked
-                  ? [...journal.likes, user._id]
-                  : journal.likes.filter((id) => id !== user._id),
-                likeCount: response.data.likeCount,
-              }
-            : journal
-        )
-      );
-
+      await API.post(`/journals/${journalId}/like`, { userId: user._id });
+    } catch (error) {
+      // Revert optimistic update on error
       setLikedJournals(prev => {
         const newSet = new Set(prev);
-        if (response.data.isLiked) {
+        if (currentIsLiked) {
           newSet.add(journalId);
         } else {
           newSet.delete(journalId);
         }
         return newSet;
       });
-    } catch (error) {
+      setJournals(prevJournals => 
+        prevJournals.map(j => 
+          j._id === journalId 
+            ? { ...j, likeCount: j.likeCount + (currentIsLiked ? 1 : -1) }
+            : j
+        )
+      );
       console.error("Error liking journal:", error);
-      throw error;
     }
-  }, []);
+  }, [likedJournals]);
 
-  const handleFeedTypeChange = useCallback((type) => {
-    setFeedType(type);
-    setPage(1);
-    setJournals([]);
-    setHasMore(true);
-    setHasInitialFetch(false);
-    fetchJournals(1);
-  }, [fetchJournals]);
+  const handleFeedTypeChange = useCallback((newFeedType) => {
+    if (newFeedType !== feedType) {
+      fetchJournals(1, newFeedType, false);
+    }
+  }, [feedType, fetchJournals]);
 
   const toggleFollowingOnly = useCallback(() => {
-    setShowFollowingOnly(prev => !prev);
-    setPage(1);
-    setJournals([]);
-    setHasMore(true);
-    setHasInitialFetch(false);
-    fetchJournals(1);
-  }, [fetchJournals]);
+    const newShowFollowingOnly = !showFollowingOnly;
+    setShowFollowingOnly(newShowFollowingOnly);
+    fetchJournals(1, feedType, false);
+  }, [showFollowingOnly, feedType, fetchJournals]);
 
   const loadMore = useCallback(() => {
-    const nextPage = page + 1;
-    fetchJournals(nextPage, true);
-  }, [page, fetchJournals]);
+    if (hasMore && !loadingMore) {
+      fetchJournals(page + 1, feedType, true);
+    }
+  }, [page, hasMore, loadingMore, feedType, fetchJournals]);
 
   const value = {
     journals,

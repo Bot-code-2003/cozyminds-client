@@ -104,7 +104,7 @@ const LandingPage = () => {
         const userRes = await API.get("/users");
         const journalRes = await API.get("/journals/journalscount");
 
-        const userFinal = userRes.data.users + 97;
+        const userFinal = userRes.data.length + 97;
         const journalFinal = journalRes.data.count + 114;
 
         setUserCount(userFinal);
