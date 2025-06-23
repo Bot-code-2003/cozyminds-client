@@ -371,12 +371,47 @@ const PublicJournalEntry = () => {
           />
         )}
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm w-full mx-4">
-            <div className="flex items-center justify-center space-x-3">
-              <Loader2 className="h-6 w-6 animate-spin text-blue-600 dark:text-blue-400" />
-              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Loading journal...
-              </p>
+          <div className="max-w-7xl w-full px-4 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-pulse">
+              {/* Main Content Skeleton */}
+              <div className="lg:col-span-2">
+                <div className="bg-white/80 dark:bg-black/80 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  {/* Image Skeleton */}
+                  <div className="w-full aspect-[3/2] sm:aspect-[16/9] bg-gray-200 dark:bg-gray-800 mb-6" />
+                  {/* Title Skeleton */}
+                  <div className="px-4 sm:px-8 pt-4">
+                    <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mb-4" />
+                    {/* Meta Skeleton */}
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="h-6 w-6 rounded-full bg-gray-200 dark:bg-gray-700" />
+                      <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+                      <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+                    </div>
+                  </div>
+                  {/* Content Skeleton */}
+                  <div className="px-4 sm:px-6 pb-8">
+                    <div className="space-y-3">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6" />
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-4/6" />
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/6" />
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/6" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Sidebar Skeleton */}
+              <div className="hidden lg:block lg:col-span-1 h-fit">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white/80 dark:bg-black/80 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                  <div className="h-6 w-2/3 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
+                  <div className="space-y-3">
+                    <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded" />
+                    <div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-700 rounded" />
+                    <div className="h-4 w-4/6 bg-gray-200 dark:bg-gray-700 rounded" />
+                  </div>
+                </div>
+              ))}
+              </div>
             </div>
           </div>
         </div>

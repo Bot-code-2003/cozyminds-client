@@ -60,83 +60,79 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
           </div>
         </button>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-1">
-          {navigationItems.map((item) => (
-            <button
-              key={item.name}
-              onClick={() => handleNavigation(item.path)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-gray-600 dark:text-gray-300 hover:text-[#5999a8] hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-500 ease-in-out"
-            >
-              {item.icon}
-              {item.name}
-            </button>
-          ))}
-        </div>
+        {/* Desktop Navigation & Actions */}
+        <div className="hidden md:flex items-center gap-x-4 lg:gap-x-6">
+          {/* Navigation */}
+          <div className="flex items-center gap-x-1 lg:gap-x-2">
+            {navigationItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => handleNavigation(item.path)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[#5999a8] hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                {item.icon}
+                <span>{item.name}</span>
+              </button>
+            ))}
+          </div>
 
-        {/* Desktop Actions */}
-        <div className="hidden md:flex items-center space-x-3">
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-[#5999a8] transition-all duration-500 ease-in-out group"
-            aria-label="Toggle dark mode"
-          >
-            {darkMode ? (
-              <Sun
-                size={18}
-                className="text-gray-600 dark:text-gray-300 group-hover:text-[#5999a8]"
-              />
+          {/* Actions */}
+          <div className="flex items-center gap-x-2">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-[#5999a8] transition-colors group"
+              aria-label="Toggle dark mode"
+            >
+              {darkMode ? (
+                <Sun size={16} className="text-gray-600 dark:text-gray-300 group-hover:text-[#5999a8]" />
+              ) : (
+                <Moon size={16} className="text-gray-600 dark:text-gray-300 group-hover:text-[#5999a8]" />
+              )}
+            </button>
+
+            {user ? (
+              <button
+                onClick={() => handleNavigation("/profile")}
+                className="flex items-center gap-2 px-4 py-2 bg-[#5999a8] text-white rounded-lg hover:bg-[#468b97] transition-colors font-medium text-sm shadow-sm"
+              >
+                <User size={16} />
+                <span>{user.nickname || "Profile"}</span>
+              </button>
             ) : (
-              <Moon
-                size={18}
-                className="text-gray-600 dark:text-gray-300 group-hover:text-[#5999a8]"
-              />
+              <div className="flex items-center gap-x-2">
+                <button
+                  onClick={openLoginModal}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[#5999a8] transition-colors"
+                >
+                  <LogIn size={16} />
+                  <span>Login</span>
+                </button>
+                <button
+                  onClick={openSignupModal}
+                  className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white text-sm rounded-lg hover:bg-[#468b97] transition-colors font-medium shadow-sm"
+                >
+                  <UserPlus size={16} />
+                  <span>Sign Up</span>
+                </button>
+              </div>
             )}
-          </button>
-
-          {user ? (
-            /* User Profile */
-            <button
-              onClick={() => handleNavigation("/profile")}
-              className="flex items-center gap-2 px-4 py-2 bg-[#5999a8] text-white rounded-xl hover:bg-[#468b97] transition-all duration-500 ease-in-out font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              <User size={16} />
-              {user.nickname || "Profile"}
-            </button>
-          ) : (
-            /* Auth Buttons */
-            <div className="flex items-center gap-2">
-              <button
-                onClick={openLoginModal}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-[#5999a8] font-medium transition-all duration-500 ease-in-out"
-              >
-                <LogIn size={16} />
-                Login
-              </button>
-              <button
-                onClick={openSignupModal}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-xl hover:bg-[#468b97] transition-all duration-500 ease-in-out font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                <UserPlus size={16} />
-                Sign Up
-              </button>
-            </div>
-          )}
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-500 ease-in-out"
-          onClick={toggleMobileMenu}
-          aria-label="Toggle mobile menu"
-        >
-          {isMobileMenuOpen ? (
-            <X size={24} className="text-gray-600 dark:text-gray-300" />
-          ) : (
-            <Menu size={24} className="text-gray-600 dark:text-gray-300" />
-          )}
-        </button>
+        <div className="md:hidden">
+          <button
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle mobile menu"
+          >
+            {isMobileMenuOpen ? (
+              <X size={24} className="text-gray-600 dark:text-gray-300" />
+            ) : (
+              <Menu size={24} className="text-gray-600 dark:text-gray-300" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}

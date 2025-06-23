@@ -158,7 +158,7 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
           
           {/* Image Content */}
           {firstImage && (
-            <div className="col-span-1 h-52 md:h-full w-full">
+            <div className="col-span-1 w-full aspect-[4/3] h-52 md:h-full flex items-center justify-center">
               <img
                 src={firstImage}
                 alt=""

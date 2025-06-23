@@ -126,11 +126,11 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           </div>
         </button>
 
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden lg:flex items-center space-x-6">
           <div className="flex items-center space-x-1">
             <button
               onClick={() => handleNavigation("/public-journals")}
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md font-medium text-gray-700 dark:text-gray-300 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             >
               <BookOpen size={16} className="mr-2" />
               Public Journals
@@ -140,7 +140,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             </button>
             <button
               onClick={() => handleNavigation("/cozyshop")}
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             >
               <ShoppingBag size={16} className="mr-2" />
               Shop
@@ -149,36 +149,36 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setMailModalOpen(!mailModalOpen)}
-              className="p-2.5 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               aria-label="Open mail"
             >
-              <Mail size={18} className="text-gray-600 dark:text-gray-400" />
+              <Mail size={16} className="text-gray-600 dark:text-gray-400" />
               {hasUnreadMails && (
                 <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full" />
               )}
             </button>
             <button
               onClick={toggleDarkMode}
-              className="p-2.5 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
             >
               {darkMode ? (
-                <Sun size={18} className="text-gray-600 dark:text-gray-400" />
+                <Sun size={16} className="text-gray-600 dark:text-gray-400" />
               ) : (
-                <Moon size={18} className="text-gray-600 dark:text-gray-400" />
+                <Moon size={16} className="text-gray-600 dark:text-gray-400" />
               )}
             </button>
           </div>
           <div className="flex items-center px-3 py-2 bg-gray-900/5 dark:bg-white/10 rounded-lg">
             <Coins size={16} className="text-yellow-600 dark:text-yellow-400 mr-2" />
-            <span className="font-medium text-gray-900 dark:text-white text-md">
+            <span className="font-medium text-gray-900 dark:text-white text-sm">
               {coins.toLocaleString()}
             </span>
           </div>
           {!isJournalingAlt && (
             <button
               onClick={() => handleNavigation(link)}
-              className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium text-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             >
               <Plus size={16} className="mr-2" />
               {name}
@@ -193,7 +193,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 aria-expanded={dropdownOpen}
               >
                 <User size={16} className="mr-2 text-gray-600 dark:text-gray-400" />
-                <span className="text-gray-900 dark:text-white font-medium text-md mr-1">
+                <span className="text-gray-900 dark:text-white font-medium text-sm mr-1">
                   {userData.nickname || "User"}
                 </span>
                 <ChevronDown
@@ -204,46 +204,33 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 />
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-xl shadow-xl border border-gray-900/10 dark:border-white/10 py-2 z-[1000]">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-900/10 dark:border-white/10 py-1 z-10">
                   <button
-                    onClick={() => {
-                      handleNavigation("/profile-settings");
-                      setDropdownOpen(false);
-                    }}
-                    className="flex items-center w-full px-4 py-2.5 text-left text-gray-900 dark:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                    onClick={() => handleNavigation("/saved-entries")}
+                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
-                    <Settings size={16} className="mr-3" />
-                    Profile Settings
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleNavigation("/subscriptions");
-                      setDropdownOpen(false);
-                    }}
-                    className="flex items-center w-full px-4 py-2.5 text-left text-gray-900 dark:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                  >
-                    <Users size={16} className="mr-3" />
-                    Subscriptions
-                    {hasSubscriptionNotifications && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleNavigation("/saved-entries");
-                      setDropdownOpen(false);
-                    }}
-                    className="flex items-center w-full px-4 py-2.5 text-left text-gray-900 dark:text-white hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                  >
-                    <Bookmark size={16} className="mr-3" />
+                    <Bookmark size={14} className="mr-2" />
                     Saved
                   </button>
-                  <div className="h-px bg-gray-900/10 dark:bg-white/10 mx-2 my-1" />
+                  <button
+                    onClick={() => handleNavigation("/subscriptions")}
+                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <Users size={14} className="mr-2" />
+                    Subscriptions
+                  </button>
+                  <button
+                    onClick={() => handleNavigation("/profile-settings")}
+                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <Settings size={14} className="mr-2" />
+                    Settings
+                  </button>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center w-full px-4 py-2.5 text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 text-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                    className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
-                    <LogOut size={16} className="mr-3" />
+                    <LogOut size={14} className="mr-2" />
                     Logout
                   </button>
                 </div>
@@ -252,140 +239,109 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           )}
         </div>
 
-        <button
-          className="md:hidden p-2.5 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 mobile-menu-button"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle mobile menu"
-          aria-expanded={mobileMenuOpen}
-        >
-          {mobileMenuOpen ? (
-            <X size={20} className="text-gray-900 dark:text-white" />
-          ) : (
-            <Menu size={20} className="text-gray-900 dark:text-white" />
-          )}
-        </button>
+        <div className="lg:hidden flex items-center">
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-colors mobile-menu-button"
+            aria-label="Open menu"
+          >
+            <Menu size={24} className="text-gray-700 dark:text-gray-300" />
+          </button>
+        </div>
       </nav>
 
       {mobileMenuOpen && (
         <div
           ref={mobileMenuRef}
-          className="md:hidden fixed left-0 right-0 bg-white/90 dark:bg-gray-950/90 backdrop-blur-xl z-[1000] overflow-y-auto"
-          style={{
-            top: "73px",
-            height: "calc(100vh - 73px)",
-            paddingBottom: "env(safe-area-inset-bottom)",
-          }}
-          role="dialog"
-          aria-label="Mobile navigation menu"
+          className="lg:hidden fixed inset-0 bg-black/40 z-[1000]"
+          onClick={() => setMobileMenuOpen(false)}
         >
-          <div className="p-6 space-y-6 flex flex-col h-full">
-            <div className="flex items-center justify-center px-4 py-3 bg-gray-900/5 dark:bg-white/10 rounded-xl">
-              <Coins size={18} className="text-yellow-600 dark:text-yellow-400 mr-2" />
-              <span className="font-medium text-gray-900 dark:text-white">
-                {coins.toLocaleString()} Coins
-              </span>
+          <div
+            className="fixed inset-y-0 left-0 w-4/5 max-w-sm bg-white dark:bg-gray-900 p-6 space-y-4 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="font-semibold text-lg">Menu</h3>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10"
+                aria-label="Close menu"
+              >
+                <X size={20} />
+              </button>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            
+            <div className="space-y-2">
               <button
                 onClick={() => handleNavigation("/public-journals")}
-                className="flex flex-col items-center px-4 py-6 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
               >
-                <BookOpen size={24} className="mb-2 text-gray-900 dark:text-white" />
-                <span className="text-md font-medium text-gray-900 dark:text-white">Public Journals</span>
-                {hasSubscriptionNotifications && (
-                  <div className="absolute top-4 right-4 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
-                )}
+                <BookOpen size={18} />
+                Public Journals
               </button>
               <button
                 onClick={() => handleNavigation("/cozyshop")}
-                className="flex flex-col items-center px-4 py-6 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
               >
-                <ShoppingBag size={24} className="mb-2 text-gray-900 dark:text-white" />
-                <span className="text-md font-medium text-gray-900 dark:text-white">Shop</span>
+                <ShoppingBag size={18} />
+                Shop
               </button>
               <button
-                onClick={() => {
-                  setMailModalOpen(true);
-                  setMobileMenuOpen(false);
-                }}
-                className="flex flex-col items-center px-4 py-6 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                onClick={() => handleNavigation("/saved-entries")}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
               >
-                <Mail size={24} className="mb-2 text-gray-900 dark:text-white" />
-                <span className="text-md font-medium text-gray-900 dark:text-white">Mail</span>
-                {hasUnreadMails && (
-                  <span className="absolute top-4 right-8 w-2.5 h-2.5 bg-red-500 rounded-full" />
-                )}
+                <Bookmark size={18} />
+                Saved
+              </button>
+              <button
+                onClick={() => handleNavigation("/subscriptions")}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+              >
+                <Users size={18} />
+                Subscriptions
+              </button>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
+              <button
+                onClick={() => handleNavigation("/profile-settings")}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+              >
+                <Settings size={18} />
+                Settings
               </button>
               <button
                 onClick={toggleDarkMode}
-                className="flex flex-col items-center px-4 py-6 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
               >
-                {darkMode ? (
-                  <Sun size={24} className="mb-2 text-gray-900 dark:text-white" />
-                ) : (
-                  <Moon size={24} className="mb-2 text-gray-900 dark:text-white" />
-                )}
-                <span className="text-md font-medium text-gray-900 dark:text-white">
-                  {darkMode ? "Light Mode" : "Dark Mode"}
-                </span>
+                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                {darkMode ? 'Light Mode' : 'Dark Mode'}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium"
+              >
+                <LogOut size={18} />
+                Logout
               </button>
             </div>
+
             {!isJournalingAlt && (
-              <button
-                onClick={() => handleNavigation(link)}
-                className="flex items-center justify-center w-full px-4 py-3 bg-[var(--accent)] text-white rounded-xl hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-              >
-                <Plus size={18} className="mr-2" />
-                {name}
-              </button>
-            )}
-            {userData && (
-              <div className="flex-1 flex flex-col border-t border-gray-900/10 dark:border-white/10 pt-6 space-y-4">
-                <div className="text-center text-gray-900 dark:text-white font-medium">
-                  Welcome, {userData.nickname || "User"}!
-                </div>
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
-                  onClick={() => handleNavigation("/profile-settings")}
-                  className="flex items-center justify-center w-full px-4 py-3 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                  onClick={() => handleNavigation(link)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium"
                 >
-                  <Settings size={18} className="mr-2" />
-                  <span className="font-medium text-gray-900 dark:text-white">Profile Settings</span>
+                  <Plus size={18} />
+                  {name}
                 </button>
-                <button
-                  onClick={() => handleNavigation("/subscriptions")}
-                  className="flex items-center justify-center w-full px-4 py-3 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                >
-                  <Users size={18} className="mr-2" />
-                  <span className="font-medium text-gray-900 dark:text-white">Subscriptions</span>
-                  {hasSubscriptionNotifications && (
-                    <div className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  )}
-                </button>
-                <button
-                  onClick={() => handleNavigation("/saved-entries")}
-                  className="flex items-center justify-center w-full px-4 py-3 bg-gray-900/5 dark:bg-white/10 rounded-xl hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-                >
-                  <Bookmark size={18} className="mr-2" />
-                  <span className="font-medium text-gray-900 dark:text-white">Saved</span>
-                </button>
-                <div className="mt-auto">
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center justify-center w-full py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
-                  >
-                    <LogOut size={18} className="mr-2" />
-                    Logout
-                  </button>
-                </div>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {mailModalOpen && (
-        <InGameMail toggleMailModal={() => setMailModalOpen(false)} />
-      )}
+      {mailModalOpen && <InGameMail closeModal={() => setMailModalOpen(false)} />}
     </>
   );
 };

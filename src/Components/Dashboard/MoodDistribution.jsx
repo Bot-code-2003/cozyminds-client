@@ -22,6 +22,7 @@ const MoodDistribution = ({ journalEntries }) => {
   const [currentMonthEntries, setCurrentMonthEntries] = useState([]);
   const [viewMode, setViewMode] = useState("grid"); // "grid", "horizontal", "pie"
   const [animationKey, setAnimationKey] = useState(0);
+  const [entryType, setEntryType] = useState("private"); // "private" or "public"
 
   // Mood options
   const moods = [
@@ -41,7 +42,7 @@ const MoodDistribution = ({ journalEntries }) => {
     { emoji: "🧚", name: "Imaginative", color: "#F59E0B" },
   ];
 
-  // Filter entries for current month
+  // Filter entries for current month and type
   useEffect(() => {
     const now = new Date();
     const currentMonth = now.getMonth();
@@ -49,15 +50,17 @@ const MoodDistribution = ({ journalEntries }) => {
 
     const filtered = journalEntries.filter((entry) => {
       const entryDate = new Date(entry.date);
+      const isCorrectType = entryType === "public" ? entry.isPublic : !entry.isPublic;
       return (
         entryDate.getMonth() === currentMonth &&
-        entryDate.getFullYear() === currentYear
+        entryDate.getFullYear() === currentYear &&
+        isCorrectType
       );
     });
 
     setCurrentMonthEntries(filtered);
     setAnimationKey((prev) => prev + 1);
-  }, [journalEntries]);
+  }, [journalEntries, entryType]);
 
   // Get mood counts
   const getMoodCounts = () => {
@@ -264,41 +267,57 @@ const MoodDistribution = ({ journalEntries }) => {
               )}
             </div>
             
-            {/* View Mode Toggle */}
-            <div className="flex gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-md transition-all ${
-                  viewMode === "grid"
-                    ? "bg-white dark:bg-gray-700 shadow-sm"
-                    : "hover:bg-gray-200 dark:hover:bg-gray-700"
-                }`}
-                title="Grid View"
-              >
-                <Grid size={16} />
-              </button>
-              <button
-                onClick={() => setViewMode("horizontal")}
-                className={`p-2 rounded-md transition-all ${
-                  viewMode === "horizontal"
-                    ? "bg-white dark:bg-gray-700 shadow-sm"
-                    : "hover:bg-gray-200 dark:hover:bg-gray-700"
-                }`}
-                title="Bar Chart"
-              >
-                <BarChart3 size={16} />
-              </button>
-              <button
-                onClick={() => setViewMode("pie")}
-                className={`p-2 rounded-md transition-all ${
-                  viewMode === "pie"
-                    ? "bg-white dark:bg-gray-700 shadow-sm"
-                    : "hover:bg-gray-200 dark:hover:bg-gray-700"
-                }`}
-                title="Pie Chart"
-              >
-                <BarChart2 size={16} />
-              </button>
+            {/* View Mode Toggle & Public/Private Toggle */}
+            <div className="flex flex-col gap-2 items-end">
+              <div className="flex gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mb-2">
+                <button
+                  onClick={() => setEntryType("private")}
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${entryType === "private" ? "bg-white dark:bg-gray-700 shadow-sm text-[var(--accent)]" : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"}`}
+                >
+                  Private
+                </button>
+                <button
+                  onClick={() => setEntryType("public")}
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${entryType === "public" ? "bg-white dark:bg-gray-700 shadow-sm text-[var(--accent)]" : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"}`}
+                >
+                  Public
+                </button>
+              </div>
+              <div className="flex gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === "grid"
+                      ? "bg-white dark:bg-gray-700 shadow-sm"
+                      : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                  title="Grid View"
+                >
+                  <Grid size={16} />
+                </button>
+                <button
+                  onClick={() => setViewMode("horizontal")}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === "horizontal"
+                      ? "bg-white dark:bg-gray-700 shadow-sm"
+                      : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                  title="Bar Chart"
+                >
+                  <BarChart3 size={16} />
+                </button>
+                <button
+                  onClick={() => setViewMode("pie")}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === "pie"
+                      ? "bg-white dark:bg-gray-700 shadow-sm"
+                      : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                  title="Pie Chart"
+                >
+                  <BarChart2 size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </div>

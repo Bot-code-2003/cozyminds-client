@@ -123,9 +123,11 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
                   <p className="font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-[var(--accent)]">
                     {writer.anonymousName || "Anonymous"}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {writer.journalCount} {writer.journalCount === 1 ? 'entry' : 'entries'}
-                  </p>
+                  {writer.bio && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 max-w-xs">
+                      {writer.bio}
+                    </p>
+                  )}
                 </div>
               </Link>
 

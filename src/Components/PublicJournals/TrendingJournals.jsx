@@ -27,7 +27,7 @@ const TrendingJournals = () => {
     const fetchTrendingJournals = async () => {
       try {
         setLoading(true);
-        const response = await API.get("/trending-journals?limit=5");
+        const response = await API.get("/trending-journals?limit=8");
         setTrendingJournals(response.data.trendingJournals || []);
       } catch (err) {
         console.error("Error fetching trending journals:", err);

@@ -33,6 +33,7 @@ const DetailedMoodDistributions = () => {
   const [error, setError] = useState(null);
   const [chartType, setChartType] = useState("bar");
   const [showFilters, setShowFilters] = useState(false);
+  const [entryType, setEntryType] = useState("private");
 
   const navigate = useNavigate();
 
@@ -110,25 +111,26 @@ const DetailedMoodDistributions = () => {
     fetchData();
   }, [navigate]);
 
-  // Filter entries based on selected month and year
+  // Filter entries based on selected month, year, and entry type
   useEffect(() => {
     let filtered = [...journalEntries];
-    if (selectedMonth !== "all") {
-      filtered = filtered.filter((entry) => {
+    filtered = filtered.filter((entry) => {
+      const isCorrectType = entryType === "public" ? entry.isPublic : !entry.isPublic;
+      if (selectedMonth !== "all") {
         const entryDate = new Date(entry.date);
         return (
           entryDate.getMonth() === Number.parseInt(selectedMonth) &&
-          entryDate.getFullYear() === selectedYear
+          entryDate.getFullYear() === selectedYear &&
+          isCorrectType
         );
-      });
-    } else if (selectedYear) {
-      filtered = filtered.filter((entry) => {
+      } else if (selectedYear) {
         const entryDate = new Date(entry.date);
-        return entryDate.getFullYear() === selectedYear;
-      });
-    }
+        return entryDate.getFullYear() === selectedYear && isCorrectType;
+      }
+      return isCorrectType;
+    });
     setFilteredEntries(filtered);
-  }, [journalEntries, selectedMonth, selectedYear]);
+  }, [journalEntries, selectedMonth, selectedYear, entryType]);
 
   // Get mood counts for chart
   const getMoodCounts = () => {
@@ -309,6 +311,23 @@ const DetailedMoodDistributions = () => {
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* View Mode Toggle & Public/Private Toggle */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div className="flex gap-2 bg-bg border border-border rounded-lg p-1 shadow-sm w-fit">
+            <button
+              onClick={() => setEntryType("private")}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${entryType === "private" ? "bg-white dark:bg-gray-700 shadow-sm text-[var(--accent)]" : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"}`}
+            >
+              Private
+            </button>
+            <button
+              onClick={() => setEntryType("public")}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${entryType === "public" ? "bg-white dark:bg-gray-700 shadow-sm text-[var(--accent)]" : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"}`}
+            >
+              Public
+            </button>
+          </div>
+        </div>
         {/* Header section */}
         <div className="mb-8">
           <h1

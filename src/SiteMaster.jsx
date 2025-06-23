@@ -7,7 +7,7 @@ import { Search, Coins } from "lucide-react";
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000" });
 
 const SiteMaster = () => {
-  const [activeTab, setActiveTab] = useState("mail"); // 'mail' or 'users'
+  const [activeTab, setActiveTab] = useState("mail"); // 'mail', 'users', or 'feedbacks'
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50 text-gray-800 rounded-lg shadow-lg mt-8">
@@ -33,12 +33,23 @@ const SiteMaster = () => {
           >
             User Management
           </button>
+          <button
+            onClick={() => setActiveTab('feedbacks')}
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'feedbacks'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Feedbacks
+          </button>
         </nav>
       </div>
 
       <div className="mt-8">
         {activeTab === 'mail' && <MailSender />}
         {activeTab === 'users' && <UserManagement />}
+        {activeTab === 'feedbacks' && <FeedbacksSection />}
       </div>
     </div>
   );
@@ -268,6 +279,47 @@ const UserManagement = () => {
             )}
         </div>
     );
+};
+
+const FeedbacksSection = () => {
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await API.get("/feedbacks");
+        setFeedbacks(res.data.feedbacks || []);
+      } catch (err) {
+        setError("Failed to fetch feedbacks.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFeedbacks();
+  }, []);
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">User Feedbacks</h2>
+      {loading && <div className="text-gray-500">Loading...</div>}
+      {error && <div className="text-red-500">{error}</div>}
+      {!loading && !error && feedbacks.length === 0 && (
+        <div className="text-gray-500">No feedbacks yet.</div>
+      )}
+      <ul className="divide-y divide-gray-200 mt-4">
+        {feedbacks.slice().reverse().map((fb, idx) => (
+          <li key={fb._id || idx} className="py-4">
+            <div className="text-gray-800 mb-1">{fb.feedback}</div>
+            <div className="text-xs text-gray-500">{new Date(fb.createdAt).toLocaleString()}</div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 export default SiteMaster;

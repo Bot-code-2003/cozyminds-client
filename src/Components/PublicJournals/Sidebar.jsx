@@ -4,6 +4,10 @@ import PopularTopics from "./PopularTopics";
 import PopularWriters from "./PopularWriters";
 import TrendingJournals from "./TrendingJournals";
 import TopMoodPosts from "./TopMoodPosts";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 const SidebarSection = ({ icon, title, children, noPadding = false }) => (
   <div className="bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm">
@@ -18,6 +22,106 @@ const SidebarSection = ({ icon, title, children, noPadding = false }) => (
     </div>
   </div>
 );
+
+const ActiveDiscussions = () => {
+  const [journals, setJournals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDiscussions = async () => {
+      try {
+        setLoading(true);
+        const res = await API.get("/journals/with-comments?sort=-commentCount&limit=7");
+        setJournals(res.data.journals || []);
+      } catch (err) {
+        setError("Failed to load discussions");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDiscussions();
+  }, []);
+
+  if (loading) return <div className="text-xs text-gray-500">Loading...</div>;
+  if (error) return <div className="text-xs text-red-500">{error}</div>;
+  if (!journals.length) return <div className="text-xs text-gray-500">No active discussions yet.</div>;
+
+  return (
+    <ul className="space-y-2">
+      {journals.map(journal => (
+        <li
+          key={journal._id}
+          className="flex items-center gap-3 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700/40 transition"
+        >
+          <div className="flex-1 min-w-0">
+            <Link
+              to={`/public-journal/${journal.slug}`}
+              className="font-medium text-gray-900 dark:text-gray-100 truncate block text-sm mb-1"
+              title={journal.title}
+            >
+              {journal.title}
+            </Link>
+            <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 mt-1">
+              <span>by {journal.authorName || "Anonymous"}</span>
+              <span className="inline-block w-1 h-1 bg-gray-400 rounded-full" />
+              <span>{journal.commentCount} comments</span>
+            </div>
+          </div>
+          <Link
+            to={`/public-journal/${journal.slug}#comments`}
+            className="text-xs text-[var(--accent)] font-semibold hover:underline flex-shrink-0"
+          >
+            Join
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const FeedbackBox = () => {
+  const [feedback, setFeedback] = useState("");
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!feedback.trim()) return;
+    setLoading(true);
+    setStatus("");
+    try {
+      await API.post("/feedback", { feedback });
+      setStatus("Thank you for your feedback!");
+      setFeedback("");
+    } catch {
+      setStatus("Failed to send feedback. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-2">
+      <textarea
+        className="w-full rounded-lg border border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+        rows={3}
+        placeholder="Have feedback or a suggestion? Let us know!"
+        value={feedback}
+        onChange={e => setFeedback(e.target.value)}
+        disabled={loading}
+      />
+      <button
+        type="submit"
+        className="w-full bg-[var(--accent)] text-white rounded-lg py-1.5 font-medium text-sm hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50"
+        disabled={loading || !feedback.trim()}
+      >
+        {loading ? "Sending..." : "Send Feedback"}
+      </button>
+      {status && <div className="text-xs text-center text-gray-500 dark:text-gray-400 mt-1">{status}</div>}
+    </form>
+  );
+};
 
 const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
 
@@ -70,6 +174,14 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
 
       <SidebarSection icon={<TrendingUp className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Trending Journals">
         <TrendingJournals />
+      </SidebarSection>
+      
+      <SidebarSection icon={<BookOpen className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Active Discussions">
+        <ActiveDiscussions />
+      </SidebarSection>
+      
+      <SidebarSection icon={<Lightbulb className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Feedback Box">
+        <FeedbackBox />
       </SidebarSection>
       
       <SidebarSection icon={<Tag className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Popular Topics">

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Mail, X, Inbox, Trash2, Star } from "lucide-react";
 import { useMails } from "../../../context/MailContext";
 import { useCoins } from "../../../context/CoinContext";
+import { marked } from 'marked';
 
-const InGameMail = ({ toggleMailModal }) => {
+const InGameMail = ({ closeModal }) => {
   const { mails, user, error, claimReward, markAsRead, deleteMail } = useMails();
   const { showCoinAward } = useCoins();
   const [selectedMail, setSelectedMail] = useState(null);
@@ -100,7 +101,7 @@ const InGameMail = ({ toggleMailModal }) => {
             </div>
           </div>
           <button 
-            onClick={toggleMailModal}
+            onClick={closeModal}
             className="w-8 h-8 rounded-full bg-gray-100/80 dark:bg-gray-700/80 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 flex items-center justify-center transition-all duration-200"
             aria-label="Close mailbox"
           >
@@ -196,7 +197,7 @@ const InGameMail = ({ toggleMailModal }) => {
                     
                     <div
                       className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300"
-                      dangerouslySetInnerHTML={{ __html: selectedMail.content }}
+                      dangerouslySetInnerHTML={{ __html: marked.parse(selectedMail.content || '') }}
                     />
                     
                     {['streak', 'milestone', 'reward'].includes(selectedMail.mailType) && selectedMail.rewardAmount > 0 && (
@@ -218,12 +219,6 @@ const InGameMail = ({ toggleMailModal }) => {
                             {claimingReward ? 'Claiming...' : `Claim ${selectedMail.rewardAmount} Coins`}
                           </button>
                         )}
-                      </div>
-                    )}
-                    
-                    {claimSuccess && (
-                      <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/30 rounded-xl">
-                        <p className="text-green-700 dark:text-green-400 text-sm">{claimSuccess}</p>
                       </div>
                     )}
                     
@@ -335,7 +330,7 @@ const InGameMail = ({ toggleMailModal }) => {
                   <div className="flex-1 px-8 py-6">
                     <div
                       className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300"
-                      dangerouslySetInnerHTML={{ __html: selectedMail.content }}
+                      dangerouslySetInnerHTML={{ __html: marked.parse(selectedMail.content || '') }}
                     />
                     
                     {['streak', 'milestone', 'reward'].includes(selectedMail.mailType) && selectedMail.rewardAmount > 0 && (
@@ -357,12 +352,6 @@ const InGameMail = ({ toggleMailModal }) => {
                             {claimingReward ? 'Claiming...' : `Claim ${selectedMail.rewardAmount} Coins`}
                           </button>
                         )}
-                      </div>
-                    )}
-                    
-                    {claimSuccess && (
-                      <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/30 rounded-xl">
-                        <p className="text-green-700 dark:text-green-400">{claimSuccess}</p>
                       </div>
                     )}
                     
@@ -407,6 +396,20 @@ const InGameMail = ({ toggleMailModal }) => {
         }
         .dark .prose a:hover {
           color: #3b82f6 !important;
+        }
+        .prose strong, .prose b {
+          color: #111827 !important;
+        }
+        .dark .prose strong, .dark .prose b {
+          color: #f1f5f9 !important;
+        }
+        .dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4, .dark .prose h5, .dark .prose h6 {
+          color: #f1f5f9 !important;
+        }
+        .dark .prose blockquote {
+          color: #f1f5f9 !important;
+          border-left: 4px solid #60a5fa !important;
+          background: rgba(30,41,59,0.5) !important;
         }
       `}</style>
     </div>
