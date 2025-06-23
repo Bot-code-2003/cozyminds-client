@@ -80,7 +80,7 @@ const ActiveDiscussions = () => {
   );
 };
 
-const FeedbackBox = () => {
+const FeedbackBox = ({ isLoggedIn, onLogin }) => {
   const [feedback, setFeedback] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -100,6 +100,26 @@ const FeedbackBox = () => {
       setLoading(false);
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <form className="space-y-2">
+        <textarea
+          className="w-full rounded-lg border border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 p-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          rows={3}
+          placeholder="Login to give feedback"
+          disabled
+        />
+        <button
+          type="button"
+          className="w-full bg-[var(--accent)] text-white rounded-lg py-1.5 font-medium text-sm opacity-80 cursor-pointer"
+          onClick={onLogin}
+        >
+          Login to give feedback
+        </button>
+      </form>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
@@ -181,7 +201,7 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
       </SidebarSection>
       
       <SidebarSection icon={<Lightbulb className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Feedback Box">
-        <FeedbackBox />
+        <FeedbackBox isLoggedIn={isLoggedIn} onLogin={() => window.dispatchEvent(new CustomEvent('open-login-modal'))} />
       </SidebarSection>
       
       <SidebarSection icon={<Tag className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Popular Topics">
