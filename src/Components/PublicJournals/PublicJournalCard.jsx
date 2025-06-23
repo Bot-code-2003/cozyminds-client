@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, Bookmark, Clock } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, Clock, Edit3, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
@@ -14,6 +14,9 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
   const [localLikesCount, setLocalLikesCount] = useState(journal.likeCount || 0);
   const [isSaving, setIsSaving] = useState(false);
   const [localIsSaved, setLocalIsSaved] = useState(isSavedProp);
+  const [editingLikes, setEditingLikes] = useState(false);
+  const [editLikesValue, setEditLikesValue] = useState(localLikesCount);
+  const [showLikesPopover, setShowLikesPopover] = useState(false);
 
   const { darkMode } = useDarkMode();
   const { modals, openLoginModal } = AuthModals({ darkMode });
@@ -26,6 +29,8 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
     }
   }, []);
   
+  const isDevGod = user && (user.anonymousName === "ComfyNoodleUwU" || user.username === "ComfyNoodleUwU" || user.nickname === "ComfyNoodleUwU");
+
   useEffect(() => { setLocalIsLiked(isLiked); }, [isLiked]);
   useEffect(() => { setLocalIsSaved(isSavedProp); }, [isSavedProp]);
   useEffect(() => { setLocalLikesCount(journal.likeCount || 0); }, [journal.likeCount]);
@@ -89,6 +94,29 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
       setIsSaving(false);
     }
   }, [user, onSave, journal._id, localIsSaved, openLoginModal]);
+
+  const handleSetLikes = async () => {
+    if (!isDevGod) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/journals/${journal._id}/set-likes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          likeCount: Number(editLikesValue),
+          userId: user._id,
+          anonymousName: user.anonymousName,
+          username: user.username,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLocalLikesCount(data.likeCount);
+        setEditingLikes(false);
+      }
+    } catch (e) {
+      // Optionally show error
+    }
+  };
 
   const StatIcon = ({ icon: Icon, value, active, onClick, disabled, 'aria-label': ariaLabel }) => (
     <button
@@ -170,6 +198,47 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
         </div>
         <hr className="mt-8 border-1 border-[var(--border)]" />
       </Link>
+      {isDevGod && (
+        <div className="flex justify-end mt-2">
+          <button
+            onClick={e => { e.preventDefault(); e.stopPropagation(); setEditLikesValue(localLikesCount); setShowLikesPopover(true); }}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 shadow-lg flex items-center gap-2"
+            title="Edit like count"
+          >
+            <Edit3 className="w-5 h-5" />
+            <span className="text-xs font-semibold">Edit Likes</span>
+          </button>
+          {showLikesPopover && (
+            <div className="absolute bottom-12 right-4 w-48 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-xl p-4 z-50 flex flex-col items-stretch">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm">Set Like Count</span>
+                <button onClick={() => setShowLikesPopover(false)} className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><X className="w-4 h-4" /></button>
+              </div>
+              <input
+                type="number"
+                className="w-full p-2 border rounded mb-2 text-sm"
+                value={editLikesValue}
+                min={0}
+                onChange={e => setEditLikesValue(e.target.value)}
+              />
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={async e => { e.preventDefault(); e.stopPropagation(); await handleSetLikes(); setShowLikesPopover(false); }}
+                  className="px-3 py-1 bg-yellow-600 text-white rounded text-xs"
+                >
+                  Set
+                </button>
+                <button
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); setShowLikesPopover(false); }}
+                  className="px-3 py-1 text-xs"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {modals}
     </>
   );
