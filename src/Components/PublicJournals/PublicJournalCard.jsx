@@ -140,10 +140,10 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
                   fillOnActive={true}
                 />
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+              {/* <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{formattedDate}</span>
-              </div>
+              </div> */}
             </div>
           </div>
           

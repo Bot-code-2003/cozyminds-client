@@ -91,17 +91,17 @@ const TrendingJournals = () => {
                   </div>
                   
                   {journal.tags && journal.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-0.5">
                       {journal.tags.slice(0, 2).map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg"
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-md"
                         >
-                          <Tag className="w-3 h-3" /> #{tag}
+                          <Tag className="w-2.5 h-2.5" /> #{tag}
                         </span>
                       ))}
                       {journal.tags.length > 2 && (
-                        <span className="inline-flex items-center px-2 py-0.5 text-[5px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg">
+                        <span className="inline-flex items-center px-1.5 py-0.5 text-[8px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-md">
                           +{journal.tags.length - 2}
                         </span>
                       )}

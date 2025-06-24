@@ -11,14 +11,14 @@ import ActiveDiscussions from "./ActiveDiscussions";
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 const SidebarSection = ({ icon, title, children, noPadding = false }) => (
-  <div className="bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm">
-    <div className="p-4 border-b border-gray-200 dark:border-slate-700/50">
+  <div className="bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm sm:rounded-2xl sm:border sm:shadow-sm rounded-none border-0 shadow-none px-0">
+    <div className="p-4 border-b border-gray-200 dark:border-slate-700/50 sm:p-4 p-3">
       <div className="flex items-center gap-3">
         {icon}
         <h3 className="font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
       </div>
     </div>
-    <div className={noPadding ? "" : "p-4"}>
+    <div className={noPadding ? "" : "p-4 sm:p-4 p-3"}>
       {children}
     </div>
   </div>
@@ -102,9 +102,9 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full  space-y-6 px-0 sm:px-0">
       {isLoggedIn && (
-        <div className="mt-16 sm:mt-0 bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm p-4">
+        <div className="mt-4 sm:mt-0 bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm p-4">
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="w-5 h-5 text-[var(--accent)]" />
             <h3 className="font-semibold text-gray-900 dark:text-gray-100">Quick Actions</h3>

@@ -106,6 +106,7 @@ const PublicJournalEntry = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Memoize current user
   const currentUser = useMemo(() => {
@@ -197,6 +198,13 @@ const PublicJournalEntry = () => {
         attempts++;
       }, intervalTime);
     }
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const handleLike = useCallback(async () => {
@@ -524,7 +532,7 @@ const PublicJournalEntry = () => {
       )}
       <div
         style={{ backgroundAttachment: "fixed" }}
-        className={`min-h-screen ${journal.theme === 'theme_default' ? 'bg-white dark:bg-black' : getCardClass(journal.theme)} ${!isLoggedIn ? 'pt-16' : ''}`}
+        className={`min-h-screen ${isMobile ? 'bg-white dark:bg-black' : (journal.theme === 'theme_default' ? 'bg-white dark:bg-black' : getCardClass(journal.theme))} ${!isLoggedIn ? 'pt-16' : ''}`}
       >
         <div className="w-full sm:max-w-7xl mx-auto sm:px-4 sm:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -565,7 +573,7 @@ const PublicJournalEntry = () => {
                       </motion.div>
                     )}
 
-                    {/* Date */}
+                    {/* Date
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       className="inline-flex items-center gap-1.5 px-2 py-1 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-black/5 dark:border-white/10 text-gray-700 dark:text-gray-300 rounded-lg text-xs sm:text-sm font-medium shadow-sm"
@@ -586,7 +594,7 @@ const PublicJournalEntry = () => {
                           year: "numeric",
                         })}
                       </span>
-                    </motion.div>
+                    </motion.div> */}
 
                     {/* Reading Time */}
                     <motion.div

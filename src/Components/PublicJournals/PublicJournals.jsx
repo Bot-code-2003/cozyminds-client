@@ -457,14 +457,19 @@ const PublicJournals = () => {
 
       {/* Mobile Sidebar (Off-canvas) */}
       {isSidebarOpen && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsSidebarOpen(false)}>
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-[9999]" onClick={() => setIsSidebarOpen(false)}>
+          <button 
+            onClick={() => setIsSidebarOpen(false)} 
+            className="fixed top-3 right-3 z-[10001] w-12 h-12 flex items-center justify-center rounded-full bg-white/95 dark:bg-gray-900/95 border border-gray-300 dark:border-gray-700 shadow-2xl text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-800 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 animate-float"
+            style={{ boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}
+            aria-label="Close sidebar"
+          >
+              <X className="w-7 h-7" />
+          </button>
           <div
-            className="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-[var(--bg-primary)] shadow-lg overflow-y-auto p-4 animate-slideInRight"
+            className="fixed top-0 left-0 h-full w-full max-w-full bg-[var(--bg-primary)] shadow-lg overflow-y-auto p-0 animate-slideInRight"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={() => setIsSidebarOpen(false)} className="absolute top-4 right-4 text-gray-500 dark:text-gray-400">
-                <X className="w-6 h-6" />
-            </button>
             <Sidebar
               onTopicClick={(topic) => {
                 handleTagSelect(topic);
