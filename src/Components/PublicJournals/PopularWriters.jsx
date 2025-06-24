@@ -1,16 +1,15 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Users, Crown, BookOpen, Heart, UserPlus, UserCheck } from "lucide-react";
-import axios from "axios";
+import { useSidebar } from "../../context/SidebarContext";
 import { useDarkMode } from "../../context/ThemeContext";
 import AuthModals from "../Landing/AuthModals";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
-  const [popularWriters, setPopularWriters] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { popularWriters, loading, error, refreshSidebar } = useSidebar();
   const [followedWriters, setFollowedWriters] = useState(new Set());
   const [updatingFollow, setUpdatingFollow] = useState(new Set());
   const [writerFollowStatus, setWriterFollowStatus] = useState({});
@@ -28,24 +27,11 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
     }
   }, [isLoggedIn]);
 
-  const fetchPopularWriters = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await API.get("/popular-writers?limit=6");
-      setPopularWriters(response.data.popularWriters || []);
-    } catch (err) {
-      setError("Failed to load writers");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     if (user?.subscribedTo) {
       setFollowedWriters(new Set(user.subscribedTo));
     }
-    fetchPopularWriters();
-  }, [user, fetchPopularWriters]);
+  }, [user]);
 
   useEffect(() => {
     if (!user || !popularWriters.length) return;
@@ -83,7 +69,7 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
       });
       const isNowSubscribed = response.data.subscribed;
       setWriterFollowStatus(prev => ({ ...prev, [targetUserId]: isNowSubscribed }));
-      fetchPopularWriters();
+      refreshSidebar(); // Refresh sidebar data
     } catch (err) {
       // Optionally show error
     } finally {
@@ -93,7 +79,7 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
         return newSet;
       });
     }
-  }, [user, openLoginModal, fetchPopularWriters]);
+  }, [user, openLoginModal, refreshSidebar]);
 
   if (loading) return <div>Loading writers...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -111,8 +97,8 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
               key={writer.userId}
               className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-200 group"
             >
-              <Link 
-                to={`/profile/${writer.anonymousName}`} 
+              <Link
+                to={`/profile/${writer.anonymousName}`}
                 className="flex items-center gap-3 flex-1 min-w-0"
                 onClick={() => window.scrollTo(0, 0)}
               >

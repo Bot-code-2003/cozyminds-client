@@ -104,8 +104,8 @@ const PublicRecommendations = ({ slug }) => {
   ), [recommendations]);
 
   return (
-    <aside className="sticky top-20 max-h-[calc(100vh-5rem)] ">
-      <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-apple shadow-apple border border-black/5 dark:border-white/10 p-4 sm:p-5 space-y-4">
+    <aside className="sticky top-20 ">
+      <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl sm:rounded-apple shadow-apple border border-black/5 dark:border-white/10 p-4 sm:p-5 space-y-4">
         <h3 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Recommended Journals</h3>
         {loading ? (
           <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 py-8 justify-center">

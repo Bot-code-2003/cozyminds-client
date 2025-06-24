@@ -22,6 +22,8 @@ import {
   List,
   Clock,
   Heart,
+  X,
+  Compass
 } from "lucide-react";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -263,6 +265,7 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
 
 const PublicJournals = () => {
   const [hasSubscriptionNotifications, setHasSubscriptionNotifications] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const {
     journals,
@@ -443,6 +446,37 @@ const PublicJournals = () => {
       )}
       {modals}
 
+      {/* Mobile Sidebar Toggle Button */}
+      <button
+        onClick={() => setIsSidebarOpen(true)}
+        className="md:hidden fixed bottom-5 right-5 bg-blue-600 text-white p-4 rounded-full shadow-lg z-40 hover:bg-blue-700 transition-all"
+        aria-label="Open filters"
+      >
+        <Compass className="w-6 h-6" />
+      </button>
+
+      {/* Mobile Sidebar (Off-canvas) */}
+      {isSidebarOpen && (
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsSidebarOpen(false)}>
+          <div
+            className="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-[var(--bg-primary)] shadow-lg overflow-y-auto p-4 animate-slideInRight"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button onClick={() => setIsSidebarOpen(false)} className="absolute top-4 right-4 text-gray-500 dark:text-gray-400">
+                <X className="w-6 h-6" />
+            </button>
+            <Sidebar
+              onTopicClick={(topic) => {
+                handleTagSelect(topic);
+                setIsSidebarOpen(false);
+              }}
+              onWriterClick={handleWriterClick}
+              isLoggedIn={isLoggedIn}
+            />
+          </div>
+        </div>
+      )}
+
       <div className={`min-h-screen bg-[var(--bg-primary)] ${!isLoggedIn ? 'pt-16' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
@@ -492,7 +526,7 @@ const PublicJournals = () => {
                 onLoadMore={loadMore}
               />
             </main>
-            <aside className="md:col-span-4">
+            <aside className="hidden md:block md:col-span-4">
               <Sidebar
                 onTopicClick={handleTagSelect}
                 onWriterClick={handleWriterClick}

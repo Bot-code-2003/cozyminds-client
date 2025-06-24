@@ -1,30 +1,8 @@
-import { useState, useEffect } from "react";
-import { Tag, TrendingUp, Hash } from "lucide-react";
-import axios from "axios";
-
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+import { Tag } from "lucide-react";
+import { useSidebar } from "../../context/SidebarContext";
 
 const PopularTopics = ({ onTopicClick }) => {
-  const [popularTopics, setPopularTopics] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchPopularTopics = async () => {
-      try {
-        setLoading(true);
-        const response = await API.get("/popular-topics?limit=8");
-        setPopularTopics(response.data.popularTopics || []);
-      } catch (err) {
-        console.error("Error fetching popular topics:", err);
-        setError("Failed to load popular topics");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPopularTopics();
-  }, []);
+  const { trendingTopics, loading, error } = useSidebar();
 
   if (loading) {
     return (
@@ -56,7 +34,7 @@ const PopularTopics = ({ onTopicClick }) => {
     );
   }
 
-  if (popularTopics.length === 0) {
+  if (trendingTopics.length === 0) {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6">
         <div className="flex items-center gap-2 mb-4">
@@ -70,7 +48,7 @@ const PopularTopics = ({ onTopicClick }) => {
 
   return (
     <div className="flex flex-wrap gap-2">
-      {popularTopics.map((topic) => (
+      {trendingTopics.map((topic) => (
         <button
           key={topic.tag}
           onClick={() => onTopicClick && onTopicClick(topic.tag)}

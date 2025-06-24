@@ -6,6 +6,7 @@ import TrendingJournals from "./TrendingJournals";
 import TopMoodPosts from "./TopMoodPosts";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ActiveDiscussions from "./ActiveDiscussions";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -22,63 +23,6 @@ const SidebarSection = ({ icon, title, children, noPadding = false }) => (
     </div>
   </div>
 );
-
-const ActiveDiscussions = () => {
-  const [journals, setJournals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchDiscussions = async () => {
-      try {
-        setLoading(true);
-        const res = await API.get("/journals/with-comments?sort=-commentCount&limit=7");
-        setJournals(res.data.journals || []);
-      } catch (err) {
-        setError("Failed to load discussions");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDiscussions();
-  }, []);
-
-  if (loading) return <div className="text-xs text-gray-500">Loading...</div>;
-  if (error) return <div className="text-xs text-red-500">{error}</div>;
-  if (!journals.length) return <div className="text-xs text-gray-500">No active discussions yet.</div>;
-
-  return (
-    <ul className="space-y-2">
-      {journals.map(journal => (
-        <li
-          key={journal._id}
-          className="flex items-center gap-3 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700/40 transition"
-        >
-          <div className="flex-1 min-w-0">
-            <Link
-              to={`/public-journal/${journal.slug}`}
-              className="font-medium text-gray-900 dark:text-gray-100 truncate block text-sm mb-1"
-              title={journal.title}
-            >
-              {journal.title}
-            </Link>
-            <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 mt-1">
-              <span>by {journal.authorName || "Anonymous"}</span>
-              <span className="inline-block w-1 h-1 bg-gray-400 rounded-full" />
-              <span>{journal.commentCount} comments</span>
-            </div>
-          </div>
-          <Link
-            to={`/public-journal/${journal.slug}#comments`}
-            className="text-xs text-[var(--accent)] font-semibold hover:underline flex-shrink-0"
-          >
-            Join
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-};
 
 const FeedbackBox = ({ isLoggedIn, onLogin }) => {
   const [feedback, setFeedback] = useState("");
@@ -160,7 +104,7 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
   return (
     <div className="w-full space-y-6">
       {isLoggedIn && (
-        <div className="bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm p-4">
+        <div className="mt-16 sm:mt-0 bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm p-4">
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="w-5 h-5 text-[var(--accent)]" />
             <h3 className="font-semibold text-gray-900 dark:text-gray-100">Quick Actions</h3>

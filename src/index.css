@@ -53,6 +53,20 @@
   animation: fadeInUp 0.6s ease-out forwards;
 }
 
+/* Animation for slide in right effect */
+.animate-slideInRight {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 /* Reset for sharp corners */
 * {
   /* border-radius: 0 !important; */
@@ -68,69 +82,69 @@ button:hover {
 }
 
 :root {
-  /* Light Theme - Apple-inspired */
+  /* Light Theme - Cozy Blue-inspired */
   --bg-navbar: #ffffff;
-  --bg-primary: #fbfbfd;
-  --bg-secondary: #f5f5f7;
-  --bg-tertiary: #f2f2f2;
+  --bg-primary: #fbfaf8;
+  --bg-secondary: #f5f4f2;
+  --bg-tertiary: #edebe9;
   --bg-hover: rgba(0, 0, 0, 0.04);
 
-  --text-primary: #1d1d1f;
-  --text-secondary: #86868b;
+  --text-primary: #2d2a27;
+  --text-secondary: #7d7b78;
   --text-journal-title: #ffffff;
 
-  --accent: #2563eb; /* Tailwind text-blue-600 */
-  --accent-rgb: 37, 99, 235;
-  --accent-hover: #1d4ed8; /* Tailwind hover:text-blue-700 */
-  --accent-light: #60a5fa; /* Tailwind text-blue-400 */
-  --accent-light-hover: #38bdf8; /* Tailwind hover:text-blue-300 */
+  --accent: #6b7280; /* Dusty blue */
+  --accent-rgb: 107, 114, 128;
+  --accent-hover: #5b6070; /* Darker dusty blue */
+  --accent-light: #a3bffa; /* Light slate blue */
+  --accent-light-hover: #93b1f6; /* Hover light slate blue */
 
-  --highlight: #34c759;
-  --highlight-rgb: 52, 199, 89;
+  --highlight: #64748b; /* Muted slate blue */
+  --highlight-rgb: 100, 116, 139;
 
-  --border: #d2d2d7;
+  --border: #d4d1cd;
   --shadow: rgba(0, 0, 0, 0.08);
 
   --card-bg: #ffffff;
-  --card-txt: #1d1d1f;
+  --card-txt: #2d2a27;
 
   /* Success, Error, Warning states */
-  --success: #34c759;
-  --error: #ff3b30;
-  --warning: #ff9500;
+  --success: #64748b; /* Muted slate blue */
+  --error: #d6574e;
+  --warning: #e8b923;
 }
 
 .dark {
-  /* Dark Theme - Apple-inspired */
-  --bg-navbar: #1d1d1f;
-  --bg-primary: #000000;
-  --bg-secondary: #1c1c1e;
-  --bg-tertiary: #2c2c2e;
+  /* Dark Theme - Cozy Blue-inspired */
+  --bg-navbar: #2d2a27;
+  --bg-primary: #1c1a18;
+  --bg-secondary: #282624;
+  --bg-tertiary: #343230;
   --bg-hover: rgba(255, 255, 255, 0.08);
 
-  --text-primary: #f5f5f7;
-  --text-secondary: #86868b;
+  --text-primary: #f5f2ef;
+  --text-secondary: #8a8784;
   --text-journal-title: #ffffff;
 
-  --accent: #60a5fa; /* Tailwind text-blue-400 */
-  --accent-rgb: 96, 165, 250;
-  --accent-hover: #38bdf8; /* Tailwind hover:text-blue-300 */
-  --accent-dark: #2563eb; /* Tailwind text-blue-600 */
-  --accent-dark-hover: #1d4ed8; /* Tailwind hover:text-blue-700 */
+  --accent: #a3bffa; /* Light slate blue */
+  --accent-rgb: 163, 191, 250;
+  --accent-hover: #93b1f6; /* Hover light slate blue */
+  --accent-dark: #6b7280; /* Dusty blue */
+  --accent-dark-hover: #5b6070; /* Darker dusty blue */
 
-  --highlight: #30d158;
-  --highlight-rgb: 48, 209, 88;
+  --highlight: #94a3b8; /* Slightly lighter muted slate blue */
+  --highlight-rgb: 148, 163, 184;
 
-  --border: #38383a;
+  --border: #3f3d3a;
   --shadow: rgba(0, 0, 0, 0.2);
 
-  --card-bg: #1c1c1e;
-  --card-txt: #f5f5f7;
+  --card-bg: #282624;
+  --card-txt: #f5f2ef;
 
   /* Success, Error, Warning states */
-  --success: #30d158;
-  --error: #ff453a;
-  --warning: #ff9f0a;
+  --success: #94a3b8; /* Slightly lighter muted slate blue */
+  --error: #e86a60;
+  --warning: #f0c043;
 }
 
 /* Concept Packs */

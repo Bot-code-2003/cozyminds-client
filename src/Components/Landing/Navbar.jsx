@@ -93,7 +93,7 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
             {user ? (
               <button
                 onClick={() => handleNavigation("/profile")}
-                className="flex items-center gap-2 px-4 py-2 bg-[#5999a8] text-white rounded-lg hover:bg-[#468b97] transition-colors font-medium text-sm shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 text-white rounded-lg hover:bg-[#468b97] transition-colors font-medium text-sm shadow-sm"
               >
                 <User size={16} />
                 <span>{user.nickname || "Profile"}</span>

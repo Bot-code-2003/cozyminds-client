@@ -17,13 +17,6 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
   const [editingComment, setEditingComment] = useState(null)
   const [editText, setEditText] = useState("")
   const [showDropdown, setShowDropdown] = useState(null)
-  const isDevGod = currentUser && (currentUser.anonymousName === "ComfyNoodleUwU" || currentUser.username === "ComfyNoodleUwU")
-  const [devAuthor, setDevAuthor] = useState("")
-  const [devDate, setDevDate] = useState("")
-  const [devContent, setDevContent] = useState("")
-  const [devLikes, setDevLikes] = useState(0)
-  const [devSubmitting, setDevSubmitting] = useState(false)
-  const [devReplyStates, setDevReplyStates] = useState({})
 
   const API_BASE = import.meta.env.VITE_API_URL
 
@@ -273,108 +266,6 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
   // Find comment by ID
   const findCommentById = (id) => comments.find((comment) => comment._id === id)
 
-  // Helper to add a dev comment
-  const handleDevSubmit = async (e) => {
-    e.preventDefault()
-    if (!devAuthor.trim() || !devContent.trim()) return
-    setDevSubmitting(true)
-    try {
-      const response = await fetch(`${API_BASE}/comments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          journalId,
-          userId: currentUser._id,
-          content: devContent.trim(),
-          authorName: devAuthor.trim(),
-        }),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        // Inject dev fields into the comment object
-        const devComment = {
-          ...data.comment,
-          authorName: devAuthor.trim(),
-          createdAt: devDate && devDate !== "now" ? devDate : new Date().toISOString(),
-          likeCount: Number(devLikes) || 0,
-          likes: [], // fake likes, not real user IDs
-          isDevGod: true,
-        }
-        setComments((prev) => [devComment, ...prev])
-        setDevAuthor("")
-        setDevDate("")
-        setDevContent("")
-        setDevLikes(0)
-      }
-    } catch (error) {
-      console.error("Error submitting dev comment:", error)
-    } finally {
-      setDevSubmitting(false)
-    }
-  }
-
-  // Helper to open/close dev reply form
-  const openDevReplyForm = (parentId) => {
-    setDevReplyStates((prev) => ({
-      ...prev,
-      [parentId]: {
-        open: true,
-        author: '',
-        date: '',
-        content: '',
-        likes: 0,
-        submitting: false,
-      },
-    }));
-  };
-  const closeDevReplyForm = (parentId) => {
-    setDevReplyStates((prev) => ({ ...prev, [parentId]: { ...prev[parentId], open: false } }));
-  };
-  const updateDevReplyField = (parentId, field, value) => {
-    setDevReplyStates((prev) => ({
-      ...prev,
-      [parentId]: { ...prev[parentId], [field]: value },
-    }));
-  };
-
-  // Helper to add a dev reply
-  const handleDevReplySubmit = async (e, parentId, replyToName) => {
-    e.preventDefault();
-    const state = devReplyStates[parentId];
-    if (!state || !state.author.trim() || !state.content.trim()) return;
-    updateDevReplyField(parentId, 'submitting', true);
-    try {
-      const response = await fetch(`${API_BASE}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          journalId,
-          userId: currentUser._id,
-          content: replyToName && !state.content.startsWith(`@${replyToName}`) ? `@${replyToName} ${state.content.trim()}` : state.content.trim(),
-          authorName: state.author.trim(),
-          parentId,
-        }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const devReply = {
-          ...data.comment,
-          authorName: state.author.trim(),
-          createdAt: state.date && state.date !== 'now' ? state.date : new Date().toISOString(),
-          likeCount: Number(state.likes) || 0,
-          likes: [],
-          isDevGod: true,
-        };
-        setComments((prev) => [devReply, ...prev]);
-        closeDevReplyForm(parentId);
-      }
-    } catch (error) {
-      console.error('Error submitting dev reply:', error);
-    } finally {
-      updateDevReplyField(parentId, 'submitting', false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="border-t border-gray-200 dark:border-gray-700 p-6">
@@ -389,7 +280,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
   return (
     <div id="comments" className="border-t mb-10 border-gray-200 dark:border-gray-700">
       {/* Comments Header */}
-      <div className="p-6 pb-4">
+      <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
           <MessageCircle className="w-5 h-5" />
           {comments.length} {comments.length === 1 ? "Comment" : "Comments"}
@@ -397,7 +288,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
       </div>
 
       {/* Add Comment Form */}
-      <div className="px-6 pb-6">
+      <div className="px-4">
         <form onSubmit={handleSubmitComment} className="space-y-4">
           <div className="flex gap-3">
             <div
@@ -438,64 +329,12 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
         </form>
       </div>
 
-      {/* Developer God Mode Comment Form */}
-      {isDevGod && (
-        <div className="px-6 pb-2">
-          <form onSubmit={handleDevSubmit} className="space-y-2 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-300 dark:border-yellow-700 mb-4">
-            <div className="font-bold text-yellow-800 dark:text-yellow-200 mb-2">Developer God Mode: Manual Comment</div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <input
-                type="text"
-                className="flex-1 p-2 border rounded"
-                placeholder="Author Name"
-                value={devAuthor}
-                onChange={e => setDevAuthor(e.target.value)}
-              />
-              <input
-                type="text"
-                className="flex-1 p-2 border rounded"
-                placeholder="Date (ISO or 'now')"
-                value={devDate}
-                onChange={e => setDevDate(e.target.value)}
-              />
-              <input
-                type="number"
-                className="w-32 p-2 border rounded"
-                placeholder="Likes"
-                value={devLikes}
-                min={0}
-                onChange={e => setDevLikes(e.target.value)}
-              />
-            </div>
-            <textarea
-              className="w-full p-2 border rounded"
-              placeholder="Comment Content"
-              value={devContent}
-              onChange={e => setDevContent(e.target.value)}
-              rows={2}
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                type="submit"
-                disabled={devSubmitting}
-                className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50"
-              >
-                {devSubmitting ? "Submitting..." : "Add Dev Comment"}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
       {/* Comments List */}
       <div className="px-6 space-y-6">
         {parentComments.map((comment) => {
           const replies = getReplies(comment._id)
           const isLiked = currentUser && comment.likes?.includes(currentUser._id)
           const isOwner = currentUser && comment.userId === currentUser._id
-          // DEV: override likeCount and createdAt if isDevGod
-          const displayLikeCount = comment.isDevGod ? comment.likeCount : (comment.likeCount || 0)
-          const displayCreatedAt = comment.isDevGod ? comment.createdAt : comment.createdAt
 
           return (
             <div key={comment._id} className="space-y-4">
@@ -515,6 +354,12 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
                           <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
                             {comment.authorName}
                           </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {formatDate(comment.createdAt)}
+                          </span>
+                          {comment.isEdited && (
+                            <span className="text-xs text-gray-400 dark:text-gray-500">(edited)</span>
+                          )}
                         </div>
 
                         {editingComment === comment._id ? (
@@ -599,7 +444,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
                       }`}
                     >
                       <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-                      {displayLikeCount}
+                      {comment.likeCount || 0}
                     </button>
 
                     <button
@@ -659,74 +504,6 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
                       </div>
                     </div>
                   )}
-
-                  {/* Dev Reply Form */}
-                  {isDevGod && (
-                    <div className="mt-2 ml-4">
-                      {devReplyStates[comment._id]?.open ? (
-                        <form
-                          onSubmit={e => handleDevReplySubmit(e, comment._id, comment.authorName)}
-                          className="space-y-2 bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-300 dark:border-yellow-700 mb-2"
-                        >
-                          <div className="font-bold text-yellow-800 dark:text-yellow-200 mb-1">Dev Reply</div>
-                          <div className="flex flex-col gap-2 sm:flex-row">
-                            <input
-                              type="text"
-                              className="flex-1 p-2 border rounded"
-                              placeholder="Author Name"
-                              value={devReplyStates[comment._id]?.author || ''}
-                              onChange={e => updateDevReplyField(comment._id, 'author', e.target.value)}
-                            />
-                            <input
-                              type="text"
-                              className="flex-1 p-2 border rounded"
-                              placeholder="Date (ISO or 'now')"
-                              value={devReplyStates[comment._id]?.date || ''}
-                              onChange={e => updateDevReplyField(comment._id, 'date', e.target.value)}
-                            />
-                            <input
-                              type="number"
-                              className="w-32 p-2 border rounded"
-                              placeholder="Likes"
-                              value={devReplyStates[comment._id]?.likes || 0}
-                              min={0}
-                              onChange={e => updateDevReplyField(comment._id, 'likes', e.target.value)}
-                            />
-                          </div>
-                          <textarea
-                            className="w-full p-2 border rounded"
-                            placeholder="Reply Content"
-                            value={devReplyStates[comment._id]?.content || ''}
-                            onChange={e => updateDevReplyField(comment._id, 'content', e.target.value)}
-                            rows={2}
-                          />
-                          <div className="flex justify-end gap-2">
-                            <button
-                              type="button"
-                              onClick={() => closeDevReplyForm(comment._id)}
-                              className="px-3 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              type="submit"
-                              disabled={devReplyStates[comment._id]?.submitting}
-                              className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50"
-                            >
-                              {devReplyStates[comment._id]?.submitting ? 'Submitting...' : 'Add Dev Reply'}
-                            </button>
-                          </div>
-                        </form>
-                      ) : (
-                        <button
-                          onClick={() => openDevReplyForm(comment._id)}
-                          className="text-xs font-medium text-yellow-700 dark:text-yellow-200 hover:underline ml-2"
-                        >
-                          + Dev Reply
-                        </button>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -753,6 +530,12 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
                                   <span className="font-semibold text-gray-900 dark:text-gray-100 text-xs">
                                     {reply.authorName}
                                   </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {formatDate(reply.createdAt)}
+                                  </span>
+                                  {reply.isEdited && (
+                                    <span className="text-xs text-gray-400 dark:text-gray-500">(edited)</span>
+                                  )}
                                 </div>
                                 <p
                                   className="text-gray-800 dark:text-gray-200 text-xs leading-relaxed"
@@ -815,74 +598,6 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
                               Reply
                             </button>
                           </div>
-
-                          {/* Dev Reply Form */}
-                          {isDevGod && (
-                            <div className="mt-2 ml-4">
-                              {devReplyStates[reply._id]?.open ? (
-                                <form
-                                  onSubmit={e => handleDevReplySubmit(e, reply._id, replyingToName)}
-                                  className="space-y-2 bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-300 dark:border-yellow-700 mb-2"
-                                >
-                                  <div className="font-bold text-yellow-800 dark:text-yellow-200 mb-1">Dev Reply</div>
-                                  <div className="flex flex-col gap-2 sm:flex-row">
-                                    <input
-                                      type="text"
-                                      className="flex-1 p-2 border rounded"
-                                      placeholder="Author Name"
-                                      value={devReplyStates[reply._id]?.author || ''}
-                                      onChange={e => updateDevReplyField(reply._id, 'author', e.target.value)}
-                                    />
-                                    <input
-                                      type="text"
-                                      className="flex-1 p-2 border rounded"
-                                      placeholder="Date (ISO or 'now')"
-                                      value={devReplyStates[reply._id]?.date || ''}
-                                      onChange={e => updateDevReplyField(reply._id, 'date', e.target.value)}
-                                    />
-                                    <input
-                                      type="number"
-                                      className="w-32 p-2 border rounded"
-                                      placeholder="Likes"
-                                      value={devReplyStates[reply._id]?.likes || 0}
-                                      min={0}
-                                      onChange={e => updateDevReplyField(reply._id, 'likes', e.target.value)}
-                                    />
-                                  </div>
-                                  <textarea
-                                    className="w-full p-2 border rounded"
-                                    placeholder="Reply Content"
-                                    value={devReplyStates[reply._id]?.content || ''}
-                                    onChange={e => updateDevReplyField(reply._id, 'content', e.target.value)}
-                                    rows={2}
-                                  />
-                                  <div className="flex justify-end gap-2">
-                                    <button
-                                      type="button"
-                                      onClick={() => closeDevReplyForm(reply._id)}
-                                      className="px-3 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                                    >
-                                      Cancel
-                                    </button>
-                                    <button
-                                      type="submit"
-                                      disabled={devReplyStates[reply._id]?.submitting}
-                                      className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50"
-                                    >
-                                      {devReplyStates[reply._id]?.submitting ? 'Submitting...' : 'Add Dev Reply'}
-                                    </button>
-                                  </div>
-                                </form>
-                              ) : (
-                                <button
-                                  onClick={() => openDevReplyForm(reply._id)}
-                                  className="text-xs font-medium text-yellow-700 dark:text-yellow-200 hover:underline ml-2"
-                                >
-                                  + Dev Reply
-                                </button>
-                              )}
-                            </div>
-                          )}
                         </div>
                       </div>
                     )

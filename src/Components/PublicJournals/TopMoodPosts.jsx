@@ -1,9 +1,6 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { Loader2, ServerCrash, Heart, BookOpen } from "lucide-react";
-
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+import { useSidebar } from "../../context/SidebarContext";
 
 const moodEmojis = {
   Happy: "😄",
@@ -36,27 +33,7 @@ function getFirstImage(html) {
 }
 
 const TopMoodPosts = () => {
-  const [moodPosts, setMoodPosts] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchTopMoodPosts = async () => {
-      try {
-        setLoading(true);
-        const response = await API.get("/journals/top-by-mood");
-        // console.log(response.data); // <-- add this
-
-        setMoodPosts(response.data);
-      } catch (err) {
-        console.error("Error fetching top mood posts:", err);
-        setError("Failed to load posts by mood.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTopMoodPosts();
-  }, []);
+  const { topMoodPosts, loading, error } = useSidebar();
 
   if (loading) {
     return (
@@ -76,7 +53,7 @@ const TopMoodPosts = () => {
   }
 
   // Filter out moods with no posts and sort the rest
-  const sortedMoodsWithPosts = Object.entries(moodPosts)
+  const sortedMoodsWithPosts = Object.entries(topMoodPosts)
     .filter(([_, journals]) => journals.length > 0)
     .sort(([, a], [, b]) => b.length - a.length);
 

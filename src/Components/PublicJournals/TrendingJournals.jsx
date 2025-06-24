@@ -1,9 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { TrendingUp, Clock, Heart, Tag, BookOpen, Smile, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+import { useSidebar } from "../../context/SidebarContext";
 
 // Helper to extract first image src from HTML content
 function getFirstImage(html) {
@@ -19,26 +17,7 @@ function getFirstImage(html) {
 }
 
 const TrendingJournals = () => {
-  const [trendingJournals, setTrendingJournals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchTrendingJournals = async () => {
-      try {
-        setLoading(true);
-        const response = await API.get("/trending-journals?limit=8");
-        setTrendingJournals(response.data.trendingJournals || []);
-      } catch (err) {
-        console.error("Error fetching trending journals:", err);
-        setError("Failed to load trending journals");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTrendingJournals();
-  }, []);
+  const { trendingJournals, loading, error } = useSidebar();
 
   const formatTimeAgo = (dateString) => {
     const now = new Date();

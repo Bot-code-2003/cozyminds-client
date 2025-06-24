@@ -206,19 +206,9 @@ const PublicJournalEntry = () => {
     }
     if (!journal) return;
     try {
-      await contextHandleLike(journal._id);
-      setIsLiked((prev) => !prev);
-      setJournal((prev) => {
-        if (!prev) return prev;
-        const alreadyLiked = prev.likes?.includes(currentUser._id);
-        return {
-          ...prev,
-          likes: alreadyLiked
-            ? prev.likes.filter((id) => id !== currentUser._id)
-            : [...prev.likes, currentUser._id],
-          likeCount: alreadyLiked ? prev.likeCount - 1 : prev.likeCount + 1,
-        };
-      });
+      const updatedJournal = await contextHandleLike(journal);
+      setJournal(updatedJournal);
+      setIsLiked(updatedJournal.likes?.includes(currentUser._id) || false);
     } catch (error) {
       console.error("Error liking journal:", error);
     }
@@ -536,11 +526,11 @@ const PublicJournalEntry = () => {
         style={{ backgroundAttachment: "fixed" }}
         className={`min-h-screen ${journal.theme === 'theme_default' ? 'bg-white dark:bg-black' : getCardClass(journal.theme)} ${!isLoggedIn ? 'pt-16' : ''}`}
       >
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="w-full sm:max-w-7xl mx-auto sm:px-4 sm:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <article className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <article className="bg-white/80 dark:bg-black/80 backdrop-blur-sm sm:rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                 {/* Header Section */}
                 <div className="p-4 sm:p-8 border-b border-black/5 dark:border-white/10">
                   {/* Image */}
@@ -702,7 +692,7 @@ const PublicJournalEntry = () => {
                       title={isLiked ? "Unlike journal" : "Like journal"}
                       aria-label={isLiked ? "Unlike journal" : "Like journal"}
                     >
-                      <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
+                      <Heart className="w-5 h-5" fill={isLiked ? 'currentColor' : 'none'} />
                     </motion.button>
                     <motion.button
                       onClick={handleShare}

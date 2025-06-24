@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, Bookmark, Clock, Edit3, X } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
@@ -10,13 +10,7 @@ import { useDarkMode } from "../../context/ThemeContext";
 const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onSave }) => {
   const [imageError, setImageError] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
-  const [localIsLiked, setLocalIsLiked] = useState(isLiked);
-  const [localLikesCount, setLocalLikesCount] = useState(journal.likeCount || 0);
   const [isSaving, setIsSaving] = useState(false);
-  const [localIsSaved, setLocalIsSaved] = useState(isSavedProp);
-  const [editingLikes, setEditingLikes] = useState(false);
-  const [editLikesValue, setEditLikesValue] = useState(localLikesCount);
-  const [showLikesPopover, setShowLikesPopover] = useState(false);
 
   const { darkMode } = useDarkMode();
   const { modals, openLoginModal } = AuthModals({ darkMode });
@@ -28,12 +22,6 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
       return null;
     }
   }, []);
-  
-  const isDevGod = user && (user.anonymousName === "ComfyNoodleUwU" || user.username === "ComfyNoodleUwU" || user.nickname === "ComfyNoodleUwU");
-
-  useEffect(() => { setLocalIsLiked(isLiked); }, [isLiked]);
-  useEffect(() => { setLocalIsSaved(isSavedProp); }, [isSavedProp]);
-  useEffect(() => { setLocalLikesCount(journal.likeCount || 0); }, [journal.likeCount]);
 
   const firstImage = useMemo(() => {
     if (!journal.content || imageError) return null;
@@ -65,69 +53,41 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
     if (!user) return openLoginModal();
     
     setIsLiking(true);
-    const newLikedState = !localIsLiked;
-    setLocalIsLiked(newLikedState);
-    setLocalLikesCount(prev => newLikedState ? prev + 1 : prev - 1);
     
     try {
-      await onLike(journal._id);
+      await onLike(journal);
     } catch (error) {
-      setLocalIsLiked(!newLikedState);
-      setLocalLikesCount(prev => !newLikedState ? prev + 1 : prev - 1);
+      // No need to revert here, context will handle it.
+      // The parent component should re-render with the correct state from context.
     } finally {
       setIsLiking(false);
     }
-  }, [onLike, journal._id, user, openLoginModal, localIsLiked]);
+  }, [onLike, journal, user, openLoginModal]);
 
   const handleSave = useCallback(async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (!user) return openLoginModal();
     setIsSaving(true);
-    const newSavedState = !localIsSaved;
-    setLocalIsSaved(newSavedState);
     try {
-      await onSave(journal._id, newSavedState);
+      await onSave(journal._id, !isSavedProp);
     } catch (error) {
-      setLocalIsSaved(!newSavedState);
+       // The parent component should re-render with the correct state from context.
     } finally {
       setIsSaving(false);
     }
-  }, [user, onSave, journal._id, localIsSaved, openLoginModal]);
+  }, [user, onSave, journal._id, isSavedProp, openLoginModal]);
 
-  const handleSetLikes = async () => {
-    if (!isDevGod) return;
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/journals/${journal._id}/set-likes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          likeCount: Number(editLikesValue),
-          userId: user._id,
-          anonymousName: user.anonymousName,
-          username: user.username,
-        }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setLocalLikesCount(data.likeCount);
-        setEditingLikes(false);
-      }
-    } catch (e) {
-      // Optionally show error
-    }
-  };
-
-  const StatIcon = ({ icon: Icon, value, active, onClick, disabled, 'aria-label': ariaLabel }) => (
+  const StatIcon = ({ icon: Icon, value, active, onClick, disabled, 'aria-label': ariaLabel, activeColor, fillOnActive = false }) => (
     <button
       onClick={onClick}
       disabled={disabled}
       className={`flex items-center gap-1.5 text-sm transition-colors duration-200 disabled:opacity-50 ${
-        active ? 'text-[var(--accent)]' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+        active ? (activeColor || 'text-[var(--accent)]') : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
       }`}
       aria-label={ariaLabel}
     >
-      <Icon className="w-4 h-4" />
+      <Icon className="w-4 h-4" fill={active && fillOnActive ? 'currentColor' : 'none'} />
       {value !== null && <span className="font-medium">{value}</span>}
     </button>
   );
@@ -157,11 +117,13 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
               <div className="flex items-center gap-4">
                 <StatIcon 
                   icon={Heart} 
-                  value={localLikesCount} 
-                  active={localIsLiked}
+                  value={journal.likeCount || 0} 
+                  active={isLiked}
                   onClick={handleLike}
                   disabled={isLiking}
-                  aria-label={`Like journal, currently ${localLikesCount} likes`}
+                  aria-label={`Like journal, currently ${journal.likeCount || 0} likes`}
+                  activeColor="text-red-500"
+                  fillOnActive={true}
                 />
                 <StatIcon 
                   icon={MessageCircle} 
@@ -171,10 +133,11 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
                 <StatIcon
                   icon={Bookmark}
                   value={null}
-                  active={localIsSaved}
+                  active={isSavedProp}
                   onClick={handleSave}
                   disabled={isSaving}
-                  aria-label={localIsSaved ? "Unsave journal" : "Save journal"}
+                  aria-label={isSavedProp ? "Unsave journal" : "Save journal"}
+                  fillOnActive={true}
                 />
               </div>
               <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
@@ -198,47 +161,6 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
         </div>
         <hr className="mt-8 border-1 border-[var(--border)]" />
       </Link>
-      {isDevGod && (
-        <div className="flex justify-end mt-2">
-          <button
-            onClick={e => { e.preventDefault(); e.stopPropagation(); setEditLikesValue(localLikesCount); setShowLikesPopover(true); }}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 shadow-lg flex items-center gap-2"
-            title="Edit like count"
-          >
-            <Edit3 className="w-5 h-5" />
-            <span className="text-xs font-semibold">Edit Likes</span>
-          </button>
-          {showLikesPopover && (
-            <div className="absolute bottom-12 right-4 w-48 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-xl p-4 z-50 flex flex-col items-stretch">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm">Set Like Count</span>
-                <button onClick={() => setShowLikesPopover(false)} className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><X className="w-4 h-4" /></button>
-              </div>
-              <input
-                type="number"
-                className="w-full p-2 border rounded mb-2 text-sm"
-                value={editLikesValue}
-                min={0}
-                onChange={e => setEditLikesValue(e.target.value)}
-              />
-              <div className="flex gap-2 justify-end">
-                <button
-                  onClick={async e => { e.preventDefault(); e.stopPropagation(); await handleSetLikes(); setShowLikesPopover(false); }}
-                  className="px-3 py-1 bg-yellow-600 text-white rounded text-xs"
-                >
-                  Set
-                </button>
-                <button
-                  onClick={e => { e.preventDefault(); e.stopPropagation(); setShowLikesPopover(false); }}
-                  className="px-3 py-1 text-xs"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
       {modals}
     </>
   );

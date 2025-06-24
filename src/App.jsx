@@ -8,6 +8,7 @@ import { CoinProvider } from "./context/CoinContext"
 import { JournalProvider } from "./context/JournalContext"
 import { MailProvider } from "./context/MailContext"
 import { PublicJournalsProvider } from './context/PublicJournalsContext'
+import { SidebarProvider } from './context/SidebarContext'
 
 // Components
 import LandingPage from "./Components/Landing/LandingPage"
@@ -68,36 +69,38 @@ const App = () => {
   return (
     <ThemeProvider>
       <PublicJournalsProvider>
-        <JournalProvider>
-          <MailProvider>
-            <CoinProvider>
-              <div>
-                <Routes>
-                  <Route path="/" element={user ? <Dashboard /> : <LandingPage />} />
-                  <Route path="/aboutus" element={<AboutUs />} />
-                  <Route path="/journaling-alt" element={<JournalingAlt />} />
-                  <Route path="/journal/:id" element={<JournalEntry />} />
-                  <Route path="/cozyshop" element={<CozyShop />} />
-                  <Route path="/journal-entries/:collection" element={<JournalEntries />} />
-                  <Route path="/privacy-policy" element={<Privacy />} />
-                  <Route path="/terms-of-service" element={<Terms />} />
-                  <Route path="/starlitblogs" element={<CozyMindsBlog />} />
-                  <Route path="/blog/:slug" element={<BlogPage />} />
-                  <Route path="/collections" element={<Collections />} />
-                  <Route path="/profile-settings" element={<ProfileSettings />} />
-                  <Route path="/features" element={<Features />} />
-                  <Route path="/mood-distributions" element={<DetailedMoodDistributions />} />
-                  <Route path="/sitemaster" element={<SiteMaster />} />
-                  <Route path="/public-journals" element={<PublicJournals />} />
-                  <Route path="/public-journal/:slug" element={<PublicJournalEntry />} />
-                  <Route path="/profile/:anonymousName" element={<PublicProfile />} />
-                  <Route path="/subscriptions" element={<SubscriptionsView />} />
-                  <Route path="/saved-entries" element={<SavedEntries />} />
-                </Routes>
-              </div>
-            </CoinProvider>
-          </MailProvider>
-        </JournalProvider>
+        <SidebarProvider>
+          <JournalProvider>
+            <MailProvider>
+              <CoinProvider>
+                <div>
+                  <Routes>
+                    <Route path="/" element={user ? <Dashboard /> : <LandingPage />} />
+                    <Route path="/aboutus" element={<AboutUs />} />
+                    <Route path="/journaling-alt" element={<JournalingAlt />} />
+                    <Route path="/journal/:id" element={<JournalEntry />} />
+                    <Route path="/cozyshop" element={<CozyShop />} />
+                    <Route path="/journal-entries/:collection" element={<JournalEntries />} />
+                    <Route path="/privacy-policy" element={<Privacy />} />
+                    <Route path="/terms-of-service" element={<Terms />} />
+                    <Route path="/starlitblogs" element={<CozyMindsBlog />} />
+                    <Route path="/blog/:slug" element={<BlogPage />} />
+                    <Route path="/collections" element={<Collections />} />
+                    <Route path="/profile-settings" element={<ProfileSettings />} />
+                    <Route path="/features" element={<Features />} />
+                    <Route path="/mood-distributions" element={<DetailedMoodDistributions />} />
+                    <Route path="/sitemaster" element={<SiteMaster />} />
+                    <Route path="/public-journals" element={<PublicJournals />} />
+                    <Route path="/public-journal/:slug" element={<PublicJournalEntry />} />
+                    <Route path="/profile/:anonymousName" element={<PublicProfile />} />
+                    <Route path="/subscriptions" element={<SubscriptionsView />} />
+                    <Route path="/saved-entries" element={<SavedEntries />} />
+                  </Routes>
+                </div>
+              </CoinProvider>
+            </MailProvider>
+          </JournalProvider>
+        </SidebarProvider>
       </PublicJournalsProvider>
     </ThemeProvider>
   )

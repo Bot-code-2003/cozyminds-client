@@ -25,6 +25,7 @@
     "@tiptap/starter-kit": "^2.12.0",
     "axios": "^1.6.7",
     "date-fns": "^3.3.1",
+    "express": "^5.1.0",
     "framer-motion": "^11.0.5",
     "lucide-react": "^0.515.0",
     "marked": "^15.0.12",
@@ -32,11 +33,11 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
-    "react-helmet-async": "^2.0.5",
     "react-router-dom": "^6.22.1",
     "recharts": "^2.12.0",
     "tailwindcss": "^3.4.1",
-    "vite-plugin-prerender": "^1.0.8"
+    "vite-plugin-prerender": "^1.0.8",
+    "vite-plugin-ssr": "^0.4.142"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
@@ -49,7 +50,11 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.35",
+    "react-helmet-async": "^2.0.5",
     "tailwindcss": "^3.4.1",
-    "vite": "^5.4.19"
+    "vite": "^5.4.19",
+    "vite-bundle-visualizer": "^1.2.1",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-sitemap": "^0.8.2"
   }
 }

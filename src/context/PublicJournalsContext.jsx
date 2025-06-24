@@ -152,6 +152,7 @@ export function PublicJournalsProvider({ children }) {
     const user = JSON.parse(userData);
     const journalId = journal._id;
     const currentIsLiked = likedJournals.has(journalId);
+    let updatedJournal = null;
 
     // Optimistic update
     setLikedJournals(prev => {
@@ -163,16 +164,20 @@ export function PublicJournalsProvider({ children }) {
       }
       return newSet;
     });
-    setJournals(prevJournals => 
-      prevJournals.map(j => 
-        j._id === journalId 
-          ? { ...j, likeCount: j.likeCount + (currentIsLiked ? -1 : 1) }
-          : j
-      )
-    );
+    setJournals(prevJournals => {
+      const newJournals = prevJournals.map(j => {
+        if (j._id === journalId) {
+          updatedJournal = { ...j, likeCount: j.likeCount + (currentIsLiked ? -1 : 1), likes: currentIsLiked ? (j.likes || []).filter(id => id !== user._id) : [...(j.likes || []), user._id] };
+          return updatedJournal;
+        }
+        return j;
+      });
+      return newJournals;
+    });
 
     try {
       await API.post(`/journals/${journalId}/like`, { userId: user._id });
+      return updatedJournal;
     } catch (error) {
       // Revert optimistic update on error
       setLikedJournals(prev => {
@@ -187,11 +192,12 @@ export function PublicJournalsProvider({ children }) {
       setJournals(prevJournals => 
         prevJournals.map(j => 
           j._id === journalId 
-            ? { ...j, likeCount: j.likeCount + (currentIsLiked ? 1 : -1) }
+            ? { ...j, likeCount: journal.likeCount, likes: journal.likes }
             : j
         )
       );
       console.error("Error liking journal:", error);
+      throw error; // Re-throw the error so the calling component knows it failed
     }
   }, [likedJournals]);
 
