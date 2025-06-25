@@ -54,7 +54,7 @@ const TopMoodPosts = () => {
 
   // Filter out moods with no posts and sort the rest
   const sortedMoodsWithPosts = Object.entries(topMoodPosts)
-    .filter(([_, journals]) => journals.length > 0)
+    .filter(([_, journals]) => Array.isArray(journals) && journals.length > 0)
     .sort(([, a], [, b]) => b.length - a.length);
 
   if (sortedMoodsWithPosts.length === 0) {

@@ -248,10 +248,10 @@ const JournalCard = ({
             disabled={isUpdatingPublic}
             className={`px-3 py-1 rounded-md text-xs font-medium border transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent)]
               ${isPublic ? 'bg-green-100 text-green-700 border-green-300' : 'bg-gray-100 text-gray-500 border-gray-300'}
-              ${isUpdatingPublic ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-200 hover:text-green-800'}
+              ${isUpdatingPublic ? 'cursor-not-allowed' : ''}
             `}
           >
-            {isPublic ? 'Public' : 'Private'}
+            {isUpdatingPublic ? '...' : (isPublic ? 'Public' : 'Private')}
           </button>
         </div>
       </Link>
