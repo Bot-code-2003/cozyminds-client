@@ -8,6 +8,7 @@ import { useDarkMode } from "../../context/ThemeContext";
 import { useJournals } from "../../context/JournalContext";
 import Navbar from "./Navbar";
 import { getCardClass } from "./ThemeDetails";
+import { logout } from "../../utils/anonymousName";
 
 const Collections = () => {
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -44,7 +45,7 @@ const Collections = () => {
   }, [user, journalEntries, navigate]);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
+    logout();
     navigate("/");
   };
 

@@ -61,15 +61,27 @@ const JournalingAlt = () => {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
+    localStorage.removeItem("user");
     window.location.href = "/";
+  };
+
+  const getCurrentUser = () => {
+    try {
+      const itemStr = localStorage.getItem('user');
+      if (!itemStr) return null;
+      const item = JSON.parse(itemStr);
+      if (item && item.value) return item.value;
+      return item;
+    } catch {
+      return null;
+    }
   };
 
   // Fetch existing tags, collections, and set available themes from inventory
   useEffect(() => {
     const fetchExistingData = async () => {
       try {
-        const userData = JSON.parse(sessionStorage.getItem("user"));
+        const userData = getCurrentUser();
         if (!userData || !userData._id) return;
 
         // Get available themes from user inventory
@@ -192,7 +204,7 @@ const JournalingAlt = () => {
     setIsSaving(true);
     setSaveError(null);
     try {
-      const userData = JSON.parse(sessionStorage.getItem("user"));
+      const userData = getCurrentUser();
       if (!userData || !userData._id) {
         setSaveError("User not found. Please log in.");
         setIsSaving(false);

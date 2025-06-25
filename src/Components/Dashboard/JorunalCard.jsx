@@ -16,6 +16,8 @@ const JournalCard = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPublic, setIsPublic] = useState(entry.isPublic);
+  const [isUpdatingPublic, setIsUpdatingPublic] = useState(false);
   const moodData = moods.find((m) => m.name === entry.mood);
   const currentTheme = getThemeDetails(entry.theme);
   const cardClass = getCardClass(entry.theme);
@@ -50,6 +52,19 @@ const JournalCard = ({
       alert("Failed to delete journal entry. Please try again.");
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleTogglePublic = async (e) => {
+    e.preventDefault();
+    setIsUpdatingPublic(true);
+    try {
+      await API.patch(`/journal/${entry._id}`, { isPublic: !isPublic });
+      setIsPublic((prev) => !prev);
+    } catch (err) {
+      alert('Failed to update visibility.');
+    } finally {
+      setIsUpdatingPublic(false);
     }
   };
 
@@ -225,6 +240,19 @@ const JournalCard = ({
             className="w-full h-full rounded-full"
             style={{ backgroundColor: moodData?.color || "var(--accent)" }}
           />
+        </div>
+
+        <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+          <button
+            onClick={handleTogglePublic}
+            disabled={isUpdatingPublic}
+            className={`px-3 py-1 rounded-md text-xs font-medium border transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent)]
+              ${isPublic ? 'bg-green-100 text-green-700 border-green-300' : 'bg-gray-100 text-gray-500 border-gray-300'}
+              ${isUpdatingPublic ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-200 hover:text-green-800'}
+            `}
+          >
+            {isPublic ? 'Public' : 'Private'}
+          </button>
         </div>
       </Link>
 

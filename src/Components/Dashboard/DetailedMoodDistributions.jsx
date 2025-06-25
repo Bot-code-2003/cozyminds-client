@@ -20,6 +20,7 @@ import {
   Pie,
   Legend,
 } from "recharts";
+import { logout } from "../../utils/anonymousName";
 
 const DetailedMoodDistributions = () => {
   const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -90,7 +91,7 @@ const DetailedMoodDistributions = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const user = JSON.parse(sessionStorage.getItem("user") || "null");
+        const user = getCurrentUser();
         setUserData(user);
         if (!user) {
           navigate("/login");
@@ -194,7 +195,7 @@ const DetailedMoodDistributions = () => {
 
   // Logout
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
+    logout();
     navigate("/");
   };
 
@@ -294,6 +295,18 @@ const DetailedMoodDistributions = () => {
     return new Date(2000, monthIndex, 1).toLocaleString("default", {
       month: "long",
     });
+  };
+
+  const getCurrentUser = () => {
+    try {
+      const itemStr = localStorage.getItem('user');
+      if (!itemStr) return null;
+      const item = JSON.parse(itemStr);
+      if (item && item.value) return item.value;
+      return item;
+    } catch {
+      return null;
+    }
   };
 
   return (

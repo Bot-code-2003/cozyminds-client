@@ -17,7 +17,7 @@ export const MailProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       try {
-        const storedUser = loginUser || JSON.parse(sessionStorage.getItem("user") || "null");
+        const storedUser = loginUser || getCurrentUser();
         if (!storedUser) return;
         setUser(storedUser);
         const response = await API.get(`/mails/${storedUser._id}`);
@@ -90,7 +90,7 @@ export const MailProvider = ({ children }) => {
       // Update user coins in sessionStorage
       if (response.data.newCoinsBalance) {
         const updatedUser = { ...user, coins: response.data.newCoinsBalance };
-        sessionStorage.setItem("user", JSON.stringify(updatedUser));
+        localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
 
         // Trigger a storage event to update other components
@@ -141,3 +141,15 @@ export const MailProvider = ({ children }) => {
 };
 
 export const useMails = () => useContext(MailContext);
+
+const getCurrentUser = () => {
+  try {
+    const itemStr = localStorage.getItem('user');
+    if (!itemStr) return null;
+    const item = JSON.parse(itemStr);
+    if (item && item.value) return item.value;
+    return item;
+  } catch {
+    return null;
+  }
+};

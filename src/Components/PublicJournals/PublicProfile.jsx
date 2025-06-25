@@ -22,6 +22,8 @@ import LandingNavbar from "../Landing/Navbar";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
 import { motion } from "framer-motion";
+import { createAvatar } from '@dicebear/core';
+import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -76,12 +78,39 @@ const ErrorState = ({ error, onRetry }) => (
   </div>
 );
 
+// Map of avatar styles
+const avatarStyles = {
+  avataaars: avataaars,
+  bottts: bottts,
+  funEmoji: funEmoji,
+  miniavs: miniavs,
+  croodles: croodles,
+  micah: micah,
+  pixelArt: pixelArt,
+  adventurer: adventurer,
+  bigEars: bigEars,
+  bigSmile: bigSmile,
+  lorelei: lorelei,
+  openPeeps: openPeeps,
+  personas: personas,
+  rings: rings,
+  shapes: shapes,
+  thumbs: thumbs,
+};
+
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avataaars;
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
 const ProfileHeader = ({
   profile,
   isSubscribed,
   subscribing,
   canSubscribe,
   onSubscribe,
+  currentUser,
 }) => {
   const joinDate = useMemo(() => {
     if (!profile?.createdAt) return "";
@@ -96,6 +125,20 @@ const ProfileHeader = ({
     // Could add toast notification here
   }, []);
 
+  // Banner style logic (use profileTheme)
+  const getBannerStyle = () => {
+    if (profile.profileTheme?.type === 'color') return { background: profile.profileTheme.value };
+    if (profile.profileTheme?.type === 'gradient') return { background: profile.profileTheme.value };
+    if (profile.profileTheme?.type === 'texture') return { background: `url(${profile.profileTheme.value})`, backgroundSize: 'cover' };
+    // fallback
+    return { background: 'linear-gradient(to right, #a18cd1 0%, #fbc2eb 100%)' };
+  };
+
+  // Avatar logic (use profileTheme.avatarStyle)
+  const avatarUrl = (profile.profileTheme?.avatarStyle && profile.anonymousName)
+    ? getAvatarSvg(profile.profileTheme.avatarStyle, profile.anonymousName)
+    : getAvatarSvg('avataaars', profile.anonymousName);
+
   return (
     <motion.div
       className="bg-white dark:bg-slate-800 rounded-apple shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden mb-8"
@@ -104,7 +147,7 @@ const ProfileHeader = ({
       transition={{ duration: 0.5 }}
     >
       {/* Cover/Header Background */}
-      <div className="h-32 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 relative">
+      <div className="h-32 relative" style={getBannerStyle()}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute top-4 right-4 flex gap-2">
           <button
@@ -122,12 +165,13 @@ const ProfileHeader = ({
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 -mt-16 relative z-10">
           {/* Avatar */}
           <motion.div
-            className="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-apple flex items-center justify-center text-white text-4xl font-bold shadow-xl border-4 border-white dark:border-slate-800 flex-shrink-0"
+            className="w-32 h-32 rounded-apple flex items-center justify-center text-white text-4xl font-bold shadow-xl border-4 border-white dark:border-slate-800 flex-shrink-0 bg-white"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
+            style={{ overflow: 'hidden' }}
           >
-            {profile.anonymousName?.charAt(0).toUpperCase() || "A"}
+            <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
           </motion.div>
 
           {/* Name and Actions */}
@@ -150,7 +194,7 @@ const ProfileHeader = ({
               </div>
 
               {/* Subscribe Button */}
-              {canSubscribe && (
+              {currentUser && profile && currentUser._id !== profile._id && canSubscribe && (
                 <motion.button
                   onClick={onSubscribe}
                   disabled={subscribing}
@@ -307,16 +351,19 @@ const PublicProfile = () => {
   const { darkMode, setDarkMode } = useDarkMode();
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
-  // Memoize current user to prevent unnecessary re-renders
-  const currentUser = useMemo(() => {
+  const getCurrentUser = () => {
     try {
-      const userData = sessionStorage.getItem("user");
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error("Error parsing user data:", error);
+      const itemStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+      if (!itemStr) return null;
+      const item = JSON.parse(itemStr);
+      if (item && item.value) return item.value;
+      return item;
+    } catch {
       return null;
     }
-  }, []);
+  };
+
+  const currentUser = useMemo(() => getCurrentUser(), []);
 
   // Determine if user is logged in
   const isLoggedIn = useMemo(() => !!currentUser, [currentUser]);
@@ -526,8 +573,9 @@ const PublicProfile = () => {
             profile={profile}
             isSubscribed={isSubscribed}
             subscribing={subscribing}
-            canSubscribe={canSubscribe}
+            canSubscribe={isLoggedIn}
             onSubscribe={handleSubscribe}
+            currentUser={currentUser}
           />
 
           {/* Journals Section */}

@@ -18,14 +18,19 @@ const SavedEntries = () => {
   const navigate = useNavigate();
   const { darkMode, setDarkMode } = useDarkMode();
 
-  const user = useMemo(() => {
+  const getCurrentUser = () => {
     try {
-      return JSON.parse(sessionStorage.getItem("user") || "null");
-    } catch (err) {
-      console.error("Error parsing user data:", err);
+      const itemStr = localStorage.getItem('user');
+      if (!itemStr) return null;
+      const item = JSON.parse(itemStr);
+      if (item && item.value) return item.value;
+      return item;
+    } catch {
       return null;
     }
-  }, []);
+  };
+
+  const user = useMemo(() => getCurrentUser(), []);
 
   const isLoggedIn = !!user;
 

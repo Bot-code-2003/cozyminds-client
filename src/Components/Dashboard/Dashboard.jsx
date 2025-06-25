@@ -5,6 +5,7 @@ import { useDarkMode } from "../../context/ThemeContext";
 import { useCoins } from "../../context/CoinContext";
 import { useJournals } from "../../context/JournalContext"; // Import the JournalContext
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../utils/anonymousName";
 import Navbar from "./Navbar";
 import MainSection from "./MainSection";
 import MoodDistribution from "./MoodDistribution";
@@ -81,8 +82,8 @@ const Dashboard = () => {
   }, [journalEntries, searchQuery, selectedTag, selectedPeriod]);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
-    window.location.href = "/";
+    logout();
+    navigate("/");
   };
 
   const getWordCountStats = () => {

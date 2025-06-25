@@ -19,6 +19,7 @@ import AuthModals from "./AuthModals";
 import axios from "axios";
 import Home from "../../assets/home3.png";
 import PublicJournalsShowcase from "./PublicJournalsShowcase";
+import { getWithExpiry } from "../../utils/anonymousName";
 
 const LandingPage = () => {
   const API = axios.create({
@@ -145,7 +146,7 @@ const LandingPage = () => {
     fetchCounts();
 
     // Scroll and login event listeners
-    const storedUser = JSON.parse(sessionStorage.getItem("user"));
+    const storedUser = getWithExpiry("user");
     if (storedUser) setUser(storedUser);
 
     const handleUserLogin = (event) => setUser(event.detail.user);

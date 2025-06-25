@@ -1,26 +1,49 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Bookmark, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
+import { createAvatar } from '@dicebear/core';
+import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
+import axios from 'axios';
+
+const avatarStyles = {
+  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+};
+
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avataaars;
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
+const getCurrentUser = () => {
+  try {
+    const itemStr = localStorage.getItem('user');
+    if (!itemStr) return null;
+    const item = JSON.parse(itemStr);
+    if (item && item.value) return item.value;
+    return item;
+  } catch {
+    return null;
+  }
+};
 
 const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onSave }) => {
   const [imageError, setImageError] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [authorProfileTheme, setAuthorProfileTheme] = useState(journal.profileTheme);
 
+  const navigate = useNavigate();
   const { darkMode } = useDarkMode();
   const { modals, openLoginModal } = AuthModals({ darkMode });
 
   const user = useMemo(() => {
-    try {
-      return JSON.parse(sessionStorage.getItem("user") || "null");
-    } catch {
-      return null;
-    }
+    return getCurrentUser();
   }, []);
 
   const firstImage = useMemo(() => {
@@ -46,6 +69,16 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
       return "some time ago";
     }
   }, [journal.createdAt]);
+
+  useEffect(() => {
+    if (!journal.profileTheme && journal.authorName) {
+      axios.get(`${import.meta.env.VITE_API_URL}/profile/${journal.authorName}`)
+        .then(res => setAuthorProfileTheme(res.data.profile.profileTheme))
+        .catch(() => setAuthorProfileTheme(null));
+    } else {
+      setAuthorProfileTheme(journal.profileTheme);
+    }
+  }, [journal.profileTheme, journal.authorName]);
 
   const handleLike = useCallback(async (e) => {
     e.preventDefault();
@@ -78,6 +111,12 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
     }
   }, [user, onSave, journal._id, isSavedProp, openLoginModal]);
 
+  const handleCommentClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/public-journal/${journal.slug}#comments`);
+  };
+
   const StatIcon = ({ icon: Icon, value, active, onClick, disabled, 'aria-label': ariaLabel, activeColor, fillOnActive = false }) => (
     <button
       onClick={onClick}
@@ -99,9 +138,7 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
           {/* Text Content */}
           <div className={`${firstImage ? 'md:col-span-2' : 'col-span-1'}`}>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-bold text-gray-600 dark:text-gray-300">
-                {journal.authorName?.[0]?.toUpperCase() || 'A'}
-              </div>
+              <img src={getAvatarSvg(authorProfileTheme?.avatarStyle || 'avataaars', journal.authorName)} alt="" className="w-8 h-8 rounded-full" />
               <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{journal.authorName || 'Anonymous'}</span>
             </div>
             
@@ -128,6 +165,7 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
                 <StatIcon 
                   icon={MessageCircle} 
                   value={journal.commentCount || 0}
+                  onClick={handleCommentClick}
                   aria-label={`View comments, currently ${journal.commentCount || 0} comments`}
                 />
                 <StatIcon

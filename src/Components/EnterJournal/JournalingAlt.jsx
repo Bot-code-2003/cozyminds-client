@@ -11,7 +11,7 @@ import ThemeSelector from "./ThemeSelector";
 import { getThemeDetails } from "../Dashboard/ThemeDetails";
 import SecondStep from "./SecondStep";
 import PrivacySelection from "./PrivacySelection";
-import { generateAnonymousName } from "../../utils/anonymousName";
+import { generateAnonymousName, getWithExpiry, setWithExpiry, logout } from "../../utils/anonymousName";
 
 import { ArrowLeft, ArrowRight, Save } from "lucide-react";
 
@@ -50,7 +50,7 @@ const JournalingAlt = () => {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
+    logout();
     window.location.href = "/";
   };
 
@@ -58,7 +58,7 @@ const JournalingAlt = () => {
   useEffect(() => {
     const fetchExistingData = async () => {
       try {
-        const userData = JSON.parse(sessionStorage.getItem("user"));
+        const userData = getWithExpiry("user");
 
         // console.log("User data:", userData.inventory);
 
@@ -135,7 +135,7 @@ const JournalingAlt = () => {
   const handlePrivacySelect = (privacy) => {
     setIsPublic(privacy === "public");
     if (privacy === "public") {
-      const userData = JSON.parse(sessionStorage.getItem("user"));
+      const userData = getWithExpiry("user");
       if (userData && userData.nickname) {
         setAuthorName(userData.anonymousName);
       }
@@ -159,7 +159,7 @@ const JournalingAlt = () => {
     setIsSaving(true);
     setSaveError(null);
     try {
-      const userData = JSON.parse(sessionStorage.getItem("user"));
+      const userData = getWithExpiry("user");
       // console.log(userData._id);
       
       if (!userData || !userData._id) {

@@ -217,30 +217,15 @@ const ErrorState = ({ error, onRetry }) => (
 const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
   if (!hasMore) {
     return (
-      <div className="text-center py-8">
-        <div className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl border border-green-200 dark:border-green-800">
-          <span className="text-2xl">🎉</span>
-          <div className="text-left">
-            <p className="font-semibold text-gray-900 dark:text-gray-100">
-              You've reached the end!
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Thanks for exploring our community
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (loadingMore) {
-    return (
-      <div className="text-center mt-12 lg:mt-16">
-        <div className="inline-flex items-center gap-3 px-6 py-4 bg-[var(--bg-primary)] rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
-          <Loader2 className="h-5 w-5 animate-spin text-[var(--accent)]" />
-          <span className="text-gray-600 dark:text-gray-400 font-medium">
-            Loading more journals...
-          </span>
+      <div className="text-center py-12">
+        <div className="inline-flex flex-col items-center gap-3 px-10 py-8 bg-gradient-to-br from-blue-50 to-green-50 dark:from-blue-900/30 dark:to-green-900/30 rounded-2xl border border-blue-200 dark:border-blue-800 shadow-xl animate-fadeIn">
+          <span className="text-4xl mb-2">🎉</span>
+          <h3 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-1 flex items-center gap-2">
+            You've reached the end!
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 text-base mb-2 max-w-xs">
+            Thanks for exploring our community. Check back soon for more inspiring journals, or <Link to="/journaling-alt" className="text-[var(--accent)] underline hover:text-blue-600">start your own journal</Link> to inspire others!
+          </p>
         </div>
       </div>
     );
@@ -250,17 +235,36 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
     <div className="text-center mt-12 lg:mt-16">
       <button
         onClick={onLoadMore}
-        className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--bg-primary)] border-2 border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 text-gray-700 dark:text-gray-300 dark:hover:text-blue-400 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-lg"
+        disabled={loadingMore}
+        className={`inline-flex items-center gap-2 px-10 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 relative ${loadingMore ? 'opacity-70 cursor-not-allowed' : ''}`}
+        style={{ minWidth: 180 }}
       >
-        <span>Load More </span>
-        <div className="flex gap-1">
-          <div className="w-1 h-1 bg-current rounded-full opacity-60" />
-          <div className="w-1 h-1 bg-current rounded-full opacity-40" />
-          <div className="w-1 h-1 bg-current rounded-full opacity-20" />
-        </div>
+        {loadingMore ? (
+          <>
+            <Loader2 className="h-5 w-5 animate-spin mr-2" />
+            <span>Loading more journals...</span>
+          </>
+        ) : (
+          <>
+            <span>Load More</span>
+            <svg className="w-5 h-5 ml-1 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </>
+        )}
       </button>
     </div>
   );
+};
+
+const getCurrentUser = () => {
+  try {
+    const itemStr = localStorage.getItem('user');
+    if (!itemStr) return null;
+    const item = JSON.parse(itemStr);
+    if (item && item.value) return item.value;
+    return item;
+  } catch {
+    return null;
+  }
 };
 
 const PublicJournals = () => {
@@ -288,16 +292,7 @@ const PublicJournals = () => {
   const { darkMode, setDarkMode } = useDarkMode();
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
-  const user = useMemo(() => {
-    try {
-      const userData = sessionStorage.getItem("user");
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error("Error parsing user data:", error);
-      return null;
-    }
-  }, []);
-
+  const user = useMemo(() => getCurrentUser(), []);
   const isLoggedIn = !!user;
 
   // Fetch subscription notifications

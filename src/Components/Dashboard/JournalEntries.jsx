@@ -20,6 +20,7 @@ import { useJournals } from "../../context/JournalContext"; // Import JournalCon
 import Navbar from "./Navbar";
 import { getThemeDetails, getCardClass } from "./ThemeDetails";
 import JournalCard from "./JorunalCard";
+import { logout } from "../../utils/anonymousName";
 
 // Mood options with emojis, descriptions and colors
 const MOODS = [
@@ -139,6 +140,7 @@ const JournalEntries = () => {
     entriesPerPage: 9,
   });
   const [userData, setUserData] = useState(null);
+  const [publicFilter, setPublicFilter] = useState('all'); // 'all', 'public', 'private'
 
   // Load user data and filter journal entries by collection
   useEffect(() => {
@@ -219,9 +221,21 @@ const JournalEntries = () => {
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
   }, [journalEntries, filters, sortOrder]);
 
+  // Update filteredEntries when publicFilter changes
+  useEffect(() => {
+    let filtered = [...journalEntries];
+    if (publicFilter === 'public') {
+      filtered = filtered.filter((entry) => entry.isPublic);
+    } else if (publicFilter === 'private') {
+      filtered = filtered.filter((entry) => !entry.isPublic);
+    }
+    setFilteredEntries(filtered);
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
+  }, [journalEntries, publicFilter]);
+
   // Helper functions
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
+    logout();
     navigate("/");
   };
 
@@ -318,6 +332,28 @@ const JournalEntries = () => {
         name="New Entry"
         link="/journaling-alt"
       />
+
+      {/* Public/Private Toggle */}
+      <div className="flex gap-2 bg-bg border border-border rounded-lg p-1 shadow-sm w-fit mx-auto mt-6 mb-4">
+        <button
+          onClick={() => setPublicFilter('all')}
+          className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${publicFilter === 'all' ? 'bg-white dark:bg-gray-700 shadow-sm text-[var(--accent)]' : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'}`}
+        >
+          All
+        </button>
+        <button
+          onClick={() => setPublicFilter('private')}
+          className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${publicFilter === 'private' ? 'bg-white dark:bg-gray-700 shadow-sm text-[var(--accent)]' : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'}`}
+        >
+          Private
+        </button>
+        <button
+          onClick={() => setPublicFilter('public')}
+          className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${publicFilter === 'public' ? 'bg-white dark:bg-gray-700 shadow-sm text-[var(--accent)]' : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'}`}
+        >
+          Public
+        </button>
+      </div>
 
       {/* Main content */}
       <main className="max-w-7xl mt-10 mb-20 mx-auto py-3 px-6 transition-colors duration-300">

@@ -20,6 +20,18 @@ export function PublicJournalsProvider({ children }) {
   const [showFollowingOnly, setShowFollowingOnly] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
 
+  const getCurrentUser = () => {
+    try {
+      const itemStr = localStorage.getItem('user');
+      if (!itemStr) return null;
+      const item = JSON.parse(itemStr);
+      if (item && item.value) return item.value;
+      return item;
+    } catch {
+      return null;
+    }
+  };
+
   const fetchJournalsByTag = useCallback(async (tag, pageNum = 1, append = false) => {
     try {
       setLoading(!append);
@@ -40,12 +52,11 @@ export function PublicJournalsProvider({ children }) {
       setHasMore(moreAvailable);
       setPage(pageNum);
       
-      const userData = sessionStorage.getItem("user");
+      const userData = getCurrentUser();
       if (userData) {
-        const user = JSON.parse(userData);
         const likedSet = new Set(
           newJournals
-            .filter((journal) => journal.likes?.includes(user._id))
+            .filter((journal) => journal.likes?.includes(userData._id))
             .map((journal) => journal._id)
         );
         setLikedJournals(prev => append ? new Set([...prev, ...likedSet]) : likedSet);
@@ -74,8 +85,8 @@ export function PublicJournalsProvider({ children }) {
       setError(null);
 
       let response;
-      const userData = sessionStorage.getItem("user");
-      const user = userData ? JSON.parse(userData) : null;
+      const userData = getCurrentUser();
+      const user = userData;
 
       const params = {
         page: pageNum,
@@ -144,12 +155,12 @@ export function PublicJournalsProvider({ children }) {
   }, [journals]);
 
   const handleLike = useCallback(async (journal) => {
-    const userData = sessionStorage.getItem("user");
+    const userData = getCurrentUser();
     if (!userData) {
       // Handle not logged in case if needed
       return;
     }
-    const user = JSON.parse(userData);
+    const user = userData;
     const journalId = journal._id;
     const currentIsLiked = likedJournals.has(journalId);
     let updatedJournal = null;

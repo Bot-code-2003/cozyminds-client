@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { getCardClass, getThemeDetails } from "./Dashboard/ThemeDetails";
 import Navbar from "./Dashboard/Navbar";
+import { logout } from "../utils/anonymousName";
 
 // Mood styling configurations
 const moodStyles = {
@@ -92,7 +93,7 @@ const moodStyles = {
 };
 
 const handleLogout = () => {
-  sessionStorage.removeItem("user");
+  logout();
   window.location.href = "/";
 };
 

@@ -2,6 +2,7 @@
 
 import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { getWithExpiry, setWithExpiry } from "../utils/anonymousName";
 
 // Configure Axios with base URL
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
@@ -19,7 +20,8 @@ export const CoinProvider = ({ children }) => {
 
   // Function to sync user data from session storage
   const syncUserData = () => {
-    const user = JSON.parse(sessionStorage.getItem("user") || "null");
+    const user = getWithExpiry("user");
+    console.log("CoinContext - syncUserData - user:", user);
     if (user) {
       setUserData(user);
       setCoins(user.coins || 0);
@@ -27,6 +29,7 @@ export const CoinProvider = ({ children }) => {
       setActiveMailTheme(user.activeMailTheme || null);
       return user;
     }
+    console.log("CoinContext - No user found in localStorage");
     return null;
   };
 
@@ -75,15 +78,25 @@ export const CoinProvider = ({ children }) => {
     // Listen for signup event as well
     window.addEventListener("user-signed-up", handleLoginEvent);
 
+    // Listen for logout event
+    const handleLogoutEvent = () => {
+      setUserData(null);
+      setCoins(0);
+      setInventory([]);
+      setActiveMailTheme(null);
+    };
+    window.addEventListener("user-logged-out", handleLogoutEvent);
+
     return () => {
       window.removeEventListener("user-logged-in", handleLoginEvent);
       window.removeEventListener("user-signed-up", handleLoginEvent);
+      window.removeEventListener("user-logged-out", handleLogoutEvent);
     };
   }, []);
 
   const updateUserCoins = async (userId, coinsToAdd) => {
     try {
-      const user = JSON.parse(sessionStorage.getItem("user") || "null");
+      const user = getWithExpiry("user");
       if (!user) return;
 
       const newCoins = (user.coins || 0) + coinsToAdd;
@@ -95,7 +108,7 @@ export const CoinProvider = ({ children }) => {
 
       setCoins(newCoins);
       const updatedUser = { ...user, coins: newCoins, lastVisited: new Date() };
-      sessionStorage.setItem("user", JSON.stringify(updatedUser));
+      setWithExpiry("user", updatedUser, 2 * 60 * 60 * 1000);
 
       // Show popup for manually awarded coins too
       if (coinsToAdd > 0) {
@@ -123,7 +136,7 @@ export const CoinProvider = ({ children }) => {
       }
 
       // Fetch user from sessionStorage
-      let user = JSON.parse(sessionStorage.getItem("user") || "null");
+      let user = getWithExpiry("user");
       if (!user) {
         return { success: false, message: "User not logged in" };
       }
@@ -219,7 +232,7 @@ export const CoinProvider = ({ children }) => {
       setCoins(newCoins);
       setInventory(newInventory);
       setUserData(updatedUser);
-      sessionStorage.setItem("user", JSON.stringify(updatedUser));
+      setWithExpiry("user", updatedUser, 2 * 60 * 60 * 1000);
 
       return { success: true, message: `Successfully purchased ${item.name}!` };
     } catch (error) {
@@ -243,8 +256,8 @@ export const CoinProvider = ({ children }) => {
       // Update in API
       await API.put(`/user/${updatedUser._id}`, updatedUser);
 
-      // Update in session storage
-      sessionStorage.setItem("user", JSON.stringify(updatedUser));
+      // Update in local storage with expiry
+      setWithExpiry("user", updatedUser, 2 * 60 * 60 * 1000);
 
       // Update state
       setUserData(updatedUser);

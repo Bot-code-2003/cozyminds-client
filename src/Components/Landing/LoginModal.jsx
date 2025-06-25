@@ -5,6 +5,7 @@ import { X, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import Signin from "../../assets/signin.png";
 import { useNavigate } from "react-router-dom";
+import { setWithExpiry } from "../../utils/anonymousName";
 
 const MIN_LOADING_DURATION = 3000; // Minimum loading screen duration in ms
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -60,7 +61,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
 
         // Securely store minimal data
         localStorage.setItem("userId", user._id);
-        sessionStorage.setItem("user", JSON.stringify(user));
+        setWithExpiry("user", user, 2 * 60 * 60 * 1000);
 
         window.dispatchEvent(
           new CustomEvent("user-logged-in", {

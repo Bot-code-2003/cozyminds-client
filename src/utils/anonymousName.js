@@ -23,15 +23,50 @@ const nouns = [
   "Princess", "Prince", "Queen", "King"
 ];
 
-// Generate anonymous name using nickname from sessionStorage
+// Utility functions for localStorage with expiry
+export function setWithExpiry(key, value, ttlMs) {
+  const now = new Date();
+  const item = {
+    value: value,
+    expiry: now.getTime() + ttlMs,
+  };
+  localStorage.setItem(key, JSON.stringify(item));
+}
+
+export function getWithExpiry(key) {
+  const itemStr = localStorage.getItem(key);
+  if (!itemStr) {
+    return null;
+  }
+  try {
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return item.value;
+  } catch (e) {
+    localStorage.removeItem(key);
+    return null;
+  }
+}
+
+// Utility function for logout
+export function logout() {
+  localStorage.removeItem("user");
+  window.dispatchEvent(new CustomEvent("user-logged-out"));
+}
+
+// Generate anonymous name using nickname from localStorage (with expiry)
 export const generateAnonymousName = () => {
   let nickname = "Guest";
 
   try {
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = getWithExpiry("user");
     nickname = user?.nickname || "Guest";
   } catch (e) {
-    console.warn("Could not parse user from sessionStorage, using default nickname.");
+    console.warn("Could not parse user from localStorage, using default nickname.");
   }
 
   const adj = adjectives[Math.floor(Math.random() * adjectives.length)];

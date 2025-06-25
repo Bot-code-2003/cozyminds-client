@@ -9,6 +9,7 @@ import { JournalProvider } from "./context/JournalContext"
 import { MailProvider } from "./context/MailContext"
 import { PublicJournalsProvider } from './context/PublicJournalsContext'
 import { SidebarProvider } from './context/SidebarContext'
+import { getWithExpiry, setWithExpiry } from "./utils/anonymousName"
 
 // Components
 import LandingPage from "./Components/Landing/LandingPage"
@@ -40,9 +41,9 @@ const App = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("user")
+    const storedUser = getWithExpiry("user")
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      setUser(storedUser)
     }
     setLoading(false)
 
@@ -58,9 +59,16 @@ const App = () => {
     }
     window.addEventListener("user-signed-up", handleUserSignedUp)
 
+    // Listen for logout event
+    const handleUserLoggedOut = () => {
+      setUser(null)
+    }
+    window.addEventListener("user-logged-out", handleUserLoggedOut)
+
     return () => {
       window.removeEventListener("user-logged-in", handleUserLoggedIn)
       window.removeEventListener("user-signed-up", handleUserSignedUp)
+      window.removeEventListener("user-logged-out", handleUserLoggedOut)
     }
   }, [])
 

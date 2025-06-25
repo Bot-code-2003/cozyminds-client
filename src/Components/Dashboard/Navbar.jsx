@@ -25,8 +25,37 @@ import InGameMail from "./Mail/InGameMail";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useCoins } from "../../context/CoinContext.jsx";
 import { useMails } from "../../context/MailContext";
+import { logout } from "../../utils/anonymousName";
+import { createAvatar } from '@dicebear/core';
+import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+
+const avatarStyles = {
+  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+};
+
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avataaars;
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
+const getCurrentUser = () => {
+  try {
+    const itemStr = localStorage.getItem('user');
+    if (!itemStr) return null;
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem('user');
+      return null;
+    }
+    return item.value;
+  } catch {
+    return null;
+  }
+};
 
 const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   const navigate = useNavigate();
@@ -99,8 +128,8 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
-    window.location.href = "/";
+    logout();
+    navigate("/");
   };
 
   const handleNavigation = (path) => {
@@ -108,6 +137,8 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
     setMobileMenuOpen(false);
     window.scrollTo(0, 0);
   };
+
+  const currentUser = getCurrentUser();
 
   return (
     <>
@@ -184,7 +215,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               {name}
             </button>
           )}
-          {userData && (
+          {currentUser && (
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -192,15 +223,13 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 aria-label="Open user menu"
                 aria-expanded={dropdownOpen}
               >
-                <User size={16} className="mr-2 text-gray-600 dark:text-gray-400" />
+                <img src={getAvatarSvg(currentUser.profileTheme?.avatarStyle || 'avataaars', currentUser.anonymousName || currentUser.nickname || currentUser.email)} alt="User Avatar" className="w-8 h-8 rounded-full mr-2" />
                 <span className="text-gray-900 dark:text-white font-medium text-sm mr-1">
-                  {userData.nickname || "User"}
+                  {currentUser.nickname || currentUser.anonymousName || currentUser.email || "User"}
                 </span>
                 <ChevronDown
                   size={16}
-                  className={`text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
-                    dropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`text-gray-600 dark:text-gray-400 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
                 />
               </button>
               {dropdownOpen && (

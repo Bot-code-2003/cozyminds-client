@@ -2,8 +2,20 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Heart, MessageCircle, MoreVertical, Edit3, Trash2, Send, Loader2, Reply } from "lucide-react"
+import { createAvatar } from '@dicebear/core';
+import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
+import { getWithExpiry } from '../../utils/anonymousName';
 
-const Comments = ({ journalId, currentUser, onLoginRequired }) => {
+const avatarStyles = {
+  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+};
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avataaars;
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
+const Comments = ({ journalId, onLoginRequired }) => {
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -19,6 +31,8 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
   const [showDropdown, setShowDropdown] = useState(null)
 
   const API_BASE = import.meta.env.VITE_API_URL
+
+  const getCurrentUser = () => getWithExpiry('user');
 
   // Fetch comments
   const fetchComments = useCallback(
@@ -56,6 +70,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
   // Submit new comment
   const handleSubmitComment = async (e) => {
     e.preventDefault()
+    const currentUser = getCurrentUser()
     if (!currentUser) {
       onLoginRequired()
       return
@@ -72,6 +87,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
           userId: currentUser._id,
           content: newComment.trim(),
           authorName: currentUser.anonymousName || currentUser.username,
+          profileTheme: currentUser.profileTheme,
         }),
       })
 
@@ -89,6 +105,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
 
   // Submit reply
   const handleSubmitReply = async (parentId, replyToName) => {
+    const currentUser = getCurrentUser()
     if (!currentUser) {
       onLoginRequired()
       return
@@ -113,6 +130,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
           content,
           authorName: currentUser.anonymousName || currentUser.username,
           parentId,
+          profileTheme: currentUser.profileTheme,
         }),
       })
 
@@ -132,6 +150,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
 
   // Like comment
   const handleLikeComment = async (commentId) => {
+    const currentUser = getCurrentUser()
     if (!currentUser) {
       onLoginRequired()
       return
@@ -169,6 +188,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
   const handleEditComment = async (commentId) => {
     if (!editText.trim()) return
 
+    const currentUser = getCurrentUser()
     try {
       const response = await fetch(`${API_BASE}/comments/${commentId}`, {
         method: "PUT",
@@ -194,6 +214,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
   const handleDeleteComment = async (commentId) => {
     if (!confirm("Are you sure you want to delete this comment?")) return
 
+    const currentUser = getCurrentUser()
     try {
       const response = await fetch(`${API_BASE}/comments/${commentId}`, {
         method: "DELETE",
@@ -292,16 +313,16 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
         <form onSubmit={handleSubmitComment} className="space-y-4">
           <div className="flex gap-3">
             <div
-              className={`w-10 h-10 bg-gradient-to-br ${getAvatarGradient(currentUser?.anonymousName || currentUser?.username)} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
+              className={`w-10 h-10 bg-gradient-to-br ${getAvatarGradient(getCurrentUser()?.anonymousName || getCurrentUser()?.username)} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
             >
-              {currentUser ? getUserAvatar(currentUser.anonymousName || currentUser.username) : "?"}
+              <img src={getAvatarSvg(getCurrentUser()?.profileTheme?.avatarStyle || 'avataaars', getCurrentUser()?.anonymousName || getCurrentUser()?.username)} alt={getCurrentUser()?.anonymousName || getCurrentUser()?.username} className="w-10 h-10 rounded-full" />
             </div>
             <div className="flex-1">
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder={currentUser ? "Add a comment..." : "Please log in to comment"}
-                disabled={!currentUser}
+                placeholder={getCurrentUser() ? "Add a comment..." : "Please log in to comment"}
+                disabled={!getCurrentUser()}
                 className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows="3"
               />
@@ -333,8 +354,8 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
       <div className="px-6 space-y-6">
         {parentComments.map((comment) => {
           const replies = getReplies(comment._id)
-          const isLiked = currentUser && comment.likes?.includes(currentUser._id)
-          const isOwner = currentUser && comment.userId === currentUser._id
+          const isLiked = getCurrentUser() && comment.likes?.includes(getCurrentUser()._id)
+          const isOwner = getCurrentUser() && comment.userId === getCurrentUser()._id
 
           return (
             <div key={comment._id} className="space-y-4">
@@ -343,7 +364,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
                 <div
                   className={`w-10 h-10 bg-gradient-to-br ${getAvatarGradient(comment.authorName)} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
                 >
-                  {getUserAvatar(comment.authorName)}
+                  <img src={getAvatarSvg(comment.profileTheme?.avatarStyle || 'avataaars', comment.authorName)} alt={comment.authorName} className="w-10 h-10 rounded-full" />
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -449,7 +470,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
 
                     <button
                       onClick={() => {
-                        if (!currentUser) {
+                        if (!getCurrentUser()) {
                           onLoginRequired()
                           return
                         }
@@ -469,9 +490,9 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
                     <div className="mt-3 ml-4">
                       <div className="flex gap-2">
                         <div
-                          className={`w-8 h-8 bg-gradient-to-br ${getAvatarGradient(currentUser?.anonymousName || currentUser?.username)} rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
+                          className={`w-8 h-8 bg-gradient-to-br ${getAvatarGradient(getCurrentUser()?.anonymousName || getCurrentUser()?.username)} rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
                         >
-                          {getUserAvatar(currentUser?.anonymousName || currentUser?.username)}
+                          <img src={getAvatarSvg(getCurrentUser()?.profileTheme?.avatarStyle || 'avataaars', getCurrentUser()?.anonymousName || getCurrentUser()?.username)} alt={getCurrentUser()?.anonymousName || getCurrentUser()?.username} className="w-8 h-8 rounded-full" />
                         </div>
                         <div className="flex-1">
                           <textarea
@@ -511,15 +532,15 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
               {replies.length > 0 && (
                 <div className="ml-12 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-3">
                   {replies.map((reply) => {
-                    const isReplyLiked = currentUser && reply.likes?.includes(currentUser._id)
-                    const isReplyOwner = currentUser && reply.userId === currentUser._id
+                    const isReplyLiked = getCurrentUser() && reply.likes?.includes(getCurrentUser()._id)
+                    const isReplyOwner = getCurrentUser() && reply.userId === getCurrentUser()._id
 
                     return (
                       <div key={reply._id} className="flex gap-3">
                         <div
                           className={`w-8 h-8 bg-gradient-to-br ${getAvatarGradient(reply.authorName)} rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
                         >
-                          {getUserAvatar(reply.authorName)}
+                          <img src={getAvatarSvg(reply.profileTheme?.avatarStyle || 'avataaars', reply.authorName)} alt={reply.authorName} className="w-8 h-8 rounded-full" />
                         </div>
 
                         <div className="flex-1 min-w-0">
@@ -584,7 +605,7 @@ const Comments = ({ journalId, currentUser, onLoginRequired }) => {
 
                             <button
                               onClick={() => {
-                                if (!currentUser) {
+                                if (!getCurrentUser()) {
                                   onLoginRequired()
                                   return
                                 }

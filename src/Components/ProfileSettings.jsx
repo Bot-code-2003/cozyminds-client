@@ -17,12 +17,71 @@ import {
   Shield,
   Settings,
   AlertTriangle,
+  Users,
+  MapPin,
+  Award,
+  BookOpen,
+  Flame,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/ThemeContext";
 import Navbar from "./Dashboard/Navbar";
+import { getWithExpiry, setWithExpiry, logout } from "../utils/anonymousName";
+import { createAvatar } from '@dicebear/core';
+import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
+import { motion } from "framer-motion";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+
+// Map of avatar styles
+const avatarStyles = {
+  avataaars: avataaars,
+  bottts: bottts,
+  funEmoji: funEmoji,
+  miniavs: miniavs,
+  croodles: croodles,
+  micah: micah,
+  pixelArt: pixelArt,
+  adventurer: adventurer,
+  bigEars: bigEars,
+  bigSmile: bigSmile,
+  lorelei: lorelei,
+  openPeeps: openPeeps,
+  personas: personas,
+  rings: rings,
+  shapes: shapes,
+  thumbs: thumbs,
+};
+
+// Helper for generating avatar SVG
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avataaars;
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
+// Helper to pick a deterministic random avatar style based on a seed (anonymousName)
+const getDeterministicAvatarStyle = (seed) => {
+  const styles = [
+    'avataaars', 'bottts', 'funEmoji', 'miniavs', 'croodles', 'micah', 'pixelArt',
+    'adventurer', 'bigEars', 'bigSmile', 'lorelei', 'openPeeps', 'personas',
+    'rings', 'shapes', 'thumbs'
+  ];
+  if (!seed) return styles[0];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  return styles[Math.abs(hash) % styles.length];
+};
+
+// When initializing DEFAULT_PROFILE_THEME, use the deterministic style if anonymousName is available
+const getDefaultProfileTheme = (anonymousName) => ({
+  type: 'color',
+  value: '#b6e3f4',
+  avatarStyle: getDeterministicAvatarStyle(anonymousName),
+});
 
 const ProfileSettings = () => {
   const { darkMode, toggleDarkMode } = useDarkMode();
@@ -52,14 +111,17 @@ const ProfileSettings = () => {
   const [changingPwd, setChangingPwd] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [activeSection, setActiveSection] = useState("profile"); // profile, security
+  const [activeSection, setActiveSection] = useState("profile"); // profile, security, publicCard
+  const [editingCard, setEditingCard] = useState(false);
+  const [profileTheme, setProfileTheme] = useState(getDefaultProfileTheme(form.anonymousName));
+  const [savedCard, setSavedCard] = useState(getDefaultProfileTheme(form.anonymousName));
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = JSON.parse(sessionStorage.getItem("user") || "null");
+        const user = getWithExpiry("user");
         if (!user) return navigate("/login");
         
         setUserData(user);
@@ -71,6 +133,13 @@ const ProfileSettings = () => {
           bio: user.bio || "",
           anonymousName: user.anonymousName || "",
         });
+        if (user.profileTheme) {
+          setProfileTheme(user.profileTheme);
+          setSavedCard(user.profileTheme);
+        } else {
+          setProfileTheme(getDefaultProfileTheme(user.anonymousName));
+          setSavedCard(getDefaultProfileTheme(user.anonymousName));
+        }
       } catch (e) {
         setError("Failed to load profile");
       } finally {
@@ -100,7 +169,7 @@ const ProfileSettings = () => {
       };
 
       await API.put(`/user/${userData._id}`, updated);
-      sessionStorage.setItem("user", JSON.stringify(updated));
+      setWithExpiry("user", updated, 2 * 60 * 60 * 1000);
       setUserData(updated);
       setSuccess("Profile updated successfully");
       setEditing(false);
@@ -143,7 +212,7 @@ const ProfileSettings = () => {
   const handleDelete = async () => {
     try {
       await API.delete(`/user/${userData._id}`);
-      sessionStorage.removeItem("user");
+      logout();
       setSuccess("Account deleted successfully");
       setTimeout(() => navigate("/"), 1500);
     } catch {
@@ -177,6 +246,240 @@ const ProfileSettings = () => {
       [field]: !prev[field],
     }));
   };
+
+  const handleSaveProfileCard = async () => {
+    const updated = {
+      ...userData,
+      profileTheme,
+    };
+    await API.put(`/user/${userData._id}`, { profileTheme });
+    setWithExpiry("user", updated, 2 * 60 * 60 * 1000);
+    setUserData(updated);
+    setSavedCard(profileTheme);
+    setSuccess("Profile card updated!");
+    setEditingCard(false);
+  };
+
+  const getBannerStyle = () => {
+    if (profileTheme.type === 'color') return { background: profileTheme.value };
+    if (profileTheme.type === 'gradient') return { background: profileTheme.value };
+    if (profileTheme.type === 'texture') return { background: `url(${profileTheme.value})` };
+    return {};
+  };
+
+  // Dummy stats for preview (replace with real stats if available)
+  const previewStats = {
+    subscriberCount: userData?.subscriberCount || 0,
+    currentStreak: userData?.currentStreak || 0,
+    journalCount: userData?.journalCount || userData?.journals?.length || 0,
+    longestStreak: userData?.longestStreak || 0,
+    bio: form.bio,
+    anonymousName: form.anonymousName || userData?.anonymousName || "Anonymous",
+    createdAt: userData?.createdAt || new Date().toISOString(),
+  };
+
+  // Public Profile Card Preview (simplified ProfileHeader)
+  const PublicProfileCardPreview = () => (
+    <motion.div
+      className="bg-white dark:bg-slate-800 rounded-apple shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden mb-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Cover/Header Background */}
+      <div
+        className="h-32 relative"
+        style={getBannerStyle()}
+      >
+        <div className="absolute inset-0 bg-black/20" />
+        {!editingCard && (
+          <button
+            className="absolute bottom-2 right-2 px-4 py-1 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)]"
+            onClick={() => {
+              setSavedCard(profileTheme);
+              setEditingCard(true);
+            }}
+          >Edit</button>
+        )}
+      </div>
+      <div className="px-6 sm:px-8 pb-8">
+        {/* Avatar and Basic Info */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 -mt-16 relative z-10">
+          {/* Avatar */}
+          <motion.div
+            className="w-32 h-32 rounded-apple flex items-center justify-center text-white text-4xl font-bold shadow-xl border-4 border-white dark:border-slate-800 flex-shrink-0 bg-white"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            style={{ overflow: 'hidden' }}
+          >
+            {/* Avatar SVG preview */}
+            <img
+              src={getAvatarSvg(profileTheme.avatarStyle || 'avataaars', form.anonymousName || userData?.anonymousName || 'Anonymous')}
+              alt="Avatar Preview"
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+          {/* Name and Info */}
+          <div className="flex-1 min-w-0 pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  {previewStats.anonymousName}
+                </h1>
+                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>Joined {new Date(previewStats.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>Community Member</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Bio */}
+        {previewStats.bio && (
+          <motion.div
+            className="mt-6 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              {previewStats.bio}
+            </p>
+          </motion.div>
+        )}
+        {/* Stats Grid */}
+        <motion.div
+          className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-2">
+              <Users className="w-5 h-5" />
+              <span className="text-sm font-medium">Followers</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {previewStats.subscriberCount}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4 rounded-xl border border-orange-200 dark:border-orange-800">
+            <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
+              <Flame className="w-5 h-5" />
+              <span className="text-sm font-medium">Streak</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {previewStats.currentStreak}
+              <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-1">days</span>
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
+              <BookOpen className="w-5 h-5" />
+              <span className="text-sm font-medium">Journals</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {previewStats.journalCount}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-2">
+              <Award className="w-5 h-5" />
+              <span className="text-sm font-medium">Best Streak</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {previewStats.longestStreak}
+              <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-1">days</span>
+            </p>
+          </div>
+        </motion.div>
+        {/* Edit controls */}
+        {editingCard && (
+          <div className="mt-8">
+            <h2 className="text-xl font-bold mb-2">Customize Your Public Profile Card</h2>
+            {/* Avatar Style Selection */}
+            <div className="mb-4 flex flex-col gap-2">
+              <label className="block font-medium mb-1">Avatar Style</label>
+              <div className="flex gap-2 flex-wrap">
+                {Object.keys(avatarStyles).map((style) => (
+                  <button
+                    key={style}
+                    className={`px-3 py-1 rounded ${profileTheme.avatarStyle === style ? 'bg-[var(--accent)] text-white' : 'bg-gray-200'}`}
+                    onClick={() => setProfileTheme({ ...profileTheme, avatarStyle: style })}
+                  >
+                    {style}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Banner Selection */}
+            <div className="mb-4 flex flex-col gap-2">
+              <label className="block font-medium mb-1">Banner Style</label>
+              <div className="flex gap-2">
+                <button
+                  className={`px-3 py-1 rounded ${profileTheme.type === 'color' ? 'bg-[var(--accent)] text-white' : 'bg-gray-200'}`}
+                  onClick={() => setProfileTheme({ ...profileTheme, type: 'color', value: profileTheme.type === 'color' ? profileTheme.value : '#b6e3f4' })}
+                >Color</button>
+                <button
+                  className={`px-3 py-1 rounded ${profileTheme.type === 'gradient' ? 'bg-[var(--accent)] text-white' : 'bg-gray-200'}`}
+                  onClick={() => setProfileTheme({ ...profileTheme, type: 'gradient', value: profileTheme.type === 'gradient' ? profileTheme.value : 'linear-gradient(90deg, #b6e3f4 0%, #fbc2eb 100%)' })}
+                >Gradient</button>
+                <button
+                  className={`px-3 py-1 rounded ${profileTheme.type === 'texture' ? 'bg-[var(--accent)] text-white' : 'bg-gray-200'}`}
+                  onClick={() => setProfileTheme({ ...profileTheme, type: 'texture', value: profileTheme.type === 'texture' ? profileTheme.value : '' })}
+                >Texture</button>
+              </div>
+              {profileTheme.type === 'color' && (
+                <input
+                  type="color"
+                  value={profileTheme.value}
+                  onChange={e => setProfileTheme({ ...profileTheme, type: 'color', value: e.target.value })}
+                  className="w-16 h-10 border rounded mt-2"
+                  style={{ cursor: 'pointer' }}
+                />
+              )}
+              {profileTheme.type === 'gradient' && (
+                <input
+                  type="text"
+                  value={profileTheme.value}
+                  onChange={e => setProfileTheme({ ...profileTheme, type: 'gradient', value: e.target.value })}
+                  className="w-full border rounded p-2 mt-2"
+                  placeholder="CSS gradient value"
+                />
+              )}
+              {profileTheme.type === 'texture' && (
+                <input
+                  type="text"
+                  value={profileTheme.value}
+                  onChange={e => setProfileTheme({ ...profileTheme, type: 'texture', value: e.target.value })}
+                  className="w-full border rounded p-2 mt-2"
+                  placeholder="Image URL for texture"
+                />
+              )}
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={handleSaveProfileCard}
+                className="px-4 py-2 bg-[var(--accent)] text-white rounded hover:bg-[var(--accent-hover)]"
+              >Save</button>
+              <button
+                onClick={() => { setProfileTheme(savedCard); setEditingCard(false); }}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              >Cancel</button>
+            </div>
+            {success && <div className="text-green-600 mt-2">{success}</div>}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
 
   const renderProfileSection = () => (
     <div className="space-y-4 sm:space-y-6">
@@ -423,6 +726,7 @@ const ProfileSettings = () => {
           {[
             { id: "profile", label: "Profile", icon: User },
             { id: "security", label: "Security", icon: Shield },
+            { id: "publicCard", label: "Public Profile Card", icon: Users },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -443,6 +747,7 @@ const ProfileSettings = () => {
         <div className="bg-[var(--bg-secondary)] rounded-apple p-4 sm:p-6 shadow-apple">
           {activeSection === "profile" && renderProfileSection()}
           {activeSection === "security" && renderSecuritySection()}
+          {activeSection === "publicCard" && <PublicProfileCardPreview />}
         </div>
 
         {/* Action Buttons */}

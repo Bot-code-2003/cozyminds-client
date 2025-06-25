@@ -5,8 +5,31 @@ import { useDarkMode } from "../../context/ThemeContext";
 import AuthModals from "../Landing/AuthModals";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { createAvatar } from '@dicebear/core';
+import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+
+const avatarStyles = {
+  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+};
+
+const getDeterministicAvatarStyle = (seed) => {
+  const styles = Object.keys(avatarStyles);
+  if (!seed) return styles[0];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  return styles[Math.abs(hash) % styles.length];
+};
+
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avatarStyles['avataaars'];
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
 
 const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
   const { popularWriters, loading, error, refreshSidebar } = useSidebar();
@@ -20,8 +43,11 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
   const user = useMemo(() => {
     if (!isLoggedIn) return null;
     try {
-      const userData = sessionStorage.getItem("user");
-      return userData ? JSON.parse(userData) : null;
+      const itemStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+      if (!itemStr) return null;
+      const item = JSON.parse(itemStr);
+      if (item && item.value) return item.value;
+      return item;
     } catch {
       return null;
     }
@@ -90,7 +116,9 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
         {popularWriters.map((writer) => {
           const isFollowed = writerFollowStatus[writer.userId] || false;
           const isUpdating = updatingFollow.has(writer.userId);
-          const isSelf = user?.anonymousName === writer.anonymousName;
+          const canSubscribe = user && writer.userId && String(user._id) !== String(writer.userId);
+
+          console.log('Logged in user._id:', user?._id, 'Writer userId:', writer.userId, 'Can subscribe:', canSubscribe);
 
           return (
             <div
@@ -102,8 +130,16 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
                 className="flex items-center gap-3 flex-1 min-w-0"
                 onClick={() => window.scrollTo(0, 0)}
               >
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] font-bold text-lg flex-shrink-0">
-                  {writer.anonymousName?.charAt(0).toUpperCase()}
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] font-bold text-lg flex-shrink-0 overflow-hidden">
+                  <img
+                    src={getAvatarSvg(
+                      writer.profileTheme?.avatarStyle || getDeterministicAvatarStyle(writer.anonymousName),
+                      writer.anonymousName
+                    )}
+                    alt={writer.anonymousName}
+                    className="w-10 h-10 rounded-full"
+                    draggable="false"
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-[var(--accent)]">
@@ -117,7 +153,7 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
                 </div>
               </Link>
 
-              {isLoggedIn && !isSelf && (
+              {isLoggedIn && canSubscribe && (
                 <button
                   onClick={(e) => handleFollow(e, writer.userId)}
                   disabled={isUpdating}

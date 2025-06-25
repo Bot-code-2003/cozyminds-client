@@ -20,8 +20,20 @@ import Navbar from "../Dashboard/Navbar";
 import LandingNavbar from "../Landing/Navbar";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
+import { createAvatar } from '@dicebear/core';
+import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+
+const avatarStyles = {
+  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+};
+
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avataaars;
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
 
 const SubscriptionsView = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -30,15 +42,19 @@ const SubscriptionsView = () => {
   const navigate = useNavigate();
   const { darkMode, setDarkMode } = useDarkMode();
 
-  const currentUser = useMemo(() => {
+  const getCurrentUser = () => {
     try {
-      const userData = sessionStorage.getItem("user");
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error("Error parsing user data:", error);
+      const itemStr = localStorage.getItem('user');
+      if (!itemStr) return null;
+      const item = JSON.parse(itemStr);
+      if (item && item.value) return item.value;
+      return item;
+    } catch {
       return null;
     }
-  }, []);
+  };
+
+  const currentUser = useMemo(() => getCurrentUser(), []);
 
   const isLoggedIn = !!currentUser;
 
@@ -241,10 +257,15 @@ const SubscriptionsView = () => {
                   {/* Avatar and basic info */}
                   <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
                     <div className="relative">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-apple flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg group-hover:scale-105 transition-transform">
-                        {subscription.anonymousName?.charAt(0).toUpperCase() ||
-                          "A"}
-                      </div>
+                      <img
+                        src={getAvatarSvg(
+                          subscription.profileTheme?.avatarStyle || 'avataaars',
+                          subscription.anonymousName
+                        )}
+                        alt={subscription.anonymousName}
+                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-apple shadow-lg group-hover:scale-105 transition-transform"
+                        draggable="false"
+                      />
                       {subscription.hasNewContent && (
                         <div className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 rounded-apple flex items-center justify-center shadow-sm">
                           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-apple" />

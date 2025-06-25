@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useDarkMode } from "../context/ThemeContext";
 import { Calendar, Flame, Target, PenTool, Award } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getWithExpiry, setWithExpiry } from "../utils/anonymousName";
 
 const StreakCard = ({ journalEntries = [], wordCountStats = {} }) => {
   const { darkMode } = useDarkMode();
@@ -28,12 +29,12 @@ const StreakCard = ({ journalEntries = [], wordCountStats = {} }) => {
   useEffect(() => {
     const loadUserData = () => {
       try {
-        const storedUser = sessionStorage.getItem("user");
+        const storedUser = getWithExpiry("user");
         if (storedUser) {
-          setUserData(JSON.parse(storedUser));
+          setUserData(storedUser);
         } else {
           setUserData(defaultUserData);
-          sessionStorage.setItem("user", JSON.stringify(defaultUserData));
+          setWithExpiry("user", defaultUserData, 2 * 60 * 60 * 1000);
         }
         setLoading(false);
       } catch (err) {

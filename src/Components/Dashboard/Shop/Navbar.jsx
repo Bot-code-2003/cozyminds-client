@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Moon, Sun, User, LogOut } from "lucide-react";
 import { useDarkMode } from "../../../context/ThemeContext";
+import { getWithExpiry, logout } from "../../../utils/anonymousName";
 
 const Navbar = () => {
   const { darkMode, setDarkMode } = useDarkMode();
@@ -12,7 +13,7 @@ const Navbar = () => {
 
   // Load user data once
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user") || "null");
+    const user = getWithExpiry("user");
     setUserData(user);
   }, []);
 
@@ -22,7 +23,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
+    logout();
     window.location.href = "/";
   };
 

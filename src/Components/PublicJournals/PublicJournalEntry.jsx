@@ -29,6 +29,9 @@ import { motion } from "framer-motion";
 import PublicRecommendations from "./PublicRecommendations";
 
 import { Helmet } from "react-helmet";
+import { createAvatar } from '@dicebear/core';
+import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
+import { getWithExpiry } from '../../utils/anonymousName';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -89,6 +92,16 @@ const moodStyles = {
   },
 };
 
+const avatarStyles = {
+  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+};
+
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avataaars;
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
 const PublicJournalEntry = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -109,17 +122,9 @@ const PublicJournalEntry = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   // Memoize current user
-  const currentUser = useMemo(() => {
-    try {
-      const userData = sessionStorage.getItem("user");
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error("Error parsing user data:", error);
-      return null;
-    }
-  }, []);
+  const getCurrentUser = () => getWithExpiry('user');
 
-  const isLoggedIn = useMemo(() => !!currentUser, [currentUser]);
+  const isLoggedIn = useMemo(() => !!getCurrentUser(), []);
 
   // Use the context's fetchSingleJournalBySlug
   const loadJournal = useCallback(async () => {
@@ -142,16 +147,16 @@ const PublicJournalEntry = () => {
       setAuthorProfile(response.data.profile);
 
       // Check subscription status
-      if (currentUser && currentUser._id !== response.data.profile._id) {
+      if (getCurrentUser() && getCurrentUser()._id !== response.data.profile._id) {
         const subResponse = await API.get(
-          `/subscription-status/${currentUser._id}/${response.data.profile._id}`
+          `/subscription-status/${getCurrentUser()._id}/${response.data.profile._id}`
         );
         setIsSubscribed(subResponse.data.isSubscribed);
       }
     } catch (error) {
       console.error("Error fetching author profile:", error);
     }
-  }, [journal?.authorName, currentUser]);
+  }, [journal?.authorName]);
 
   useEffect(() => {
     loadJournal();
@@ -162,16 +167,16 @@ const PublicJournalEntry = () => {
   }, [fetchAuthorProfile]);
 
   useEffect(() => {
-    if (journal && currentUser) {
-      setIsLiked(journal.likes?.includes(currentUser._id) || false);
+    if (journal && getCurrentUser()) {
+      setIsLiked(journal.likes?.includes(getCurrentUser()._id) || false);
     }
-  }, [journal, currentUser]);
+  }, [journal, getCurrentUser]);
 
   useEffect(() => {
-    if (journal && currentUser) {
-      setIsSaved(Array.isArray(journal.saved) && journal.saved.includes(currentUser._id));
+    if (journal && getCurrentUser()) {
+      setIsSaved(Array.isArray(journal.saved) && journal.saved.includes(getCurrentUser()._id));
     }
-  }, [journal, currentUser]);
+  }, [journal, getCurrentUser]);
 
   // Scroll to top when component mounts or journal changes
   useEffect(() => {
@@ -208,7 +213,7 @@ const PublicJournalEntry = () => {
   }, []);
 
   const handleLike = useCallback(async () => {
-    if (!currentUser) {
+    if (!getCurrentUser()) {
       openLoginModal();
       return;
     }
@@ -216,11 +221,11 @@ const PublicJournalEntry = () => {
     try {
       const updatedJournal = await contextHandleLike(journal);
       setJournal(updatedJournal);
-      setIsLiked(updatedJournal.likes?.includes(currentUser._id) || false);
+      setIsLiked(updatedJournal.likes?.includes(getCurrentUser()._id) || false);
     } catch (error) {
       console.error("Error liking journal:", error);
     }
-  }, [currentUser, journal, openLoginModal, contextHandleLike]);
+  }, [getCurrentUser, journal, openLoginModal, contextHandleLike]);
 
   const handleShare = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
@@ -228,12 +233,12 @@ const PublicJournalEntry = () => {
   }, []);
 
   const handleSubscribe = useCallback(async () => {
-    if (!currentUser || !authorProfile) return;
+    if (!getCurrentUser() || !authorProfile) return;
 
     try {
       setSubscribing(true);
       const response = await API.post("/subscribe", {
-        subscriberId: currentUser._id,
+        subscriberId: getCurrentUser()._id,
         targetUserId: authorProfile._id,
       });
       setIsSubscribed(response.data.subscribed);
@@ -248,26 +253,26 @@ const PublicJournalEntry = () => {
     } finally {
       setSubscribing(false);
     }
-  }, [currentUser, authorProfile]);
+  }, [getCurrentUser, authorProfile]);
 
   const handleSave = useCallback(async () => {
-    if (!currentUser) {
+    if (!getCurrentUser()) {
       openLoginModal();
       return;
     }
     try {
       // Call API to save/unsave
       if (!isSaved) {
-        await API.post(`/users/${currentUser._id}/save-journal`, { journalId: journal._id });
+        await API.post(`/users/${getCurrentUser()._id}/save-journal`, { journalId: journal._id });
         setIsSaved(true);
       } else {
-        await API.post(`/users/${currentUser._id}/unsave-journal`, { journalId: journal._id });
+        await API.post(`/users/${getCurrentUser()._id}/unsave-journal`, { journalId: journal._id });
         setIsSaved(false);
       }
     } catch (err) {
       console.error("Error saving/unsaving journal:", err);
     }
-  }, [currentUser, openLoginModal, isSaved, journal?._id]);
+  }, [getCurrentUser, openLoginModal, isSaved, journal?._id]);
 
   const processContent = useCallback((content) => {
     if (!content) return "No content available.";
@@ -338,8 +343,8 @@ const PublicJournalEntry = () => {
   }, [journal?.content]);
 
   const canSubscribe = useMemo(
-    () => currentUser && authorProfile && currentUser._id !== authorProfile._id,
-    [currentUser, authorProfile]
+    () => getCurrentUser() && authorProfile && getCurrentUser()._id !== authorProfile._id,
+    [getCurrentUser, authorProfile]
   );
 
   const firstImage = useMemo(() => {
@@ -363,7 +368,7 @@ const PublicJournalEntry = () => {
           <LandingNavbar
             darkMode={darkMode}
             setDarkMode={setDarkMode}
-            user={currentUser}
+            user={getCurrentUser()}
             openLoginModal={openLoginModal}
             openSignupModal={openSignupModal}
           />
@@ -426,7 +431,7 @@ const PublicJournalEntry = () => {
           <LandingNavbar
             darkMode={darkMode}
             setDarkMode={setDarkMode}
-            user={currentUser}
+            user={getCurrentUser()}
             openLoginModal={openLoginModal}
             openSignupModal={openSignupModal}
           />
@@ -463,7 +468,7 @@ const PublicJournalEntry = () => {
           <LandingNavbar
             darkMode={darkMode}
             setDarkMode={setDarkMode}
-            user={currentUser}
+            user={getCurrentUser()}
             openLoginModal={openLoginModal}
             openSignupModal={openSignupModal}
           />
@@ -525,7 +530,7 @@ const PublicJournalEntry = () => {
         <LandingNavbar
           darkMode={darkMode}
           setDarkMode={setDarkMode}
-          user={currentUser}
+          user={getCurrentUser()}
           openLoginModal={openLoginModal}
           openSignupModal={openSignupModal}
         />
@@ -648,9 +653,7 @@ const PublicJournalEntry = () => {
                   {/* Author Profile (left) */}
                   {authorProfile && (
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                        {authorProfile.anonymousName?.charAt(0).toUpperCase() || "A"}
-                      </div>
+                      <img src={getAvatarSvg(authorProfile.profileTheme?.avatarStyle || 'avataaars', authorProfile.anonymousName)} alt={authorProfile.anonymousName} className="w-9 h-9 rounded-full" />
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate">
                           {authorProfile.anonymousName}
@@ -665,7 +668,7 @@ const PublicJournalEntry = () => {
                       >
                         Profile
                       </Link>
-                      {canSubscribe && (
+                      {getCurrentUser() && authorProfile && getCurrentUser()._id !== authorProfile._id && canSubscribe && (
                         <button
                           onClick={handleSubscribe}
                           disabled={subscribing}
@@ -742,7 +745,7 @@ const PublicJournalEntry = () => {
 
                 <Comments
                   journalId={journal._id}
-                  currentUser={currentUser}
+                  currentUser={getCurrentUser()}
                   onLoginRequired={openLoginModal}
                 />
                 {/* Recommendations for mobile (after comments) */}

@@ -6,6 +6,7 @@ import axios from "axios";
 import Signup from "../../assets/signup.png";
 import { useNavigate } from "react-router-dom";
 import TermsModal from "./TermsModal";
+import { setWithExpiry } from "../../utils/anonymousName";
 
 const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -100,7 +101,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
       const { user } = signupRes.data;
 
       localStorage.setItem("userId", user._id);
-      sessionStorage.setItem("user", JSON.stringify(user));
+      setWithExpiry("user", user, 2 * 60 * 60 * 1000);
 
       window.dispatchEvent(
         new CustomEvent("user-signed-up", {
