@@ -61,7 +61,7 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
         </button>
 
         {/* Desktop Navigation & Actions */}
-        <div className="hidden md:flex items-center gap-x-4 lg:gap-x-6">
+        <div className="hidden custom-md:flex items-center gap-x-4 lg:gap-x-6">
           {/* Navigation */}
           <div className="flex items-center gap-x-1 lg:gap-x-2">
             {navigationItems.map((item) => (
@@ -120,7 +120,7 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="custom-md:hidden">
           <button
             className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             onClick={toggleMobileMenu}

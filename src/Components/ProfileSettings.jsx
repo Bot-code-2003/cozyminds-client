@@ -294,7 +294,7 @@ const ProfileSettings = () => {
         <div className="absolute inset-0 bg-black/20" />
         {!editingCard && (
           <button
-            className="absolute bottom-2 right-2 px-4 py-1 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)]"
+            className="absolute bottom-2 right-2 px-4 py-1 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)] z-[200]"
             onClick={() => {
               setSavedCard(profileTheme);
               setEditingCard(true);

@@ -7,6 +7,9 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
+      screens: {
+        'custom-md': '1065px',
+      },
       colors: {
         'bg-navbar': 'var(--bg-navbar)',
         'bg-primary': 'var(--bg-primary)',

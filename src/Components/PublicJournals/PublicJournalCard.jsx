@@ -114,7 +114,7 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
   const handleCommentClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/public-journal/${journal.slug}#comments`);
+    navigate(`/public-journals/${journal.slug}#comments`);
   };
 
   const StatIcon = ({ icon: Icon, value, active, onClick, disabled, 'aria-label': ariaLabel, activeColor, fillOnActive = false }) => (
@@ -133,7 +133,7 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
 
   return (
     <>
-      <Link to={`/public-journal/${journal.slug}`} className=" group block mb-8">
+      <Link to={`/public-journals/${journal.slug}`} className=" group block mb-8">
         <div className={`grid ${firstImage ? 'grid-cols-1  md:grid-cols-3' : 'grid-cols-1'} gap-8 items-center`}>
           {/* Text Content */}
           <div className={`${firstImage ? 'md:col-span-2' : 'col-span-1'}`}>

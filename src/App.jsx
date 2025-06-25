@@ -99,7 +99,7 @@ const App = () => {
                     <Route path="/mood-distributions" element={<DetailedMoodDistributions />} />
                     <Route path="/sitemaster" element={<SiteMaster />} />
                     <Route path="/public-journals" element={<PublicJournals />} />
-                    <Route path="/public-journal/:slug" element={<PublicJournalEntry />} />
+                    <Route path="/public-journals/:slug" element={<PublicJournalEntry />} />
                     <Route path="/profile/:anonymousName" element={<PublicProfile />} />
                     <Route path="/subscriptions" element={<SubscriptionsView />} />
                     <Route path="/saved-entries" element={<SavedEntries />} />
