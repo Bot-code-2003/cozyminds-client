@@ -194,8 +194,7 @@ const JournalEditor = ({
         },
       }),
       Placeholder.configure({
-        placeholder:
-          "Begin writing your thoughts...",
+        placeholder: "Start journaling here...",
         emptyEditorClass: "is-editor-empty",
       }),
     ],
@@ -211,7 +210,7 @@ const JournalEditor = ({
     editorProps: {
       attributes: {
         class:
-          "prose prose-lg max-w-none focus:outline-none min-h-[400px]",
+          "prose prose-lg max-w-none focus:outline-none min-h-[300px]",
       },
     },
   });
@@ -355,7 +354,7 @@ const JournalEditor = ({
 
   if (!editor) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+      <div className=" bg-gray-50 dark:bg-gray-900 py-4 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white dark:bg-gray-800 rounded-apple-lg border border-gray-200 dark:border-gray-700 p-8 shadow-apple">
             <div className="animate-pulse space-y-6">
@@ -377,15 +376,15 @@ const JournalEditor = ({
   const hasContent = journalTitle.trim() || !editor.isEmpty;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 ">
+    <div className="py-2 ">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
       
 
         {/* Main Editor Card */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-apple-lg shadow-apple-lg overflow-hidden">
+        <div className=" overflow-hidden">
           {/* Toolbar */}
-          <div className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-750 px-2 py-2 sm:px-4 sm:py-4">
+          <div className="border-[var(--border)] px-2 py-2 sm:px-4 sm:py-4">
             <div className="flex flex-wrap items-center gap-2">
               {/* Text Formatting Group */}
               <div className="flex items-center gap-1 p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
@@ -514,7 +513,7 @@ const JournalEditor = ({
           </div>
 
           {/* Title Input */}
-          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+          <div className="px-6 py-4 border-b border-[var(--border)]">
             <input
               ref={titleRef}
               type="text"
@@ -528,7 +527,7 @@ const JournalEditor = ({
 
           {/* Link Menu */}
           {isLinkMenuOpen && (
-            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
+            <div className="px-6 py-4 border-b border-[var(--border)] bg-blue-50 dark:bg-blue-900/20">
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
@@ -699,7 +698,7 @@ const JournalEditor = ({
           <div className="relative">
             <EditorContent
               editor={editor}
-              className="min-h-[500px] px-6 py-6 text-gray-900 dark:text-gray-100 leading-relaxed focus-within:outline-none journal-editor-content"
+              className="min-h-[500px] sm:min-h-[400px] px-6 py-6 text-gray-900 dark:text-gray-100 leading-relaxed focus-within:outline-none journal-editor-content"
             />
 
             {/* Bubble Menu */}
@@ -778,7 +777,7 @@ const JournalEditor = ({
           </div>
 
           {/* Footer */}
-<div className="w-full border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-750 px-4 sm:px-6 py-4">
+<div className="w-full border-t border-[var(--border)] px-4 sm:px-6 py-4">
   <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
       {hasContent && (
@@ -791,18 +790,6 @@ const JournalEditor = ({
         {words} words • {characters} characters
       </div>
     </div>
-
-    <button
-      onClick={onNext}
-      disabled={!hasContent}
-      className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-medium hover:bg-blue-700 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
-    >
-      Continue
-      <ArrowRight
-        size={16}
-        className="ml-2 transition-transform duration-200 group-hover:translate-x-0.5"
-      />
-    </button>
   </div>
 </div>
 
@@ -820,10 +807,13 @@ const JournalEditor = ({
         .journal-editor-content .ProseMirror.is-editor-empty:first-child::before {
           content: attr(data-placeholder);
           float: left;
-          color: #9ca3af;
+          color: #b0b6be;
           pointer-events: none;
           height: 0;
           font-style: italic;
+          font-size: 1.25rem;
+          opacity: 0.7;
+          font-weight: 400;
         }
 
         .journal-editor-content .ProseMirror p {

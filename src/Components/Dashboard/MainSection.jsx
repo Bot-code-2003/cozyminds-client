@@ -40,7 +40,7 @@ const MainSection = ({
       to: "/public-journals",
       icon: <Heart size={28} />,
       title: "Discover",
-      description: "Discover amazing entries",
+      description: "Explore vibrant community",
       color: "from-pink-500 to-rose-600",
       bgColor: "bg-pink-50 dark:bg-pink-950/30",
       borderColor: "border-pink-200 dark:border-pink-800/50",

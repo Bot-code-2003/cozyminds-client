@@ -212,86 +212,119 @@ const JournalingAlt = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="px-2 sm:px-4">
-            <JournalEditor
-              journalTitle={journalTitle}
-              setJournalTitle={setJournalTitle}
-              journalText={journalText}
-              setJournalText={setJournalText}
-              wordCount={wordCount}
-              onNext={goToNextStep}
-            />
-          </div>
+          <JournalEditor
+            journalTitle={journalTitle}
+            setJournalTitle={setJournalTitle}
+            journalText={journalText}
+            setJournalText={setJournalText}
+            wordCount={wordCount}
+          />
         );
       case 2:
         return (
-          <div className="px-2 sm:px-4">
-            <SecondStep
-              selectedTags={selectedTags}
-              setSelectedTags={setSelectedTags}
-              existingTags={existingTags}
-              selectedMood={selectedMood}
-              setSelectedMood={setSelectedMood}
-              selectedCollections={selectedCollections}
-              setSelectedCollections={setSelectedCollections}
-              existingCollections={existingCollections}
-              onBack={goToPreviousStep}
-              onNext={goToNextStep}
-            />
-          </div>
+          <SecondStep
+            selectedTags={selectedTags}
+            setSelectedTags={setSelectedTags}
+            existingTags={existingTags}
+            selectedMood={selectedMood}
+            setSelectedMood={setSelectedMood}
+            selectedCollections={selectedCollections}
+            setSelectedCollections={setSelectedCollections}
+            existingCollections={existingCollections}
+          />
         );
       case 3:
         return (
-          <div className="px-2 sm:px-4">
-            <ThemeSelector
-              selectedTheme={selectedTheme}
-              setSelectedTheme={setSelectedTheme}
-              availableThemes={availableThemes}
-              onBack={goToPreviousStep}
-              onNext={goToNextStep}
-            />
-          </div>
+          <ThemeSelector
+            selectedTheme={selectedTheme}
+            setSelectedTheme={setSelectedTheme}
+            availableThemes={availableThemes}
+          />
         );
       case 4:
         return (
-          <div className="px-2 sm:px-4">
-            <PrivacySelection
-              onSelect={handlePrivacySelect}
-              initialValue={isPublic ? "public" : "private"}
-            />
-          </div>
+          <PrivacySelection
+            onSelect={handlePrivacySelect}
+            initialValue={isPublic ? "public" : "private"}
+          />
         );
       default:
         return null;
     }
   };
 
+  // Navigation button logic
+  const renderNavigation = () => {
+    if (currentStep === 4) {
+      return (
+        <div className="flex w-full justify-between gap-4">
+          <button
+            onClick={goToPreviousStep}
+            className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Save className="w-5 h-5" />
+            <span>{isSaving ? "Publishing..." : "Publish"}</span>
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="flex w-full justify-between gap-4">
+        <button
+          onClick={goToPreviousStep}
+          disabled={currentStep === 1}
+          className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back
+        </button>
+        <button
+          onClick={goToNextStep}
+          className="flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Continue
+          <ArrowRight className="w-5 h-5" />
+        </button>
+      </div>
+    );
+  };
+
+  // Show saveError for 2 seconds only
+  useEffect(() => {
+    if (saveError) {
+      const timer = setTimeout(() => setSaveError(null), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [saveError]);
+
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)]">
+    <div className="bg-[var(--bg-primary)]">
       <Navbar
         darkMode={darkMode}
         toggleDarkMode={toggleDarkMode}
         onLogout={handleLogout}
       />
-      <div className="mx-auto pb-12 px-2 sm:px-4">
+      <div className="max-w-5xl w-full mx-auto px-2 sm:px-0 flex flex-col">
         {renderCurrentStep()}
         {saveError && (
-          <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
+          <div className="absolute left-1/2 -translate-x-1/2 top-10 z-[1000] px-6 py-3 bg-red-100 text-red-700 rounded-lg shadow-lg transition-opacity duration-300 animate-fade-in-out">
             {saveError}
           </div>
         )}
-        {currentStep === 4 && (
-          <div className="mt-8 flex justify-end">
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Save className="w-5 h-5" />
-              <span>{isSaving ? "Saving..." : "Save Journal"}</span>
-            </button>
-          </div>
-        )}
+      </div>
+      {/* Sticky footer navigation */}
+      <div className="fixed bottom-0 left-0 w-full bg-[var(--bg-primary)] border-t border-[var(--border)] z-50 py-4 px-2 sm:px-0">
+        <div className="max-w-3xl mx-auto w-full flex flex-col items-center">
+          {renderNavigation()}
+        </div>
       </div>
     </div>
   );
