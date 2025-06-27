@@ -100,6 +100,7 @@ const App = () => {
                     <Route path="/sitemaster" element={<SiteMaster />} />
                     <Route path="/public-journals" element={<PublicJournals />} />
                     <Route path="/public-journals/:slug" element={<PublicJournalEntry />} />
+                    <Route path="/profile/id/:userId" element={<PublicProfile />} />
                     <Route path="/profile/:anonymousName" element={<PublicProfile />} />
                     <Route path="/subscriptions" element={<SubscriptionsView />} />
                     <Route path="/saved-entries" element={<SavedEntries />} />

@@ -425,6 +425,15 @@ const JournalEntry = () => {
         name="New Entry"
         link={"/journaling-alt"}
       />
+      {/* Minimal Absolute Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="fixed top-20 left-6 z-30 p-2 rounded-full bg-white/80 dark:bg-black/60 hover:bg-blue-100 dark:hover:bg-slate-800 text-blue-700 dark:text-blue-200 shadow transition-colors"
+        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}
+        aria-label="Back"
+      >
+        <ArrowLeft size={20} />
+      </button>
       <div
         style={{ backgroundAttachment: "fixed" }}
         className={`min-h-screen transition-colors duration-300 text-[var(--text-primary)] bg-[var(--bg-primary)] ${

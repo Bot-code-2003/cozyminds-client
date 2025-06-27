@@ -12,6 +12,7 @@ import { getThemeDetails } from "../Dashboard/ThemeDetails";
 import SecondStep from "./SecondStep";
 import PrivacySelection from "./PrivacySelection";
 import { generateAnonymousName, getWithExpiry, setWithExpiry, logout } from "../../utils/anonymousName";
+import useAutoSave from "../../utils/useAutoSave";
 
 import { ArrowLeft, ArrowRight, Save } from "lucide-react";
 
@@ -31,6 +32,7 @@ const JournalingAlt = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [showDraftRestore, setShowDraftRestore] = useState(false);
 
   // Journal metadata state
   const [selectedMood, setSelectedMood] = useState(null);
@@ -47,11 +49,43 @@ const JournalingAlt = () => {
   const [isPublic, setIsPublic] = useState(false);
   const [authorName, setAuthorName] = useState("");
 
+  // Auto-save hook
+  const { loadFromStorage, clearDraft } = useAutoSave(journalText, journalTitle, 'journal-draft');
+
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const handleLogout = () => {
     logout();
     window.location.href = "/";
+  };
+
+  // Load draft on component mount
+  useEffect(() => {
+    const loadDraft = () => {
+      const savedDraft = loadFromStorage();
+      if (savedDraft && (savedDraft.content || savedDraft.title)) {
+        setShowDraftRestore(true);
+      }
+    };
+    
+    // Small delay to ensure component is fully mounted
+    const timer = setTimeout(loadDraft, 100);
+    return () => clearTimeout(timer);
+  }, [loadFromStorage]);
+
+  // Handle draft restoration
+  const handleRestoreDraft = () => {
+    const savedDraft = loadFromStorage();
+    if (savedDraft) {
+      setJournalTitle(savedDraft.title || "");
+      setJournalText(savedDraft.content || "");
+      setShowDraftRestore(false);
+    }
+  };
+
+  const handleDiscardDraft = () => {
+    clearDraft();
+    setShowDraftRestore(false);
   };
 
   // Fetch existing tags, collections, and set available themes from inventory
@@ -182,6 +216,8 @@ const JournalingAlt = () => {
       };
       await API.post("/saveJournal", journalEntry);
       setIsSaved(true);
+      // Clear the draft after successful save
+      clearDraft();
       setTimeout(() => window.location.replace("/collections"), 1000);
     } catch (error) {
       setSaveError(error.response?.data?.message || "Failed to save journal.");
@@ -312,6 +348,46 @@ const JournalingAlt = () => {
         toggleDarkMode={toggleDarkMode}
         onLogout={handleLogout}
       />
+      
+      {/* Draft Restoration Banner */}
+      {showDraftRestore && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[1000] w-full max-w-4xl px-4">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 shadow-lg">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    Unsaved Draft Found
+                  </h3>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    You have an unsaved draft. Would you like to restore it?
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleRestoreDraft}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+                >
+                  Restore Draft
+                </button>
+                <button
+                  onClick={handleDiscardDraft}
+                  className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md transition-colors"
+                >
+                  Start Fresh
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="max-w-5xl w-full mx-auto px-2 sm:px-0 flex flex-col">
         {renderCurrentStep()}
         {saveError && (

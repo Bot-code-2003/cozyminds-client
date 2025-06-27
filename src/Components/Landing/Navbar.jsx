@@ -137,7 +137,7 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[60px] z-[998] bg-white dark:bg-[#1A1A1A] border-t border-gray-200 dark:border-gray-700">
+        <div className="custom-md:hidden fixed inset-0 top-[60px] z-[998] bg-white dark:bg-[#1A1A1A] border-t border-gray-200 dark:border-gray-700">
           <div className="w-full h-full px-4 sm:px-6 py-4 overflow-y-auto">
             {/* Mobile Navigation */}
             <div className="space-y-2 mb-4">

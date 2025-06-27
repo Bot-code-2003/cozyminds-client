@@ -139,24 +139,45 @@ const PublicJournalEntry = () => {
     }
   }, [slug, fetchSingleJournalBySlug, journal]);
 
+  // Fetch author profile by userId (not authorName)
   const fetchAuthorProfile = useCallback(async () => {
-    if (!journal?.authorName) return;
-
+    // Defensive: get userId as string
+    let userId = null;
+    if (journal?.userId) {
+      userId = typeof journal.userId === 'object' ? journal.userId._id : journal.userId;
+    }
+    if (!userId) return;
+    // If author is current user, use local storage
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser._id === userId) {
+      setAuthorProfile({
+        userId: currentUser._id,
+        anonymousName: currentUser.anonymousName,
+        profileTheme: currentUser.profileTheme,
+        bio: currentUser.bio,
+      });
+      return;
+    }
     try {
-      const response = await API.get(`/profile/${journal.authorName}`);
-      setAuthorProfile(response.data.profile);
-
+      const response = await API.get(`/user/${userId}`);
+      const author = response.data.user;
+      setAuthorProfile({
+        userId: author._id,
+        anonymousName: author.anonymousName,
+        profileTheme: author.profileTheme,
+        bio: author.bio,
+      });
       // Check subscription status
-      if (getCurrentUser() && getCurrentUser()._id !== response.data.profile._id) {
+      if (getCurrentUser() && getCurrentUser()._id !== author._id) {
         const subResponse = await API.get(
-          `/subscription-status/${getCurrentUser()._id}/${response.data.profile._id}`
+          `/subscription-status/${getCurrentUser()._id}/${author._id}`
         );
         setIsSubscribed(subResponse.data.isSubscribed);
       }
     } catch (error) {
-      console.error("Error fetching author profile:", error);
+      setAuthorProfile(null);
     }
-  }, [journal?.authorName]);
+  }, [journal?.userId]);
 
   useEffect(() => {
     loadJournal();
@@ -239,7 +260,7 @@ const PublicJournalEntry = () => {
       setSubscribing(true);
       const response = await API.post("/subscribe", {
         subscriberId: getCurrentUser()._id,
-        targetUserId: authorProfile._id,
+        targetUserId: authorProfile.userId,
       });
       setIsSubscribed(response.data.subscribed);
 
@@ -343,7 +364,7 @@ const PublicJournalEntry = () => {
   }, [journal?.content]);
 
   const canSubscribe = useMemo(
-    () => getCurrentUser() && authorProfile && getCurrentUser()._id !== authorProfile._id,
+    () => getCurrentUser() && authorProfile && authorProfile.userId && getCurrentUser()._id !== authorProfile.userId,
     [getCurrentUser, authorProfile]
   );
 
@@ -537,7 +558,7 @@ const PublicJournalEntry = () => {
       )}
       <div
         style={{ backgroundAttachment: "fixed" }}
-        className={`min-h-screen ${isMobile ? 'bg-white dark:bg-black' : (journal.theme === 'theme_default' ? 'bg-white dark:bg-black' : getCardClass(journal.theme))} ${!isLoggedIn ? 'pt-16' : ''}`}
+        className={`min-h-screen ${isMobile ? 'bg-white dark:bg-black' : (journal.theme === 'theme_default' ? 'bg-white dark:bg-black' : getCardClass(journal.theme))} ${!isLoggedIn ? 'mt-16' : 'mt-16'}`}
       >
         <div className="w-full sm:max-w-7xl mx-auto sm:px-4 sm:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -649,82 +670,180 @@ const PublicJournalEntry = () => {
                     )}
                   </div>
                   {/* Author + Actions Bar */}
-                <div className="flex items-center justify-between gap-4 mt-6 px-4 py-2 bg-white/80 dark:bg-slate-800/80 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm">
-                  {/* Author Profile (left) */}
-                  {authorProfile && (
-                    <div className="flex items-center gap-3 min-w-0">
-                      <img src={getAvatarSvg(authorProfile.profileTheme?.avatarStyle || 'avataaars', authorProfile.anonymousName)} alt={authorProfile.anonymousName} className="w-9 h-9 rounded-full" />
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate">
-                          {authorProfile.anonymousName}
-                        </h4>
-                        {authorProfile.bio && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate line-clamp-1">{authorProfile.bio}</p>
+                <div className="mt-6 px-4 py-2 bg-white/80 dark:bg-slate-800/80 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm">
+                  {/* Mobile Layout */}
+                  <div className="block sm:hidden">
+                    {/* Author Profile - Stacked */}
+                    {authorProfile && (
+                      <div className="flex items-start gap-3 mb-3">
+                        {authorProfile && (
+                          <img src={getAvatarSvg(authorProfile.profileTheme?.avatarStyle, authorProfile.anonymousName)} alt={authorProfile.anonymousName} className="w-10 h-10 rounded-full flex-shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100">
+                            {authorProfile.anonymousName}
+                          </h4>
+                          {authorProfile.bio && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{authorProfile.bio}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Action Buttons - Bottom Row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {authorProfile && authorProfile.userId && (
+                          <Link
+                            to={`/profile/id/${authorProfile.userId}`}
+                            className="px-3 py-1.5 text-xs border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
+                          >
+                            Profile
+                          </Link>
+                        )}
+                        {getCurrentUser() && authorProfile && authorProfile.userId && getCurrentUser()._id !== authorProfile.userId && canSubscribe && (
+                          <button
+                            onClick={handleSubscribe}
+                            disabled={subscribing}
+                            className={`px-3 py-1.5 text-xs rounded-md font-medium transition-all duration-200 whitespace-nowrap ${
+                              isSubscribed
+                                ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                : "bg-blue-600 text-white hover:bg-blue-700"
+                            } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                          >
+                            {subscribing ? (
+                              <Loader2 className="w-3 h-3 animate-spin inline-block" />
+                            ) : isSubscribed ? (
+                              "Following"
+                            ) : (
+                              "Follow"
+                            )}
+                          </button>
                         )}
                       </div>
-                      <Link
-                        to={`/profile/${authorProfile.anonymousName}`}
-                        className="ml-2 px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
-                      >
-                        Profile
-                      </Link>
-                      {getCurrentUser() && authorProfile && getCurrentUser()._id !== authorProfile._id && canSubscribe && (
-                        <button
-                          onClick={handleSubscribe}
-                          disabled={subscribing}
-                          className={`ml-2 px-3 py-1 text-xs rounded-md font-medium transition-all duration-200 whitespace-nowrap ${
-                            isSubscribed
-                              ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                              : "bg-blue-600 text-white hover:bg-blue-700"
-                          } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                      
+                      {/* Share and Save buttons */}
+                      <div className="flex items-center gap-1">
+                        <motion.button
+                          onClick={handleLike}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className={`p-2 rounded-full transition-all duration-200 ${
+                            isLiked
+                              ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                              : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
+                          } focus:ring-2 ring-blue-500`}
+                          title={isLiked ? "Unlike journal" : "Like journal"}
+                          aria-label={isLiked ? "Unlike journal" : "Like journal"}
                         >
-                          {subscribing ? (
-                            <Loader2 className="w-4 h-4 animate-spin inline-block" />
-                          ) : isSubscribed ? (
-                            "Following"
-                          ) : (
-                            "Follow"
-                          )}
-                        </button>
-                      )}
+                          <Heart className="w-4 h-4" fill={isLiked ? 'currentColor' : 'none'} />
+                        </motion.button>
+                        <motion.button
+                          onClick={handleShare}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 focus:ring-2 ring-blue-500"
+                          title="Share journal"
+                          aria-label="Share journal"
+                        >
+                          <Share2 className="w-4 h-4" />
+                        </motion.button>
+                        <motion.button
+                          onClick={handleSave}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 focus:ring-2 ring-blue-500"
+                          title={isSaved ? "Unsave journal" : "Save journal"}
+                          aria-label={isSaved ? "Unsave journal" : "Save journal"}
+                        >
+                          {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+                        </motion.button>
+                      </div>
                     </div>
-                  )}
-                  {/* Action Buttons (right) */}
-                  <div className="flex items-center gap-2">
-                    <motion.button
-                      onClick={handleLike}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-2 rounded-full transition-all duration-200 min-h-12 ${
-                        isLiked
-                          ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
-                          : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
-                      } focus:ring-2 ring-blue-500`}
-                      title={isLiked ? "Unlike journal" : "Like journal"}
-                      aria-label={isLiked ? "Unlike journal" : "Like journal"}
-                    >
-                      <Heart className="w-5 h-5" fill={isLiked ? 'currentColor' : 'none'} />
-                    </motion.button>
-                    <motion.button
-                      onClick={handleShare}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
-                      title="Share journal"
-                      aria-label="Share journal"
-                    >
-                      <Share2 className="w-5 h-5" />
-                    </motion.button>
-                    <motion.button
-                      onClick={handleSave}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
-                      title={isSaved ? "Unsave journal" : "Save journal"}
-                      aria-label={isSaved ? "Unsave journal" : "Save journal"}
-                    >
-                      {isSaved ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
-                    </motion.button>
+                  </div>
+
+                  {/* Desktop Layout */}
+                  <div className="hidden sm:flex items-center justify-between gap-4">
+                    {/* Author Profile (left) */}
+                    {authorProfile && authorProfile.userId && (
+                      <div className="flex items-center gap-3 min-w-0">
+                        {authorProfile && (
+                          <img src={getAvatarSvg(authorProfile.profileTheme?.avatarStyle, authorProfile.anonymousName)} alt={authorProfile.anonymousName} className="w-9 h-9 rounded-full" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate">
+                            {authorProfile.anonymousName}
+                          </h4>
+                          {authorProfile.bio && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate line-clamp-1">{authorProfile.bio}</p>
+                          )}
+                        </div>
+                        {authorProfile && authorProfile.userId && (
+                          <Link
+                            to={`/profile/id/${authorProfile.userId}`}
+                            className="ml-2 px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
+                          >
+                            Profile
+                          </Link>
+                        )}
+                        {getCurrentUser() && authorProfile && authorProfile.userId && getCurrentUser()._id !== authorProfile.userId && canSubscribe && (
+                          <button
+                            onClick={handleSubscribe}
+                            disabled={subscribing}
+                            className={`ml-2 px-3 py-1 text-xs rounded-md font-medium transition-all duration-200 whitespace-nowrap ${
+                              isSubscribed
+                                ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                : "bg-blue-600 text-white hover:bg-blue-700"
+                            } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                          >
+                            {subscribing ? (
+                              <Loader2 className="w-4 h-4 animate-spin inline-block" />
+                            ) : isSubscribed ? (
+                              "Following"
+                            ) : (
+                              "Follow"
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {/* Action Buttons (right) */}
+                    <div className="flex items-center gap-2">
+                      <motion.button
+                        onClick={handleLike}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`p-2 rounded-full transition-all duration-200 min-h-12 ${
+                          isLiked
+                            ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+                            : "hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400"
+                        } focus:ring-2 ring-blue-500`}
+                        title={isLiked ? "Unlike journal" : "Like journal"}
+                        aria-label={isLiked ? "Unlike journal" : "Like journal"}
+                      >
+                        <Heart className="w-5 h-5" fill={isLiked ? 'currentColor' : 'none'} />
+                      </motion.button>
+                      <motion.button
+                        onClick={handleShare}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
+                        title="Share journal"
+                        aria-label="Share journal"
+                      >
+                        <Share2 className="w-5 h-5" />
+                      </motion.button>
+                      <motion.button
+                        onClick={handleSave}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
+                        title={isSaved ? "Unsave journal" : "Save journal"}
+                        aria-label={isSaved ? "Unsave journal" : "Save journal"}
+                      >
+                        {isSaved ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
+                      </motion.button>
+                    </div>
                   </div>
                 </div>
                 </div>

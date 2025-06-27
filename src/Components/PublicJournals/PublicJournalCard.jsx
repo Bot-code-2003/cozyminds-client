@@ -9,6 +9,7 @@ import { useDarkMode } from "../../context/ThemeContext";
 import { createAvatar } from '@dicebear/core';
 import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
 import axios from 'axios';
+import { getWithExpiry } from '../../utils/anonymousName';
 
 const avatarStyles = {
   avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
@@ -36,7 +37,7 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
   const [imageError, setImageError] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [authorProfileTheme, setAuthorProfileTheme] = useState(journal.profileTheme);
+  const [authorProfile, setAuthorProfile] = useState(journal.author || null);
 
   const navigate = useNavigate();
   const { darkMode } = useDarkMode();
@@ -71,14 +72,34 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
   }, [journal.createdAt]);
 
   useEffect(() => {
-    if (!journal.profileTheme && journal.authorName) {
-      axios.get(`${import.meta.env.VITE_API_URL}/profile/${journal.authorName}`)
-        .then(res => setAuthorProfileTheme(res.data.profile.profileTheme))
-        .catch(() => setAuthorProfileTheme(null));
-    } else {
-      setAuthorProfileTheme(journal.profileTheme);
-    }
-  }, [journal.profileTheme, journal.authorName]);
+    const fetchProfile = async () => {
+      if (journal.author) {
+        setAuthorProfile(journal.author);
+        return;
+      }
+      if (!journal.userId) return;
+      if (user && user._id === journal.userId) {
+        setAuthorProfile({
+          userId: user._id,
+          anonymousName: user.anonymousName,
+          profileTheme: user.profileTheme,
+        });
+        return;
+      }
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/${journal.userId}`);
+        const author = res.data.user;
+        setAuthorProfile({
+          userId: author._id,
+          anonymousName: author.anonymousName,
+          profileTheme: author.profileTheme,
+        });
+      } catch {
+        setAuthorProfile(null);
+      }
+    };
+    fetchProfile();
+  }, [journal.author, journal.userId]);
 
   const handleLike = useCallback(async (e) => {
     e.preventDefault();
@@ -138,8 +159,8 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
           {/* Text Content */}
           <div className={`${firstImage ? 'md:col-span-2' : 'col-span-1'}`}>
             <div className="flex items-center gap-3 mb-3">
-              <img src={getAvatarSvg(authorProfileTheme?.avatarStyle || 'avataaars', journal.authorName)} alt="" className="w-8 h-8 rounded-full" />
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{journal.authorName || 'Anonymous'}</span>
+              <img src={getAvatarSvg(authorProfile?.profileTheme?.avatarStyle || 'avataaars', authorProfile?.anonymousName || 'Anonymous')} alt="" className="w-8 h-8 rounded-full" />
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{authorProfile?.anonymousName || 'Anonymous'}</span>
             </div>
             
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight group-hover:text-[var(--accent)] transition-colors duration-200">
