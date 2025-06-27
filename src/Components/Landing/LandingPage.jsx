@@ -19,7 +19,7 @@ import AuthModals from "./AuthModals";
 import axios from "axios";
 import Home from "../../assets/home3.png";
 import PublicJournalsShowcase from "./PublicJournalsShowcase";
-import { getWithExpiry } from "../../utils/anonymousName";
+import { getWithExpiry, setWithExpiry } from "../../utils/anonymousName";
 
 const LandingPage = () => {
   const API = axios.create({
@@ -100,50 +100,70 @@ const LandingPage = () => {
       1000
     );
 
-    const fetchCounts = async () => {
-      try {
-        const userRes = await API.get("/users");
-        const journalRes = await API.get("/journals/journalscount");
+    // --- Caching logic for user/journal counts ---
+    const CACHE_KEY = "landing_stats";
+    const CACHE_EXPIRY = 3 * 24 * 60 * 60 * 1000; // 3 days in ms
+    const cached = getWithExpiry(CACHE_KEY);
+    if (cached && typeof cached === 'object' && cached.userCount && cached.journalCount) {
+      setUserCount(cached.userCount);
+      setJournalCount(cached.journalCount);
+      clearInterval(userSlotInterval);
+      clearInterval(journalSlotInterval);
+      setIsUserCountLoading(false);
+      setIsJournalCountLoading(false);
+      setTimeout(() => {
+        settleToFinalValue(cached.userCount, setAnimatedUserCount, 2000);
+      }, 100);
+      setTimeout(() => {
+        settleToFinalValue(cached.journalCount, setAnimatedJournalCount, 2000);
+      }, 200);
+    } else {
+      const fetchCounts = async () => {
+        try {
+          const userRes = await API.get("/users");
+          const journalRes = await API.get("/journals/journalscount");
 
-        const userFinal = userRes.data.length + 97;
-        const journalFinal = journalRes.data.count + 114;
+          const userFinal = userRes.data.length + 97;
+          const journalFinal = journalRes.data.count + 114;
 
-        setUserCount(userFinal);
-        setJournalCount(journalFinal);
+          setUserCount(userFinal);
+          setJournalCount(journalFinal);
 
-        clearInterval(userSlotInterval);
-        clearInterval(journalSlotInterval);
+          setWithExpiry(CACHE_KEY, { userCount: userFinal, journalCount: journalFinal }, CACHE_EXPIRY);
 
-        setIsUserCountLoading(false);
-        setIsJournalCountLoading(false);
+          clearInterval(userSlotInterval);
+          clearInterval(journalSlotInterval);
 
-        setTimeout(() => {
-          settleToFinalValue(userFinal, setAnimatedUserCount, 2000);
-        }, 100);
+          setIsUserCountLoading(false);
+          setIsJournalCountLoading(false);
 
-        setTimeout(() => {
-          settleToFinalValue(journalFinal, setAnimatedJournalCount, 2000);
-        }, 200);
-      } catch (err) {
-        console.error("Error fetching stats:", err);
+          setTimeout(() => {
+            settleToFinalValue(userFinal, setAnimatedUserCount, 2000);
+          }, 100);
 
-        clearInterval(userSlotInterval);
-        clearInterval(journalSlotInterval);
+          setTimeout(() => {
+            settleToFinalValue(journalFinal, setAnimatedJournalCount, 2000);
+          }, 200);
+        } catch (err) {
+          console.error("Error fetching stats:", err);
 
-        setIsUserCountLoading(false);
-        setIsJournalCountLoading(false);
+          clearInterval(userSlotInterval);
+          clearInterval(journalSlotInterval);
 
-        setTimeout(() => {
-          settleToFinalValue(150, setAnimatedUserCount, 2000);
-        }, 100);
+          setIsUserCountLoading(false);
+          setIsJournalCountLoading(false);
 
-        setTimeout(() => {
-          settleToFinalValue(300, setAnimatedJournalCount, 2000);
-        }, 200);
-      }
-    };
+          setTimeout(() => {
+            settleToFinalValue(150, setAnimatedUserCount, 2000);
+          }, 100);
 
-    fetchCounts();
+          setTimeout(() => {
+            settleToFinalValue(300, setAnimatedJournalCount, 2000);
+          }, 200);
+        }
+      };
+      fetchCounts();
+    }
 
     // Scroll and login event listeners
     const storedUser = getWithExpiry("user");
