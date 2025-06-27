@@ -350,14 +350,12 @@ const PublicJournals = () => {
   // Handle topic click from sidebar
   const handleTopicClick = useCallback((topic) => {
     // You can implement filtering by topic here
-    console.log("Topic clicked:", topic);
     // For now, we'll just log it. You can extend this to filter journals by topic
   }, []);
 
   // Handle writer click from sidebar
   const handleWriterClick = useCallback((writer) => {
     // You can implement navigation to writer's profile here
-    console.log("Writer clicked:", writer);
     // For now, we'll just log it. You can extend this to navigate to writer's profile
   }, []);
 

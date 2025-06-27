@@ -79,7 +79,7 @@ const LandingPage = () => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(`Subscribed: ${email} to ${category}`);
+    // console.log(`Subscribed: ${email} to ${category}`);
 
     const button = e.target.querySelector("button");
     const originalText = button.innerHTML;

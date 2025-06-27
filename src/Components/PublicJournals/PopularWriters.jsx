@@ -118,8 +118,6 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
           const isUpdating = updatingFollow.has(writer.userId);
           const canSubscribe = user && writer.userId && String(user._id) !== String(writer.userId);
 
-          console.log('Logged in user._id:', user?._id, 'Writer userId:', writer.userId, 'Can subscribe:', canSubscribe);
-
           return (
             <div
               key={writer.userId}

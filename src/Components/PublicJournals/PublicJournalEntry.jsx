@@ -568,7 +568,7 @@ const PublicJournalEntry = () => {
       )}
       <div
         style={{ backgroundAttachment: "fixed" }}
-        className={`min-h-screen ${isMobile ? 'bg-white dark:bg-black' : (journal.theme === 'theme_default' ? 'bg-white dark:bg-black' : getCardClass(journal.theme))} ${!isLoggedIn ? 'mt-16' : 'mt-16'}`}
+        className={`min-h-screen ${isMobile ? 'bg-white dark:bg-black' : (journal.theme === 'theme_default' ? 'bg-white dark:bg-black' : getCardClass(journal.theme))} ${!isLoggedIn ? 'mt-16' : ''}`}
       >
         <div className="w-full sm:max-w-7xl mx-auto sm:px-4 sm:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -577,6 +577,17 @@ const PublicJournalEntry = () => {
               <article className="bg-white/80 dark:bg-black/80 backdrop-blur-sm sm:rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                 {/* Header Section */}
                 <div className="p-4 sm:p-8 border-b border-black/5 dark:border-white/10">
+                  {/* Back Button */}
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium mb-4 sm:mb-6 transition-colors"
+                    aria-label="Go back"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>Back</span>
+                  </button>
                   {/* Image */}
                   {firstImage && (
                     <div className="w-full aspect-[3/2] sm:aspect-[16/9]  flex items-center rounded-apple justify-center overflow-hidden mb-4 sm:mb-6 shadow-sm">

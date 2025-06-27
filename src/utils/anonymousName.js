@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const adjectives = [
   "Whispering", "Dancing", "Soaring", "Gentle", "Mystic",
   "Radiant", "Serene", "Vibrant", "Cosmic", "Ethereal",
@@ -89,3 +91,17 @@ export const isAnonymousName = (name) => {
 
   return hasAdj && hasNoun && endsWithDigits;
 };
+
+// Add a global axios response interceptor for 401 Unauthorized
+if (typeof window !== "undefined") {
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response && error.response.status === 401) {
+        // Token expired or unauthorized, reload the page
+        window.location.reload();
+      }
+      return Promise.reject(error);
+    }
+  );
+}

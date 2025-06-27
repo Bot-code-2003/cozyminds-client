@@ -9,7 +9,7 @@ const Privacy = () => {
   const handleSave = async () => {
     try {
       // TODO: Implement save functionality
-      console.log("Saving privacy settings:", privacy);
+      // console.log("Saving privacy settings:", privacy);
     } catch (error) {
       console.error("Error saving privacy settings:", error);
     }

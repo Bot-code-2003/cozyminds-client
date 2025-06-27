@@ -32,7 +32,7 @@ const Login = ({ setUser }) => {
       const res = await API.post("/login", form);
       const { user, coinsEarned } = res.data;
 
-      console.log("Login successful, coins earned:", coinsEarned);
+      // console.log("Login successful, coins earned:", coinsEarned);
 
       // Make sure coinsEarned is a number
       const coinsEarnedNum = parseInt(coinsEarned || 0, 10);

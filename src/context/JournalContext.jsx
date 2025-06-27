@@ -18,16 +18,16 @@ export const JournalProvider = ({ children }) => {
       setError(null);
       try {
         const storedUser = getWithExpiry("user");
-        console.log("JournalContext - storedUser:", storedUser);
+        // console.log("JournalContext - storedUser:", storedUser);
         
         if (!storedUser) {
-          console.log("JournalContext - No user found in localStorage");
+          // console.log("JournalContext - No user found in localStorage");
           setLoading(false);
           return;
         }
         
         if (!storedUser._id) {
-          console.log("JournalContext - User found but no _id:", storedUser);
+          // console.log("JournalContext - User found but no _id:", storedUser);
           setError("Invalid user data. Please log in again.");
           setLoading(false);
           return;

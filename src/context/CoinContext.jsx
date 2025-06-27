@@ -21,7 +21,6 @@ export const CoinProvider = ({ children }) => {
   // Function to sync user data from session storage
   const syncUserData = () => {
     const user = getWithExpiry("user");
-    console.log("CoinContext - syncUserData - user:", user);
     if (user) {
       setUserData(user);
       setCoins(user.coins || 0);
@@ -29,7 +28,6 @@ export const CoinProvider = ({ children }) => {
       setActiveMailTheme(user.activeMailTheme || null);
       return user;
     }
-    console.log("CoinContext - No user found in localStorage");
     return null;
   };
 
@@ -55,14 +53,11 @@ export const CoinProvider = ({ children }) => {
     const handleLoginEvent = (event) => {
       // Access the coinsEarned from the event detail
       const { user, coinsEarned } = event.detail;
-      console.log("Login event received:", event.detail);
-      console.log("Coins earned from login:", coinsEarned);
 
       syncUserData();
 
       // Show coin popup if coins were earned during login
       if (coinsEarned && coinsEarned > 0) {
-        console.log("Showing coin popup for", coinsEarned, "coins");
         setCoinsEarned(coinsEarned);
         setShowCoinPopup(true);
 

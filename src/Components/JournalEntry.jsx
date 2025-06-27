@@ -412,7 +412,7 @@ const JournalEntry = () => {
   let currentTheme;
   try {
     currentTheme = getThemeDetails(entry.theme);
-    console.log("Theme details:", currentTheme);
+    // console.log("Theme details:", currentTheme);
   } catch (error) {
     console.error("Error getting theme details:", error);
     currentTheme = { icon: "📝", dateIcon: "📅" };

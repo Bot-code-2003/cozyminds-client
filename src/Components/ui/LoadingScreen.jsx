@@ -30,11 +30,9 @@ const LoadingScreen = ({ isLoading, progress = 0 }) => {
             audioRef.current.volume = 0.2;
             audioRef.current.loop = true;
           }
-          audioRef.current
-            .play()
-            .catch((e) => console.log("Audio autoplay prevented"));
+          // .catch((e) => console.log("Audio autoplay prevented"));
         } catch (e) {
-          console.log("Audio playback not supported");
+          // console.log("Audio playback not supported");
         }
       }
     } else {
