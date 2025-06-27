@@ -85,70 +85,67 @@ button:hover {
 }
 
 :root {
-  /* Light Theme - Celestial Dawn */
-  --bg-navbar: #f8faff;   /* Very light, airy blue-white */
-  --bg-primary: #f2f6fc;   /* Soft, clean sky blue-gray, like clear morning air */
-  --bg-secondary: #e8eff6; /* Slightly deeper background for sections */
-  --bg-tertiary: #dce7f0;  /* Subtle separation, cool light gray-blue */
-  --bg-hover: rgba(50, 70, 100, 0.08); /* Gentle hover, subtle blue hint */
+  --bg-navbar: #f9fbfe;           /* Near-white with a subtle blue tint */
+  --bg-primary: #f3f6fb;          /* Very soft, airy sky blue-gray */
+  --bg-secondary: #e6edf5;        /* Slightly deeper blue-gray for content sections */
+  --bg-tertiary: #d8e1ec;         /* Subtle separation, cool gray-blue */
+  --bg-hover: rgba(80, 100, 140, 0.08); /* More visible hover feedback */
 
-  --text-primary: #2c3e50; /* Deep, muted navy for main text - excellent readability */
-  --text-secondary: #6e8898; /* Softer, calm blue-gray for secondary text/metadata */
-  --text-journal-title: #ffffff; /* Remains white for titles on image backgrounds */
+  --text-primary: #2b3c50;        /* Slightly deeper navy, high readability */
+  --text-secondary: #5c6f82;      /* Clear and calm blue-gray */
+  --text-journal-title: #1f2d40;  /* Darker for legibility over light accent backgrounds */
 
-  --accent: #5577bb; /* A rich, calming "Horizon Blue" - your core interactive blue */
-  --accent-rgb: 85, 119, 187;
-  --accent-hover: #456aa0; /* Darker accent on hover */
-  --accent-light: #8cb8e0; /* Brighter, airy blue for secondary actions/links */
-  --accent-light-hover: #7ba6cb; /* Hover for light accent */
+  --accent: #3b6fc6;              /* Clear, elegant blue with strong contrast (improved from #5577bb) */
+  --accent-rgb: 59, 111, 198;
+  --accent-hover: #335fb0;
+  --accent-light: #a4c8f0;        /* Gentle, fresh sky blue */
+  --accent-light-hover: #92b7e0;
 
-  --highlight: #d1b8eb; /* A soft, magical "Moonstone Purple" - for subtle sparkle */
-  --highlight-rgb: 209, 184, 235;
+  --highlight: #cfa7f5;           /* Dreamy lavender with better brightness */
+  --highlight-rgb: 207, 167, 245;
 
-  --border: #c3d4e0; /* Clean, light blue-gray for borders */
-  --shadow: rgba(44, 62, 80, 0.15); /* Soft shadow from primary text color */
+  --border: #b5c7d9;              /* Balanced light border */
+  --shadow: rgba(43, 60, 80, 0.1); /* Soft and subtle */
 
-  --card-bg: #ffffff; /* Pristine white for journal cards */
-  --card-txt: var(--text-primary); /* Uses primary text for readability */
+  --card-bg: #ffffff;
+  --card-txt: var(--text-primary);
 
-  /* Success, Error, Warning states (aligned with new palette) */
-  --success: #6cb67a; /* Muted, fresh green */
-  --error: #e07a5f;   /* Warm, soft terracotta red */
-  --warning: #f7a072;  /* Gentle, warm orange */
+  --success: #5ba36b;             /* Strong yet soft green */
+  --error: #d45f50;               /* Coral-red for warmth + clarity */
+  --warning: #f29850;             /* Toasted orange */
 }
 
 .dark {
-  /* Dark Theme - Cosmic Abyss */
-  --bg-navbar: #0d1621; /* Very deep, almost black, midnight blue */
-  --bg-primary: #0a111a; /* Absolute deepest background, true cosmic void */
-  --bg-secondary: #162433; /* Darker blue-gray for sections/cards, less stark than black */
-  --bg-tertiary: #213240; /* For subtle darker elements, like scrollbars or dividers */
-  --bg-hover: rgba(255, 255, 255, 0.12); /* Brighter hover, for visibility on dark */
+  --bg-navbar: #0e1722;           /* Cosmic navy */
+  --bg-primary: #0b131b;
+  --bg-secondary: #182434;
+  --bg-tertiary: #233446;
+  --bg-hover: rgba(255, 255, 255, 0.1); /* Light hover that fits better on dark */
 
-  --text-primary: #e0f2f7; /* Soft, ethereal off-white/light-blue for main text, like starlight */
-  --text-secondary: #9cb1c5; /* Muted, lighter blue-gray for secondary text */
-  --text-journal-title: #ffffff; /* Remains white for titles */
+  --text-primary: #e6f0f5;        /* Clear and soft light for readability */
+  --text-secondary: #9fb3c4;      /* Muted and gentle for less important text */
+  --text-journal-title: #ffffff;
 
-  --accent: #8cb8e0; /* Brighter, clearer blue (accent-light from light theme) - glows on dark */
-  --accent-rgb: 140, 184, 224;
-  --accent-hover: #7ba6cb; /* Slightly darker hover for accent */
-  --accent-dark: #5577bb; /* Deeper accent for less prominent blue elements (primary accent from light theme) */
-  --accent-dark-hover: #456aa0; /* Hover for dark accent */
+  --accent: #84b7f4;              /* Soft but visible "starlight blue" accent */
+  --accent-rgb: 132, 183, 244;
+  --accent-hover: #6aa4e8;
+  --accent-dark: #3b6fc6;         /* Matching light theme’s primary accent */
+  --accent-dark-hover: #2f5fb1;
 
-  --highlight: #d1b8eb; /* Moonstone Purple - glows beautifully on this dark background */
-  --highlight-rgb: 209, 184, 235;
+  --highlight: #cfa7f5;           /* Consistent across themes */
+  --highlight-rgb: 207, 167, 245;
 
-  --border: #2c445a; /* Visible, but subtle dark blue border */
-  --shadow: rgba(0, 0, 0, 0.5); /* Deeper shadow for profound depth */
+  --border: #2d4155;
+  --shadow: rgba(0, 0, 0, 0.45);
 
-  --card-bg: var(--bg-secondary); /* Cards blend well, but distinct from primary background */
-  --card-txt: var(--text-primary); /* Uses primary text for readability */
+  --card-bg: var(--bg-secondary);
+  --card-txt: var(--text-primary);
 
-  /* Success, Error, Warning states (aligned with new palette) */
-  --success: #8cd699; /* Brighter, glowing green */
-  --error: #f08970;   /* Brighter, glowing red */
-  --warning: #ffb788;  /* Brighter, glowing orange */
+  --success: #6fd88a;
+  --error: #f08474;
+  --warning: #ffc58a;
 }
+
 
 /* Concept Packs */
 .card-maple-wolly-toward-the-peaks {

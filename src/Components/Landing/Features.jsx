@@ -13,14 +13,14 @@ import {
   Anchor,
 } from "lucide-react";
 import { useDarkMode } from "../../context/ThemeContext";
-import MailImg from "../../assets/mailing-d.png";
-import EditorImg from "../../assets/editor-d.png";
+import MailImg from "../../assets/inGameMail.png";
+import EditorImg from "../../assets/journaleditor.png";
 import MoodGraphPreview from "../../assets/mooding.png";
 import RewardImg from "../../assets/reward.png";
 import CollectionsPreview from "../../assets/collections.png";
 import ThemeSelectStepPreview from "../../assets/preview.png";
 import EntriesPreview from "../../assets/entries.png";
-import Shop from "../../assets/shop-d.png";
+import Shop from "../../assets/shop copy.png";
 import StoryMailPreview from "../../assets/andy_the_sailor.png";
 import StoryMailPreview2 from "../../assets/story-d.png";
 
@@ -34,60 +34,52 @@ const Features = ({ setShowLoginModal, setShowSignupModal }) => {
     {
       icon: <Edit3 size={20} />,
       title: "Rich Text Editor",
-      description:
-        "Express yourself with a powerful, intuitive editor featuring clean formatting and seamless content organization.",
+      description: "Write and format your thoughts with an easy-to-use editor.",
       image: EditorImg,
     },
     {
       icon: <BookOpen size={20} />,
       title: "Beautiful Journals",
-      description:
-        "Create stunning journal entries with customizable templates and layouts that reflect your personal style.",
+      description: "Design journal entries with customizable templates.",
       image: Shop,
     },
     {
       icon: <BarChart3 size={20} />,
       title: "Mood Analytics",
-      description:
-        "Track your emotional patterns with comprehensive mood analysis and insights for better wellbeing.",
+      description: "Track and understand your emotions with clear insights.",
       image: MoodGraphPreview,
     },
     {
       icon: <Mail size={20} />,
-      title: "In Site Mails",
-      description:
-        "Get rewards, encouragement messages and much more from charming in-world personalities.",
+      title: "In-Site Mail",
+      description: "Receive messages and rewards from in-world characters.",
       image: MailImg,
     },
   ];
-
+  
   const additionalFeatures = [
     {
       icon: <Gift size={24} />,
       title: "Achievement System",
-      description:
-        "Stay motivated with rewards that celebrate your journaling milestones and consistency.",
+      description: "Earn rewards for your journaling milestones.",
       image: RewardImg,
     },
     {
       icon: <Layers size={24} />,
-      title: "Smart Collections",
-      description:
-        "Organize entries with intelligent tagging and powerful search capabilities.",
+      title: "Collections",
+      description: "Organize entries into collections you create.",
       image: CollectionsPreview,
     },
     {
       icon: <Palette size={24} />,
       title: "Custom Themes",
-      description:
-        "Personalize your experience with beautiful themes and customization options.",
+      description: "Personalize your journal with beautiful themes.",
       image: ThemeSelectStepPreview,
     },
     {
       icon: <Book size={24} />,
       title: "Entry Management",
-      description:
-        "Browse and manage your entries with powerful filtering and organization tools.",
+      description: "View, filter, or delete your journal entries easily.",
       image: EntriesPreview,
     },
   ];
@@ -117,32 +109,35 @@ const Features = ({ setShowLoginModal, setShowSignupModal }) => {
       <div className="mb-24 sm:mb-32">
         {/* Feature Navigation */}
         <nav
-          className="mb-12 sm:mb-16"
-          role="tablist"
-          aria-label="Feature navigation"
+  className="mb-10 sm:mb-14"
+  role="tablist"
+  aria-label="Feature navigation"
+>
+  <div className="flex justify-center">
+    <div className="inline-flex flex-wrap justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-full shadow-sm">
+      {mainFeatures.map((feature, index) => (
+        <button
+          key={index}
+          role="tab"
+          aria-selected={activeFeature === index}
+          aria-controls={`feature-panel-${index}`}
+          onClick={() => setActiveFeature(index)}
+          className={`flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium font-sans transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 dark:focus:ring-gray-600 ${
+            activeFeature === index
+              ? "bg-gray-100/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100"
+              : "bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50"
+          }`}
+          style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
         >
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-            {mainFeatures.map((feature, index) => (
-              <button
-                key={index}
-                role="tab"
-                aria-selected={activeFeature === index}
-                aria-controls={`feature-panel-${index}`}
-                onClick={() => setActiveFeature(index)}
-                className={`flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl text-sm font-medium transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent)] ${
-                  activeFeature === index
-                    ? "bg-[var(--accent)] text-white shadow-xl transform scale-105"
-                    : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:scale-102"
-                }`}
-              >
-                <span className="flex-shrink-0">{feature.icon}</span>
-                <span className="hidden xs:inline sm:inline whitespace-nowrap">
-                  {feature.title}
-                </span>
-              </button>
-            ))}
-          </div>
-        </nav>
+          <span className="flex-shrink-0">{feature.icon}</span>
+          <span className="hidden xs:inline sm:inline whitespace-nowrap">
+            {feature.title}
+          </span>
+        </button>
+      ))}
+    </div>
+  </div>
+</nav>
 
         {/* Active Feature Display */}
         <div
@@ -169,7 +164,7 @@ const Features = ({ setShowLoginModal, setShowSignupModal }) => {
 
             {/* Image */}
             <div className="lg:col-span-3 p-6 sm:p-8 order-1 lg:order-2">
-              <div className="w-full aspect-video sm:aspect-[4/3] lg:aspect-video rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--bg-secondary)]">
+              <div className="w-full min-h-[350px] max-h-[350px] rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--bg-secondary)]">
                 <img
                   src={
                     mainFeatures[activeFeature].image ||
@@ -177,7 +172,7 @@ const Features = ({ setShowLoginModal, setShowSignupModal }) => {
                     "/placeholder.svg"
                   }
                   alt={`${mainFeatures[activeFeature].title} preview`}
-                  className="w-full h-full object-contain sm:object-cover transition-all duration-700 ease-in-out hover:scale-105"
+                  className="w-full min-h-[350px] object-cover transition-all duration-700 ease-in-out hover:scale-105"
                   loading="lazy"
                 />
               </div>

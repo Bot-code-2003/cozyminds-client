@@ -20,6 +20,7 @@ import axios from "axios";
 import Home from "../../assets/home3.png";
 import PublicJournalsShowcase from "./PublicJournalsShowcase";
 import { getWithExpiry, setWithExpiry } from "../../utils/anonymousName";
+import PublicProfileShowcase from "./PublicProfileShowcase";
 
 const LandingPage = () => {
   const API = axios.create({
@@ -377,6 +378,8 @@ const LandingPage = () => {
 
         {/* Public Journals Showcase */}
         <PublicJournalsShowcase />
+
+        <PublicProfileShowcase />
 
         {/* How It Works Section */}
         {/* <HowItWorks setShowLoginModal={openLoginModal} /> */}

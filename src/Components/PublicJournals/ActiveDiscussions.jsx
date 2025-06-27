@@ -17,7 +17,7 @@ const ActiveDiscussions = () => {
         >
           <div className="flex-1 min-w-0">
             <Link
-              to={`/public-journal/${journal.slug}`}
+              to={`/public-journals/${journal.slug}`}
               className="font-medium text-gray-900 dark:text-gray-100 truncate block text-sm mb-1"
               title={journal.title}
             >
@@ -30,7 +30,7 @@ const ActiveDiscussions = () => {
             </div>
           </div>
           <Link
-            to={`/public-journal/${journal.slug}#comments`}
+            to={`/public-journals/${journal.slug}#comments`}
             className="text-xs text-[var(--accent)] font-semibold hover:underline flex-shrink-0"
           >
             Join

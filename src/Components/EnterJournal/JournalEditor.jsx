@@ -893,6 +893,23 @@ const JournalEditor = ({
           margin: 0 !important;
         }
 
+        /* BOLD TEXT: Ensure visible in both modes */
+        .journal-editor-content .ProseMirror strong {
+          color: #111827;
+          font-weight: 700;
+        }
+        .dark .journal-editor-content .ProseMirror strong {
+          color: #fff;
+        }
+
+        /* BULLET POINTS: Ensure marker is visible in both modes */
+        .journal-editor-content .ProseMirror ul li::marker {
+          color: #3b82f6;
+        }
+        .dark .journal-editor-content .ProseMirror ul li::marker {
+          color: #60a5fa;
+        }
+
         .journal-editor-content .ProseMirror a {
           color: #3b82f6;
           text-decoration: none;

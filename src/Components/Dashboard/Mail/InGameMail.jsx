@@ -411,6 +411,9 @@ const InGameMail = ({ closeModal }) => {
           border-left: 4px solid #60a5fa !important;
           background: rgba(30,41,59,0.5) !important;
         }
+        .view-journal-btn {
+          color: #fff !important;
+        }
       `}</style>
     </div>
   );
