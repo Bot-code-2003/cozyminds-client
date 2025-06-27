@@ -503,9 +503,9 @@ const ProfileSettings = () => {
         <input
           type="text"
           value={form.anonymousName}
-          onChange={(e) => setForm({ ...form, anonymousName: e.target.value })}
+          readOnly
+          disabled
           className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-          placeholder="Enter your anonymous name"
         />
       </div>
 

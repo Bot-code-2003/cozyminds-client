@@ -14,6 +14,12 @@ import {
   BookOpen,
   Zap,
   Gift,
+  Edit3,
+  BarChart3,
+  Layers,
+  Palette,
+  Anchor,
+  ShoppingBag,
 } from "lucide-react";
 import AuthModals from "./AuthModals";
 import { useState } from "react";
@@ -45,33 +51,82 @@ const AboutUs = () => {
 
   const features = [
     {
-      icon: <Mail size={24} />,
-      title: "Mail from Fantastical Characters",
+      icon: <Edit3 size={24} />,
+      title: "Rich Text Editor",
       description:
-        "Get surprise letters, encouragement, and rewards from charming in-world personalities.",
-      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
-      iconBg: "bg-[var(--accent-text)]",
-    },
-    {
-      icon: <Sparkles size={24} />,
-      title: "Themes & Fun Packs",
-      description:
-        "Customize how your journal feels — from elves to sci-fi vibes.",
+        "Write and format your thoughts with a distraction-free, easy-to-use editor. Supports text formatting, images, and beautiful layouts.",
       accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
       iconBg: "bg-[var(--accent-text)]",
     },
     {
       icon: <BookOpen size={24} />,
-      title: "Weekly Reflections",
-      description: "Insightful summaries of your thoughts, moods, and moments.",
+      title: "Beautiful Journals",
+      description:
+        "Design and personalize your journal entries with customizable templates, themes, and cover images.",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
+    },
+    {
+      icon: <BarChart3 size={24} />,
+      title: "Mood Analytics",
+      description:
+        "Track and understand your emotions with clear, insightful mood graphs and statistics for self-reflection.",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
+    },
+    {
+      icon: <Mail size={24} />,
+      title: "In-Site Mail & Messaging",
+      description:
+        "Receive messages, rewards, and story chapters directly in your in-site mailbox. Connect with the community in a safe, private way.",
       accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
       iconBg: "bg-[var(--accent-text)]",
     },
     {
       icon: <Gift size={24} />,
-      title: "Daily Rewards & Quests",
+      title: "Achievements & Daily Rewards",
       description:
-        "Earn coins, unlock themes, and grow your journaling streak.",
+        "Earn coins, unlock themes, and celebrate your journaling streaks and milestones with fun achievements.",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
+    },
+    {
+      icon: <Layers size={24} />,
+      title: "Collections & Entry Management",
+      description:
+        "Organize your entries into collections, filter or delete them easily, and keep your journal tidy.",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
+    },
+    {
+      icon: <Palette size={24} />,
+      title: "Custom Themes",
+      description:
+        "Personalize your journal with a variety of beautiful, unlockable themes and fun packs.",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
+    },
+    {
+      icon: <Anchor size={24} />,
+      title: "Daily Story Chapters",
+      description:
+        "Purchase a story and receive a new chapter each day in your mailbox, crafted to inspire your journaling journey.",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
+    },
+    {
+      icon: <Users size={24} />,
+      title: "Public Journals & Community",
+      description:
+        "Explore, like, and comment on public journal entries. Discover trending topics, top writers, and connect with a vibrant community.",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
+    },
+    {
+      icon: <ShoppingBag size={24} />,
+      title: "In-Site Shop",
+      description:
+        "Discover journaling supplies, premium themes, and exclusive content to enhance your writing experience.",
       accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
       iconBg: "bg-[var(--accent-text)]",
     },
@@ -80,14 +135,6 @@ const AboutUs = () => {
       title: "AI Journal Companion",
       description:
         "Thoughtful analysis of your entries with kind suggestions and stories.",
-      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
-      iconBg: "bg-[var(--accent-text)]",
-      upcoming: true,
-    },
-    {
-      icon: <BookOpen size={24} />,
-      title: "Gentle News & Fun Facts",
-      description: "Stay lightly informed without overwhelm.",
       accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
       iconBg: "bg-[var(--accent-text)]",
       upcoming: true,
