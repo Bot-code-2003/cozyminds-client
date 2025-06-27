@@ -49,7 +49,7 @@ const PublicRecommendations = ({ slug }) => {
           >
             <Link
               onClick={() => window.scrollTo({ top: 0 })}
-              to={`/public-journal/${rec.slug}`}
+              to={`/public-journals/${rec.slug}`}
               className="block group bg-white/90 dark:bg-gray-900/80 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-200 p-3 sm:p-4 hover:bg-blue-50/60 dark:hover:bg-blue-900/20 focus:outline-none focus:ring-2 focus:ring-blue-400"
               aria-label={`Read recommended journal by ${rec.authorName || "Anonymous"}`}
               title={rec.title || "Untitled Entry"}

@@ -102,6 +102,16 @@ const getAvatarSvg = (style, seed) => {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
+const AuthorCardSkeleton = () => (
+  <div className="flex items-start gap-3 mb-3 animate-pulse">
+    <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
+    <div className="flex-1 min-w-0">
+      <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+      <div className="h-3 w-32 bg-gray-200 dark:bg-gray-700 rounded" />
+    </div>
+  </div>
+);
+
 const PublicJournalEntry = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -674,7 +684,9 @@ const PublicJournalEntry = () => {
                   {/* Mobile Layout */}
                   <div className="block sm:hidden">
                     {/* Author Profile - Stacked */}
-                    {authorProfile && (
+                    {!authorProfile ? (
+                      <AuthorCardSkeleton />
+                    ) : (
                       <div className="flex items-start gap-3 mb-3">
                         {authorProfile && (
                           <img src={getAvatarSvg(authorProfile.profileTheme?.avatarStyle, authorProfile.anonymousName)} alt={authorProfile.anonymousName} className="w-10 h-10 rounded-full flex-shrink-0" />
@@ -765,7 +777,9 @@ const PublicJournalEntry = () => {
                   {/* Desktop Layout */}
                   <div className="hidden sm:flex items-center justify-between gap-4">
                     {/* Author Profile (left) */}
-                    {authorProfile && authorProfile.userId && (
+                    {!authorProfile ? (
+                      <AuthorCardSkeleton />
+                    ) : (
                       <div className="flex items-center gap-3 min-w-0">
                         {authorProfile && (
                           <img src={getAvatarSvg(authorProfile.profileTheme?.avatarStyle, authorProfile.anonymousName)} alt={authorProfile.anonymousName} className="w-9 h-9 rounded-full" />

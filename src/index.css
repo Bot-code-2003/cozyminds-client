@@ -85,69 +85,69 @@ button:hover {
 }
 
 :root {
-  /* Light Theme - Cozy Blue-inspired */
-  --bg-navbar: #ffffff;
-  --bg-primary: #fbfaf8;
-  --bg-secondary: #f5f4f2;
-  --bg-tertiary: #edebe9;
-  --bg-hover: rgba(0, 0, 0, 0.04);
+  /* Light Theme - Celestial Dawn */
+  --bg-navbar: #f8faff;   /* Very light, airy blue-white */
+  --bg-primary: #f2f6fc;   /* Soft, clean sky blue-gray, like clear morning air */
+  --bg-secondary: #e8eff6; /* Slightly deeper background for sections */
+  --bg-tertiary: #dce7f0;  /* Subtle separation, cool light gray-blue */
+  --bg-hover: rgba(50, 70, 100, 0.08); /* Gentle hover, subtle blue hint */
 
-  --text-primary: #2d2a27;
-  --text-secondary: #7d7b78;
-  --text-journal-title: #ffffff;
+  --text-primary: #2c3e50; /* Deep, muted navy for main text - excellent readability */
+  --text-secondary: #6e8898; /* Softer, calm blue-gray for secondary text/metadata */
+  --text-journal-title: #ffffff; /* Remains white for titles on image backgrounds */
 
-  --accent: #6b7280; /* Dusty blue */
-  --accent-rgb: 107, 114, 128;
-  --accent-hover: #5b6070; /* Darker dusty blue */
-  --accent-light: #a3bffa; /* Light slate blue */
-  --accent-light-hover: #93b1f6; /* Hover light slate blue */
+  --accent: #5577bb; /* A rich, calming "Horizon Blue" - your core interactive blue */
+  --accent-rgb: 85, 119, 187;
+  --accent-hover: #456aa0; /* Darker accent on hover */
+  --accent-light: #8cb8e0; /* Brighter, airy blue for secondary actions/links */
+  --accent-light-hover: #7ba6cb; /* Hover for light accent */
 
-  --highlight: #64748b; /* Muted slate blue */
-  --highlight-rgb: 100, 116, 139;
+  --highlight: #d1b8eb; /* A soft, magical "Moonstone Purple" - for subtle sparkle */
+  --highlight-rgb: 209, 184, 235;
 
-  --border: #d4d1cd;
-  --shadow: rgba(0, 0, 0, 0.08);
+  --border: #c3d4e0; /* Clean, light blue-gray for borders */
+  --shadow: rgba(44, 62, 80, 0.15); /* Soft shadow from primary text color */
 
-  --card-bg: #ffffff;
-  --card-txt: #2d2a27;
+  --card-bg: #ffffff; /* Pristine white for journal cards */
+  --card-txt: var(--text-primary); /* Uses primary text for readability */
 
-  /* Success, Error, Warning states */
-  --success: #64748b; /* Muted slate blue */
-  --error: #d6574e;
-  --warning: #e8b923;
+  /* Success, Error, Warning states (aligned with new palette) */
+  --success: #6cb67a; /* Muted, fresh green */
+  --error: #e07a5f;   /* Warm, soft terracotta red */
+  --warning: #f7a072;  /* Gentle, warm orange */
 }
 
 .dark {
-  /* Dark Theme - Cozy Blue-inspired */
-  --bg-navbar: #2d2a27;
-  --bg-primary: #1c1a18;
-  --bg-secondary: #282624;
-  --bg-tertiary: #343230;
-  --bg-hover: rgba(255, 255, 255, 0.08);
+  /* Dark Theme - Cosmic Abyss */
+  --bg-navbar: #0d1621; /* Very deep, almost black, midnight blue */
+  --bg-primary: #0a111a; /* Absolute deepest background, true cosmic void */
+  --bg-secondary: #162433; /* Darker blue-gray for sections/cards, less stark than black */
+  --bg-tertiary: #213240; /* For subtle darker elements, like scrollbars or dividers */
+  --bg-hover: rgba(255, 255, 255, 0.12); /* Brighter hover, for visibility on dark */
 
-  --text-primary: #f5f2ef;
-  --text-secondary: #8a8784;
-  --text-journal-title: #ffffff;
+  --text-primary: #e0f2f7; /* Soft, ethereal off-white/light-blue for main text, like starlight */
+  --text-secondary: #9cb1c5; /* Muted, lighter blue-gray for secondary text */
+  --text-journal-title: #ffffff; /* Remains white for titles */
 
-  --accent: #a3bffa; /* Light slate blue */
-  --accent-rgb: 163, 191, 250;
-  --accent-hover: #93b1f6; /* Hover light slate blue */
-  --accent-dark: #6b7280; /* Dusty blue */
-  --accent-dark-hover: #5b6070; /* Darker dusty blue */
+  --accent: #8cb8e0; /* Brighter, clearer blue (accent-light from light theme) - glows on dark */
+  --accent-rgb: 140, 184, 224;
+  --accent-hover: #7ba6cb; /* Slightly darker hover for accent */
+  --accent-dark: #5577bb; /* Deeper accent for less prominent blue elements (primary accent from light theme) */
+  --accent-dark-hover: #456aa0; /* Hover for dark accent */
 
-  --highlight: #94a3b8; /* Slightly lighter muted slate blue */
-  --highlight-rgb: 148, 163, 184;
+  --highlight: #d1b8eb; /* Moonstone Purple - glows beautifully on this dark background */
+  --highlight-rgb: 209, 184, 235;
 
-  --border: #3f3d3a;
-  --shadow: rgba(0, 0, 0, 0.2);
+  --border: #2c445a; /* Visible, but subtle dark blue border */
+  --shadow: rgba(0, 0, 0, 0.5); /* Deeper shadow for profound depth */
 
-  --card-bg: #282624;
-  --card-txt: #f5f2ef;
+  --card-bg: var(--bg-secondary); /* Cards blend well, but distinct from primary background */
+  --card-txt: var(--text-primary); /* Uses primary text for readability */
 
-  /* Success, Error, Warning states */
-  --success: #94a3b8; /* Slightly lighter muted slate blue */
-  --error: #e86a60;
-  --warning: #f0c043;
+  /* Success, Error, Warning states (aligned with new palette) */
+  --success: #8cd699; /* Brighter, glowing green */
+  --error: #f08970;   /* Brighter, glowing red */
+  --warning: #ffb788;  /* Brighter, glowing orange */
 }
 
 /* Concept Packs */
