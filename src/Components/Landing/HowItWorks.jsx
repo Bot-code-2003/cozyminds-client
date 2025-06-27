@@ -69,29 +69,29 @@ const HowItWorks = ({ setShowLoginModal }) => {
   return (
     <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24 relative overflow-hidden">
       {/* Decorative Background Elements */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-[#5999a8]/10 rounded-full blur-2xl animate-pulse"></div>
+      <div className="absolute top-10 left-10 w-32 h-32 bg-[var(--bg-primary)]/10 rounded-full blur-2xl animate-pulse"></div>
       <div
-        className="absolute bottom-20 right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-2xl animate-pulse"
+        className="absolute bottom-20 right-10 w-40 h-40 bg-[var(--accent)]/10 rounded-full blur-2xl animate-pulse"
         style={{ animationDelay: "1s" }}
       ></div>
       <div
-        className="absolute top-1/2 left-1/4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl animate-pulse"
+        className="absolute top-1/2 left-1/4 w-24 h-24 bg-[var(--accent)]/10 rounded-full blur-xl animate-pulse"
         style={{ animationDelay: "2s" }}
       ></div>
 
       {/* Header */}
       <div className="text-center mb-20 relative z-10">
-        <div className="inline-block mb-6 px-6 py-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full text-sm font-medium tracking-wider bg-gradient-to-r from-[#5999a8]/10 to-purple-500/10 dark:from-[#5999a8]/20 dark:to-purple-500/20">
+        <div className="inline-block mb-6 px-6 py-3 border-2 border-[var(--border)] dark:border-[var(--border-dark)] rounded-full text-sm font-medium tracking-wider bg-gradient-to-r from-[var(--bg-primary)]/10 to-[var(--accent)]/10 dark:from-[var(--bg-primary)]/20 dark:to-[var(--accent)]/20">
           ✨ POWERFUL FEATURES
         </div>
         <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight leading-tight">
           <span className="relative">
             Everything You Need to{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5999a8] to-purple-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--bg-primary)] to-[var(--accent)]">
               Create
             </span>
             <svg
-              className="absolute -bottom-2 left-0 w-full h-3 text-[#5999a8]"
+              className="absolute -bottom-2 left-0 w-full h-3 text-[var(--bg-primary)]"
               viewBox="0 0 100 10"
               preserveAspectRatio="none"
             >
@@ -116,7 +116,7 @@ const HowItWorks = ({ setShowLoginModal }) => {
         {features.map((feature, index) => (
           <div
             key={index}
-            className={`group relative overflow-hidden rounded-apple border-2 ${feature.borderColor} transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md`}
+            className={`group relative overflow-hidden rounded-apple border-2 ${feature.borderColor} transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl bg-[var(--card-bg)] dark:bg-[#2A2A2A]/60 backdrop-blur-md`}
             style={{ animationDelay: `${index * 0.2}s` }}
           >
             {/* Gradient Background */}
@@ -134,14 +134,14 @@ const HowItWorks = ({ setShowLoginModal }) => {
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] dark:text-[#F8F1E9] group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#5999a8] group-hover:to-purple-500 transition-all duration-300">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] dark:text-[var(--text-dark)] group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[var(--bg-primary)] group-hover:to-[var(--accent)] transition-all duration-300">
                     {feature.title}
                   </h3>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-base sm:text-lg leading-relaxed text-[#1A1A1A] dark:text-[#F8F1E9] opacity-90 mb-8">
+              <p className="text-base sm:text-lg leading-relaxed text-[var(--text-primary)] dark:text-[var(--text-dark)] opacity-90 mb-8">
                 {feature.description}
               </p>
 
@@ -161,9 +161,9 @@ const HowItWorks = ({ setShowLoginModal }) => {
               {/* Decorative elements */}
               <div className="flex justify-between items-center mt-6">
                 <div className="flex items-center gap-2 opacity-40 group-hover:opacity-70 transition-opacity duration-300">
-                  <Sparkles size={14} className="text-[#5999a8]" />
-                  <Sparkles size={12} className="text-purple-500" />
-                  <Sparkles size={16} className="text-emerald-500" />
+                  <Sparkles size={14} className="text-[var(--bg-primary)]" />
+                  <Sparkles size={12} className="text-[var(--accent)]" />
+                  <Sparkles size={16} className="text-[var(--accent)]" />
                 </div>
                 <div className="text-xs font-medium tracking-wider opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                   0{index + 1}
@@ -172,22 +172,22 @@ const HowItWorks = ({ setShowLoginModal }) => {
             </div>
 
             {/* Hover glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#5999a8]/5 via-purple-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--bg-primary)]/5 via-[var(--accent)]/5 to-[var(--accent)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
           </div>
         ))}
       </div>
 
       {/* Call to Action */}
       <div className="text-center mt-20 relative z-10">
-        <div className="inline-block p-10 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-3xl bg-gradient-to-r from-[#5999a8]/10 via-purple-500/10 to-emerald-500/10 dark:from-[#5999a8]/5 dark:via-purple-500/5 dark:to-emerald-500/5 backdrop-blur-md shadow-2xl">
+        <div className="inline-block p-10 border-2 border-[var(--border)] dark:border-[var(--border-dark)] rounded-3xl bg-gradient-to-r from-[var(--bg-primary)]/10 via-[var(--accent)]/10 to-[var(--accent)]/10 dark:from-[var(--bg-primary)]/5 dark:via-[var(--accent)]/5 dark:to-[var(--accent)]/5 backdrop-blur-md shadow-2xl">
           <div className="flex items-center justify-center gap-4 mb-6">
-            <Heart size={28} className="text-[#5999a8] animate-pulse" />
-            <h3 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#1A1A1A] to-[#5999a8] dark:from-[#F8F1E9] dark:to-[#5999a8]">
+            <Heart size={28} className="text-[var(--bg-primary)] animate-pulse" />
+            <h3 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--text-primary)] to-[var(--bg-primary)] dark:from-[var(--text-dark)] dark:to-[var(--bg-primary)]">
               Ready to Start Creating?
             </h3>
             <Heart
               size={28}
-              className="text-purple-500 animate-pulse"
+              className="text-[var(--accent)] animate-pulse"
               style={{ animationDelay: "0.5s" }}
             />
           </div>
@@ -197,7 +197,7 @@ const HowItWorks = ({ setShowLoginModal }) => {
           </p>
           <button
             onClick={() => setShowLoginModal(true)}
-            className="group inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-[#1A1A1A] to-[#5999a8] dark:from-[#F8F1E9] dark:to-[#5999a8] text-[#F8F1E9] dark:text-[#1A1A1A] rounded-2xl hover:shadow-2xl transition-all duration-300 font-bold text-lg shadow-xl hover:scale-105"
+            className="group inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-[var(--text-primary)] to-[var(--bg-primary)] dark:from-[var(--text-dark)] dark:to-[var(--bg-primary)] text-[var(--text-dark)] dark:text-[var(--text-primary)] rounded-2xl hover:shadow-2xl transition-all duration-300 font-bold text-lg shadow-xl hover:scale-105"
           >
             <Sparkles
               size={24}

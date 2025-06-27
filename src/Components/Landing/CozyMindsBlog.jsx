@@ -186,7 +186,7 @@ const CozyMindsBlog = () => {
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden mb-6 p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl bg-white/80 dark:bg-[#2A2A2A]/80 backdrop-blur-md shadow-xl">
+          <div className="sm:hidden mb-6 p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-xl bg-[var(--card-bg)] dark:bg-[#2A2A2A]/80 backdrop-blur-md shadow-xl">
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => {
@@ -212,7 +212,7 @@ const CozyMindsBlog = () => {
 
         {/* Enhanced Header */}
         <div className="text-center mb-12 mt-20 sm:mb-20">
-          <div className="inline-block mb-4 sm:mb-6 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-bold tracking-widest bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm rounded-full">
+          <div className="inline-block mb-4 sm:mb-6 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-bold tracking-widest bg-[var(--card-bg)]/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm rounded-full">
             MINDFUL READING
           </div>
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight mb-6 sm:mb-8 leading-none">
@@ -245,7 +245,7 @@ const CozyMindsBlog = () => {
         {featuredPosts.length > 0 && (
           <div className="mb-12 sm:mb-20">
             <div className="relative">
-              <div className="overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md shadow-2xl">
+              <div className="overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[var(--card-bg)] dark:bg-[#2A2A2A]/60 backdrop-blur-md shadow-2xl">
                 <div
                   className="flex transition-transform duration-500 ease-in-out"
                   style={{
@@ -324,13 +324,13 @@ const CozyMindsBlog = () => {
                   {/* Desktop Controls - Side positioned */}
                   <button
                     onClick={prevFeatured}
-                    className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                    className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-[var(--card-bg)]/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
                   >
                     <ChevronLeft size={20} />
                   </button>
                   <button
                     onClick={nextFeatured}
-                    className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                    className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-[var(--card-bg)]/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
                   >
                     <ChevronRight size={20} />
                   </button>
@@ -339,13 +339,13 @@ const CozyMindsBlog = () => {
                   <div className="sm:hidden flex justify-center gap-4 mt-4">
                     <button
                       onClick={prevFeatured}
-                      className="p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                      className="p-3 bg-[var(--card-bg)]/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
                     >
                       <ChevronLeft size={20} />
                     </button>
                     <button
                       onClick={nextFeatured}
-                      className="p-3 bg-white/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
+                      className="p-3 bg-[var(--card-bg)]/90 dark:bg-[#1A1A1A]/90 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-full hover:scale-110 transition-all duration-300 shadow-lg"
                     >
                       <ChevronRight size={20} />
                     </button>
@@ -378,7 +378,7 @@ const CozyMindsBlog = () => {
             .map((post, index) => (
               <article
                 key={post.id}
-                className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl overflow-hidden bg-white/60 dark:bg-[#2A2A2A]/60 backdrop-blur-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
+                className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl overflow-hidden bg-[var(--card-bg)] dark:bg-[#2A2A2A]/60 backdrop-blur-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
                 onClick={() => openBlogPost(post)}
                 style={{
                   animationDelay: `${index * 100}ms`,
@@ -391,7 +391,7 @@ const CozyMindsBlog = () => {
                     className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute top-4 sm:top-5 left-4 sm:left-5">
-                    <div className="p-2 sm:p-3 bg-white/95 dark:bg-[#1A1A1A]/95 rounded-2xl border border-[#1A1A1A] dark:border-[#F8F1E9] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                    <div className="p-2 sm:p-3 bg-[var(--card-bg)]/95 dark:bg-[#1A1A1A]/95 rounded-2xl border border-[#1A1A1A] dark:border-[#F8F1E9] group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
                       {getIcon(post.icon)}
                     </div>
                   </div>
@@ -432,7 +432,7 @@ const CozyMindsBlog = () => {
         {/* Enhanced Signup CTA */}
         <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl p-8 sm:p-12 bg-gradient-to-br from-[#5999a8]/10 via-white/50 to-[#5999a8]/5 dark:from-[#5999a8]/10 dark:via-[#2A2A2A]/50 dark:to-[#5999a8]/5 text-center backdrop-blur-md shadow-2xl">
           <div className="mb-6 sm:mb-8">
-            <div className="inline-block p-4 sm:p-6 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl bg-white/80 dark:bg-[#1A1A1A]/80 shadow-lg">
+            <div className="inline-block p-4 sm:p-6 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl sm:rounded-3xl bg-[var(--card-bg)]/80 dark:bg-[#1A1A1A]/80 shadow-lg">
               <Heart size={32} className="sm:w-12 sm:h-12 text-[#5999a8]" />
             </div>
           </div>

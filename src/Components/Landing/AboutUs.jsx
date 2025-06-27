@@ -49,47 +49,47 @@ const AboutUs = () => {
       title: "Mail from Fantastical Characters",
       description:
         "Get surprise letters, encouragement, and rewards from charming in-world personalities.",
-      accent: "bg-purple-100 dark:bg-purple-900/20",
-      iconBg: "bg-purple-500",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
     },
     {
       icon: <Sparkles size={24} />,
       title: "Themes & Fun Packs",
       description:
         "Customize how your journal feels — from elves to sci-fi vibes.",
-      accent: "bg-pink-100 dark:bg-pink-900/20",
-      iconBg: "bg-pink-500",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
     },
     {
       icon: <BookOpen size={24} />,
       title: "Weekly Reflections",
       description: "Insightful summaries of your thoughts, moods, and moments.",
-      accent: "bg-blue-100 dark:bg-blue-900/20",
-      iconBg: "bg-blue-500",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
     },
     {
       icon: <Gift size={24} />,
       title: "Daily Rewards & Quests",
       description:
         "Earn coins, unlock themes, and grow your journaling streak.",
-      accent: "bg-green-100 dark:bg-green-900/20",
-      iconBg: "bg-green-500",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
     },
     {
       icon: <Zap size={24} />,
       title: "AI Journal Companion",
       description:
         "Thoughtful analysis of your entries with kind suggestions and stories.",
-      accent: "bg-orange-100 dark:bg-orange-900/20",
-      iconBg: "bg-orange-500",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
       upcoming: true,
     },
     {
       icon: <BookOpen size={24} />,
       title: "Gentle News & Fun Facts",
       description: "Stay lightly informed without overwhelm.",
-      accent: "bg-teal-100 dark:bg-teal-900/20",
-      iconBg: "bg-teal-500",
+      accent: "bg-[var(--accent)] dark:bg-[var(--accent-dark)]/20",
+      iconBg: "bg-[var(--accent-text)]",
       upcoming: true,
     },
   ];
@@ -99,19 +99,19 @@ const AboutUs = () => {
       icon: <Users size={24} />,
       title: "Students",
       description: "A safe space to vent or celebrate your academic journey",
-      color: "text-blue-600 dark:text-blue-400",
+      color: "text-[var(--text-primary)] dark:text-[var(--text-primary-dark)]",
     },
     {
       icon: <Heart size={24} />,
       title: "Young Users",
       description: "Learning emotional expression in a supportive environment",
-      color: "text-pink-600 dark:text-pink-400",
+      color: "text-[var(--text-primary)] dark:text-[var(--text-primary-dark)]",
     },
     {
       icon: <Star size={24} />,
       title: "Adults",
       description: "Looking to rekindle the joy of writing and self-reflection",
-      color: "text-purple-600 dark:text-purple-400",
+      color: "text-[var(--text-primary)] dark:text-[var(--text-primary-dark)]",
     },
   ];
 
@@ -120,19 +120,19 @@ const AboutUs = () => {
       icon: <Shield size={24} />,
       title: "We do not sell your data",
       description: "Your privacy is sacred",
-      color: "text-green-600 dark:text-green-400",
+      color: "text-[var(--text-primary)] dark:text-[var(--text-primary-dark)]",
     },
     {
       icon: <Heart size={24} />,
       title: "No ads",
       description: "Just calm, kind, and cozy vibes",
-      color: "text-red-600 dark:text-red-400",
+      color: "text-[var(--text-primary)] dark:text-[var(--text-primary-dark)]",
     },
     {
       icon: <Sparkles size={24} />,
       title: "Always evolving",
       description: "We're listening to your stories",
-      color: "text-yellow-600 dark:text-yellow-400",
+      color: "text-[var(--text-primary)] dark:text-[var(--text-primary-dark)]",
     },
   ];
 
@@ -270,7 +270,7 @@ const AboutUs = () => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className={`border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl p-6 hover:shadow-xl transition-all duration-300 bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm ${feature.accent} relative`}
+                className={`border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl p-6 hover:shadow-xl transition-all duration-300 bg-[var(--card-bg)] ${feature.accent} relative`}
               >
                 {feature.upcoming && (
                   <div className="absolute -top-2 -right-2 px-2 py-1 bg-orange-500 text-white text-xs font-bold rounded-md">
@@ -342,7 +342,7 @@ const AboutUs = () => {
             {audience.map((item, index) => (
               <div
                 key={index}
-                className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-apple p-8 text-center hover:shadow-xl transition-all duration-300 bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm"
+                className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-apple p-8 text-center hover:shadow-xl transition-all duration-300 bg-[var(--card-bg)]"
               >
                 <div className={`mb-6 ${item.color}`}>
                   <div className="inline-block p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-apple">
@@ -371,7 +371,7 @@ const AboutUs = () => {
             {promises.map((promise, index) => (
               <div
                 key={index}
-                className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm"
+                className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 bg-[var(--card-bg)]"
               >
                 <div className={`mb-4 ${promise.color}`}>
                   <div className="inline-block p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl">

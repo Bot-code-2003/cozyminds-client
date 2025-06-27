@@ -85,67 +85,74 @@ button:hover {
 }
 
 :root {
-  --bg-navbar: #f9fbfe;           /* Near-white with a subtle blue tint */
-  --bg-primary: #f3f6fb;          /* Very soft, airy sky blue-gray */
-  --bg-secondary: #e6edf5;        /* Slightly deeper blue-gray for content sections */
-  --bg-tertiary: #d8e1ec;         /* Subtle separation, cool gray-blue */
-  --bg-hover: rgba(80, 100, 140, 0.08); /* More visible hover feedback */
+  --bg-navbar: #f7fafc;           /* Soft, neutral off-white */
+  --bg-primary: #f4f7fa;          /* Gentle, airy blue-gray */
+  --bg-secondary: #e9eef3;        /* Slightly deeper blue-gray */
+  --bg-tertiary: #dde5ed;         /* Subtle separation, cool gray-blue */
+  --bg-hover: rgba(60, 100, 180, 0.07); /* Soft blue hover */
 
-  --text-primary: #2b3c50;        /* Slightly deeper navy, high readability */
-  --text-secondary: #5c6f82;      /* Clear and calm blue-gray */
-  --text-journal-title: #1f2d40;  /* Darker for legibility over light accent backgrounds */
+  --text-primary: #223046;        /* Deep navy, high readability */
+  --text-secondary: #5a6b7b;      /* Calm blue-gray */
+  --text-journal-title: #1a2533;  /* Even deeper for titles */
 
-  --accent: #3b6fc6;              /* Clear, elegant blue with strong contrast (improved from #5577bb) */
-  --accent-rgb: 59, 111, 198;
-  --accent-hover: #335fb0;
-  --accent-light: #a4c8f0;        /* Gentle, fresh sky blue */
-  --accent-light-hover: #92b7e0;
+  --accent: #3a7dd8;              /* Modern blue accent */
+  --accent-rgb: 58, 125, 216;
+  --accent-hover: #2e65b3;
+  --accent-light: #b3d4fc;        /* Soft sky blue */
+  --accent-light-hover: #a0c4e8;
 
-  --highlight: #cfa7f5;           /* Dreamy lavender with better brightness */
-  --highlight-rgb: 207, 167, 245;
+  --highlight: #b98cf2;           /* Muted lavender */
+  --highlight-rgb: 185, 140, 242;
 
-  --border: #b5c7d9;              /* Balanced light border */
-  --shadow: rgba(43, 60, 80, 0.1); /* Soft and subtle */
+  --border: #c3d0df;              /* Light, elegant border */
+  --shadow: rgba(34, 48, 70, 0.09); /* Subtle shadow */
 
-  --card-bg: #ffffff;
+  --card-bg: #fff;
   --card-txt: var(--text-primary);
 
-  --success: #5ba36b;             /* Strong yet soft green */
-  --error: #d45f50;               /* Coral-red for warmth + clarity */
-  --warning: #f29850;             /* Toasted orange */
+  --success: #4bbf73;             /* Soft green */
+  --error: #e26d5a;               /* Coral */
+  --warning: #f7b955;             /* Warm yellow-orange */
+
+  /* Gradients */
+  --gradient-accent: linear-gradient(90deg, #3a7dd8 0%, #b98cf2 100%);
+  --gradient-bg: linear-gradient(120deg, #f4f7fa 0%, #e9eef3 100%);
 }
 
 .dark {
-  --bg-navbar: #0e1722;           /* Cosmic navy */
-  --bg-primary: #0b131b;
-  --bg-secondary: #182434;
-  --bg-tertiary: #233446;
-  --bg-hover: rgba(255, 255, 255, 0.1); /* Light hover that fits better on dark */
+  --bg-navbar: #101a26;           /* Deep blue-navy */
+  --bg-primary: #0c141d;
+  --bg-secondary: #182233;
+  --bg-tertiary: #232f44;
+  --bg-hover: rgba(185, 140, 242, 0.08); /* Lavender hover */
 
-  --text-primary: #e6f0f5;        /* Clear and soft light for readability */
-  --text-secondary: #9fb3c4;      /* Muted and gentle for less important text */
-  --text-journal-title: #ffffff;
+  --text-primary: #eaf2fa;        /* Soft, clear light */
+  --text-secondary: #a2b3c7;      /* Muted blue-gray */
+  --text-journal-title: #fff;
 
-  --accent: #84b7f4;              /* Soft but visible "starlight blue" accent */
-  --accent-rgb: 132, 183, 244;
-  --accent-hover: #6aa4e8;
-  --accent-dark: #3b6fc6;         /* Matching light theme’s primary accent */
-  --accent-dark-hover: #2f5fb1;
+  --accent: #6ba8f6;              /* Soft blue accent */
+  --accent-rgb: 107, 168, 246;
+  --accent-hover: #4b8ed6;
+  --accent-dark: #3a7dd8;
+  --accent-dark-hover: #2e65b3;
 
-  --highlight: #cfa7f5;           /* Consistent across themes */
-  --highlight-rgb: 207, 167, 245;
+  --highlight: #b98cf2;           /* Consistent lavender */
+  --highlight-rgb: 185, 140, 242;
 
-  --border: #2d4155;
-  --shadow: rgba(0, 0, 0, 0.45);
+  --border: #2a3a4d;
+  --shadow: rgba(0, 0, 0, 0.38);
 
   --card-bg: var(--bg-secondary);
   --card-txt: var(--text-primary);
 
-  --success: #6fd88a;
-  --error: #f08474;
-  --warning: #ffc58a;
-}
+  --success: #5fd6a3;
+  --error: #f29b8c;
+  --warning: #ffd285;
 
+  /* Gradients */
+  --gradient-accent: linear-gradient(90deg, #6ba8f6 0%, #b98cf2 100%);
+  --gradient-bg: linear-gradient(120deg, #182233 0%, #232f44 100%);
+}
 
 /* Concept Packs */
 .card-maple-wolly-toward-the-peaks {

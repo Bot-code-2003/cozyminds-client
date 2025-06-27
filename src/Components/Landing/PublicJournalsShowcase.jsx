@@ -47,78 +47,86 @@ const PublicJournalsShowcase = () => {
     },
   ];
 
+  // Group features for editorial cards
+  const discoverFeatures = features.slice(0, 4);
+  const engageFeatures = features.slice(4);
+
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-28  font-sans">
       {/* Header */}
-      <div className="text-center mb-12 sm:mb-16">
+      <div className="text-center mb-16">
         <h2
-          className="text-3xl sm:text-4xl md:text-5xl font-sans font-semibold mb-4 text-gray-900 dark:text-gray-100 tracking-tight"
+          className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-[var(--text-primary)] tracking-tight font-sans"
           style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
         >
           Vibrant Community Stories
         </h2>
-        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-xl sm:text-2xl text-[var(--text-secondary)] max-w-3xl mx-auto leading-relaxed font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
           Discover, engage, and connect through trending journals, lively discussions, and curated content.
         </p>
       </div>
 
       {/* Main Content */}
-      <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-        {/* Left Side - Image */}
+      <div className="grid lg:grid-cols-2 gap-16 items-center">
+        {/* Left Side - Hero Image */}
         <div className="relative">
-          <div className="relative rounded-2xl overflow-hidden shadow-lg border border-gray-200/50 dark:border-gray-700/50">
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[var(--border)]">
             <img
               src={PublicImg}
               alt="Public Journals Preview"
-              className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-[1.02]"
+              className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-[1.01]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent" />
           </div>
-          {/* Decorative Elements */}
-          <div className="absolute -top-4 -left-4 w-20 h-20 bg-indigo-300/10 dark:bg-indigo-600/10 rounded-full blur-xl" />
-          <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-indigo-300/10 dark:bg-indigo-600/10 rounded-full blur-xl" />
         </div>
 
-        {/* Right Side - Content */}
-        <div className="space-y-8">
-          {/* Feature Highlights */}
-          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="flex items-start gap-4 p-5 sm:p-6 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-300 ease-in-out hover:shadow-md"
-              >
-                <div className="p-2.5 bg-indigo-100/50 dark:bg-indigo-900/50 rounded-lg text-indigo-600 dark:text-indigo-400 flex-shrink-0">
-                  {feature.icon}
-                </div>
-                <div>
-                  <h3
-                    className="text-lg sm:text-xl font-sans font-semibold text-gray-900 dark:text-gray-100 mb-1"
-                    style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
-                  >
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+        {/* Right Side - Editorial Cards */}
+        <div className="flex flex-col gap-10">
+          {/* Discover & Explore Card */}
+          <div className="bg-[var(--card-bg)] dark:bg-[var(--bg-secondary)] rounded-3xl shadow-xl border border-[var(--border)] p-8 md:p-10 flex flex-col gap-6">
+            <h3 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-2 font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>Discover & Explore</h3>
+            <ul className="space-y-5">
+              {discoverFeatures.map((feature, idx) => (
+                <li key={idx} className="flex items-start gap-4">
+                  <span className="p-3 bg-[var(--accent)]/10 dark:bg-[var(--accent)]/20 rounded-xl text-[var(--accent)] dark:text-[var(--accent)] flex-shrink-0 mt-1">{feature.icon}</span>
+                  <div>
+                    <span className="block text-lg font-bold text-[var(--text-primary)] mb-1 font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>{feature.title}</span>
+                    <span className="block text-[var(--text-secondary)] text-base font-light leading-relaxed font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>{feature.description}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Engage & Connect Card */}
+          <div className="bg-[var(--card-bg)] dark:bg-[var(--bg-secondary)] rounded-3xl shadow-xl border border-[var(--border)] p-8 md:p-10 flex flex-col gap-6">
+            <h3 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-2 font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>Engage & Connect</h3>
+            <ul className="space-y-5">
+              {engageFeatures.map((feature, idx) => (
+                <li key={idx} className="flex items-start gap-4">
+                  <span className="p-3 bg-[var(--accent)]/10 dark:bg-[var(--accent)]/20 rounded-xl text-[var(--accent)] dark:text-[var(--accent)] flex-shrink-0 mt-1">{feature.icon}</span>
+                  <div>
+                    <span className="block text-lg font-bold text-[var(--text-primary)] mb-1 font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>{feature.title}</span>
+                    <span className="block text-[var(--text-secondary)] text-base font-light leading-relaxed font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>{feature.description}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Call to Action */}
-          <div className="flex flex-col items-center gap-4 pt-4">
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 text-center">
+          <div className="flex flex-col items-center gap-4 pt-2">
+            <p className="text-lg sm:text-xl text-[var(--text-secondary)] text-center font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
               Join a thriving community of storytellers and explorers
             </p>
             <Link to="/public-journals" onClick={() => window.scrollTo(0, 0)}>
               <button
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-300 ease-in-out font-medium shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] text-white rounded-2xl hover:from-[var(--accent-hover)] hover:to-[var(--accent)] transition-all duration-300 ease-in-out font-bold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent)] font-sans text-lg"
                 style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
               >
-                <BookOpen size={20} />
+                <BookOpen size={22} />
                 <span>Join the Community</span>
-                <ArrowRight size={20} className="transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
+                <ArrowRight size={22} className="transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
               </button>
             </Link>
           </div>
