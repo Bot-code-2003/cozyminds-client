@@ -51,8 +51,12 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
           onClick={() => handleNavigation("/")}
           className="flex items-center gap-2 group cursor-pointer"
         >
-          <div className="w-8 h-8 bg-[var(--accent)] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 ease-in-out">
-            <Star size={16} className="text-white" />
+          <div className="w-8 h-8 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 ease-in-out overflow-hidden">
+            <img 
+              src="/favicon-32x32.png" 
+              alt="Starlit Journals" 
+              className="w-7 h-7 object-contain"
+            />
           </div>
           <div className="text-xl font-bold tracking-tight">
             <span className="text-[var(--accent)]">Starlit</span>{" "}

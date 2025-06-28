@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { useDarkMode } from "../../context/ThemeContext";
 
-import Mail from "../../assets/mailing-d.png";
+import Mail from "../../assets/inGameMail.png";
 import Editor from "../../assets/editor-d.png";
-import Shop from "../../assets/shop-d.png";
+import Shop from "../../assets/shop copy.png";
 import Journal from "../../assets/journal-d.png";
 
 const HowItWorks = ({ setShowLoginModal }) => {

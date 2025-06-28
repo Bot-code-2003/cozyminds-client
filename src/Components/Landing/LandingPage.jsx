@@ -3,18 +3,15 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   ArrowRight,
-  BookImage,
   Notebook,
   Clock,
   Users,
-  Gift,
 } from "lucide-react";
 import Navbar from "./Navbar";
 import { useDarkMode } from "../../context/ThemeContext";
 import Footer from "./Footer";
 import Testimonials from "./Testimonials";
 import Features from "./Features";
-import HowItWorks from "./HowItWorks";
 import AuthModals from "./AuthModals";
 import axios from "axios";
 import Home from "../../assets/home3.png";

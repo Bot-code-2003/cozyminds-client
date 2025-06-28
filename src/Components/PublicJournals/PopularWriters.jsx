@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { Users, Crown, BookOpen, Heart, UserPlus, UserCheck } from "lucide-react";
+import { Users, Crown, BookOpen, Heart, UserPlus, UserCheck, Info, TrendingUp, Clock, Star } from "lucide-react";
 import { useSidebar } from "../../context/SidebarContext";
 import { useDarkMode } from "../../context/ThemeContext";
 import AuthModals from "../Landing/AuthModals";
@@ -147,6 +147,21 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
                     <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 max-w-xs">
                       {writer.bio}
                     </p>
+                  )}
+                  {writer.popularityScore && (
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-[var(--accent)] font-medium">
+                        Score: {Math.round(writer.popularityScore)}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        • {writer.journalCount} posts
+                      </span>
+                      {writer.recentPosts > 0 && (
+                        <span className="text-xs text-green-600 dark:text-green-400">
+                          • {writer.recentPosts} recent
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               </Link>

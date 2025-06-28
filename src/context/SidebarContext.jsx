@@ -31,7 +31,7 @@ export const SidebarProvider = ({ children }) => {
                 API.get('/popular-writers?limit=6').catch(e => e.response),
                 API.get('/trending-journals?limit=8').catch(e => e.response),
                 API.get('/journals/top-by-mood').catch(e => e.response),
-                API.get('/journals/with-comments?sort=-commentCount&limit=7').catch(e => e.response),
+                API.get('/journals/with-comments?sort=-activityScore&limit=7').catch(e => e.response),
             ]);
             
             setTrendingTopics(topicsRes.data?.popularTopics || []);

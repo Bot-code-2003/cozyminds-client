@@ -1,4 +1,4 @@
-import { BookOpen, Sparkles, Lightbulb, ArrowRight, TrendingUp, Tag, Users, Smile } from "lucide-react";
+import { BookOpen, Sparkles, Lightbulb, ArrowRight, TrendingUp, Tag, Users, Smile, Info, Heart, MessageCircle, Clock, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import PopularTopics from "./PopularTopics";
 import PopularWriters from "./PopularWriters";
@@ -10,12 +10,21 @@ import ActiveDiscussions from "./ActiveDiscussions";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
-const SidebarSection = ({ icon, title, children, noPadding = false }) => (
+const SidebarSection = ({ icon, title, children, noPadding = false, showInfo = false, infoContent = null }) => (
   <div className="bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm sm:rounded-2xl sm:border sm:shadow-sm rounded-none border-0 shadow-none px-0">
     <div className="p-4 border-b border-gray-200 dark:border-slate-700/50 sm:p-4 p-3">
       <div className="flex items-center gap-3">
         {icon}
         <h3 className="font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+        {showInfo && infoContent && (
+          <div className="group relative">
+            <Info className="w-4 h-4 text-gray-400 cursor-help" />
+            <div className="absolute z-[1000] bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 max-w-xs">
+              {infoContent}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
     <div className={noPadding ? "" : "p-4 sm:p-4 p-3"}>
@@ -136,11 +145,59 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
         </div>
       )}
 
-      <SidebarSection icon={<TrendingUp className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Trending Journals">
+      <SidebarSection 
+        icon={<TrendingUp className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
+        title="Trending Journals"
+        showInfo={true}
+        infoContent={
+          <div>
+            <div className="font-semibold mb-1">How we calculate trending:</div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1">
+                <Heart className="w-3 h-3" />
+                <span>Likes + (Comments × 2)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                <span>× Time decay (7 days)</span>
+              </div>
+              <div className="text-gray-300 text-[10px] mt-1">
+                Recent posts with high engagement get priority
+              </div>
+            </div>
+          </div>
+        }
+      >
         <TrendingJournals />
       </SidebarSection>
       
-      <SidebarSection icon={<BookOpen className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Active Discussions">
+      <SidebarSection 
+        icon={<BookOpen className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
+        title="Active Discussions"
+        showInfo={true}
+        infoContent={
+          <div>
+            <div className="font-semibold mb-1">How we calculate active discussions:</div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1">
+                <MessageCircle className="w-3 h-3" />
+                <span>Comments × 3</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Heart className="w-3 h-3" />
+                <span>Likes × 2</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <BookOpen className="w-3 h-3" />
+                <span>Saves × 1.5</span>
+              </div>
+              <div className="text-gray-300 text-[10px] mt-1">
+                × Recency factor (newer posts get higher weight)
+              </div>
+            </div>
+          </div>
+        }
+      >
         <ActiveDiscussions />
       </SidebarSection>
       
@@ -148,7 +205,29 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
         <FeedbackBox isLoggedIn={isLoggedIn} onLogin={() => window.dispatchEvent(new CustomEvent('open-login-modal'))} />
       </SidebarSection>
       
-      <SidebarSection icon={<Tag className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Popular Topics">
+      <SidebarSection 
+        icon={<Tag className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
+        title="Popular Topics"
+        showInfo={true}
+        infoContent={
+          <div>
+            <div className="font-semibold mb-1">How we rank popular topics:</div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1">
+                <Heart className="w-3 h-3" />
+                <span>Total likes across all posts</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <BookOpen className="w-3 h-3" />
+                <span>Number of posts with this tag</span>
+              </div>
+              <div className="text-gray-300 text-[10px] mt-1">
+                Topics with high engagement and volume rank higher
+              </div>
+            </div>
+          </div>
+        }
+      >
         <PopularTopics onTopicClick={handleTopicClick} />
       </SidebarSection>
       
@@ -156,7 +235,37 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
         <TopMoodPosts />
       </SidebarSection>
       
-      <SidebarSection icon={<Users className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Top Writers">
+      <SidebarSection 
+        icon={<Users className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
+        title="Top Writers"
+        showInfo={true}
+        infoContent={
+          <div>
+            <div className="font-semibold mb-1">How we rank popular writers:</div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1">
+                <TrendingUp className="w-3 h-3" />
+                <span>Total Engagement (40%)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Star className="w-3 h-3" />
+                <span>Avg Engagement (30%)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                <span>Consistency (20%)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Heart className="w-3 h-3" />
+                <span>Recent Activity (10%)</span>
+              </div>
+              <div className="text-gray-300 text-[10px] mt-1">
+                Based on likes, comments, saves, posting frequency & recency
+              </div>
+            </div>
+          </div>
+        }
+      >
         <PopularWriters onWriterClick={handleWriterClick} isLoggedIn={isLoggedIn} />
       </SidebarSection>
 

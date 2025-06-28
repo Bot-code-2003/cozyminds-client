@@ -114,9 +114,19 @@ button:hover {
   --error: #e26d5a;               /* Coral */
   --warning: #f7b955;             /* Warm yellow-orange */
 
+  /* Cosmic Color Palette */
+  --cosmic-deep-blue: #1E2C55;    /* Book edges / sky */
+  --cosmic-purple: #8F6DC5;       /* Cloud shades */
+  --cosmic-lavender: #C9A7F7;     /* Cloud glow */
+  --cosmic-sky-blue: #6FC8F0;     /* Highlight stars */
+  --cosmic-white: #FFFFFF;        /* Main stars / constellation */
+  --cosmic-light-blue: #A3D9F5;   /* Upper book highlight */
+
   /* Gradients */
   --gradient-accent: linear-gradient(90deg, #3a7dd8 0%, #b98cf2 100%);
   --gradient-bg: linear-gradient(120deg, #f4f7fa 0%, #e9eef3 100%);
+  --gradient-cosmic: linear-gradient(135deg, var(--cosmic-deep-blue) 0%, var(--cosmic-purple) 50%, var(--cosmic-lavender) 100%);
+  --gradient-cosmic-sky: linear-gradient(180deg, var(--cosmic-sky-blue) 0%, var(--cosmic-light-blue) 100%);
 }
 
 .dark {
@@ -149,9 +159,19 @@ button:hover {
   --error: #f29b8c;
   --warning: #ffd285;
 
+  /* Cosmic Color Palette - Dark Mode */
+  --cosmic-deep-blue: #2A3A6A;    /* Brighter deep blue for dark mode */
+  --cosmic-purple: #A17DD5;       /* Brighter purple for dark mode */
+  --cosmic-lavender: #D4B8F8;     /* Brighter lavender for dark mode */
+  --cosmic-sky-blue: #7FD8F8;     /* Brighter sky blue for dark mode */
+  --cosmic-white: #FFFFFF;        /* Pure white */
+  --cosmic-light-blue: #B3E0F8;   /* Brighter light blue for dark mode */
+
   /* Gradients */
   --gradient-accent: linear-gradient(90deg, #6ba8f6 0%, #b98cf2 100%);
   --gradient-bg: linear-gradient(120deg, #182233 0%, #232f44 100%);
+  --gradient-cosmic: linear-gradient(135deg, var(--cosmic-deep-blue) 0%, var(--cosmic-purple) 50%, var(--cosmic-lavender) 100%);
+  --gradient-cosmic-sky: linear-gradient(180deg, var(--cosmic-sky-blue) 0%, var(--cosmic-light-blue) 100%);
 }
 
 /* Concept Packs */

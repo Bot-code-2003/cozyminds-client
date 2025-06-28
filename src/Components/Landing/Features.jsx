@@ -15,11 +15,11 @@ import {
 import { useDarkMode } from "../../context/ThemeContext";
 import MailImg from "../../assets/inGameMail.png";
 import EditorImg from "../../assets/journaleditor.png";
-import MoodGraphPreview from "../../assets/mooding.png";
-import RewardImg from "../../assets/reward.png";
-import CollectionsPreview from "../../assets/collections.png";
-import ThemeSelectStepPreview from "../../assets/preview.png";
-import EntriesPreview from "../../assets/entries.png";
+import MoodGraphPreview from "../../assets/moods.png";
+import RewardImg from "../../assets/moods.png";
+import CollectionsPreview from "../../assets/moods.png";
+import ThemeSelectStepPreview from "../../assets/moods.png";
+import EntriesPreview from "../../assets/moods.png";
 import Shop from "../../assets/shop copy.png";
 import StoryMailPreview from "../../assets/andy_the_sailor.png";
 import StoryMailPreview2 from "../../assets/story-d.png";

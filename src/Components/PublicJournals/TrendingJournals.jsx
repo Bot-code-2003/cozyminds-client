@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { TrendingUp, Clock, Heart, Tag, BookOpen, Smile, Loader2 } from "lucide-react";
+import { TrendingUp, Clock, Heart, Tag, BookOpen, Smile, Loader2, Info, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSidebar } from "../../context/SidebarContext";
 
@@ -88,6 +88,17 @@ const TrendingJournals = () => {
                       <Heart className="w-3 h-3 text-red-500" />
                       {journal.likeCount}
                     </span>
+                    {journal.commentCount > 0 && (
+                      <span className="flex items-center gap-1">
+                        <MessageCircle className="w-3 h-3 text-blue-500" />
+                        {journal.commentCount}
+                      </span>
+                    )}
+                    {/* {journal.engagementScore && (
+                      <span className="text-[var(--accent)] font-medium">
+                        Score: {Math.round(journal.engagementScore)}
+                      </span>
+                    )} */}
                   </div>
                   
                   {journal.tags && journal.tags.length > 0 && (
@@ -158,7 +169,8 @@ const TrendingJournals = () => {
   }
 
   return (
-    <div >
+    <div>
+      {/* Info Header */}
       
       
       {trendingList}
