@@ -148,17 +148,14 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           className="flex items-center group cursor-pointer"
           aria-label="Go to homepage"
         >
-          <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 ease-out overflow-hidden">
-            <img 
-              src="/favicon-32x32.png" 
-              alt="Starlit Journals" 
-              className="w-7 h-7 object-contain"
-            />
+          <div className=" h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ease-out shadow-md text-2xl">
+            <span role="img" aria-label="Starlit Journals" style={{fontSize: '1.7rem', lineHeight: 1}}>🌠</span>
           </div>
-          <div className="text-lg font-extrabold tracking-tight">
-            <span className="text-[var(--accent)]">STARLIT</span>
-            <span className="text-gray-900 dark:text-white ml-1">JOURNALS</span>
-          </div>
+          <div className="text-xl font-semibold tracking-tight flex items-baseline">
+  <span className="text-[var(--accent)]">Starlit</span>
+  <span className="text-gray-800 dark:text-white ml-1 opacity-80">Journals</span>
+</div>
+
         </button>
 
         <div className="hidden lg:flex items-center space-x-6">

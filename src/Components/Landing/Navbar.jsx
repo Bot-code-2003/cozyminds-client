@@ -49,19 +49,15 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
         {/* Logo */}
         <button
           onClick={() => handleNavigation("/")}
-          className="flex items-center gap-2 group cursor-pointer"
+          className="flex items-center group cursor-pointer"
         >
-          <div className="w-8 h-8 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 ease-in-out overflow-hidden">
-            <img 
-              src="/favicon-32x32.png" 
-              alt="Starlit Journals" 
-              className="w-7 h-7 object-contain"
-            />
+          <div className=" h-8 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 ease-in-out shadow-md text-2xl">
+            <span role="img" aria-label="Starlit Journals" style={{fontSize: '1.7rem', lineHeight: 1}}>🌠</span>
           </div>
-          <div className="text-xl font-bold tracking-tight">
-            <span className="text-[var(--accent)]">Starlit</span>{" "}
-            <span className="text-[#1A1A1A] dark:text-[#F8F1E9]">Journals</span>
-          </div>
+          <div className="text-xl font-semibold tracking-tight flex items-baseline">
+  <span className="text-[var(--accent)]">Starlit</span>
+  <span className="text-gray-800 dark:text-white ml-1 opacity-80">Journals</span>
+</div>
         </button>
 
         {/* Desktop Navigation & Actions */}
