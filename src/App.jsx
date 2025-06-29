@@ -20,6 +20,7 @@ import JournalEntries from "./Components/Dashboard/JournalEntries"
 import ProfileSettings from "./Components/ProfileSettings"
 import Features from "./Components/Landing/Features"
 import DetailedMoodDistributions from "./Components/Dashboard/DetailedMoodDistributions"
+import DetailedCalendar from "./Components/Dashboard/DetailedCalendar"
 import CozyMindsBlog from "./Components/Landing/CozyMindsBlog"
 import SiteMaster from "./SiteMaster"
 import Collections from "./Components/Dashboard/Collections"
@@ -97,6 +98,7 @@ const App = () => {
                     <Route path="/profile-settings" element={<ProfileSettings />} />
                     <Route path="/features" element={<Features />} />
                     <Route path="/mood-distributions" element={<DetailedMoodDistributions />} />
+                    <Route path="/detailed-calendar" element={<DetailedCalendar />} />
                     <Route path="/sitemaster" element={<SiteMaster />} />
                     <Route path="/public-journals" element={<PublicJournals />} />
                     <Route path="/public-journals/:slug" element={<PublicJournalEntry />} />

@@ -10,6 +10,8 @@ import Navbar from "./Navbar";
 import MainSection from "./MainSection";
 import MoodDistribution from "./MoodDistribution";
 import RecentJournals from "./RecentJournals";
+import JournalingStreak from "./JournalingStreak";
+import GithubStyleCalendar from "./GitHubStyleCalendar";
 
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
@@ -156,7 +158,10 @@ const Dashboard = () => {
               wordCountStats={wordCountStats}
               formatDate={formatDate}
             />
+            
+            
             <MoodDistribution journalEntries={journalEntries} />
+            <GithubStyleCalendar journalEntries={journalEntries} />
             <RecentJournals
               entries={filteredEntries.slice(0, 3)}
               darkMode={darkMode}

@@ -13,7 +13,7 @@ const useAutoSave = (content, title, saveKey = 'journal-draft') => {
         lastModified: new Date().toISOString()
       };
       localStorage.setItem(saveKey, JSON.stringify(draftData));
-      // console.log('Draft auto-saved:', draftData);
+      console.log('Draft auto-saved:', draftData);
     } catch (error) {
       console.error('Failed to save draft to localStorage:', error);
     }
@@ -25,7 +25,7 @@ const useAutoSave = (content, title, saveKey = 'journal-draft') => {
       const saved = localStorage.getItem(saveKey);
       if (saved) {
         const draftData = JSON.parse(saved);
-        // console.log('Draft loaded from storage:', draftData);
+        console.log('Draft loaded from storage:', draftData);
         return draftData;
       }
     } catch (error) {
@@ -38,7 +38,7 @@ const useAutoSave = (content, title, saveKey = 'journal-draft') => {
   const clearDraft = useCallback(() => {
     try {
       localStorage.removeItem(saveKey);
-      // console.log('Draft cleared from storage');
+      console.log('Draft cleared from storage');
     } catch (error) {
       console.error('Failed to clear draft from localStorage:', error);
     }
