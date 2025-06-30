@@ -11,6 +11,7 @@ export function PublicJournalsProvider({ children }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [likedJournals, setLikedJournals] = useState(new Set());
+  const [savedJournals, setSavedJournals] = useState(new Set());
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [feedType, setFeedType] = useState('-createdAt');
@@ -60,6 +61,14 @@ export function PublicJournalsProvider({ children }) {
             .map((journal) => journal._id)
         );
         setLikedJournals(prev => append ? new Set([...prev, ...likedSet]) : likedSet);
+
+        // Also update saved journals
+        const savedSet = new Set(
+          newJournals
+            .filter((journal) => userData.savedEntries?.includes(journal._id))
+            .map((journal) => journal._id)
+        );
+        setSavedJournals(prev => append ? new Set([...prev, ...savedSet]) : savedSet);
       }
     } catch (error) {
       console.error("Error fetching journals by tag:", error);
@@ -108,13 +117,21 @@ export function PublicJournalsProvider({ children }) {
       setHasInitialFetch(true);
       setFeedType(currentFeedType);
 
-      if (user) {
+      if (userData) {
         const likedSet = new Set(
           newJournals
-            .filter((journal) => journal.likes?.includes(user._id))
+            .filter((journal) => journal.likes?.includes(userData._id))
             .map((journal) => journal._id)
         );
         setLikedJournals(prev => append ? new Set([...prev, ...likedSet]) : likedSet);
+
+        // Also update saved journals
+        const savedSet = new Set(
+          newJournals
+            .filter((journal) => userData.savedEntries?.includes(journal._id))
+            .map((journal) => journal._id)
+        );
+        setSavedJournals(prev => append ? new Set([...prev, ...savedSet]) : savedSet);
       }
     } catch (error) {
       console.error("Error fetching journals:", error);
@@ -124,6 +141,35 @@ export function PublicJournalsProvider({ children }) {
       setLoadingMore(false);
     }
   }, [feedType, hasInitialFetch, showFollowingOnly, selectedTag]);
+
+  const fetchSavedJournals = useCallback(async (userId, pageNum = 1, append = false) => {
+    try {
+      setLoading(!append);
+      setLoadingMore(append);
+      setError(null);
+      
+      const response = await API.get(`/journals/saved/${userId}`, {
+        params: { page: pageNum, limit: 20 },
+      });
+
+      const { journals: newJournals, hasMore: moreAvailable } = response.data;
+      
+      setJournals(prev => append ? [...prev, ...newJournals] : newJournals);
+      setHasMore(moreAvailable);
+      setPage(pageNum);
+
+      // Since these are all saved journals, add all their IDs to the saved set
+      const savedSet = new Set(newJournals.map(j => j._id));
+      setSavedJournals(prev => append ? new Set([...prev, ...savedSet]) : savedSet);
+
+    } catch (error) {
+      console.error("Error fetching saved journals:", error);
+      setError("Failed to fetch saved journals. Please try again.");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, []);
 
   const fetchSingleJournalBySlug = useCallback(async (slug) => {
     const existingJournal = journals.find(journal => journal.slug === slug);
@@ -153,6 +199,40 @@ export function PublicJournalsProvider({ children }) {
       setSingleJournalLoading(false);
     }
   }, [journals]);
+
+  const handleSave = useCallback(async (journalId) => {
+    const userData = getCurrentUser();
+    if (!userData) return;
+    const user = userData;
+    const currentIsSaved = savedJournals.has(journalId);
+
+    // Optimistic update
+    setSavedJournals(prev => {
+      const newSet = new Set(prev);
+      if (currentIsSaved) {
+        newSet.delete(journalId);
+      } else {
+        newSet.add(journalId);
+      }
+      return newSet;
+    });
+
+    try {
+      await API.post(`/journals/${journalId}/save`, { userId: user._id });
+    } catch (error) {
+      // Revert optimistic update
+      setSavedJournals(prev => {
+        const newSet = new Set(prev);
+        if (currentIsSaved) {
+          newSet.add(journalId);
+        } else {
+          newSet.delete(journalId);
+        }
+        return newSet;
+      });
+      console.error("Error saving journal:", error);
+    }
+  }, [savedJournals]);
 
   const handleLike = useCallback(async (journal) => {
     const userData = getCurrentUser();
@@ -246,11 +326,14 @@ export function PublicJournalsProvider({ children }) {
     loadingMore,
     error,
     likedJournals,
+    savedJournals,
     hasMore,
     feedType,
     showFollowingOnly,
     fetchJournals,
+    fetchSavedJournals,
     handleLike,
+    handleSave,
     handleFeedTypeChange,
     toggleFollowingOnly,
     loadMore,

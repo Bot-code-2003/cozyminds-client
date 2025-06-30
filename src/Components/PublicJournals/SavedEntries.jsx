@@ -8,13 +8,22 @@ import Navbar from "../Dashboard/Navbar";
 import LandingNavbar from "../Landing/Navbar";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
+import { usePublicJournals } from "../../context/PublicJournalsContext";
 
 const SavedEntries = () => {
-  const [journals, setJournals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(false);
+  const { 
+    journals, 
+    loading, 
+    error, 
+    handleSave, 
+    fetchSavedJournals, 
+    hasMore,
+    loadingMore,
+    likedJournals,
+    savedJournals
+  } = usePublicJournals();
+  
   const [page, setPage] = useState(1);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { darkMode, setDarkMode } = useDarkMode();
 
@@ -31,70 +40,21 @@ const SavedEntries = () => {
   };
 
   const user = useMemo(() => getCurrentUser(), []);
-
   const isLoggedIn = !!user;
-
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
-  const fetchSaved = useCallback(
-    async (pageNum = 1) => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
-      setError(null);
-      try {
-        const API = await import("axios").then((m) =>
-          m.default.create({ baseURL: import.meta.env.VITE_API_URL })
-        );
-        const res = await API.get(`/users/${user._id}/saved-journals?page=${pageNum}`);
-        const newJournals = res.data.journals || [];
-        if (pageNum === 1) {
-          setJournals(newJournals);
-        } else {
-          setJournals((prev) => [...prev, ...newJournals]);
-        }
-        setHasMore(res.data.hasMore && newJournals.length > 0);
-      } catch (err) {
-        setError("Failed to load saved journals");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [user]
-  );
-
-  const handleSave = useCallback(
-    async (journalId, shouldSave, setIsSaved) => {
-      if (!user) return;
-      try {
-        const API = await import("axios").then((m) =>
-          m.default.create({ baseURL: import.meta.env.VITE_API_URL })
-        );
-        if (shouldSave) {
-          await API.post(`/users/${user._id}/save-journal`, { journalId });
-          setIsSaved(true);
-        } else {
-          await API.post(`/users/${user._id}/unsave-journal`, { journalId });
-          setIsSaved(false);
-          setJournals((prev) => prev.filter((j) => j._id !== journalId));
-        }
-      } catch (err) {
-        console.error("Error saving/unsaving journal:", err);
-      }
-    },
-    [user]
-  );
-
   useEffect(() => {
-    fetchSaved(1);
-  }, [fetchSaved]);
+    if (user) {
+      fetchSavedJournals(user._id, 1, false);
+    }
+  }, [user, fetchSavedJournals]);
 
   const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchSaved(nextPage);
+    if (user && hasMore && !loadingMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchSavedJournals(user._id, nextPage, true);
+    }
   };
 
   if (!user) {
@@ -142,13 +102,13 @@ const SavedEntries = () => {
         ) : !loading && journals.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 sm:py-20">
             <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 rounded-apple flex items-center justify-center mb-6 sm:mb-8 shadow-lg">
-              <span className="text-4xl sm:text-6xl">🍏</span>
+              <span className="text-4xl sm:text-6xl">🔖</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               No Saved Entries
             </h2>
             <p className="text-sm sm:text-lg font-medium text-gray-600 dark:text-gray-300 mb-4 text-center max-w-md">
-              You haven't saved any journals yet. When you save journals, they'll appear here for easy access—just like your favorite notes on an Apple device!
+              You haven't saved any journals yet. Explore public journals and save the ones you love.
             </p>
             <button
               onClick={() => navigate("/public-journals")}
@@ -165,8 +125,10 @@ const SavedEntries = () => {
                 <div key={journal._id} className="min-h-12">
                   <PublicJournalCard
                     journal={journal}
-                    isSaved={true}
-                    onSave={handleSave}
+                    isSaved={savedJournals.has(journal._id)}
+                    onSave={() => handleSave(journal._id)}
+                    isLiked={likedJournals.has(journal._id)}
+                    onLike={() => { /* Not implemented on this page, but prop is needed */ }}
                   />
                 </div>
               ))}
@@ -176,10 +138,10 @@ const SavedEntries = () => {
                 <button
                   onClick={handleLoadMore}
                   className="px-8 py-2 bg-blue-500 text-white rounded-apple hover:bg-blue-600 font-medium shadow-md min-h-12 active:scale-95 flex items-center gap-2"
-                  disabled={loading}
+                  disabled={loadingMore}
                   aria-label="Load more saved journals"
                 >
-                  {loading && (
+                  {loadingMore && (
                     <Loader2 className="w-5 h-5 animate-spin inline-block" />
                   )}
                   Load More
@@ -195,7 +157,7 @@ const SavedEntries = () => {
               <span className="text-sm sm:text-base">{error}</span>
             </div>
             <button
-              onClick={() => fetchSaved(1)}
+              onClick={() => fetchSavedJournals(user._id, 1, false)}
               className="px-6 py-2 bg-blue-500 text-white rounded-apple hover:bg-blue-600 transition-colors min-h-12 active:scale-95"
               aria-label="Retry loading saved journals"
             >
@@ -203,8 +165,6 @@ const SavedEntries = () => {
             </button>
           </div>
         )}
-
-        {/* Write FAB (Mobile) */}
         {isLoggedIn && (
           <Link
             to="/journaling-alt"

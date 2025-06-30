@@ -275,13 +275,18 @@ const PublicJournals = () => {
     journals,
     loading,
     error,
+    likedJournals,
+    savedJournals,
     hasMore,
     loadingMore,
-    likedJournals,
     feedType,
     showFollowingOnly,
     fetchJournals,
     handleLike,
+    handleSave,
+    setFeedType,
+    setShowFollowingOnly,
+    fetchJournalsByTag,
     handleFeedTypeChange,
     toggleFollowingOnly,
     loadMore,
@@ -325,27 +330,6 @@ const PublicJournals = () => {
       toggleFollowingOnly();
     }
   }, [showFollowingOnly, toggleFollowingOnly]);
-
-  const handleSave = useCallback(async (journalId, shouldSave, setIsSaved) => {
-    if (!user) {
-      openLoginModal();
-      return;
-    }
-    try {
-      if (shouldSave) {
-        await API.post(`/users/${user._id}/save-journal`, { journalId });
-        setIsSaved(true);
-      } else {
-        await API.post(`/users/${user._id}/unsave-journal`, { journalId });
-        setIsSaved(false);
-      }
-      // Optionally update local state for instant feedback
-      // setJournals((prev) => prev.map(j => j._id === journalId ? { ...j, isSaved: shouldSave } : j));
-    } catch (err) {
-      // Optionally show error
-      console.error('Error saving/unsaving journal:', err);
-    }
-  }, [user, openLoginModal]);
 
   // Handle topic click from sidebar
   const handleTopicClick = useCallback((topic) => {
@@ -510,8 +494,8 @@ const PublicJournals = () => {
                         onLike={() => handleLike(journal)}
                         onShare={handleShare}
                         isLiked={likedJournals.has(journal._id)}
-                        isSaved={user && journal.saved && Array.isArray(journal.saved) ? journal.saved.includes(user._id) : false}
-                        onSave={handleSave}
+                        isSaved={savedJournals.has(journal._id)}
+                        onSave={() => handleSave(journal._id)}
                       />
                     </div>
                   ))}

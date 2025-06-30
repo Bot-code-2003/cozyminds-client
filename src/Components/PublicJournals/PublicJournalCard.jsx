@@ -73,12 +73,19 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (journal.author) {
-        setAuthorProfile(journal.author);
+      if (journal.userId && typeof journal.userId === 'object' && journal.userId !== null) {
+        setAuthorProfile({
+          userId: journal.userId._id,
+          anonymousName: journal.userId.anonymousName,
+          profileTheme: journal.userId.profileTheme,
+        });
         return;
       }
-      if (!journal.userId) return;
-      if (user && user._id === journal.userId) {
+
+      const authorId = journal.userId;
+      if (!authorId) return;
+
+      if (user && user._id === authorId) {
         setAuthorProfile({
           userId: user._id,
           anonymousName: user.anonymousName,
@@ -86,8 +93,9 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
         });
         return;
       }
+
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/${journal.userId}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/${authorId}`);
         const author = res.data.user;
         setAuthorProfile({
           userId: author._id,
@@ -99,7 +107,12 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
       }
     };
     fetchProfile();
-  }, [journal.author, journal.userId]);
+  }, [journal.userId, user]);
+
+  const handleAuthorClick = (e) => {
+    e.stopPropagation();
+    navigate(`/profile/id/${authorProfile.userId}`);
+  };
 
   const handleLike = useCallback(async (e) => {
     e.preventDefault();
@@ -158,9 +171,12 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
         <div className={`grid ${firstImage ? 'grid-cols-1  md:grid-cols-3' : 'grid-cols-1'} gap-8 items-center`}>
           {/* Text Content */}
           <div className={`${firstImage ? 'md:col-span-2' : 'col-span-1'}`}>
-            <div className="flex items-center gap-3 mb-3">
+            <div
+              className="flex items-center gap-3 mb-3 cursor-pointer"
+              onClick={handleAuthorClick}
+            >
               <img src={getAvatarSvg(authorProfile?.profileTheme?.avatarStyle || 'avataaars', authorProfile?.anonymousName || 'Anonymous')} alt="" className="w-8 h-8 rounded-full" />
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{authorProfile?.anonymousName || 'Anonymous'}</span>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200 hover:underline">{authorProfile?.anonymousName || 'Anonymous'}</span>
             </div>
             
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight group-hover:text-[var(--accent)] transition-colors duration-200">

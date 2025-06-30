@@ -90,7 +90,9 @@ export const MailProvider = ({ children }) => {
       // Update user coins in sessionStorage
       if (response.data.newCoinsBalance) {
         const updatedUser = { ...user, coins: response.data.newCoinsBalance };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
+        // Set expiry to 7 days from now (same as login/signup)
+        const expiry = Date.now() + 1000 * 60 * 60 * 24 * 7;
+        localStorage.setItem("user", JSON.stringify({ value: updatedUser, expiry }));
         setUser(updatedUser);
 
         // Trigger a storage event to update other components

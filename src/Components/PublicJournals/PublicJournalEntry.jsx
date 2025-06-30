@@ -120,15 +120,22 @@ const PublicJournalEntry = () => {
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
   // Use PublicJournals context for single journal fetching and state
-  const { fetchSingleJournalBySlug, singleJournalLoading, singleJournalError, handleLike: contextHandleLike } =
-    usePublicJournals();
+  const {
+    fetchSingleJournalBySlug,
+    singleJournalLoading,
+    singleJournalError,
+    handleLike: contextHandleLike,
+    handleSave: contextHandleSave,
+    savedJournals,
+    likedJournals
+  } = usePublicJournals();
 
   const [journal, setJournal] = useState(location.state?.journal || null);
   const [authorProfile, setAuthorProfile] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   // Memoize current user
@@ -199,15 +206,14 @@ const PublicJournalEntry = () => {
 
   useEffect(() => {
     if (journal && getCurrentUser()) {
-      setIsLiked(journal.likes?.includes(getCurrentUser()._id) || false);
+      setIsLiked(likedJournals.has(journal._id));
     }
-  }, [journal, getCurrentUser]);
+  }, [likedJournals, journal]);
 
-  useEffect(() => {
-    if (journal && getCurrentUser()) {
-      setIsSaved(Array.isArray(journal.saved) && journal.saved.includes(getCurrentUser()._id));
-    }
-  }, [journal, getCurrentUser]);
+  const isSaved = useMemo(() => {
+    if (!journal) return false;
+    return savedJournals.has(journal._id);
+  }, [savedJournals, journal]);
 
   // Scroll to top when component mounts or journal changes
   useEffect(() => {
@@ -291,19 +297,18 @@ const PublicJournalEntry = () => {
       openLoginModal();
       return;
     }
+    if (!journal) return;
+
+    setIsSaving(true);
     try {
-      // Call API to save/unsave
-      if (!isSaved) {
-        await API.post(`/users/${getCurrentUser()._id}/save-journal`, { journalId: journal._id });
-        setIsSaved(true);
-      } else {
-        await API.post(`/users/${getCurrentUser()._id}/unsave-journal`, { journalId: journal._id });
-        setIsSaved(false);
-      }
-    } catch (err) {
-      console.error("Error saving/unsaving journal:", err);
+      await contextHandleSave(journal._id);
+    } catch (error) {
+      console.error("Error saving/unsaving journal:", error);
+      // The context will handle reverting the state
+    } finally {
+      setIsSaving(false);
     }
-  }, [getCurrentUser, openLoginModal, isSaved, journal?._id]);
+  }, [getCurrentUser, openLoginModal, journal, contextHandleSave]);
 
   const processContent = useCallback((content) => {
     if (!content) return "No content available.";
@@ -773,13 +778,13 @@ const PublicJournalEntry = () => {
                         </motion.button>
                         <motion.button
                           onClick={handleSave}
-                          whileHover={{ scale: 1.05 }}
+                          disabled={isSaving}
                           whileTap={{ scale: 0.95 }}
                           className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 focus:ring-2 ring-blue-500"
                           title={isSaved ? "Unsave journal" : "Save journal"}
                           aria-label={isSaved ? "Unsave journal" : "Save journal"}
                         >
-                          {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+                          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
                         </motion.button>
                       </div>
                     </div>
@@ -860,13 +865,13 @@ const PublicJournalEntry = () => {
                       </motion.button>
                       <motion.button
                         onClick={handleSave}
-                        whileHover={{ scale: 1.05 }}
+                        disabled={isSaving}
                         whileTap={{ scale: 0.95 }}
                         className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all duration-200 min-h-12 focus:ring-2 ring-blue-500"
                         title={isSaved ? "Unsave journal" : "Save journal"}
                         aria-label={isSaved ? "Unsave journal" : "Save journal"}
                       >
-                        {isSaved ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
+                        {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : isSaved ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
                       </motion.button>
                     </div>
                   </div>
