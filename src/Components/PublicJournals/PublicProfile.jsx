@@ -294,7 +294,7 @@ const ProfileHeader = ({
   );
 };
 
-const JournalsSection = ({ journals, onLike, onShare, currentUser }) => {
+const JournalsSection = ({ journals, onLike, onShare, onSave, currentUser }) => {
   if (journals.length === 0) {
     return (
       <motion.div
@@ -331,9 +331,11 @@ const JournalsSection = ({ journals, onLike, onShare, currentUser }) => {
         <PublicJournalCard
           key={journal._id}
           journal={journal}
-          onLike={onLike}
+          onLike={() => onLike(journal._id)}
           onShare={onShare}
           isLiked={journal.likes?.includes(currentUser?._id)}
+          isSaved={currentUser && journal.saved && Array.isArray(journal.saved) ? journal.saved.includes(currentUser._id) : false}
+          onSave={onSave}
         />
       ))}
     </motion.div>
@@ -514,6 +516,30 @@ const PublicProfile = () => {
     [journals]
   );
 
+  const handleSave = useCallback(async (journalId, shouldSave, setIsSaved) => {
+    if (!currentUser) {
+      openLoginModal();
+      return;
+    }
+    try {
+      if (shouldSave) {
+        await API.post(`/users/${currentUser._id}/save-journal`, { journalId });
+        setIsSaved(true);
+      } else {
+        await API.post(`/users/${currentUser._id}/unsave-journal`, { journalId });
+        setIsSaved(false);
+      }
+      // Optionally update local state for instant feedback
+      setJournals((prev) =>
+        prev.map((j) =>
+          j._id === journalId ? { ...j, isSaved: shouldSave } : j
+        )
+      );
+    } catch (err) {
+      console.error('Error saving/unsaving journal:', err);
+    }
+  }, [currentUser, openLoginModal]);
+
   const canSubscribe = useMemo(
     () => currentUser && profile && currentUser._id !== profile._id,
     [currentUser, profile]
@@ -627,6 +653,7 @@ const PublicProfile = () => {
               journals={journals}
               onLike={handleLike}
               onShare={handleShare}
+              onSave={handleSave}
               currentUser={currentUser}
             />
           </div>

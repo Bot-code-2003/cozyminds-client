@@ -51,10 +51,10 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
           onClick={() => handleNavigation("/")}
           className="flex items-center group cursor-pointer"
         >
-          <div className=" h-8 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 ease-in-out shadow-md text-2xl">
+          <div className=" h-8 rounded-2xl mr-2 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 ease-in-out text-2xl">
             <span role="img" aria-label="Starlit Journals" style={{fontSize: '1.7rem', lineHeight: 1}}>🌠</span>
           </div>
-          <div className="text-xl font-semibold tracking-tight flex items-baseline">
+          <div className="text-xl font-bold tracking-light flex items-baseline">
   <span className="text-[var(--accent)]">Starlit</span>
   <span className="text-gray-800 dark:text-white ml-1 opacity-80">Journals</span>
 </div>
