@@ -5,6 +5,7 @@ import { Heart, MessageCircle, MoreVertical, Edit3, Trash2, Send, Loader2, Reply
 import { createAvatar } from '@dicebear/core';
 import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
 import { getWithExpiry } from '../../utils/anonymousName';
+import axios from "axios";
 
 const avatarStyles = {
   avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
@@ -29,6 +30,7 @@ const Comments = ({ journalId, onLoginRequired }) => {
   const [editingComment, setEditingComment] = useState(null)
   const [editText, setEditText] = useState("")
   const [showDropdown, setShowDropdown] = useState(null)
+  const [userProfiles, setUserProfiles] = useState({});
 
   const API_BASE = import.meta.env.VITE_API_URL
 
@@ -66,6 +68,33 @@ const Comments = ({ journalId, onLoginRequired }) => {
   useEffect(() => {
     fetchComments()
   }, [fetchComments])
+
+  // Fetch user profiles for all unique userIds in comments/replies
+  useEffect(() => {
+    const uniqueUserIds = Array.from(new Set([
+      ...comments.map(c => c.userId),
+      ...comments.flatMap(c => (c.replies || []).map(r => r.userId)),
+    ].filter(Boolean)));
+    const missingIds = uniqueUserIds.filter(id => !userProfiles[id]);
+    if (missingIds.length === 0) return;
+    const fetchProfiles = async () => {
+      try {
+        const responses = await Promise.all(
+          missingIds.map(id => axios.get(`${API_BASE}/user/${id}`))
+        );
+        const newProfiles = {};
+        responses.forEach(res => {
+          if (res.data && res.data.user) {
+            newProfiles[res.data.user._id] = res.data.user;
+          }
+        });
+        setUserProfiles(prev => ({ ...prev, ...newProfiles }));
+      } catch (err) {
+        // Ignore errors, fallback will be used
+      }
+    };
+    fetchProfiles();
+  }, [comments, API_BASE, userProfiles]);
 
   // Submit new comment
   const handleSubmitComment = async (e) => {
@@ -315,7 +344,12 @@ const Comments = ({ journalId, onLoginRequired }) => {
             <div
               className={`w-10 h-10 bg-gradient-to-br ${getAvatarGradient(getCurrentUser()?.anonymousName || getCurrentUser()?.username)} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
             >
-              <img src={getAvatarSvg(getCurrentUser()?.profileTheme?.avatarStyle || 'avataaars', getCurrentUser()?.anonymousName || getCurrentUser()?.username)} alt={getCurrentUser()?.anonymousName || getCurrentUser()?.username} className="w-10 h-10 rounded-full" />
+              <img src={getAvatarSvg(
+                (getCurrentUser()?.profileTheme?.avatarStyle && avatarStyles[getCurrentUser()?.profileTheme?.avatarStyle])
+                  ? getCurrentUser().profileTheme.avatarStyle
+                  : 'avataaars',
+                getCurrentUser()?.anonymousName || getCurrentUser()?.username
+              )} alt={getCurrentUser()?.anonymousName || getCurrentUser()?.username} className="w-10 h-10 rounded-full" />
             </div>
             <div className="flex-1">
               <textarea
@@ -364,7 +398,12 @@ const Comments = ({ journalId, onLoginRequired }) => {
                 <div
                   className={`w-10 h-10 bg-gradient-to-br ${getAvatarGradient(comment.authorName)} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
                 >
-                  <img src={getAvatarSvg(comment.profileTheme?.avatarStyle || 'avataaars', comment.authorName)} alt={comment.authorName} className="w-10 h-10 rounded-full" />
+                  <img src={getAvatarSvg(
+                    (userProfiles[comment.userId]?.profileTheme?.avatarStyle && avatarStyles[userProfiles[comment.userId]?.profileTheme?.avatarStyle])
+                      ? userProfiles[comment.userId].profileTheme.avatarStyle
+                      : 'avataaars',
+                    userProfiles[comment.userId]?.anonymousName || comment.authorName
+                  )} alt={comment.authorName} className="w-10 h-10 rounded-full" />
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -375,9 +414,9 @@ const Comments = ({ journalId, onLoginRequired }) => {
                           <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
                             {comment.authorName}
                           </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {/* <span className="text-xs text-gray-500 dark:text-gray-400">
                             {formatDate(comment.createdAt)}
-                          </span>
+                          </span> */}
                           {comment.isEdited && (
                             <span className="text-xs text-gray-400 dark:text-gray-500">(edited)</span>
                           )}
@@ -492,7 +531,12 @@ const Comments = ({ journalId, onLoginRequired }) => {
                         <div
                           className={`w-8 h-8 bg-gradient-to-br ${getAvatarGradient(getCurrentUser()?.anonymousName || getCurrentUser()?.username)} rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
                         >
-                          <img src={getAvatarSvg(getCurrentUser()?.profileTheme?.avatarStyle || 'avataaars', getCurrentUser()?.anonymousName || getCurrentUser()?.username)} alt={getCurrentUser()?.anonymousName || getCurrentUser()?.username} className="w-8 h-8 rounded-full" />
+                          <img src={getAvatarSvg(
+                            (getCurrentUser()?.profileTheme?.avatarStyle && avatarStyles[getCurrentUser()?.profileTheme?.avatarStyle])
+                              ? getCurrentUser().profileTheme.avatarStyle
+                              : 'avataaars',
+                            getCurrentUser()?.anonymousName || getCurrentUser()?.username
+                          )} alt={getCurrentUser()?.anonymousName || getCurrentUser()?.username} className="w-8 h-8 rounded-full" />
                         </div>
                         <div className="flex-1">
                           <textarea
@@ -540,7 +584,12 @@ const Comments = ({ journalId, onLoginRequired }) => {
                         <div
                           className={`w-8 h-8 bg-gradient-to-br ${getAvatarGradient(reply.authorName)} rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
                         >
-                          <img src={getAvatarSvg(reply.profileTheme?.avatarStyle || 'avataaars', reply.authorName)} alt={reply.authorName} className="w-8 h-8 rounded-full" />
+                          <img src={getAvatarSvg(
+                            (userProfiles[reply.userId]?.profileTheme?.avatarStyle && avatarStyles[userProfiles[reply.userId]?.profileTheme?.avatarStyle])
+                              ? userProfiles[reply.userId].profileTheme.avatarStyle
+                              : 'avataaars',
+                            userProfiles[reply.userId]?.anonymousName || reply.authorName
+                          )} alt={reply.authorName} className="w-8 h-8 rounded-full" />
                         </div>
 
                         <div className="flex-1 min-w-0">
@@ -551,9 +600,9 @@ const Comments = ({ journalId, onLoginRequired }) => {
                                   <span className="font-semibold text-gray-900 dark:text-gray-100 text-xs">
                                     {reply.authorName}
                                   </span>
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  {/* <span className="text-xs text-gray-500 dark:text-gray-400">
                                     {formatDate(reply.createdAt)}
-                                  </span>
+                                  </span> */}
                                   {reply.isEdited && (
                                     <span className="text-xs text-gray-400 dark:text-gray-500">(edited)</span>
                                   )}

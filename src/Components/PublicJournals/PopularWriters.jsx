@@ -124,7 +124,7 @@ const PopularWriters = ({ onWriterClick, isLoggedIn }) => {
               className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-200 group"
             >
               <Link
-                to={`/profile/${writer.anonymousName}`}
+                to={`/profile/id/${writer.userId}`}
                 className="flex items-center gap-3 flex-1 min-w-0"
                 onClick={() => window.scrollTo(0, 0)}
               >
