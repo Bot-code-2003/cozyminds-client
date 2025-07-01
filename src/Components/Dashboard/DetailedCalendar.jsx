@@ -10,7 +10,6 @@ const DetailedCalendar = () => {
   const { darkMode } = useDarkMode();
   const { journalEntries } = useJournals();
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   // Mood categories and their colors (grouped from SecondStep.jsx)
   const moodCategories = {
@@ -46,6 +45,14 @@ const DetailedCalendar = () => {
     }
   };
 
+  // Add after moodCategories definition:
+  const moodLookup = new Map();
+  Object.entries(moodCategories).forEach(([categoryKey, category]) => {
+    category.moods.forEach(mood => {
+      moodLookup.set(mood, { categoryKey, color: category.color });
+    });
+  });
+
   // Get all available years from journal entries
   const availableYears = useMemo(() => {
     const years = new Set();
@@ -55,84 +62,69 @@ const DetailedCalendar = () => {
     return Array.from(years).sort((a, b) => b - a); // Sort descending
   }, [journalEntries]);
 
-  // Generate calendar data for the selected year
-  const calendarData = useMemo(() => {
-    const data = [];
-    
-    // Start from January 1st of selected year
-    const startDate = new Date(selectedYear, 0, 1);
-    const endDate = new Date(selectedYear, 11, 31);
-    
-    // Group entries by date
-    const entriesByDate = {};
-    journalEntries.forEach(entry => {
-      const entryDate = new Date(entry.date);
-      if (entryDate.getFullYear() === selectedYear) {
-        const date = entryDate.toDateString();
-        if (!entriesByDate[date]) {
-          entriesByDate[date] = [];
+  // For each year, generate its calendar data
+  const calendarsByYear = useMemo(() => {
+    return availableYears.map(year => {
+      // Generate calendar data for this year
+      const data = [];
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year, 11, 31);
+      const entriesByDate = {};
+      journalEntries.forEach(entry => {
+        const entryDate = new Date(entry.date);
+        if (entryDate.getFullYear() === year) {
+          const date = entryDate.toDateString();
+          if (!entriesByDate[date]) entriesByDate[date] = [];
+          entriesByDate[date].push(entry);
         }
-        entriesByDate[date].push(entry);
-      }
-    });
-
-    // Generate calendar grid for the entire year
-    const currentDate = new Date(startDate);
-    while (currentDate <= endDate) {
-      const dateString = currentDate.toDateString();
-      const dayEntries = entriesByDate[dateString] || [];
-      let moodData = null;
-      
-      if (dayEntries.length > 0) {
-        // Get the first mood from the first entry of the day
-        const firstEntry = dayEntries[0];
-        const mood = firstEntry.mood;
-        
-        if (mood) {
-          // O(1) lookup instead of O(n) loop!
-          const moodInfo = moodLookup.get(mood);
-          if (moodInfo) {
-            moodData = {
-              mood,
-              category: moodInfo.categoryKey,
-              color: moodInfo.color,
-              entries: dayEntries.length
-            };
+      });
+      const currentDate = new Date(startDate);
+      while (currentDate <= endDate) {
+        const dateString = currentDate.toDateString();
+        const dayEntries = entriesByDate[dateString] || [];
+        let moodData = null;
+        if (dayEntries.length > 0) {
+          const firstEntry = dayEntries[0];
+          const mood = firstEntry.mood;
+          if (mood) {
+            const moodInfo = moodLookup.get(mood);
+            if (moodInfo) {
+              moodData = {
+                mood,
+                category: moodInfo.categoryKey,
+                color: moodInfo.color,
+                entries: dayEntries.length
+              };
+            }
           }
         }
+        data.push({
+          date: new Date(currentDate),
+          dateString,
+          moodData,
+          entries: dayEntries.length,
+          dayOfYear: Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
       }
-      
-      data.push({
-        date: new Date(currentDate),
-        dateString,
-        moodData,
-        entries: dayEntries.length,
-        dayOfYear: Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1
+      // Group by weeks
+      const weeks = [];
+      let currentWeek = [];
+      data.forEach((day, index) => {
+        currentWeek.push(day);
+        if (day.date.getDay() === 0 || index === data.length - 1) {
+          weeks.push([...currentWeek]);
+          currentWeek = [];
+        }
       });
-      
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    
-    return data;
-  }, [journalEntries, selectedYear]);
-
-  // Group data by weeks for display
-  const weeks = useMemo(() => {
-    const weeks = [];
-    let currentWeek = [];
-    
-    calendarData.forEach((day, index) => {
-      currentWeek.push(day);
-      
-      // Start new week on Sundays (day 0) or at the end
-      if (day.date.getDay() === 0 || index === calendarData.length - 1) {
-        weeks.push([...currentWeek]);
-        currentWeek = [];
-      }
+      return {
+        year,
+        weeks,
+        totalEntries: journalEntries.filter(entry => new Date(entry.date).getFullYear() === year).length,
+        data
+      };
     });
-    
-    return weeks;
-  }, [calendarData]);
+  }, [availableYears, journalEntries, moodLookup]);
 
   // Get color intensity for a mood
   const getColorIntensity = (moodData) => {
@@ -149,26 +141,6 @@ const DetailedCalendar = () => {
     }
     
     return `${day.date.toLocaleDateString()}: ${day.moodData.mood} (${day.entries} ${day.entries === 1 ? 'entry' : 'entries'})`;
-  };
-
-  // Calculate total entries for selected year
-  const totalEntriesThisYear = journalEntries.filter(entry => 
-    new Date(entry.date).getFullYear() === selectedYear
-  ).length;
-
-  // Navigate to previous/next year
-  const goToPreviousYear = () => {
-    const currentIndex = availableYears.indexOf(selectedYear);
-    if (currentIndex < availableYears.length - 1) {
-      setSelectedYear(availableYears[currentIndex + 1]);
-    }
-  };
-
-  const goToNextYear = () => {
-    const currentIndex = availableYears.indexOf(selectedYear);
-    if (currentIndex > 0) {
-      setSelectedYear(availableYears[currentIndex - 1]);
-    }
   };
 
   return (
@@ -205,106 +177,89 @@ const DetailedCalendar = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Year Navigation */}
-        <div className="max-w-6xl mx-auto mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={goToPreviousYear}
-                disabled={availableYears.indexOf(selectedYear) >= availableYears.length - 1}
-                className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                {selectedYear}
-              </h2>
-              <button
-                onClick={goToNextYear}
-                disabled={availableYears.indexOf(selectedYear) <= 0}
-                className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="text-sm text-[var(--text-secondary)]">
-                {totalEntriesThisYear} entries in {selectedYear}
-              </div>
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                <Info size={14} className="sm:w-4 sm:h-4" />
-                <span>Mood Categories</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Calendar Grid */}
-          <div className="bg-[var(--bg-secondary)] rounded-xl p-4 sm:p-6 shadow-lg">
-            <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6">
-              <div className="flex gap-1 min-w-max pb-2">
-                {weeks.map((week, weekIndex) => (
-                  <div key={weekIndex} className="flex flex-col gap-1">
-                    {week.map((day, dayIndex) => {
-                      const color = getColorIntensity(day.moodData);
-                      return (
-                        <div
-                          key={dayIndex}
-                          className={`w-2 h-2 sm:w-3 sm:h-3 rounded-sm cursor-pointer transition-all duration-200 hover:scale-125 hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600 ${
-                            selectedDate === day.dateString ? 'ring-2 ring-blue-500' : ''
-                          }`}
-                          style={{
-                            backgroundColor: color,
-                            transition: 'background-color 0.3s ease, transform 0.2s ease'
-                          }}
-                          onClick={() => setSelectedDate(day.dateString)}
-                          title={getTooltipContent(day)}
-                        />
-                      );
-                    })}
+        {/* Render all years in descending order */}
+        <div className="max-w-6xl mx-auto mb-8 flex flex-col gap-12">
+          {calendarsByYear.map(({ year, weeks, totalEntries, data }) => (
+            <div key={year} className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">{year}</h2>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="text-sm text-[var(--text-secondary)]">
+                    {totalEntries} entries in {year}
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Legend */}
-            <div className="mt-6 flex flex-wrap gap-3 sm:gap-4 text-xs text-gray-600 dark:text-gray-400">
-              <div className="flex items-center gap-2">
-                <span>Mood Categories:</span>
-              </div>
-              {Object.entries(moodCategories).map(([key, category]) => (
-                <div key={key} className="flex items-center gap-2">
-                  <div 
-                    className="w-2 h-2 sm:w-3 sm:h-3 rounded-sm transition-colors duration-300"
-                    style={{ backgroundColor: category.color }}
-                  />
-                  <span className="text-xs sm:text-xs">{category.name}</span>
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    <Info size={14} className="sm:w-4 sm:h-4" />
+                    <span>Mood Categories</span>
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Selected Date Info */}
-            {selectedDate && (
-              <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {new Date(selectedDate).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
-                {calendarData.find(day => day.dateString === selectedDate)?.moodData ? (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Mood: {calendarData.find(day => day.dateString === selectedDate)?.moodData.mood}
-                  </p>
-                ) : (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    No journal entries on this date
-                  </p>
+              </div>
+              {/* Calendar Grid for this year */}
+              <div className="bg-[var(--bg-secondary)] rounded-xl p-4 sm:p-6 shadow-lg">
+                <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6">
+                  <div className="flex gap-1 min-w-max pb-2">
+                    {weeks.map((week, weekIndex) => (
+                      <div key={weekIndex} className="flex flex-col gap-1">
+                        {week.map((day, dayIndex) => {
+                          const color = getColorIntensity(day.moodData);
+                          return (
+                            <div
+                              key={dayIndex}
+                              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-sm cursor-pointer transition-all duration-200 hover:scale-125 hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600 ${
+                                selectedDate === day.dateString ? 'ring-2 ring-blue-500' : ''
+                              }`}
+                              style={{
+                                backgroundColor: color,
+                                transition: 'background-color 0.3s ease, transform 0.2s ease'
+                              }}
+                              onClick={() => setSelectedDate(day.dateString)}
+                              title={getTooltipContent(day)}
+                            />
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Legend */}
+                <div className="mt-6 flex flex-wrap gap-3 sm:gap-4 text-xs text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <span>Mood Categories:</span>
+                  </div>
+                  {Object.entries(moodCategories).map(([key, category]) => (
+                    <div key={key} className="flex items-center gap-2">
+                      <div 
+                        className="w-2 h-2 sm:w-3 sm:h-3 rounded-sm transition-colors duration-300"
+                        style={{ backgroundColor: category.color }}
+                      />
+                      <span className="text-xs sm:text-xs">{category.name}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Selected Date Info (show only if selectedDate is in this year) */}
+                {selectedDate && data.find(day => day.dateString === selectedDate) && (
+                  <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {new Date(selectedDate).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                    {data.find(day => day.dateString === selectedDate)?.moodData ? (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Mood: {data.find(day => day.dateString === selectedDate)?.moodData.mood}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        No journal entries on this date
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

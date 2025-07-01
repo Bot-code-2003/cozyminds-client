@@ -294,7 +294,7 @@ const ProfileSettings = () => {
         <div className="absolute inset-0 bg-black/20" />
         {/* Edit button: visible in top-right on desktop, below header on mobile */}
         <button
-          className="hidden sm:block absolute bottom-2 right-2 px-4 py-1 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)]"
+          className="hidden sm:block absolute bottom-2 right-2 px-4 py-1 bg-[var(--accent)] z-20 text-white rounded shadow hover:bg-[var(--accent-hover)]"
           onClick={() => {
             setSavedCard(profileTheme);
             setEditingCard(true);
@@ -302,7 +302,7 @@ const ProfileSettings = () => {
         >Edit</button>
       </div>
       {/* Mobile Edit button below header */}
-      {!editingCard && (
+      {/* {!editingCard && (
         <button
           className="block sm:hidden w-full mt-2 mb-4 px-4 py-3 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)] text-base font-semibold"
           onClick={() => {
@@ -310,7 +310,7 @@ const ProfileSettings = () => {
             setEditingCard(true);
           }}
         >Edit Public Profile Card</button>
-      )}
+      )} */}
       <div className="px-6 sm:px-8 pb-8">
         {/* Avatar and Basic Info */}
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 -mt-16 relative z-10">
@@ -409,6 +409,16 @@ const ProfileSettings = () => {
             </p>
           </div>
         </motion.div>
+        {/* Mobile Edit button below stats grid */}
+        {!editingCard && (
+          <button
+            className="block sm:hidden w-full mt-6 mb-4 px-4 py-3 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)] text-base font-semibold"
+            onClick={() => {
+              setSavedCard(profileTheme);
+              setEditingCard(true);
+            }}
+          >Edit Public Profile Card</button>
+        )}
         {/* Edit controls */}
         {editingCard && (
           <div className="mt-8">

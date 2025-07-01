@@ -267,6 +267,11 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                       </button>
                     </label>
                   </div>
+                  <div className="text-xs text-center mt-1">
+                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-[#5999a8] underline hover:no-underline">
+                      Read the full Terms and Conditions
+                    </a>
+                  </div>
                   
                   <button type="submit" className="w-full rounded-lg p-3 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:opacity-90 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled={isLoading || !passwordMatch || !!passwordError || !signupForm.agreedToTerms} aria-label="Create your account">
                     {isLoading ? "Creating Account..." : "Create Account"}

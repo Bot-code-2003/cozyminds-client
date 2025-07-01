@@ -349,10 +349,10 @@ const JournalingAlt = () => {
         onLogout={handleLogout}
       />
       
-      {/* Draft Restoration Banner */}
+      {/* Draft Restoration Banner
       {showDraftRestore && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[1000] w-full max-w-4xl px-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 shadow-lg">
+          <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-4 shadow-lg">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="flex-shrink-0">
@@ -387,7 +387,7 @@ const JournalingAlt = () => {
           </div>
         </div>
       )}
-      
+       */}
       <div className="max-w-5xl w-full mx-auto px-2 sm:px-0 flex flex-col">
         {renderCurrentStep()}
         {saveError && (

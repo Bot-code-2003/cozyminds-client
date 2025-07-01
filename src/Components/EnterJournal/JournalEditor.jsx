@@ -31,6 +31,7 @@ import LinkExtension from "@tiptap/extension-link";
 import ImageExtension from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
+import useAutoSave from "../../utils/useAutoSave";
 
 // Enhanced Full-Width Image Extension
 const FullWidthImageExtension = ImageExtension.extend({
@@ -120,6 +121,8 @@ const JournalEditor = ({
   const [imageUrl, setImageUrl] = useState("");
   const [imageError, setImageError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showDraftRestore, setShowDraftRestore] = useState(false);
+  const { loadFromStorage, clearDraft } = useAutoSave(journalText, journalTitle, 'journal-draft');
 
   // Validate URL helper
   const isValidUrl = useCallback((string) => {
@@ -236,6 +239,31 @@ const JournalEditor = ({
       }
     }
   }, [editor, journalText]);
+
+  useEffect(() => {
+    const loadDraft = () => {
+      const savedDraft = loadFromStorage();
+      if (savedDraft && (savedDraft.content || savedDraft.title)) {
+        setShowDraftRestore(true);
+      }
+    };
+    const timer = setTimeout(loadDraft, 100);
+    return () => clearTimeout(timer);
+  }, [loadFromStorage]);
+
+  const restoreDraft = () => {
+    const savedDraft = loadFromStorage();
+    if (savedDraft) {
+      setJournalTitle(savedDraft.title || "");
+      setJournalText(savedDraft.content || "");
+      setShowDraftRestore(false);
+    }
+  };
+
+  const dismissDraft = () => {
+    clearDraft();
+    setShowDraftRestore(false);
+  };
 
   const setLink = useCallback(() => {
     if (!editor) return;
@@ -780,12 +808,7 @@ const JournalEditor = ({
 <div className="w-full border-t border-[var(--border)] px-4 sm:px-6 py-4">
   <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-      {hasContent && (
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-sm font-medium rounded-full">
-          <Check size={14} />
-          Draft Ready
-        </div>
-      )}
+      
       <div className="text-sm text-gray-500 dark:text-gray-400">
         {words} words • {characters} characters
       </div>
@@ -953,6 +976,44 @@ const JournalEditor = ({
           }
         }
       `}</style>
+
+      {showDraftRestore && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[1000] w-full max-w-4xl px-4">
+          <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-4 shadow-lg">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    Unsaved Draft Found
+                  </h3>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    You have an unsaved draft. Would you like to restore it?
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={restoreDraft}
+                  className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+                >
+                  Restore Draft
+                </button>
+                <button
+                  onClick={dismissDraft}
+                  className="px-4 py-2 text-sm font-semibold border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-300 bg-white dark:bg-blue-950 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-md transition-colors"
+                >
+                  Start Fresh
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

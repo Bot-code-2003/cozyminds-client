@@ -129,7 +129,7 @@ const ProfileHeader = ({
   const getBannerStyle = () => {
     if (profile.profileTheme?.type === 'color') return { background: profile.profileTheme.value };
     if (profile.profileTheme?.type === 'gradient') return { background: profile.profileTheme.value };
-    if (profile.profileTheme?.type === 'texture') return { background: `url(${profile.profileTheme.value})`, backgroundSize: 'cover' };
+    if (profile.profileTheme?.type === 'texture') return { background: `url(${profile.profileTheme.value})`, backgroundSize: 'contain', backgroundPosition: 'center' };
     // fallback
     return { background: 'linear-gradient(to right, #a18cd1 0%, #fbc2eb 100%)' };
   };
