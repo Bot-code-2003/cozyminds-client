@@ -95,9 +95,9 @@ button:hover {
   --text-secondary: #5a6b7b;      /* Calm blue-gray */
   --text-journal-title: #1a2533;  /* Even deeper for titles */
 
-  --accent: #3a7dd8;              /* Modern blue accent */
+  --accent: #2563EB;              /* Modern blue accent */
   --accent-rgb: 58, 125, 216;
-  --accent-hover: #2e65b3;
+  --accent-hover: #1c58d9;
   --accent-light: #b3d4fc;        /* Soft sky blue */
   --accent-light-hover: #a0c4e8;
 
@@ -140,9 +140,9 @@ button:hover {
   --text-secondary: #a2b3c7;      /* Muted blue-gray */
   --text-journal-title: #fff;
 
-  --accent: #6ba8f6;              /* Soft blue accent */
+  --accent: #4e86ff;              /* Soft blue accent */
   --accent-rgb: 107, 168, 246;
-  --accent-hover: #4b8ed6;
+  --accent-hover: #3b73ee;
   --accent-dark: #3a7dd8;
   --accent-dark-hover: #2e65b3;
 

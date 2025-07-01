@@ -292,16 +292,25 @@ const ProfileSettings = () => {
         style={getBannerStyle()}
       >
         <div className="absolute inset-0 bg-black/20" />
-        {!editingCard && (
-          <button
-            className="absolute bottom-2 right-2 px-4 py-1 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)] z-[200]"
-            onClick={() => {
-              setSavedCard(profileTheme);
-              setEditingCard(true);
-            }}
-          >Edit</button>
-        )}
+        {/* Edit button: visible in top-right on desktop, below header on mobile */}
+        <button
+          className="hidden sm:block absolute bottom-2 right-2 px-4 py-1 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)]"
+          onClick={() => {
+            setSavedCard(profileTheme);
+            setEditingCard(true);
+          }}
+        >Edit</button>
       </div>
+      {/* Mobile Edit button below header */}
+      {!editingCard && (
+        <button
+          className="block sm:hidden w-full mt-2 mb-4 px-4 py-3 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)] text-base font-semibold"
+          onClick={() => {
+            setSavedCard(profileTheme);
+            setEditingCard(true);
+          }}
+        >Edit Public Profile Card</button>
+      )}
       <div className="px-6 sm:px-8 pb-8">
         {/* Avatar and Basic Info */}
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 -mt-16 relative z-10">
@@ -503,9 +512,9 @@ const ProfileSettings = () => {
         <input
           type="text"
           value={form.anonymousName}
-          readOnly
-          disabled
+          onChange={(e) => setForm({ ...form, anonymousName: e.target.value })}
           className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+          placeholder="Enter your anonymous name"
         />
       </div>
 

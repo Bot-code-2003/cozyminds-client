@@ -115,21 +115,23 @@ const DetailedMoodDistributions = () => {
   // Filter entries based on selected month, year, and entry type
   useEffect(() => {
     let filtered = [...journalEntries];
-    filtered = filtered.filter((entry) => {
-      const isCorrectType = entryType === "public" ? entry.isPublic : !entry.isPublic;
-      if (selectedMonth !== "all") {
+    if (selectedMonth !== "all") {
+      filtered = filtered.filter((entry) => {
+        const isCorrectType = entryType === "public" ? entry.isPublic : !entry.isPublic;
         const entryDate = new Date(entry.date);
         return (
           entryDate.getMonth() === Number.parseInt(selectedMonth) &&
           entryDate.getFullYear() === selectedYear &&
           isCorrectType
         );
-      } else if (selectedYear) {
+      });
+    } else if (selectedYear) {
+      // For yearly overview, ignore entryType (show all entries for the year)
+      filtered = filtered.filter((entry) => {
         const entryDate = new Date(entry.date);
-        return entryDate.getFullYear() === selectedYear && isCorrectType;
-      }
-      return isCorrectType;
-    });
+        return entryDate.getFullYear() === selectedYear;
+      });
+    }
     setFilteredEntries(filtered);
   }, [journalEntries, selectedMonth, selectedYear, entryType]);
 

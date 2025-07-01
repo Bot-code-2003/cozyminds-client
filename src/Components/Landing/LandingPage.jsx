@@ -18,6 +18,8 @@ import Home from "../../assets/home3.png";
 import PublicJournalsShowcase from "./PublicJournalsShowcase";
 import { getWithExpiry, setWithExpiry } from "../../utils/anonymousName";
 import PublicProfileShowcase from "./PublicProfileShowcase";
+import { Helmet } from "react-helmet";
+import Accordion from "../ui/Accordion";
 
 const LandingPage = () => {
   const API = axios.create({
@@ -187,210 +189,297 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div
-      className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative transition-colors duration-300`}
-    >
-      <title>Starlit Journals - Dream, Write, Track Moods</title>
-      <meta
-        name="description"
-        content="Write with a rich text editor, track moods, tag entries, and earn coins for custom backgrounds and fun mail templates in Starlit Journals!"
-      />
-      <meta
-        name="keywords"
-        content="journaling app, mood tracker, creative writing, rich text editor, gamified journaling, mental health, self-expression, journal backgrounds"
-      />
-      <meta name="author" content="Starlit Journals Team" />
-      <meta name="robots" content="index, follow" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <>
+      <Helmet>
+        <title>Starlit Journals | Anonymous Public Journaling for Everyone</title>
+        <meta name="description" content="Create and explore public journals with complete privacy. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Safe, private, and inspiring journaling for all." />
+        <meta property="og:title" content="Starlit Journals | Anonymous Public Journaling for Everyone" />
+        <meta property="og:description" content="Create and explore public journals with complete privacy. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Safe, private, and inspiring journaling for all." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://starlitjournals.com/" />
+        <meta property="og:image" content="/public/andy_the_sailor.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Starlit Journals | Anonymous Public Journaling for Everyone" />
+        <meta name="twitter:description" content="Create and explore public journals with complete privacy. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Safe, private, and inspiring journaling for all." />
+        <meta name="twitter:image" content="/public/andy_the_sailor.png" />
+        <script type="application/ld+json">{`
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Starlit Journals",
+            "url": "https://starlitjournals.com/",
+            "description": "Create and explore public journals with complete privacy. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Safe, private, and inspiring journaling for all."
+          }
+        `}</script>
+        <script type="application/ld+json">{`
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Do I need to provide my real name, email, or personal info?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No real name, email, or personal info required—ever. Starlit Journals never asks for your real name, email, or any personal info. You create an account with a unique, collision-resistant anonymous name."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How is my anonymous name generated?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Every user gets a unique, collision-resistant anonymous name. No two users can have the same name, ensuring privacy and individuality."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Are my journals private and anonymous by default?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes! By default, your journals are private and your identity is always protected. We never ask for your real name, email, or any personal information—so your anonymity is guaranteed by design."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does Starlit Journals store and protect my data?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "We use secure, encrypted servers and never store any personal identifying information. Your journal entries are public, but your identity remains private and protected at all times."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I use Starlit Journals without creating an account?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "You can browse and read public journals without an account. To write or interact, you'll need to create an anonymous account—no personal info required!"
+                }
+              }
+            ]
+          }
+        `}</script>
+      </Helmet>
+      <div
+        className={`min-h-screen dark:dark p-6 sm:p-0 dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans flex flex-col items-center relative transition-colors duration-300`}
+      >
+        <title>Starlit Journals - Dream, Write, Track Moods</title>
+        <meta
+          name="description"
+          content="Write with a rich text editor, track moods, tag entries, and earn coins for custom backgrounds and fun mail templates in Starlit Journals!"
+        />
+        <meta
+          name="keywords"
+          content="journaling app, mood tracker, creative writing, rich text editor, gamified journaling, mental health, self-expression, journal backgrounds"
+        />
+        <meta name="author" content="Starlit Journals Team" />
+        <meta name="robots" content="index, follow" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      {/* Gradient Accents */}
-      <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
+        {/* Gradient Accents */}
+        <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
 
-      {/* Grid Pattern Background */}
-      <div className="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none ">
-        <div className="absolute inset-0 grid grid-cols-12 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-full border-r border-black dark:border-white"
-            ></div>
-          ))}
-        </div>
-        <div className="absolute inset-0 grid grid-rows-12 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-full border-b border-black dark:border-white"
-            ></div>
-          ))}
-        </div>
-      </div>
-
-      {/* Navbar */}
-      <Navbar
-        isScrolled={isScrolled}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        user={user}
-        openLoginModal={openLoginModal}
-        openSignupModal={openSignupModal}
-      />
-
-      {/* Header */}
-      <header className="w-full max-w-6xl mt-32 mb-30 px-4 sm:px-8 z-[99]">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <div className="order-2 md:order-1">
-            <div className="inline-block mb-6 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-sm font-medium tracking-wider rounded-full bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm">
-              GAMIFIED
-            </div>
-            <h1 className="text-4xl md:text-hero font-bold tracking-tight mb-8 leading-tight">
-              <span className="relative">
-                Unleash Your Thoughts with Starlit Journals!
-                <svg
-                  className="absolute -bottom-3 left-0 w-full h-2 text-[#5999a8] dark:text-[#5999a8]"
-                  viewBox="0 0 100 10"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    d="M0,5 Q25,0 50,5 T100,5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                </svg>
-              </span>
-            </h1>
-            <p className="mt-6 text-xl md:text-2xl opacity-80 font-medium sm:max-w-xl leading-relaxed">
-              Write, Track Moods, and Earn Rewards in a Fun, Creative Space.
-            </p>
-            <div className="mt-10">
-              <button
-                className="px-8 py-4 bg-[var(--accent)] text-white rounded-2xl hover:bg-[var(--accent-hover)] transition-all duration-500 ease-in-out font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent)] inline-flex items-center gap-3 w-full sm:w-fit"
-                onClick={openLoginModal}
-                aria-label="Begin your journaling journey"
-              >
-                <span className="flex items-center gap-2">
-                  Start Free – Get 50 Coins!
-                  <ArrowRight
-                    size={20}
-                    className="transition-transform duration-500 ease-in-out group-hover:translate-x-1"
-                  />
-                </span>
-              </button>
-            </div>
+        {/* Grid Pattern Background */}
+        <div className="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none ">
+          <div className="absolute inset-0 grid grid-cols-12 gap-4">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-full border-r border-black dark:border-white"
+              ></div>
+            ))}
           </div>
-
-          <div className="order-1 md:order-2 relative">
-            <div className="aspect-square w-full max-w-md mx-auto relative">
-              <div className="absolute inset-0 rounded-2xl bg-[#5999a8]/20 dark:bg-[#5999a8]/10 -rotate-3 transform"></div>
-              <div className="absolute inset-0 border-2 rounded-2xl border-[#1A1A1A] dark:border-[#F8F1E9] rotate-3 transform"></div>
-              <div className="absolute inset-0 rounded-2xl bg-[#5999a8]/20 dark:bg-[#5999a8]/10 rotate-6 transform"></div>
-              <div className="relative z-10 rounded-2xl w-full h-full border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-white dark:bg-[#2A2A2A] flex items-center justify-center">
-                <img
-                  src={Home || "/placeholder.svg"}
-                  className="w-full h-full object-cover rounded-2xl"
-                  alt="Cozy journaling space - Starlit Journals"
-                  loading="lazy"
-                />
-              </div>
-              <div className="absolute -bottom-6 -right-6 w-20 h-20 rounded-2xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[#F8F1E9] dark:bg-[#1A1A1A] z-20 flex items-center justify-center">
-                <span className="text-2xl font-bold">❤️</span>
-              </div>
-            </div>
+          <div className="absolute inset-0 grid grid-rows-12 gap-4">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-full border-b border-black dark:border-white"
+              ></div>
+            ))}
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="z-10 flex flex-col items-center max-w-7xl">
-        {/* Stats Section */}
-        <section
-          className="w-full px-1 sm:px-6 sm:pb-16"
-          aria-labelledby="stats-heading"
-        >
-          <h2 id="stats-heading" className="sr-only">
-            User Statistics
-          </h2>
-          <div className="border-2 rounded-2xl border-[#1A1A1A] dark:border-[#F8F1E9]">
-            <div className="grid grid-cols-1 md:grid-cols-3">
-              {[
-                {
-                  number: animatedUserCount,
-                  isLoading: isUserCountLoading,
-                  label: "Creative Writers",
-                  icon: <Users size={28} />,
-                  description:
-                    "Join our growing community of mindful journalers",
-                },
-                {
-                  number: animatedJournalCount,
-                  isLoading: isJournalCountLoading,
-                  label: "Heartfelt Entries",
-                  icon: <Notebook size={28} />,
-                  description: "Total journal entries created by our community",
-                },
-                {
-                  number: "1 Entry",
-                  isLoading: false,
-                  label: "Daily Writing Goal",
-                  icon: <Clock size={28} />,
-                  description: "Write one entry a day to build your habit!",
-                },
-              ].map((stat, index) => (
-                <div
-                  key={index}
-                  className={`flex flex-col p-8 ${
-                    index !== 2
-                      ? "border-b md:border-b-0 md:border-r"
-                      : "border-b md:border-b-0"
-                  } border-[#1A1A1A] dark:border-[#F8F1E9] ${
-                    index === 1 ? "bg-[#5999a8]/10 dark:bg-[#5999a8]/5" : ""
-                  }`}
-                >
-                  <div className="mb-4 rounded-2xl p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] inline-block">
-                    {stat.icon}
-                  </div>
-                  <div
-                    className={`text-4xl font-bold mb-2 transition-colors duration-300 ${
-                      stat.isLoading ? "text-[#5999a8] animate-pulse" : ""
-                    }`}
-                  >
-                    {typeof stat.number === "number"
-                      ? stat.number.toLocaleString()
-                      : stat.number}
-                  </div>
-                  <p className="text-lg font-medium mb-2">{stat.label}</p>
-                  <p className="text-sm opacity-70">{stat.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <Features
-          setShowLoginModal={openLoginModal}
-          setShowSignupModal={openSignupModal}
+        {/* Navbar */}
+        <Navbar
+          isScrolled={isScrolled}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          user={user}
+          openLoginModal={openLoginModal}
+          openSignupModal={openSignupModal}
         />
 
-        {/* Public Journals Showcase */}
-        <PublicJournalsShowcase />
+        {/* Header */}
+        <header className="w-full max-w-6xl mt-32 mb-30 px-4 sm:px-8 z-[99]">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="order-2 md:order-1">
+              <div className="inline-block mb-6 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-sm font-medium tracking-wider rounded-full bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm">
+                GAMIFIED
+              </div>
+              <h1 className="text-4xl md:text-hero font-bold tracking-tight mb-6 leading-tight">
+                Start Your Public Journal Adventure
+              </h1>
+              <p className="text-xl md:text-2xl opacity-80 font-medium sm:max-w-xl leading-relaxed mb-8">
+                Write anonymously. Earn rewards. Inspire the world.
+              </p>
+              <div className="mt-6">
+                <button
+                  className="px-8 py-4 bg-[var(--accent)] text-white rounded-2xl hover:bg-[var(--accent-hover)] transition-all duration-500 ease-in-out font-medium shadow-xl hover:shadow-2xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent)] inline-flex items-center gap-3 w-full sm:w-fit"
+                  onClick={openLoginModal}
+                  aria-label="Begin your journaling journey"
+                >
+                  <span className="flex items-center gap-2">
+                    Start Free – Get 50 Coins!
+                    <ArrowRight
+                      size={20}
+                      className="transition-transform duration-500 ease-in-out group-hover:translate-x-1"
+                    />
+                  </span>
+                </button>
+              </div>
+            </div>
 
-        <PublicProfileShowcase />
+            <div className="order-1 md:order-2 relative">
+              <div className="aspect-square w-full max-w-md mx-auto relative">
+                <div className="absolute inset-0 rounded-2xl bg-[#5999a8]/20 dark:bg-[#5999a8]/10 -rotate-3 transform"></div>
+                <div className="absolute inset-0 border-2 rounded-2xl border-[#1A1A1A] dark:border-[#F8F1E9] rotate-3 transform"></div>
+                <div className="absolute inset-0 rounded-2xl bg-[#5999a8]/20 dark:bg-[#5999a8]/10 rotate-6 transform"></div>
+                <div className="relative z-10 rounded-2xl w-full h-full border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-white dark:bg-[#2A2A2A] flex items-center justify-center">
+                  <img
+                    src={Home || "/placeholder.svg"}
+                    className="w-full h-full object-cover rounded-2xl"
+                    alt="Cozy journaling space - Starlit Journals"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="absolute -bottom-6 -right-6 w-20 h-20 rounded-2xl border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-[#F8F1E9] dark:bg-[#1A1A1A] z-20 flex items-center justify-center">
+                  <span className="text-2xl font-bold">❤️</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
 
-        {/* How It Works Section */}
-        {/* <HowItWorks setShowLoginModal={openLoginModal} /> */}
-      </main>
+        {/* Main Content */}
+        <main className="z-10 flex flex-col items-center max-w-7xl">
+          {/* Stats Section */}
+          <section
+            className="w-full px-1 sm:px-6 sm:pb-16"
+            aria-labelledby="stats-heading"
+          >
+            <h2 id="stats-heading" className="sr-only">
+              User Statistics
+            </h2>
+            <div className="border-2 rounded-2xl border-[#1A1A1A] dark:border-[#F8F1E9]">
+              <div className="grid grid-cols-1 md:grid-cols-3">
+                {[
+                  {
+                    number: animatedUserCount,
+                    isLoading: isUserCountLoading,
+                    label: "Creative Writers",
+                    icon: <Users size={28} />,
+                    description:
+                      "Join our growing community of mindful journalers",
+                  },
+                  {
+                    number: animatedJournalCount,
+                    isLoading: isJournalCountLoading,
+                    label: "Heartfelt Entries",
+                    icon: <Notebook size={28} />,
+                    description: "Total journal entries created by our community",
+                  },
+                  {
+                    number: "1 Entry",
+                    isLoading: false,
+                    label: "Daily Writing Goal",
+                    icon: <Clock size={28} />,
+                    description: "Write one entry a day to build your habit!",
+                  },
+                ].map((stat, index) => (
+                  <div
+                    key={index}
+                    className={`flex flex-col p-8 ${
+                      index !== 2
+                        ? "border-b md:border-b-0 md:border-r"
+                        : "border-b md:border-b-0"
+                    } border-[#1A1A1A] dark:border-[#F8F1E9] ${
+                      index === 1 ? "bg-[#5999a8]/10 dark:bg-[#5999a8]/5" : ""
+                    }`}
+                  >
+                    <div className="mb-4 rounded-2xl p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] inline-block">
+                      {stat.icon}
+                    </div>
+                    <div
+                      className={`text-4xl font-bold mb-2 transition-colors duration-300 ${
+                        stat.isLoading ? "text-[#5999a8] animate-pulse" : ""
+                      }`}
+                    >
+                      {typeof stat.number === "number"
+                        ? stat.number.toLocaleString()
+                        : stat.number}
+                    </div>
+                    <p className="text-lg font-medium mb-2">{stat.label}</p>
+                    <p className="text-sm opacity-70">{stat.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
 
-      {/* Testimonials */}
-      <Testimonials darkMode={darkMode} />
+          {/* Features Section */}
+          <Features
+            setShowLoginModal={openLoginModal}
+            setShowSignupModal={openSignupModal}
+          />
 
-      {/* Footer + CTA Section */}
-      <Footer darkMode={darkMode} setShowLoginModal={openLoginModal} />
+          {/* Public Journals Showcase */}
+          <PublicJournalsShowcase />
 
-      {/* Auth Modals */}
-      {modals}
-    </div>
+          <PublicProfileShowcase />
+
+          {/* How It Works Section */}
+          {/* <HowItWorks setShowLoginModal={openLoginModal} /> */}
+
+          <section className="mt-16 max-w-6xl mx-auto w-full">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-center tracking-tight">How Starlit Journals Protects Your Privacy</h2>
+            <p className="text-lg md:text-xl text-center mb-8 text-[#555] dark:text-[#bbb]">Your privacy is our top priority. Here's how we keep you safe and anonymous while you journal and share your story with the world.</p>
+            <Accordion
+              items={[
+                {
+                  question: "Do I need to provide my real name, email, or personal info?",
+                  answer: "No real name, email, or personal info required—ever. Starlit Journals never asks for your real name, email, or any personal info. You create an account with a unique, collision-resistant anonymous name.",
+                },
+                {
+                  question: "How is my anonymous name generated?",
+                  answer: "Every user gets a unique, collision-resistant anonymous name. No two users can have the same name, ensuring privacy and individuality.",
+                },
+                {
+                  question: "Are my journals private and anonymous by default?",
+                  answer: "Yes! By default, your journals are private and your identity is always protected. We never ask for your real name, email, or any personal information—so your anonymity is guaranteed by design.",
+                },
+                {
+                  question: "How does Starlit Journals store and protect my data?",
+                  answer: "We use secure, encrypted servers and never store any personal identifying information. Your journal entries are public, but your identity remains private and protected at all times.",
+                },
+                {
+                  question: "Can I use Starlit Journals without creating an account?",
+                  answer: "You can browse and read public journals without an account. To write or interact, you'll need to create an anonymous account—no personal info required!",
+                },
+              ]}
+            />
+          </section>
+        </main>
+
+        {/* Testimonials */}
+        <Testimonials darkMode={darkMode} />
+
+        {/* Footer + CTA Section */}
+        <Footer darkMode={darkMode} setShowLoginModal={openLoginModal} />
+
+        {/* Auth Modals */}
+        {modals}
+      </div>
+    </>
   );
 };
 

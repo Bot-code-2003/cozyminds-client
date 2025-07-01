@@ -10,6 +10,7 @@ import {
   Mail,
   Calendar,
   Copyright,
+  BookText,
 } from "lucide-react";
 
 const Terms = ({ darkMode }) => {
@@ -19,33 +20,63 @@ const Terms = ({ darkMode }) => {
   const sections = [
     {
       icon: <Globe size={24} />,
-      title: "Using Starlit Journals",
+      title: "User Eligibility & Age Restrictions",
       content:
-        "Starlit Journals is a journaling and self-reflection app designed for personal use. You agree not to misuse, disrupt, or exploit the platform.",
+        "You must be at least 13 years old to use Starlit Journals. If you are under 18, you must use the platform with parental guidance. By using the platform, you confirm you meet these requirements.",
     },
     {
       icon: <FileText size={24} />,
-      title: "Content Ownership",
+      title: "User Responsibilities & Conduct",
       content:
-        "Your journal entries and data belong to you. We don't claim ownership over anything you write or upload to your account.",
+        "You agree to use Starlit Journals for lawful, personal, and non-commercial purposes. You will not post illegal, harmful, or abusive content, nor attempt to disrupt or exploit the platform. You are responsible for your own content and interactions.",
     },
     {
-      icon: <Copyright size={24} />,
-      title: "Intellectual Property",
+      icon: <BookText size={24} />,
+      title: "Content Ownership & Public Visibility",
       content:
-        "All images, stories (including *Moonwake Adventures*), and unique features of Starlit Journals, such as the daily story delivery system, are the exclusive property of Cozy Minds. These materials are protected by copyright and other intellectual property laws. You may not reproduce, distribute, or use them without explicit written permission from Cozy Minds.",
+        "You retain ownership of your journal entries and data. Public journals are visible to all users and may be indexed by search engines. By posting public content, you grant Starlit Journals a license to display, share, and promote your entries within the platform. Do not include personal information in public journals.",
     },
     {
       icon: <Shield size={24} />,
-      title: "Service Availability",
+      title: "Content Moderation & Takedown",
       content:
-        "We do our best to keep Starlit Journals running smoothly, but we can't guarantee perfect uptime or bug-free experiences. Features may evolve or change over time.",
+        "We reserve the right to moderate, remove, or restrict content that violates our guidelines, is illegal, or is reported by users. You can report inappropriate content via the platform or by email. We respond promptly to all valid reports.",
+    },
+    {
+      icon: <Copyright size={24} />,
+      title: "Copyright & DMCA",
+      content:
+        "If you believe your copyright has been infringed, contact us with details. We comply with DMCA and will promptly remove infringing content upon valid notice.",
+    },
+    {
+      icon: <RefreshCw size={24} />,
+      title: "Disclaimers & Limitation of Liability",
+      content:
+        "Starlit Journals is provided as-is, without warranties. We are not liable for user content, data loss, or damages arising from use of the platform. Use at your own risk.",
+    },
+    {
+      icon: <Shield size={24} />,
+      title: "Service Availability & Changes",
+      content:
+        "We strive to keep Starlit Journals running smoothly, but cannot guarantee uninterrupted service. Features may change or be discontinued at any time.",
+    },
+    {
+      icon: <Mail size={24} />,
+      title: "Third-Party Services",
+      content:
+        "We may use third-party services for hosting, analytics, and email delivery. These providers are contractually obligated to protect your data and may only use it as necessary to provide their services.",
+    },
+    {
+      icon: <Shield size={24} />,
+      title: "Jurisdiction & Dispute Resolution",
+      content:
+        "These terms are governed by the laws of India. Any disputes will be resolved in the courts of Hyderabad, India. By using the platform, you consent to this jurisdiction.",
     },
     {
       icon: <RefreshCw size={24} />,
       title: "Updates to Terms",
       content:
-        "These terms may be updated occasionally. If we make significant changes, we'll try to notify you. Continuing to use the app means you accept any updates.",
+        "We may update these Terms of Service from time to time. If we make significant changes, we will notify users via the platform or email. Continued use of Starlit Journals after changes means you accept the updated terms.",
     },
   ];
 
@@ -145,11 +176,11 @@ const Terms = ({ darkMode }) => {
               Questions? We're here to help and would love to hear from you.
             </p>
             <a
-              href="mailto:dharmadeepmadisetty@gmail.com"
+              href="mailto:madisettydharmadeep@gmail.com"
               className="inline-flex items-center gap-3 px-6 py-3 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:opacity-90 transition-opacity rounded-md font-semibold border-2 border-transparent"
             >
               <Mail size={18} />
-              dharmadeepmadisetty@gmail.com
+              madisettydharmadeep@gmail.com
             </a>
           </div>
         </div>

@@ -187,34 +187,43 @@ const AboutUs = () => {
     <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans transition-colors duration-300">
       {/* SEO Meta Tags */}
       <head>
-        <title>About Starlit Journals - Magical Journaling for Everyone</title>
+        <title>About Starlit Journals - Gamified, Public Journaling Community</title>
         <meta
           name="description"
-          content="Discover Starlit Journals - a cozy, gamified journaling platform that makes writing feel magical, rewarding, and deeply personal. Join our community of dreamers and introspective minds."
+          content="Starlit Journals is a playful, gamified public journaling platform. Write, share, and connect with a vibrant community—earn rewards, track moods, and stay 100% anonymous!"
         />
-        <meta
-          name="keywords"
-          content="about starlit journals, journaling platform, emotional expression, self-discovery, gamified journaling, magical writing"
-        />
-        <meta name="author" content="Starlit Journals Team" />
-        <meta
-          property="og:title"
-          content="About Starlit Journals - Magical Journaling Platform"
-        />
-        <meta
-          property="og:description"
-          content="A cozy, gamified journaling platform that encourages emotional expression and self-discovery under a sky of stars."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://starlitjournals.com/about" />
       </head>
-      <Navbar
-        isScrolled={isScrolled}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        openLoginModal={openLoginModal}
-        openSignupModal={openSignupModal}
-      />
+      <Navbar isScrolled={isScrolled} darkMode={darkMode} setDarkMode={setDarkMode} user={null} openLoginModal={openLoginModal} openSignupModal={openSignupModal} />
+      <section className="max-w-4xl mx-auto py-20 px-4 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[var(--accent)]">Welcome to Starlit Journals!</h1>
+        <p className="text-xl md:text-2xl mb-8 text-[var(--text-secondary)]">Where your story becomes an adventure. Share your thoughts, track your moods, and join a thriving community of anonymous writers. Every public journal you post inspires someone new—and every entry earns you coins and rewards!</p>
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <span className="inline-block bg-[var(--accent)]/10 text-[var(--accent)] px-4 py-2 rounded-full font-semibold">🌟 1000s of Public Journals</span>
+          <span className="inline-block bg-[var(--accent)]/10 text-[var(--accent)] px-4 py-2 rounded-full font-semibold">🎁 Gamified Rewards</span>
+          <span className="inline-block bg-[var(--accent)]/10 text-[var(--accent)] px-4 py-2 rounded-full font-semibold">🛡️ 100% Anonymous</span>
+        </div>
+      </section>
+      {/* Features and Why We're Different */}
+      <section className="max-w-5xl mx-auto py-10 px-4">
+        <h2 className="text-3xl font-bold mb-6 text-center text-[var(--accent)]">Why We're Different</h2>
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
+          <div className="flex flex-col items-center">
+            <Users size={36} className="mb-2 text-[var(--accent)]" />
+            <h3 className="font-bold text-lg mb-1">Community-Driven</h3>
+            <p className="text-[var(--text-secondary)]">Public journals are the heart of Starlit Journals. Read, react, and connect with real stories from real people—always anonymously.</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <Gift size={36} className="mb-2 text-[var(--accent)]" />
+            <h3 className="font-bold text-lg mb-1">Gamified Rewards</h3>
+            <p className="text-[var(--text-secondary)]">Earn coins, unlock achievements, and celebrate your journaling streaks. Every entry is a step in your adventure!</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <Shield size={36} className="mb-2 text-[var(--accent)]" />
+            <h3 className="font-bold text-lg mb-1">Privacy First</h3>
+            <p className="text-[var(--text-secondary)]">No real names, no emails, no worries. Your identity is always protected—so you can write freely and honestly.</p>
+          </div>
+        </div>
+      </section>
       {/* Gradient Accents */}
       <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
 

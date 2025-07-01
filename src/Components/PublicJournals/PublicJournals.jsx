@@ -25,6 +25,7 @@ import {
   X,
   Compass
 } from "lucide-react";
+import { Helmet } from "react-helmet";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -372,6 +373,19 @@ const PublicJournals = () => {
   if (loading && !loadingMore) {
     return (
       <>
+        <Helmet>
+          <title>Explore Public Journals | Starlit Journals</title>
+          <meta name="description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <meta property="og:title" content="Explore Public Journals | Starlit Journals" />
+          <meta property="og:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://starlitjournals.com/public-journals" />
+          <meta property="og:image" content="/public/andy_the_sailor.png" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Explore Public Journals | Starlit Journals" />
+          <meta name="twitter:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <meta name="twitter:image" content="/public/andy_the_sailor.png" />
+        </Helmet>
         {isLoggedIn ? (
           <Navbar name="New Entry" link="/journaling-alt" />
         ) : (
@@ -394,6 +408,19 @@ const PublicJournals = () => {
   if (error) {
     return (
       <>
+        <Helmet>
+          <title>Explore Public Journals | Starlit Journals</title>
+          <meta name="description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <meta property="og:title" content="Explore Public Journals | Starlit Journals" />
+          <meta property="og:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://starlitjournals.com/public-journals" />
+          <meta property="og:image" content="/public/andy_the_sailor.png" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Explore Public Journals | Starlit Journals" />
+          <meta name="twitter:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <meta name="twitter:image" content="/public/andy_the_sailor.png" />
+        </Helmet>
         {isLoggedIn ? (
           <Navbar name="New Entry" link="/journaling-alt" />
         ) : (
@@ -411,6 +438,19 @@ const PublicJournals = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Explore Public Journals | Starlit Journals</title>
+        <meta name="description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+        <meta property="og:title" content="Explore Public Journals | Starlit Journals" />
+        <meta property="og:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://starlitjournals.com/public-journals" />
+        <meta property="og:image" content="/public/andy_the_sailor.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Explore Public Journals | Starlit Journals" />
+        <meta name="twitter:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+        <meta name="twitter:image" content="/public/andy_the_sailor.png" />
+      </Helmet>
       {isLoggedIn ? (
         <Navbar name="New Entry" link="/journaling-alt" />
       ) : (

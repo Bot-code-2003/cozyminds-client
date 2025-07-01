@@ -10,6 +10,8 @@ import {
   Mail,
   Calendar,
   User,
+  Shield,
+  RefreshCw,
 } from "lucide-react";
 
 const Privacy = ({ darkMode }) => {
@@ -19,33 +21,63 @@ const Privacy = ({ darkMode }) => {
   const sections = [
     {
       icon: <Database size={24} />,
-      title: "Data We Collect",
+      title: "What Data We Collect",
       content:
-        "We collect only the information you choose to provide during signup, such as nickname, email, password, age, gender, and subscription preferences. Your journal entries are stored securely and remain private, never shared or sold. We collect this data solely to provide and improve your experience with Cozy Minds.",
+        "We collect only the information you choose to provide during signup, such as anonymous nickname, password, and (optionally) age or gender. Your journal entries, including public journals, are stored securely. We do not require real names or emails for account creation. If you use third-party logins, we may receive basic profile info from those services.",
     },
     {
       icon: <User size={24} />,
-      title: "User Consent and Data Usage",
+      title: "How We Use Your Data",
       content:
-        "We use your information (e.g., nickname, email, age, gender) to personalize your experience, deliver features like daily story chapters (e.g., *Moonwake Adventures*), and send relevant in-app mails. By signing up, you consent to this data usage. If you do not agree, you cannot create an account. You can withdraw consent and request data deletion at any time.",
+        "We use your information to provide and improve Starlit Journals, personalize your experience, deliver features like mood tracking and rewards, and ensure platform safety. Public journal entries are visible to all users and may be indexed by search engines. Private entries remain accessible only to you.",
     },
     {
       icon: <BarChart3 size={24} />,
-      title: "Analytics",
+      title: "Public Content & Visibility",
       content:
-        "We use anonymized analytics (via tools like Google Analytics) to track app usage, such as page visits and session duration. This helps us enhance Cozy Minds. Your personal data is never linked to analytics or shared with third parties beyond what's necessary for these tools.",
-    },
-    {
-      icon: <Cookie size={24} />,
-      title: "Cookies",
-      content:
-        "Cozy Minds uses cookies to maintain your login session, enable daily rewards, and support core features. We don't use cookies for tracking or advertising purposes, only for essential functionality.",
+        "When you post a public journal, it is visible to anyone on the platform and may be shared, commented on, or featured. Public journals may be indexed by search engines and are not private. Please do not include personal information in public entries. You can delete your own public journals at any time.",
     },
     {
       icon: <UserCheck size={24} />,
-      title: "Your Rights",
+      title: "Your Rights & Choices",
       content:
-        "You can view, edit, or delete your data at any time by contacting us. We comply with the Digital Personal Data Protection Act, 2023, ensuring your data is handled transparently. Data like in-app mails is automatically deleted after 10 days, and we don't use your data to train AI models.",
+        "You have the right to access, correct, export, or delete your data at any time. You can delete your account and all associated data from your profile settings. For data export or additional requests, contact us at the email below. We comply with global privacy laws, including GDPR and India's DPDP Act.",
+    },
+    {
+      icon: <Shield size={24} />,
+      title: "Content Moderation & Reporting",
+      content:
+        "We reserve the right to moderate, remove, or restrict content that violates our community guidelines, is illegal, or is reported by users. You can report inappropriate content via the platform or by email. We respond promptly to all valid reports and take user safety seriously.",
+    },
+    {
+      icon: <Cookie size={24} />,
+      title: "Cookies & Analytics",
+      content:
+        "Starlit Journals uses cookies for login sessions, rewards, and essential features. We use anonymized analytics (e.g., Google Analytics) to understand usage and improve the platform. No personal data is sold or used for advertising.",
+    },
+    {
+      icon: <Mail size={24} />,
+      title: "Third-Party Services",
+      content:
+        "We may use third-party services for hosting, analytics, and email delivery. These providers are contractually obligated to protect your data and may only use it as necessary to provide their services.",
+    },
+    {
+      icon: <Shield size={24} />,
+      title: "Data Security",
+      content:
+        "We use industry-standard security measures to protect your data. All journal entries are encrypted in transit and at rest. We do not sell or share your data with advertisers. In the event of a data breach, we will notify affected users promptly.",
+    },
+    {
+      icon: <User size={24} />,
+      title: "Age Restrictions & Parental Consent",
+      content:
+        "Starlit Journals is intended for users 13 and older. If you are under 18, please use the platform with parental guidance. We do not knowingly collect data from children under 13. Parents can request deletion of a minor's data by contacting us.",
+    },
+    {
+      icon: <RefreshCw size={24} />,
+      title: "Changes to This Policy",
+      content:
+        "We may update this Privacy Policy from time to time. If we make significant changes, we will notify users via the platform or email. Continued use of Starlit Journals after changes means you accept the updated policy.",
     },
   ];
 
@@ -146,11 +178,11 @@ const Privacy = ({ darkMode }) => {
               as soon as possible.
             </p>
             <a
-              href="mailto:dharmadeepmadisetty@gmail.com"
+              href="mailto:madisettydharmadeep@gmail.com"
               className="inline-flex items-center gap-3 px-6 py-3 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:opacity-90 transition-opacity rounded-md font-semibold border-2 border-transparent"
             >
               <Mail size={18} />
-              dharmadeepmadisetty@gmail.com
+              madisettydharmadeep@gmail.com
             </a>
           </div>
         </div>

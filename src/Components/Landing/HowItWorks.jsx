@@ -82,14 +82,11 @@ const HowItWorks = ({ setShowLoginModal }) => {
       {/* Header */}
       <div className="text-center mb-20 relative z-10">
         <div className="inline-block mb-6 px-6 py-3 border-2 border-[var(--border)] dark:border-[var(--border-dark)] rounded-full text-sm font-medium tracking-wider bg-gradient-to-r from-[var(--bg-primary)]/10 to-[var(--accent)]/10 dark:from-[var(--bg-primary)]/20 dark:to-[var(--accent)]/20">
-          ✨ POWERFUL FEATURES
+          🚀 YOUR JOURNALING ADVENTURE
         </div>
         <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 tracking-tight leading-tight">
           <span className="relative">
-            Everything You Need to{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--bg-primary)] to-[var(--accent)]">
-              Create
-            </span>
+            Start Your Story, Join the Community
             <svg
               className="absolute -bottom-2 left-0 w-full h-3 text-[var(--bg-primary)]"
               viewBox="0 0 100 10"
@@ -106,8 +103,7 @@ const HowItWorks = ({ setShowLoginModal }) => {
           </span>
         </h2>
         <p className="text-lg sm:text-xl opacity-80 max-w-3xl mx-auto font-medium leading-relaxed">
-          From rich text editing to community features, discover the tools that
-          make journaling a joy
+          Write, share, and explore public journals. Track your moods, earn coins, and unlock achievements as you go. Every entry is a new step in your adventure!
         </p>
       </div>
 
@@ -175,6 +171,25 @@ const HowItWorks = ({ setShowLoginModal }) => {
             <div className="absolute inset-0 bg-gradient-to-br from-[var(--bg-primary)]/5 via-[var(--accent)]/5 to-[var(--accent)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
           </div>
         ))}
+        {/* New: Public Journals & Rewards Step */}
+        <div className="group relative overflow-hidden rounded-apple border-2 border-[var(--accent)] transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl bg-[var(--card-bg)] dark:bg-[#2A2A2A]/60 backdrop-blur-md">
+          <div className="absolute inset-0 bg-gradient-to-br from-yellow-200/20 to-pink-200/20 opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+          <div className="relative z-10 p-8">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-14 h-14 rounded-apple flex items-center justify-center bg-gradient-to-r from-yellow-400 to-pink-400 text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <BookOpen size={28} />
+              </div>
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-bold text-[var(--accent)] group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-pink-400 transition-all duration-300">
+                  Public Journals & Rewards
+                </h3>
+              </div>
+            </div>
+            <p className="text-base sm:text-lg leading-relaxed text-[var(--text-primary)] dark:text-[var(--text-dark)] opacity-90 mb-8">
+              Share your thoughts with the world, read inspiring entries from others, and earn coins for every public journal you post. The more you write, the more you unlock!
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Call to Action */}
@@ -183,7 +198,7 @@ const HowItWorks = ({ setShowLoginModal }) => {
           <div className="flex items-center justify-center gap-4 mb-6">
             <Heart size={28} className="text-[var(--bg-primary)] animate-pulse" />
             <h3 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--text-primary)] to-[var(--bg-primary)] dark:from-[var(--text-dark)] dark:to-[var(--bg-primary)]">
-              Ready to Start Creating?
+              Start Free – Get 50 Coins!
             </h3>
             <Heart
               size={28}
@@ -192,22 +207,13 @@ const HowItWorks = ({ setShowLoginModal }) => {
             />
           </div>
           <p className="text-lg sm:text-xl opacity-80 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of creators who've transformed their journaling
-            experience with our powerful tools
+            Join thousands of creators who've transformed their journaling experience with our powerful, gamified tools and public journal community.
           </p>
           <button
             onClick={() => setShowLoginModal(true)}
             className="group inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-[var(--text-primary)] to-[var(--bg-primary)] dark:from-[var(--text-dark)] dark:to-[var(--bg-primary)] text-[var(--text-dark)] dark:text-[var(--text-primary)] rounded-2xl hover:shadow-2xl transition-all duration-300 font-bold text-lg shadow-xl hover:scale-105"
           >
-            <Sparkles
-              size={24}
-              className="group-hover:rotate-12 transition-transform duration-300"
-            />
-            Begin Your Creative Journey
-            <ArrowRight
-              size={24}
-              className="group-hover:translate-x-2 transition-transform duration-300"
-            />
+            Start Free – Get 50 Coins!
           </button>
         </div>
       </div>

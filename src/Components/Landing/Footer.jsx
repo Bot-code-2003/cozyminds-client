@@ -8,15 +8,14 @@ const Footer = ({ darkMode, setShowLoginModal }) => {
     <>
       {/* Call-to-Action Section */}
       <section className="relative z-10 w-full max-w-7xl py-12 mb-12 mx-auto px-1 sm:px-6">
-        <div className="border border-[var(--accent)] w-full rounded-3xl p-6 md:p-12 bg-[var(--bg-secondary)] shadow-2xl">
+        <div className="border border-[var(--accent)] w-full rounded-3xl p-6 md:p-12 bg-[var(--card-bg)] shadow-2xl">
           <div className=" flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4 text-[var(--text-primary)]">
-                Ready to Start Your Journey?
+                Start Your Journaling Adventure
               </h2>
               <p className="text-[var(--text-secondary)] text-sm md:text-base max-w-md">
-                Join others in finding mental clarity with Starlit Journals,
-                crafted for well-being.
+                Join a vibrant community, explore public journals, and earn rewards as you write. Starlit Journals is crafted for your well-being and creativity.
               </p>
             </div>
             <button

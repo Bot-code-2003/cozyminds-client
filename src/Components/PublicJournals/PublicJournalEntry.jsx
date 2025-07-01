@@ -551,12 +551,12 @@ const PublicJournalEntry = () => {
         <meta
           property="og:image"
           content={
-            journal?.featuredImage || "https://starlitjournals.vercel.app/static/images/default-preview.jpg"
+            journal?.featuredImage || "https://starlitjournals.com/static/images/default-preview.jpg"
           }
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:url" content={`https://starlitjournals.vercel.app/journal/${slug}`} />
+        <meta property="og:url" content={`https://starlitjournals.com/journal/${slug}`} />
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Starlit Journals" />
       </Helmet>

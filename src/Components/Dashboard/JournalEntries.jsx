@@ -254,20 +254,19 @@ const JournalEntries = () => {
   );
 
   return (
-    <div className={`min-h-screen journal-entries-container ${darkMode ? "dark" : "light"}`}>
+    <div className={`min-h-screen journal-entries-container ${darkMode ? "dark" : "light"} bg-[var(--bg-primary)] transition-colors duration-500`}>
       <Navbar user={user} handleLogout={handleLogout} darkMode={darkMode} />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold">{decodedCollection} Journals</h1>
-          
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-journal-title)] tracking-tight drop-shadow-sm">{decodedCollection} Journals</h1>
         </div>
 
-        <div className="bg-[--bg-secondary] p-4 rounded-lg shadow-md mb-6">
+        <div className="bg-[var(--card-bg)] p-5 rounded-apple shadow-apple mb-8 border border-[var(--border)]">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center px-3 py-2 border border-[var(--border)] rounded-md hover:bg-[var(--bg-secondary)]"
+                className="flex items-center px-4 py-2 border border-[var(--border)] rounded-apple bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] transition-all duration-200 shadow-sm"
               >
                 <Filter size={16} className="mr-2 opacity-70" />
                 <span className="hidden sm:inline">Filters</span>
@@ -277,7 +276,7 @@ const JournalEntries = () => {
               <select
                 value={filters.period}
                 onChange={(e) => updateFilter("period", e.target.value)}
-                className="px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none appearance-none pr-8 text-[var(--text-secondary)]"
+                className="px-4 py-2 border border-[var(--border)] rounded-apple bg-[var(--bg-secondary)] text-[var(--text-secondary)] focus:outline-none appearance-none pr-8 shadow-sm hover:bg-[var(--bg-hover)] transition-all duration-200"
               >
                 <option value="all">All Time</option>
                 <option value="today">Today</option>
@@ -287,7 +286,7 @@ const JournalEntries = () => {
 
               <button
                 onClick={toggleSortOrder}
-                className="flex items-center px-3 py-2 border border-[var(--border)] rounded-md hover:bg-[var(--bg-secondary)]"
+                className="flex items-center px-4 py-2 border border-[var(--border)] rounded-apple bg-[var(--bg-secondary)] hover:bg-[var(--bg-hover)] transition-all duration-200 shadow-sm"
                 title={sortOrder === "desc" ? "Newest first" : "Oldest first"}
               >
                 {sortOrder === "desc" ? (
@@ -304,10 +303,10 @@ const JournalEntries = () => {
             <div className="flex gap-2 mt-3 md:mt-0">
               <button
                 onClick={() => setPostType("private")}
-                className={`flex items-center px-3 py-2 rounded-lg font-semibold border border-[var(--border)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] ${
+                className={`flex items-center px-4 py-2 rounded-apple font-semibold border border-[var(--border)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] shadow-sm ${
                   postType === "private"
-                    ? "bg-indigo-600 text-white"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    ? "bg-[var(--accent)] text-white shadow-apple-hover"
+                    : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
                 }`}
                 title="Private Journals"
               >
@@ -316,10 +315,10 @@ const JournalEntries = () => {
               </button>
               <button
                 onClick={() => setPostType("public")}
-                className={`flex items-center px-3 py-2 rounded-lg font-semibold border border-[var(--border)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] ${
+                className={`flex items-center px-4 py-2 rounded-apple font-semibold border border-[var(--border)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] shadow-sm ${
                   postType === "public"
-                    ? "bg-indigo-600 text-white"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    ? "bg-[var(--accent)] text-white shadow-apple-hover"
+                    : "bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
                 }`}
                 title="Public Journals"
               >
@@ -331,16 +330,16 @@ const JournalEntries = () => {
         </div>
 
         {showFilters && (
-          <div className="bg-[var(--bg-secondary)] border border-[var(--border)] p-4 mb-6 rounded-lg animate-fadeIn">
+          <div className="bg-[var(--bg-secondary)] border border-[var(--border)] p-5 mb-8 rounded-apple animate-fadeInUp shadow-apple">
             <div className="mb-4">
-              <h3 className="text-sm font-medium mb-2">Filter by Mood</h3>
+              <h3 className="text-sm font-medium mb-2 text-[var(--text-primary)]">Filter by Mood</h3>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => updateFilter("mood", null)}
-                  className={`px-3 py-1 text-xs rounded-full ${
+                  className={`px-4 py-1 text-xs rounded-full font-medium transition-all duration-200 shadow-sm ${
                     !filters.mood
                       ? "bg-[var(--accent)] text-white"
-                      : "bg-[var(--bg-secondary)] border border-[var(--border)]"
+                      : "bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
                   }`}
                 >
                   All Moods
@@ -349,10 +348,10 @@ const JournalEntries = () => {
                   <button
                     key={mood.name}
                     onClick={() => updateFilter("mood", mood.name)}
-                    className={`flex items-center px-3 py-1 text-xs rounded-full ${
+                    className={`flex items-center px-4 py-1 text-xs rounded-full font-medium transition-all duration-200 shadow-sm ${
                       filters.mood === mood.name
                         ? "bg-[var(--accent)] text-white"
-                        : "bg-[var(--bg-secondary)] border-[var(--border)]"
+                        : "bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
                     }`}
                   >
                     <span className="mr-1">{mood.emoji}</span>
@@ -364,14 +363,14 @@ const JournalEntries = () => {
 
             {allTags.length > 0 && (
               <div>
-                <h3 className="text-sm font-medium mb-2">Filter by Tag</h3>
+                <h3 className="text-sm font-medium mb-2 text-[var(--text-primary)]">Filter by Tag</h3>
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => updateFilter("tag", null)}
-                    className={`px-3 py-1 text-xs rounded-full ${
+                    className={`px-4 py-1 text-xs rounded-full font-medium transition-all duration-200 shadow-sm ${
                       !filters.tag
                         ? "bg-[var(--accent)] text-white"
-                        : "bg-[var(--bg-secondary)] border-[var(--border)]"
+                        : "bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
                     }`}
                   >
                     All Tags
@@ -380,10 +379,10 @@ const JournalEntries = () => {
                     <button
                       key={tag}
                       onClick={() => updateFilter("tag", tag)}
-                      className={`flex items-center px-3 py-1 text-xs rounded-full ${
+                      className={`flex items-center px-4 py-1 text-xs rounded-full font-medium transition-all duration-200 shadow-sm ${
                         filters.tag === tag
                           ? "bg-[var(--accent)] text-white"
-                          : "bg-[var(--bg-secondary)] border-[var(--border)]"
+                          : "bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
                       }`}
                     >
                       <Tag size={12} className="mr-1 opacity-70" />
@@ -396,14 +395,14 @@ const JournalEntries = () => {
           </div>
         )}
 
-        {error && <div className="text-center text-red-500 py-4">{error}</div>}
+        {error && <div className="text-center text-[var(--error)] py-4 font-medium">{error}</div>}
 
         {isLoading && journalEntries.length === 0 ? (
-          <div className="text-center py-10">Loading entries...</div>
+          <div className="text-center py-10 text-[var(--text-secondary)] animate-pulse">Loading entries...</div>
         ) : filteredEntries.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fadeInUp">
             {filteredEntries.map((entry) => (
               <JournalCard
                 key={entry._id}
@@ -419,11 +418,11 @@ const JournalEntries = () => {
         )}
 
         {hasMore && (
-          <div className="text-center mt-8">
+          <div className="text-center mt-10">
             <button
               onClick={handleLoadMore}
               disabled={isLoading}
-              className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-blue-300"
+              className="bg-[var(--accent)] text-white py-3 px-8 rounded-apple shadow-apple hover:bg-[var(--accent-hover)] transition-colors disabled:bg-[var(--accent-light)] font-semibold text-lg"
             >
               {isLoading ? "Loading..." : "Load More"}
             </button>
@@ -432,9 +431,9 @@ const JournalEntries = () => {
 
         <Link
           to="/journaling-alt"
-          className="md:hidden fixed bottom-6 right-6 w-12 h-12 bg-[var(--accent)] flex items-center justify-center rounded-full shadow-lg text-white"
+          className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-[var(--accent)] flex items-center justify-center rounded-full shadow-apple text-white hover:bg-[var(--accent-hover)] transition-all duration-200"
         >
-          <Calendar size={24} />
+          <Calendar size={28} />
         </Link>
       </div>
     </div>
