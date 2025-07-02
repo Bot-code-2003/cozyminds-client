@@ -2,7 +2,7 @@ import fs from "fs";
 import axios from "axios";
 
 const generateSitemap = async () => {
-  const domain = "https://starlitjournals.vercel.app";
+  const domain = "https://starlitjournals.com";
 
   // Static pages
   const staticPages = [
