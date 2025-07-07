@@ -191,10 +191,11 @@ const LandingPage = () => {
   return (
     <>
       <Helmet>
-        <title>Starlit Journals | Anonymous Public Journaling for Everyone</title>
-        <meta name="description" content="Create and explore public journals with complete privacy. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Safe, private, and inspiring journaling for all." />
-        <meta property="og:title" content="Starlit Journals | Anonymous Public Journaling for Everyone" />
-        <meta property="og:description" content="Create and explore public journals with complete privacy. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Safe, private, and inspiring journaling for all." />
+        <title>Starlit Journals | Public Journals, Diaries & Confessions - Anonymous & Safe</title>
+        <meta name="description" content="Read and write public journals, diaries, and confessions anonymously. Discover inspiring stories, share your thoughts, and connect with a vibrant community. No real name or email required." />
+        <meta name="keywords" content="public journals, public diaries, public confessions, anonymous stories, share secrets, online diary, confession site, safe journaling, mental health, storytelling, anonymous blog" />
+        <meta property="og:title" content="Starlit Journals | Public Journals, Diaries & Confessions - Anonymous & Safe" />
+        <meta property="og:description" content="Read and write public journals, diaries, and confessions anonymously. Discover inspiring stories, share your thoughts, and connect with a vibrant community. No real name or email required." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://starlitjournals.com/" />
         <meta property="og:image" content="/public/andy_the_sailor.png" />

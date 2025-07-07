@@ -374,16 +374,17 @@ const PublicJournals = () => {
     return (
       <>
         <Helmet>
-          <title>Explore Public Journals | Starlit Journals</title>
-          <meta name="description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
-          <meta property="og:title" content="Explore Public Journals | Starlit Journals" />
-          <meta property="og:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <title>Read Public Journals & Diaries | Anonymous Confessions & Stories</title>
+          <meta name="description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+          <meta name="keywords" content="read public journals, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
+          <meta property="og:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
+          <meta property="og:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://starlitjournals.com/public-journals" />
           <meta property="og:image" content="/public/andy_the_sailor.png" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Explore Public Journals | Starlit Journals" />
-          <meta name="twitter:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <meta name="twitter:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
+          <meta name="twitter:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
           <meta name="twitter:image" content="/public/andy_the_sailor.png" />
         </Helmet>
         {isLoggedIn ? (
@@ -409,16 +410,17 @@ const PublicJournals = () => {
     return (
       <>
         <Helmet>
-          <title>Explore Public Journals | Starlit Journals</title>
-          <meta name="description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
-          <meta property="og:title" content="Explore Public Journals | Starlit Journals" />
-          <meta property="og:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <title>Read Public Journals & Diaries | Anonymous Confessions & Stories</title>
+          <meta name="description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+          <meta name="keywords" content="read public journals, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
+          <meta property="og:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
+          <meta property="og:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://starlitjournals.com/public-journals" />
           <meta property="og:image" content="/public/andy_the_sailor.png" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Explore Public Journals | Starlit Journals" />
-          <meta name="twitter:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+          <meta name="twitter:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
+          <meta name="twitter:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
           <meta name="twitter:image" content="/public/andy_the_sailor.png" />
         </Helmet>
         {isLoggedIn ? (
@@ -439,16 +441,17 @@ const PublicJournals = () => {
   return (
     <>
       <Helmet>
-        <title>Explore Public Journals | Starlit Journals</title>
-        <meta name="description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
-        <meta property="og:title" content="Explore Public Journals | Starlit Journals" />
-        <meta property="og:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+        <title>Read Public Journals & Diaries | Anonymous Confessions & Stories</title>
+        <meta name="description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+        <meta name="keywords" content="read public journals, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
+        <meta property="og:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
+        <meta property="og:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://starlitjournals.com/public-journals" />
         <meta property="og:image" content="/public/andy_the_sailor.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Explore Public Journals | Starlit Journals" />
-        <meta name="twitter:description" content="Browse inspiring, completely anonymous public journals. No real name, email, or personal info required—just a unique, collision-resistant anonymous name. Share your story or read others'—your privacy is always protected." />
+        <meta name="twitter:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
+        <meta name="twitter:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
         <meta name="twitter:image" content="/public/andy_the_sailor.png" />
       </Helmet>
       {isLoggedIn ? (

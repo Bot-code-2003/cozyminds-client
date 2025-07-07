@@ -529,36 +529,14 @@ const PublicJournalEntry = () => {
   return (
     <>
       <Helmet>
-        <title>{journal?.title ? `${journal.title} | Starlit Journals` : "Starlit Journals"}</title>
-        <meta
-          name="description"
-          content={
-            journal?.content
-              ? journal.content.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 160) + "..."
-              : "Read inspiring journal entries on Starlit Journals."
-          }
-        />
-        <meta name="keywords" content={journal?.tags?.join(", ") || "journal, writing, reflection"} />
-        <meta property="og:title" content={journal?.title || "Starlit Journals"} />
-        <meta
-          property="og:description"
-          content={
-            journal?.content
-              ? journal.content.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 160) + "..."
-              : "Read inspiring journal entries on Starlit Journals."
-          }
-        />
-        <meta
-          property="og:image"
-          content={
-            journal?.featuredImage || "https://starlitjournals.com/static/images/default-preview.jpg"
-          }
-        />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:url" content={`https://starlitjournals.com/journal/${slug}`} />
+        <title>{journal?.title ? `${journal.title} | Public Diary Entry & Confession` : 'Public Journal Entry | Anonymous Confession'}</title>
+        <meta name="description" content={journal?.content ? `${journal.content.replace(/<[^>]+>/g, '').substring(0, 160)}...` : 'Read this anonymous public journal entry, confession, or diary story.'} />
+        <meta name="keywords" content="public diary entry, anonymous confession, public journal, share secrets, online diary, confession story, mental health, anonymous blog, community stories" />
+        <meta property="og:title" content={journal?.title ? `${journal.title} | Public Diary Entry & Confession` : 'Public Journal Entry | Anonymous Confession'} />
+        <meta property="og:description" content={journal?.content ? `${journal.content.replace(/<[^>]+>/g, '').substring(0, 160)}...` : 'Read this anonymous public journal entry, confession, or diary story.'} />
         <meta property="og:type" content="article" />
-        <meta property="og:site_name" content="Starlit Journals" />
+        <meta property="og:url" content={`https://starlitjournals.com/public-journals/${journal?.slug || ''}`} />
+        <meta property="og:image" content="/public/andy_the_sailor.png" />
       </Helmet>
       {isLoggedIn ? (
         <Navbar name="New Entry" link="/journaling-alt" />
