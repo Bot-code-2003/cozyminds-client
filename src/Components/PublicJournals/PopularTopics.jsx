@@ -1,73 +1,62 @@
-import { Tag, Info, Heart, BookOpen } from "lucide-react";
-import { useSidebar } from "../../context/SidebarContext";
+import { Tag, Heart, Briefcase, User, Globe, TrendingUp, BookOpen, Smile, Users, Cloud, Star, Plane, Brain, Feather, Sun, Moon, HeartHandshake, Mountain, Sparkles, Ghost, Book, Search, History, HeartPulse, Compass, Film, Laugh, Drama, Flame, Umbrella, Puzzle, } from "lucide-react";
 
-const PopularTopics = ({ onTopicClick }) => {
-  const { trendingTopics, loading, error } = useSidebar();
+const JOURNAL_TOPICS = [
+  'Life', 'Relationships', 'Career', 'Health & Wellness', 'Travel',
+  'Personal Growth', 'Reflections', 'Gratitude', 'Family', 'Dreams',
+];
 
-  if (loading) {
-    return (
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Tag className="w-5 h-5 text-[var(--accent)]" />
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100">Popular Topics</h3>
-          
-        </div>
-        <div className="space-y-3">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
+const STORY_TOPICS = [
+  'Fantasy', 'Science Fiction', 'Horror', 'Mystery', 'Historical',
+  'Romance', 'Adventure', 'Drama', 'Thriller', 'Comedy',
+];
 
-  if (error) {
-    return (
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Tag className="w-5 h-5 text-[var(--accent)]" />
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100">Popular Topics</h3>
-          
-        </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{error}</p>
-      </div>
-    );
-  }
+const topicIcons = {
+  // Journal topics
+  'Life': User,
+  'Relationships': HeartHandshake,
+  'Career': Briefcase,
+  'Health & Wellness': HeartPulse,
+  'Travel': Plane,
+  'Personal Growth': Brain,
+  'Reflections': Feather,
+  'Gratitude': Smile,
+  'Family': Users,
+  'Dreams': Cloud,
+  // Story topics
+  'Fantasy': Sparkles,
+  'Science Fiction': Globe,
+  'Horror': Ghost,
+  'Mystery': Search,
+  'Historical': History,
+  'Romance': Heart,
+  'Adventure': Compass,
+  'Drama': Drama,
+  'Thriller': Flame,
+  'Comedy': Laugh,
+};
 
-  if (trendingTopics.length === 0) {
-    return (
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Tag className="w-5 h-5 text-[var(--accent)]" />
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100">Popular Topics</h3>
-          
-        </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400">No topics available yet</p>
-      </div>
-    );
-  }
+const PopularTopics = ({ onTopicClick, type = 'journal' }) => {
+  const topics = type === 'story' ? STORY_TOPICS : JOURNAL_TOPICS;
 
   return (
-    <div>
-      {/* Info Header */}
-      
-
-      <div className="flex flex-wrap gap-2">
-        {trendingTopics.map((topic) => (
-          <button
-            key={topic.tag}
-            onClick={() => onTopicClick && onTopicClick(topic.tag)}
-            className="capitalize px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium hover:bg-gray-200 dark:hover:bg-slate-600 hover:text-[var(--accent)] dark:hover:text-white transition-all duration-200 relative group"
-            title={`${topic.journalCount} posts • ${topic.totalLikes} total likes`}
-          >
-            {topic.tag.toLowerCase()}
-            <div className="absolute -top-1 -right-1 bg-[var(--accent)] text-white text-xs rounded-full w-4 h-4 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              {topic.journalCount}
-            </div>
-          </button>
-        ))}
+    <div className="bg-white dark:bg-slate-800 rounded-2xl">
+      <div className="grid grid-cols-2 gap-3">
+        {topics.map((topic) => {
+          const Icon = topicIcons[topic] || Tag;
+          return (
+            <button
+              key={topic}
+              onClick={() => onTopicClick && onTopicClick(topic)}
+              className="flex items-center gap-3 w-full px-4 py-3 bg-gray-50 dark:bg-slate-700/60 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-slate-700 text-gray-800 dark:text-gray-100 text-base font-medium transition-all duration-200 hover:bg-blue-50 dark:hover:bg-blue-900/40 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              title={topic}
+            >
+              <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </span>
+              <span className="truncate text-left">{topic}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

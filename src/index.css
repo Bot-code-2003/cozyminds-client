@@ -72,7 +72,7 @@
 
 /* Reset for sharp corners */
 * {
-  /* border-radius: 0 !important; */
+  border-radius: 4px !important;
   font-family: "SF Pro Display", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
@@ -86,7 +86,7 @@ button:hover {
 
 :root {
   --bg-navbar: #f7fafc;           /* Soft, neutral off-white */
-  --bg-primary: #f4f7fa;          /* Gentle, airy blue-gray */
+  --bg-primary: #ffffff;          /* Gentle, airy blue-gray */
   --bg-secondary: #e9eef3;        /* Slightly deeper blue-gray */
   --bg-tertiary: #dde5ed;         /* Subtle separation, cool gray-blue */
   --bg-hover: rgba(60, 100, 180, 0.07); /* Soft blue hover */
@@ -131,7 +131,7 @@ button:hover {
 
 .dark {
   --bg-navbar: #101a26;           /* Deep blue-navy */
-  --bg-primary: #0c141d;
+  --bg-primary: #000000;
   --bg-secondary: #182233;
   --bg-tertiary: #232f44;
   --bg-hover: rgba(185, 140, 242, 0.08); /* Lavender hover */

@@ -49,7 +49,11 @@ const PublicJournalsShowcase = () => {
   ];
 
   // Group features for editorial cards
-  const discoverFeatures = features.slice(0, 4);
+  const discoverFeatures = features.filter(f => [
+    "Latest Journals",
+    "Trending Journals",
+    "Popular Topics"
+  ].includes(f.title));
   const engageFeatures = features.slice(4);
 
   return (

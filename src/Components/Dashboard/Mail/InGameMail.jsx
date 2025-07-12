@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, X, Inbox, Trash2, Star } from "lucide-react";
 import { useMails } from "../../../context/MailContext";
-import { useCoins } from "../../../context/CoinContext";
 import { marked } from 'marked';
 
 const InGameMail = ({ closeModal }) => {
   const { mails, user, error, claimReward, markAsRead, deleteMail } = useMails();
-  const { showCoinAward } = useCoins();
   const [selectedMail, setSelectedMail] = useState(null);
   const [mailStateError, setMailStateError] = useState(null);
   const [claimingReward, setClaimingReward] = useState(false);
@@ -59,7 +57,7 @@ const InGameMail = ({ closeModal }) => {
       setMailStateError(null);
       setClaimSuccess(null);
 
-      const message = await claimReward(mailId, showCoinAward);
+      const message = await claimReward(mailId);
 
       setSelectedMail(prev => prev && prev.id === mailId ? { ...prev, rewardClaimed: true, read: true } : prev);
       setClaimSuccess(message);

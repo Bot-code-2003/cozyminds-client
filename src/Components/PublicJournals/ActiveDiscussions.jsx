@@ -15,11 +15,11 @@ const ActiveDiscussions = () => {
         {activeDiscussions.map(journal => (
           <li
             key={journal._id}
-            className="flex items-center gap-3 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700/40 transition"
+            className="flex items-center gap-3 p-3 rounded hover:bg-blue-50/60 dark:hover:bg-blue-900/20"
           >
             <div className="flex-1 min-w-0">
               <Link
-                to={`/public-journals/${journal.slug}`}
+                to={`/journals/${journal.slug}`}
                 className="font-medium text-gray-900 dark:text-gray-100 truncate block text-sm mb-1"
                 title={journal.title}
               >
@@ -40,7 +40,7 @@ const ActiveDiscussions = () => {
               </div>
             </div>
             <Link
-              to={`/public-journals/${journal.slug}#comments`}
+              to={`/journals/${journal.slug}#comments`}
               className="text-xs text-[var(--accent)] font-semibold hover:underline flex-shrink-0"
             >
               Join

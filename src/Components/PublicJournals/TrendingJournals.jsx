@@ -3,12 +3,18 @@ import { TrendingUp, Clock, Heart, Tag, BookOpen, Smile, Loader2, Info, MessageC
 import { Link } from "react-router-dom";
 import { useSidebar } from "../../context/SidebarContext";
 
-// Helper to extract first image src from HTML content
-function getFirstImage(html) {
-  if (!html) return null;
+// Helper to get thumbnail or extract first image src from HTML content
+function getImageSource(journal) {
+  // First check for thumbnail
+  if (journal.thumbnail) {
+    return journal.thumbnail;
+  }
+  
+  // Fallback to extracting first image from content
+  if (!journal.content) return null;
   try {
     const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html;
+    tempDiv.innerHTML = journal.content;
     const img = tempDiv.querySelector("img");
     return img?.src || null;
   } catch {
@@ -33,7 +39,7 @@ const TrendingJournals = () => {
   const trendingList = useMemo(() => (
     <ul className="space-y-3">
       {trendingJournals.map((journal, idx) => {
-        const firstImage = getFirstImage(journal.content);
+        const imageSource = getImageSource(journal);
         return (
           <li
             key={journal._id}
@@ -43,14 +49,14 @@ const TrendingJournals = () => {
             <Link
               onClick={() => window.scrollTo({ top: 0 })}
               to={`/public-journals/${journal.slug}`}
-              className="block group bg-white/90 dark:bg-gray-900/80 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-200 p-3 hover:bg-blue-50/60 dark:hover:bg-blue-900/20 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="block group bg-white/90 dark:bg-gray-900/80 p-3 a focus:outline-none focus:ring-2 focus:ring-blue-400"
               aria-label={`Read trending journal by ${journal.authorName || "Anonymous"}`}
               title={journal.title || "Untitled Entry"}
             >
               <div className="flex items-center gap-3">
-                {firstImage ? (
+                {imageSource ? (
                   <img
-                    src={firstImage}
+                    src={imageSource}
                     alt={journal.title || "Preview"}
                     className="w-12 h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm flex-shrink-0 bg-gray-100 dark:bg-gray-800"
                     loading="lazy"
@@ -129,7 +135,7 @@ const TrendingJournals = () => {
 
   if (loading) {
     return (
-      <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-apple shadow-apple border border-black/5 dark:border-white/10 p-4 sm:p-5">
+      <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-apple shadow-apple p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-5 h-5 text-[var(--accent)]" />
           <h3 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">Trending Now</h3>
@@ -156,7 +162,7 @@ const TrendingJournals = () => {
 
   if (trendingJournals.length === 0) {
     return (
-      <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-apple shadow-apple border border-black/5 dark:border-white/10 p-4 sm:p-5">
+      <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-apple p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-5 h-5 text-[var(--accent)]" />
           <h3 className="text-xl font-extrabold text-gray-900 dark:text-gray-100">Trending Now</h3>

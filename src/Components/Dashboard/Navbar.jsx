@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import {
   Sun,
@@ -13,17 +13,16 @@ import {
   User,
   Settings,
   LogOut,
-  Coins,
   Menu,
   X,
   Star,
   BookOpen,
   Users,
   Bookmark,
+  Sparkles, // Add Sparkles for Stories
 } from "lucide-react";
 import InGameMail from "./Mail/InGameMail";
 import { useDarkMode } from "../../context/ThemeContext";
-import { useCoins } from "../../context/CoinContext.jsx";
 import { useMails } from "../../context/MailContext";
 import { logout } from "../../utils/anonymousName";
 import { createAvatar } from '@dicebear/core';
@@ -67,7 +66,6 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const { darkMode, setDarkMode } = useDarkMode();
-  const { coins } = useCoins();
   const { user: userData, hasUnreadMails } = useMails();
 
   const isRootPath = location.pathname === "/";
@@ -140,9 +138,16 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
   const currentUser = getCurrentUser();
 
+  const navigationItems = [
+    { name: "Journals", path: "/journals", icon: <BookOpen size={16} /> },
+    { name: "Stories", path: "/stories", icon: <Sparkles size={16} /> },
+    { name: "Saved", path: "/saved-entries", icon: <Bookmark size={16} /> },
+    { name: "Subscriptions", path: "/subscriptions", icon: <Users size={16} /> },
+  ];
+
   return (
     <>
-      <nav className="w-full bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl border-b border-gray-900/10 dark:border-white/10 py-3 px-8 flex justify-between items-center sticky top-0 z-[999]">
+      <nav className="relative w-full bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl border-b border-gray-900/10 dark:border-white/10 py-3 px-8 flex justify-between items-center fixed top-0 left-0 z-[999]">
         <button
           onClick={() => handleNavigation("/")}
           className="flex items-center group cursor-pointer"
@@ -152,31 +157,26 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             <span role="img" aria-label="Starlit Journals" style={{fontSize: '1.7rem', lineHeight: 1}}>🌠</span>
           </div>
           <div className="text-xl font-semibold tracking-tight flex items-baseline">
-  <span className="text-[var(--accent)]">Starlit</span>
-  <span className="text-gray-800 dark:text-white ml-1 opacity-80">Journals</span>
-</div>
-
+            <span className="text-[var(--accent)]">Starlit</span>
+            <span className="text-gray-800 dark:text-white ml-1 opacity-80">Journals</span>
+          </div>
         </button>
 
         <div className="hidden lg:flex items-center space-x-6">
           <div className="flex items-center space-x-1">
-            <button
-              onClick={() => handleNavigation("/public-journals")}
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-            >
-              <BookOpen size={16} className="mr-2" />
-              Public Journals
-              {hasSubscriptionNotifications && (
-                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
-              )}
-            </button>
-            <button
-              onClick={() => handleNavigation("/cozyshop")}
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-            >
-              <ShoppingBag size={16} className="mr-2" />
-              Shop
-            </button>
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              >
+                {item.icon}
+                <span className="ml-2">{item.name}</span>
+                {item.name === "Journals" && hasSubscriptionNotifications && (
+                  <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
+                )}
+              </Link>
+            ))}
           </div>
           <div className="flex items-center space-x-2">
             <button
@@ -200,12 +200,6 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 <Moon size={16} className="text-gray-600 dark:text-gray-400" />
               )}
             </button>
-          </div>
-          <div className="flex items-center px-3 py-2 bg-gray-900/5 dark:bg-white/10 rounded-lg">
-            <Coins size={16} className="text-yellow-600 dark:text-yellow-400 mr-2" />
-            <span className="font-medium text-gray-900 dark:text-white text-sm">
-              {coins.toLocaleString()}
-            </span>
           </div>
           {!isJournalingAlt && (
             <button
@@ -302,34 +296,16 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             </div>
             
             <div className="space-y-2">
-              <button
-                onClick={() => handleNavigation("/public-journals")}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
-              >
-                <BookOpen size={18} />
-                Public Journals
-              </button>
-              <button
-                onClick={() => handleNavigation("/cozyshop")}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
-              >
-                <ShoppingBag size={18} />
-                Shop
-              </button>
-              <button
-                onClick={() => handleNavigation("/saved-entries")}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
-              >
-                <Bookmark size={18} />
-                Saved
-              </button>
-              <button
-                onClick={() => handleNavigation("/subscriptions")}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
-              >
-                <Users size={18} />
-                Subscriptions
-              </button>
+              {navigationItems.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => handleNavigation(item.path)}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                >
+                  {item.icon}
+                  {item.name}
+                </button>
+              ))}
             </div>
 
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">

@@ -1,18 +1,56 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Bookmark, Clock } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  Heart,
+  MessageCircle,
+  Bookmark,
+  Clock,
+  MoreHorizontal,
+  ThumbsUp, // Add ThumbsUp icon
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
-import { createAvatar } from '@dicebear/core';
-import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
-import axios from 'axios';
-import { getWithExpiry } from '../../utils/anonymousName';
+import { createAvatar } from "@dicebear/core";
+import {
+  avataaars,
+  bottts,
+  funEmoji,
+  miniavs,
+  croodles,
+  micah,
+  pixelArt,
+  adventurer,
+  bigEars,
+  bigSmile,
+  lorelei,
+  openPeeps,
+  personas,
+  rings,
+  shapes,
+  thumbs,
+} from "@dicebear/collection";
+import axios from "axios";
 
 const avatarStyles = {
-  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+  avataaars,
+  bottts,
+  funEmoji,
+  miniavs,
+  croodles,
+  micah,
+  pixelArt,
+  adventurer,
+  bigEars,
+  bigSmile,
+  lorelei,
+  openPeeps,
+  personas,
+  rings,
+  shapes,
+  thumbs,
 };
 
 const getAvatarSvg = (style, seed) => {
@@ -23,7 +61,7 @@ const getAvatarSvg = (style, seed) => {
 
 const getCurrentUser = () => {
   try {
-    const itemStr = localStorage.getItem('user');
+    const itemStr = localStorage.getItem("user");
     if (!itemStr) return null;
     const item = JSON.parse(itemStr);
     if (item && item.value) return item.value;
@@ -33,52 +71,87 @@ const getCurrentUser = () => {
   }
 };
 
-const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onSave }) => {
+const JournalCard = ({
+  journal,
+  onLike,
+  isLiked,
+  isSaved: isSavedProp,
+  onSave,
+}) => {
   const [imageError, setImageError] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [authorProfile, setAuthorProfile] = useState(journal.author || null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { darkMode } = useDarkMode();
   const { modals, openLoginModal } = AuthModals({ darkMode });
 
-  const user = useMemo(() => {
-    return getCurrentUser();
-  }, []);
+  const user = useMemo(() => getCurrentUser(), []);
 
-  const firstImage = useMemo(() => {
+  // Determine prefix based on current route
+  const prefix = location.pathname.startsWith("/stories") ? "/stories" : "/journals";
+
+  const thumbnail = useMemo(() => {
+    if (journal.thumbnail && !imageError) return journal.thumbnail;
     if (!journal.content || imageError) return null;
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = journal.content;
     const img = tempDiv.querySelector("img");
     return img?.src || null;
-  }, [journal.content, imageError]);
+  }, [journal.thumbnail, journal.content, imageError]);
 
   const textPreview = useMemo(() => {
     if (!journal.content) return "No content available.";
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = journal.content;
     const text = tempDiv.textContent || tempDiv.innerText || "";
-    return text.trim().substring(0, 200) + (text.length > 200 ? "..." : "");
+    return text.trim().substring(0, 200) + (text.length > 200 ? "…" : "");
   }, [journal.content]);
 
   const formattedDate = useMemo(() => {
     try {
-      return formatDistanceToNow(new Date(journal.createdAt), { addSuffix: true });
+      return formatDistanceToNow(new Date(journal.createdAt), {
+        addSuffix: true,
+      });
     } catch {
       return "some time ago";
     }
   }, [journal.createdAt]);
 
+  const readingTime = useMemo(() => {
+    if (!journal.content) return "1 min read";
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = journal.content;
+    const text = tempDiv.textContent || tempDiv.innerText || "";
+    const words = text.trim().split(/\s+/).length;
+    const minutes = Math.ceil(words / 200);
+    return `${minutes} min read`;
+  }, [journal.content]);
+
   useEffect(() => {
     const fetchProfile = async () => {
-      if (journal.userId && typeof journal.userId === 'object' && journal.userId !== null) {
-        setAuthorProfile({
-          userId: journal.userId._id,
-          anonymousName: journal.userId.anonymousName,
-          profileTheme: journal.userId.profileTheme,
-        });
+      if (
+        journal.userId &&
+        typeof journal.userId === "object" &&
+        journal.userId !== null
+      ) {
+        // If this is the logged-in user, use local storage for anonymousName/profileTheme
+        if (user && user._id === journal.userId._id) {
+          setAuthorProfile({
+            userId: user._id,
+            anonymousName: user.anonymousName,
+            profileTheme: user.profileTheme,
+          });
+        } else {
+          setAuthorProfile({
+            userId: journal.userId._id,
+            anonymousName: journal.userId.anonymousName,
+            profileTheme: journal.userId.profileTheme,
+          });
+        }
         return;
       }
 
@@ -95,7 +168,9 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
       }
 
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/${authorId}`);
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/user/${authorId}`
+        );
         const author = res.data.user;
         setAuthorProfile({
           userId: author._id,
@@ -114,36 +189,40 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
     navigate(`/profile/id/${authorProfile.userId}`);
   };
 
-  const handleLike = useCallback(async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!user) return openLoginModal();
-    
-    setIsLiking(true);
-    
-    try {
-      await onLike(journal);
-    } catch (error) {
-      // No need to revert here, context will handle it.
-      // The parent component should re-render with the correct state from context.
-    } finally {
-      setIsLiking(false);
-    }
-  }, [onLike, journal, user, openLoginModal]);
+  const handleLike = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!user) return openLoginModal();
 
-  const handleSave = useCallback(async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!user) return openLoginModal();
-    setIsSaving(true);
-    try {
-      await onSave(journal._id, !isSavedProp);
-    } catch (error) {
-       // The parent component should re-render with the correct state from context.
-    } finally {
-      setIsSaving(false);
-    }
-  }, [user, onSave, journal._id, isSavedProp, openLoginModal]);
+      setIsLiking(true);
+      try {
+        await onLike(journal);
+      } catch (error) {
+        // Handle error
+      } finally {
+        setIsLiking(false);
+      }
+    },
+    [onLike, journal, user, openLoginModal]
+  );
+
+  const handleSave = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!user) return openLoginModal();
+      setIsSaving(true);
+      try {
+        await onSave(journal._id, !isSavedProp);
+      } catch (error) {
+        // Handle error
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [user, onSave, journal._id, isSavedProp, openLoginModal]
+  );
 
   const handleCommentClick = (e) => {
     e.preventDefault();
@@ -151,125 +230,182 @@ const PublicJournalCard = ({ journal, onLike, isLiked, isSaved: isSavedProp, onS
     navigate(`/public-journals/${journal.slug}#comments`);
   };
 
-  const StatIcon = ({ icon: Icon, value, active, onClick, disabled, 'aria-label': ariaLabel, activeColor, fillOnActive = false }) => (
+  const ActionButton = ({
+    icon: Icon,
+    value,
+    active,
+    onClick,
+    disabled,
+    "aria-label": ariaLabel,
+    fillOnActive = false,
+  }) => (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center gap-1.5 text-sm transition-colors duration-200 disabled:opacity-50 ${
-        active ? (activeColor || 'text-[var(--accent)]') : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+      className={`group/btn flex items-center gap-2 px-3 py-2 rounded-full transition-all duration-200 disabled:opacity-50 ${
+        active
+          ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
+          : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
       }`}
       aria-label={ariaLabel}
     >
-      <Icon className="w-4 h-4" fill={active && fillOnActive ? 'currentColor' : 'none'} />
-      {value !== null && <span className="font-medium">{value}</span>}
+      <Icon
+        className={`w-4 h-4 transition-all duration-200 ${
+          active ? "scale-105" : "group-hover/btn:scale-110"
+        }`}
+        fill={active && fillOnActive ? "currentColor" : "none"}
+      />
+      {value !== null && (
+        <span className="text-sm font-medium">{value}</span>
+      )}
     </button>
   );
 
   return (
     <>
-      <Link to={`/public-journals/${journal.slug}`} className=" group block mb-8">
-        <div className={`grid ${firstImage ? 'grid-cols-1  md:grid-cols-3' : 'grid-cols-1'} gap-8 items-center`}>
-          {/* Text Content */}
-          <div className={`${firstImage ? 'md:col-span-2' : 'col-span-1'}`}>
-            <div
-              className="flex items-center gap-3 mb-3 cursor-pointer"
-              onClick={handleAuthorClick}
-            >
-              <img src={getAvatarSvg(authorProfile?.profileTheme?.avatarStyle || 'avataaars', authorProfile?.anonymousName || 'Anonymous')} alt="" className="w-8 h-8 rounded-full" />
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200 hover:underline">{authorProfile?.anonymousName || 'Anonymous'}</span>
-            </div>
-            
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight group-hover:text-[var(--accent)] transition-colors duration-200">
-              {journal.title}
-            </h2>
-            
-            <p className="text-gray-600 dark:text-gray-400 text-base line-clamp-3">
-              {textPreview}
-            </p>
-
-            <div className="flex items-center justify-between mt-4">
-              <div className="flex items-center gap-4">
-                <StatIcon 
-                  icon={Heart} 
-                  value={journal.likeCount || 0} 
-                  active={isLiked}
-                  onClick={handleLike}
-                  disabled={isLiking}
-                  aria-label={`Like journal, currently ${journal.likeCount || 0} likes`}
-                  activeColor="text-red-500"
-                  fillOnActive={true}
+      <article
+        className="group pb-2 relative bg-[var(--bg-primary)] rounded-2xl border-b border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all duration-300"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <Link
+          to={`${prefix}/${authorProfile?.anonymousName || "anonymous"}/${journal.slug}`}
+          className="block"
+        >
+          <div
+            className={`${
+              thumbnail ? "flex flex-col lg:flex-row" : "flex flex-col"
+            } gap-6`}
+          >
+            {/* Content Section */}
+            <div className={`${thumbnail ? "lg:flex-1" : "w-full"} min-w-0`}>
+              {/* Author Info */}
+              <div
+                className="flex items-center gap-3 mb-4 cursor-pointer"
+                onClick={handleAuthorClick}
+              >
+                <img
+                  src={getAvatarSvg(
+                    authorProfile?.profileTheme?.avatarStyle || "avataaars",
+                    authorProfile?.anonymousName || "Anonymous"
+                  )}
+                  alt=""
+                  className="w-9 h-9 rounded-full border-2 border-gray-200 dark:border-gray-700 shadow-sm"
                 />
-                <StatIcon 
-                  icon={MessageCircle} 
-                  value={journal.commentCount || 0}
-                  onClick={handleCommentClick}
-                  aria-label={`View comments, currently ${journal.commentCount || 0} comments`}
-                />
-                <StatIcon
-                  icon={Bookmark}
-                  value={null}
-                  active={isSavedProp}
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  aria-label={isSavedProp ? "Unsave journal" : "Save journal"}
-                  fillOnActive={true}
-                />
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                    {authorProfile?.anonymousName || "Anonymous"}
+                  </span>
+                  <span className="text-gray-300 dark:text-gray-600">•</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                    {readingTime}
+                  </span>
+                </div>
               </div>
-              {/* <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{formattedDate}</span>
-              </div> */}
+
+              {/* Title */}
+              <h2 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
+                {journal.title}
+              </h2>
+
+              {/* Preview */}
+              <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed line-clamp-3 mb-6">
+                {textPreview}
+              </p>
+
+              {/* Bottom Actions Row */}
+              {journal.isPublic && (
+                <div className="flex items-center justify-between mt-4">
+                  {/* Left: Date, Likes, Comments */}
+                  <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                    <span>{new Date(journal.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>
+                    <span className="flex items-center gap-1">
+                      <ThumbsUp className="w-3.5 h-3.5" />
+                      {journal.likeCount || 0}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      {journal.commentCount || 0}
+                    </span>
+                  </div>
+                  {/* Right: Save Button */}
+                  <div>
+                    <ActionButton
+                      icon={(props) => <Bookmark {...props} className="w-5 h-5" />} // Make save icon bigger
+                      value={null}
+                      active={isSavedProp}
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      aria-label={isSavedProp ? "Unsave journal" : "Save journal"}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Image Section */}
+            {thumbnail && (
+              <div className="lg:w-80 lg:flex-shrink-0">
+                <div className="aspect-[16/10] lg:aspect-[4/3] h-48 lg:h-56 relative overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-800">
+                  <img
+                    src={thumbnail}
+                    alt=""
+                    className={`w-full h-full object-cover transition-transform duration-700 ${
+                      isHovered ? "scale-105" : "scale-100"
+                    }`}
+                    onError={() => setImageError(true)}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+              </div>
+            )}
           </div>
-          
-          {/* Image Content */}
-          {firstImage && (
-            <div className="col-span-1 w-full aspect-[4/3] h-52 md:h-full flex items-center justify-center">
-              <img
-                src={firstImage}
-                alt=""
-                className="w-full h-full object-cover rounded-xl border border-gray-200 dark:border-gray-700"
-                onError={() => setImageError(true)}
-              />
-            </div>
-          )}
-        </div>
-        <hr className="mt-8 border-1 border-[var(--border)]" />
-      </Link>
+        </Link>
+      </article>
       {modals}
     </>
   );
 };
 
-export default PublicJournalCard;
+export default JournalCard;
 
 export const PublicJournalCardSkeleton = () => (
-  <div className="group block mb-8 animate-pulse">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-      {/* Text Content Skeleton */}
-      <div className="md:col-span-2 col-span-1">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full" />
-          <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
-        </div>
-        <div className="h-7 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
-        <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-        <div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-        <div className="h-4 w-2/3 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-4">
-            <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
-            <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
-            <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
+  <article className="group relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 animate-pulse">
+    <div className="flex flex-col lg:flex-row gap-6">
+      {/* Content Section Skeleton */}
+      <div className="lg:flex-1 min-w-0">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 bg-gray-200 dark:bg-gray-700 rounded-full" />
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded-md" />
+            <div className="w-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
+            <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded-md" />
           </div>
-          <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+        </div>
+
+        <div className="h-7 w-4/5 bg-gray-200 dark:bg-gray-700 rounded-lg mb-3" />
+        <div className="h-6 w-3/5 bg-gray-200 dark:bg-gray-700 rounded-lg mb-3" />
+
+        <div className="space-y-2 mb-6">
+          <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded-md" />
+          <div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-700 rounded-md" />
+          <div className="h-4 w-4/5 bg-gray-200 dark:bg-gray-700 rounded-md" />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <div className="h-9 w-14 bg-gray-200 dark:bg-gray-700 rounded-full" />
+            <div className="h-9 w-14 bg-gray-200 dark:bg-gray-700 rounded-full" />
+            <div className="h-9 w-9 bg-gray-200 dark:bg-gray-700 rounded-full" />
+          </div>
+          <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded-md" />
         </div>
       </div>
-      {/* Image Content Skeleton */}
-      <div className="col-span-1 h-52 md:h-full w-full">
-        <div className="w-full h-full bg-gray-200 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700" />
+
+      {/* Image Section Skeleton */}
+      <div className="lg:w-80 lg:flex-shrink-0">
+        <div className="aspect-[16/10] lg:aspect-[4/3] h-48 lg:h-56 bg-gray-200 dark:bg-gray-700 rounded-xl" />
       </div>
     </div>
-    <hr className="mt-8 border-1 border-[var(--border)]" />
-  </div>
+  </article>
 );

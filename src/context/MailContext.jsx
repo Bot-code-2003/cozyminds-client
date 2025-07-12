@@ -41,9 +41,17 @@ export const MailProvider = ({ children }) => {
     // Listen for signup event as well
     window.addEventListener("user-signed-up", handleUserLoggedIn);
 
+    // Listen for storage changes (e.g., login in another tab or programmatic update)
+    const handleStorage = () => {
+      const storedUser = getCurrentUser();
+      setUser(storedUser);
+    };
+    window.addEventListener("storage", handleStorage);
+
     return () => {
       window.removeEventListener("user-logged-in", handleUserLoggedIn);
       window.removeEventListener("user-signed-up", handleUserLoggedIn);
+      window.removeEventListener("storage", handleStorage);
     };
   }, []);
 

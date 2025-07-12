@@ -2,20 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useDarkMode } from "../../context/ThemeContext";
-import { useCoins } from "../../context/CoinContext";
 import { useJournals } from "../../context/JournalContext"; // Import the JournalContext
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../utils/anonymousName";
 import Navbar from "./Navbar";
 import MainSection from "./MainSection";
-import MoodDistribution from "./MoodDistribution";
 import RecentJournals from "./RecentJournals";
-import JournalingStreak from "./JournalingStreak";
-import GithubStyleCalendar from "./GitHubStyleCalendar";
 
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
-  const { setCoins, setInventory } = useCoins();
   const { journalEntries, user, loading: isLoading, error } = useJournals(); // Use context to get data
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState("all");
@@ -39,10 +34,8 @@ const Dashboard = () => {
       return;
     }
     setUserData(user);
-    setCoins(user.coins || 0);
-    setInventory(user.inventory || []);
     setFilteredEntries(journalEntries || []);
-  }, [user, journalEntries, navigate, setCoins, setInventory]);
+  }, [user, journalEntries, navigate]);
 
   useEffect(() => {
     let filtered = [...(journalEntries || [])];
@@ -116,12 +109,13 @@ const Dashboard = () => {
   const wordCountStats = getWordCountStats();
 
   return (
-    <div className="min-h-screen transition-colors duration-300 text-[var(--text-primary)] bg-[var(--bg-primary)]">
+    <>
       <Navbar
         handleLogout={handleLogout}
         name="New Entry"
         link={"/journaling-alt"}
       />
+    <div className="relative min-h-screen transition-colors duration-300 text-[var(--text-primary)] bg-[var(--bg-primary)]">
 
       <div className="container mx-auto px-4 pb-12">
         {isLoading ? (
@@ -159,9 +153,6 @@ const Dashboard = () => {
               formatDate={formatDate}
             />
             
-            
-            <MoodDistribution journalEntries={journalEntries} />
-            <GithubStyleCalendar journalEntries={journalEntries} />
             <RecentJournals
               entries={filteredEntries.slice(0, 3)}
               darkMode={darkMode}
@@ -170,7 +161,7 @@ const Dashboard = () => {
           </>
         )}
       </div>
-    </div>
+    </div></>
   );
 };
 

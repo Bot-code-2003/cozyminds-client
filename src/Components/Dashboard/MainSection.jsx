@@ -17,7 +17,6 @@ import {
   Zap,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import StreakCard from "../StreakCard";
 
 const MainSection = ({
   darkMode,
@@ -37,7 +36,7 @@ const MainSection = ({
       borderColor: "border-blue-200 dark:border-blue-800/50",
     },
     {
-      to: "/public-journals",
+      to: "/journals",
       icon: <Heart size={28} />,
       title: "Discover",
       description: "Explore vibrant community",
@@ -150,18 +149,6 @@ const MainSection = ({
           ))}
         </AnimatePresence>
       </div>
-
-      {/* StreakCard */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-      >
-        <StreakCard
-          journalEntries={journalEntries}
-          wordCountStats={wordCountStats}
-        />
-      </motion.div>
     </main>
   );
 };

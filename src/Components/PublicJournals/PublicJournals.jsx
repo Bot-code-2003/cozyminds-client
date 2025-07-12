@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useCallback, useMemo, useState } from "react";
 import { usePublicJournals } from "../../context/PublicJournalsContext";
 import AuthModals from "../Landing/AuthModals";
@@ -8,28 +7,14 @@ import PublicJournalCard, { PublicJournalCardSkeleton } from "./PublicJournalCar
 import Sidebar from "./Sidebar";
 import Navbar from "../Dashboard/Navbar";
 import LandingNavbar from "../Landing/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import {
-  Loader2,
-  AlertCircle,
-  Users,
-  ArrowLeft,
-  BookOpen,
-  Bell,
-  Filter,
-  Grid,
-  List,
-  Clock,
-  Heart,
-  X,
-  Compass
-} from "lucide-react";
+import { Loader2, AlertCircle, Users, ArrowLeft, BookOpen, Bell, Filter, Grid, List, Clock, Heart, X, Compass } from 'lucide-react';
 import { Helmet } from "react-helmet";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
-const Header = ({ showFollowingOnly, isLoggedIn, onBackToAll }) => (
+const Header = ({ showFollowingOnly, isLoggedIn, onBackToAll, category }) => (
   <div className="mb-8">
     {showFollowingOnly && (
       <button
@@ -37,39 +22,48 @@ const Header = ({ showFollowingOnly, isLoggedIn, onBackToAll }) => (
         className="flex items-center gap-2 text-[var(--accent)] font-medium mb-6 transition-colors group"
       >
         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-        <span>Back to All Journals</span>
+        <span>Back to All {category === "story" ? "Stories" : category === "journal" ? "Journals" : "Posts"}</span>
       </button>
     )}
-
     <div className="text-center mb-8">
       <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-        {showFollowingOnly ? "Your Feed" : "Discover Journals"}
+        {showFollowingOnly 
+          ? "Your Feed" 
+          : category === "story" 
+            ? "Discover Stories" 
+            : category === "journal" 
+              ? "Discover Journals" 
+              : "Discover Posts"
+        }
       </h1>
       <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
         {showFollowingOnly
-          ? "Latest posts from writers you follow"
-          : "Explore stories and thoughts from our vibrant community of writers"}
+          ? `Latest ${category === "story" ? "stories" : category === "journal" ? "journal entries" : "posts"} from writers you follow`
+          : category === "story"
+            ? "Explore captivating stories and narratives from our creative community"
+            : category === "journal"
+              ? "Explore personal thoughts and journal entries from our community of writers"
+              : "Explore stories and thoughts from our vibrant community of writers"
+        }
       </p>
     </div>
   </div>
 );
 
-const TagHeader = ({ tag, onClear }) => (
+const TagHeader = ({ tag, onClear, category }) => (
   <div className="mb-8">
     <button
       onClick={onClear}
       className="flex items-center gap-2 text-[var(--accent)] font-medium mb-6 transition-colors group"
     >
       <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-      <span>Back to All Journals</span>
+      <span>Back to All {category === "story" ? "Stories" : category === "journal" ? "Journals" : "Posts"}</span>
     </button>
     <div className="text-center">
-      <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3 capitalize">
-        Journals tagged with <span className="text-[var(--accent)]">#{tag.toLowerCase()}</span>
+      <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3 capitalize">
+        {category === "story" ? "Stories" : category === "journal" ? "Journals" : "Posts"} tagged with <span className="text-[var(--accent)]">#{tag.toLowerCase()}</span>
       </h1>
-      <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-        Exploring stories and thoughts about "{tag.toLowerCase()}" from our community.
-      </p>
+      
     </div>
   </div>
 );
@@ -110,7 +104,6 @@ const ControlPanel = ({
             </button>
           </div>
         )}
-
         {!showFollowingOnly && (
           <div className="flex-shrink-0 flex items-center gap-1 bg-gray-100 dark:bg-slate-700 p-1 rounded-xl">
             {[
@@ -133,30 +126,28 @@ const ControlPanel = ({
           </div>
         )}
       </div>
-
-      
     </div>
   </div>
 );
-const EmptyState = ({ showFollowingOnly, toggleFollowingOnly, isLoggedIn }) => (
+
+const EmptyState = ({ showFollowingOnly, toggleFollowingOnly, isLoggedIn, category }) => (
   <div className="text-center py-20">
     <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
-      <span className="text-5xl">{showFollowingOnly ? "👥" : "📖"}</span>
+      <span className="text-5xl">{showFollowingOnly ? "👥" : category === "story" ? "📚" : "📖"}</span>
     </div>
-
     <div className="max-w-md mx-auto space-y-4">
       <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
         {showFollowingOnly
-          ? "No posts from your follows"
-          : "No public journals yet"}
+          ? `No ${category === "story" ? "stories" : category === "journal" ? "journal entries" : "posts"} from your follows`
+          : `No public ${category === "story" ? "stories" : category === "journal" ? "journals" : "posts"} yet`
+        }
       </h3>
-
       <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
         {showFollowingOnly
-          ? "The writers you follow haven't posted anything yet. Explore all journals to discover new voices and stories."
-          : "Be the first to share your thoughts with the community and inspire others to start their journaling journey!"}
+          ? `The writers you follow haven't posted any ${category === "story" ? "stories" : category === "journal" ? "journal entries" : "content"} yet. Explore all ${category === "story" ? "stories" : category === "journal" ? "journals" : "posts"} to discover new voices and stories.`
+          : `Be the first to share your ${category === "story" ? "story" : category === "journal" ? "thoughts" : "content"} with the community and inspire others to start their ${category === "story" ? "storytelling" : "journaling"} journey!`
+        }
       </p>
-
       {showFollowingOnly && (
         <div className="pt-4">
           <button
@@ -164,7 +155,7 @@ const EmptyState = ({ showFollowingOnly, toggleFollowingOnly, isLoggedIn }) => (
             className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[var(--accent)] to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
           >
             <BookOpen className="w-5 h-5" />
-            <span>Explore All Journals</span>
+            <span>Explore All {category === "story" ? "Stories" : category === "journal" ? "Journals" : "Posts"}</span>
           </button>
         </div>
       )}
@@ -181,7 +172,7 @@ const LoadingState = () => (
       </div>
       <div className="text-center">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
-          Loading journals
+          Loading content
         </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Discovering amazing stories for you...
@@ -197,14 +188,12 @@ const ErrorState = ({ error, onRetry }) => (
       <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
         <AlertCircle className="w-8 h-8 text-red-500" />
       </div>
-
       <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">
         Something went wrong
       </h2>
       <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
         {error}
       </p>
-
       <button
         onClick={onRetry}
         className="px-6 py-3 bg-[var(--accent)] text-white rounded-xl transition-colors font-medium shadow-lg hover:shadow-xl"
@@ -215,7 +204,7 @@ const ErrorState = ({ error, onRetry }) => (
   </div>
 );
 
-const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
+const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore, category }) => {
   if (!hasMore) {
     return (
       <div className="text-center py-12">
@@ -225,7 +214,7 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
             You've reached the end!
           </h3>
           <p className="text-gray-600 dark:text-gray-400 text-base mb-2 max-w-xs">
-            Thanks for exploring our community. Check back soon for more inspiring journals, or <Link to="/journaling-alt" className="text-[var(--accent)] underline hover:text-blue-600">start your own journal</Link> to inspire others!
+            Thanks for exploring our community. Check back soon for more inspiring {category === "story" ? "stories" : category === "journal" ? "journals" : "content"}, or <Link to="/journaling-alt" className="text-[var(--accent)] underline hover:text-blue-600">start your own {category === "story" ? "story" : "journal"}</Link> to inspire others!
           </p>
         </div>
       </div>
@@ -243,7 +232,7 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
         {loadingMore ? (
           <>
             <Loader2 className="h-5 w-5 animate-spin mr-2" />
-            <span>Loading more journals...</span>
+            <span>Loading more...</span>
           </>
         ) : (
           <>
@@ -293,18 +282,27 @@ const PublicJournals = () => {
     loadMore,
     selectedTag,
     handleTagSelect,
+    resetForNewCategory,
   } = usePublicJournals();
 
   const { darkMode, setDarkMode } = useDarkMode();
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
-
   const user = useMemo(() => getCurrentUser(), []);
   const isLoggedIn = !!user;
+  const location = useLocation();
+
+  // Determine category based on current route
+  const category = useMemo(() => {
+    if (location.pathname.startsWith("/stories")) return "story";
+    if (location.pathname.startsWith("/journals")) return "journal";
+    return undefined;
+  }, [location.pathname]);
+
+  console.log('Current route:', location.pathname, 'Category:', category);
 
   // Fetch subscription notifications
   const fetchSubscriptionNotifications = useCallback(async () => {
     if (!user?._id) return;
-
     try {
       const response = await API.get(`/subscriptions/${user._id}`);
       const subscriptions = response.data.subscriptions || [];
@@ -334,35 +332,31 @@ const PublicJournals = () => {
 
   // Handle topic click from sidebar
   const handleTopicClick = useCallback((topic) => {
-    // You can implement filtering by topic here
-    // For now, we'll just log it. You can extend this to filter journals by topic
-  }, []);
+    handleTagSelect(topic);
+  }, [handleTagSelect]);
 
   // Handle writer click from sidebar
   const handleWriterClick = useCallback((writer) => {
     // You can implement navigation to writer's profile here
-    // For now, we'll just log it. You can extend this to navigate to writer's profile
   }, []);
 
-  // Handle apply filters from FilterSection
-  const handleApplyFilters = useCallback((filters) => {
-    fetchJournals(1, feedType, filters);
-  }, [fetchJournals, feedType]);
-
+  // Reset and fetch journals when category changes
   useEffect(() => {
-    fetchJournals(1);
-  }, []);
+    console.log('Category changed, resetting and fetching journals for category:', category);
+    resetForNewCategory(category);
+    fetchJournals(1, feedType, false, category);
+  }, [category, resetForNewCategory, fetchJournals, feedType]);
 
   // Re-fetch journals when user logs in
   useEffect(() => {
     const handleUserLoggedIn = () => {
-      fetchJournals(1);
+      fetchJournals(1, feedType, false, category);
     };
     window.addEventListener("user-logged-in", handleUserLoggedIn);
     return () => {
       window.removeEventListener("user-logged-in", handleUserLoggedIn);
     };
-  }, [fetchJournals]);
+  }, [fetchJournals, feedType, category]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -370,21 +364,52 @@ const PublicJournals = () => {
     }
   }, [isLoggedIn, fetchSubscriptionNotifications]);
 
+  // Custom load more that respects category
+  const handleLoadMore = useCallback(() => {
+    if (hasMore && !loadingMore) {
+      if (selectedTag) {
+        fetchJournalsByTag(selectedTag, Math.floor(journals.length / 20) + 1, true);
+      } else {
+        loadMore();
+      }
+    }
+  }, [hasMore, loadingMore, selectedTag, fetchJournalsByTag, journals.length, loadMore]);
+
+  // Custom feed type change that respects category
+  const handleCustomFeedTypeChange = useCallback((newFeedType) => {
+    if (newFeedType !== feedType) {
+      setFeedType(newFeedType);
+      fetchJournals(1, newFeedType, false, category);
+    }
+  }, [feedType, fetchJournals, category, setFeedType]);
+
+  // Custom toggle following that respects category
+  const handleCustomToggleFollowing = useCallback(() => {
+    const newShowFollowingOnly = !showFollowingOnly;
+    setShowFollowingOnly(newShowFollowingOnly);
+    fetchJournals(1, feedType, false, category);
+  }, [showFollowingOnly, feedType, fetchJournals, category, setShowFollowingOnly]);
+
+  // Handle tag clear
+  const handleTagClear = useCallback(() => {
+    fetchJournals(1, feedType, false, category);
+  }, [fetchJournals, feedType, category]);
+
   if (loading && !loadingMore) {
     return (
       <>
         <Helmet>
-          <title>Read Public Journals & Diaries | Anonymous Confessions & Stories</title>
-          <meta name="description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
-          <meta name="keywords" content="read public journals, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
-          <meta property="og:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
-          <meta property="og:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+          <title>{category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories</title>
+          <meta name="description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
+          <meta name="keywords" content={`read public ${category === "story" ? "stories" : category === "journal" ? "journals" : "journals, stories"}, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories`} />
+          <meta property="og:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
+          <meta property="og:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://starlitjournals.com/public-journals" />
+          <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
           <meta property="og:image" content="/public/andy_the_sailor.png" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
-          <meta name="twitter:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+          <meta name="twitter:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
+          <meta name="twitter:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
           <meta name="twitter:image" content="/public/andy_the_sailor.png" />
         </Helmet>
         {isLoggedIn ? (
@@ -410,17 +435,17 @@ const PublicJournals = () => {
     return (
       <>
         <Helmet>
-          <title>Read Public Journals & Diaries | Anonymous Confessions & Stories</title>
-          <meta name="description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
-          <meta name="keywords" content="read public journals, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
-          <meta property="og:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
-          <meta property="og:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+          <title>{category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories</title>
+          <meta name="description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
+          <meta name="keywords" content={`read public ${category === "story" ? "stories" : category === "journal" ? "journals" : "journals, stories"}, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories`} />
+          <meta property="og:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
+          <meta property="og:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://starlitjournals.com/public-journals" />
+          <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
           <meta property="og:image" content="/public/andy_the_sailor.png" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
-          <meta name="twitter:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+          <meta name="twitter:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
+          <meta name="twitter:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
           <meta name="twitter:image" content="/public/andy_the_sailor.png" />
         </Helmet>
         {isLoggedIn ? (
@@ -433,7 +458,7 @@ const PublicJournals = () => {
             openSignupModal={openSignupModal}
           />
         )}
-        <ErrorState error={error} onRetry={() => fetchJournals(1)} />
+        <ErrorState error={error} onRetry={() => fetchJournals(1, feedType, false, category)} />
       </>
     );
   }
@@ -441,17 +466,17 @@ const PublicJournals = () => {
   return (
     <>
       <Helmet>
-        <title>Read Public Journals & Diaries | Anonymous Confessions & Stories</title>
-        <meta name="description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
-        <meta name="keywords" content="read public journals, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
-        <meta property="og:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
-        <meta property="og:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+        <title>{category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories</title>
+        <meta name="description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
+        <meta name="keywords" content={`read public ${category === "story" ? "stories" : category === "journal" ? "journals" : "journals, stories"}, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories`} />
+        <meta property="og:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
+        <meta property="og:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://starlitjournals.com/public-journals" />
+        <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
         <meta property="og:image" content="/public/andy_the_sailor.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Read Public Journals & Diaries | Anonymous Confessions & Stories" />
-        <meta name="twitter:description" content="Explore and read public journals, diaries, and confessions from real people. Join a safe, anonymous community to share your own story or discover others'." />
+        <meta name="twitter:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
+        <meta name="twitter:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
         <meta name="twitter:image" content="/public/andy_the_sailor.png" />
       </Helmet>
       {isLoggedIn ? (
@@ -479,12 +504,12 @@ const PublicJournals = () => {
       {isSidebarOpen && (
         <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-[9999]" onClick={() => setIsSidebarOpen(false)}>
           <button 
-            onClick={() => setIsSidebarOpen(false)} 
+            onClick={() => setIsSidebarOpen(false)}
             className="fixed top-3 right-3 z-[10001] w-12 h-12 flex items-center justify-center rounded-full bg-white/95 dark:bg-gray-900/95 border border-gray-300 dark:border-gray-700 shadow-2xl text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-800 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 animate-float"
             style={{ boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}
             aria-label="Close sidebar"
           >
-              <X className="w-7 h-7" />
+            <X className="w-7 h-7" />
           </button>
           <div
             className="fixed top-0 left-0 h-full w-full max-w-full bg-[var(--bg-primary)] shadow-lg overflow-y-auto p-0 animate-slideInRight"
@@ -492,11 +517,12 @@ const PublicJournals = () => {
           >
             <Sidebar
               onTopicClick={(topic) => {
-                handleTagSelect(topic);
+                handleTopicClick(topic);
                 setIsSidebarOpen(false);
               }}
               onWriterClick={handleWriterClick}
               isLoggedIn={isLoggedIn}
+              category={category}
             />
           </div>
         </div>
@@ -507,27 +533,37 @@ const PublicJournals = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             <main className="md:col-span-8">
               {selectedTag ? (
-                <TagHeader tag={selectedTag} onClear={() => fetchJournals(1, feedType, false)} />
+                <TagHeader 
+                  tag={selectedTag} 
+                  onClear={handleTagClear} 
+                  category={category}
+                />
               ) : (
                 <>
                   <Header
                     showFollowingOnly={showFollowingOnly}
                     isLoggedIn={isLoggedIn}
-                    onBackToAll={toggleFollowingOnly}
+                    onBackToAll={handleCustomToggleFollowing}
+                    category={category}
                   />
                   <ControlPanel
                     isLoggedIn={isLoggedIn}
                     showFollowingOnly={showFollowingOnly}
-                    toggleFollowingOnly={toggleFollowingOnly}
+                    toggleFollowingOnly={handleCustomToggleFollowing}
                     feedType={feedType}
-                    handleFeedTypeChange={handleFeedTypeChange}
+                    handleFeedTypeChange={handleCustomFeedTypeChange}
                     hasNotifications={hasSubscriptionNotifications}
                   />
                 </>
               )}
               
               {journals.length === 0 && !loading ? (
-                <EmptyState showFollowingOnly={showFollowingOnly} toggleFollowingOnly={toggleFollowingOnly} isLoggedIn={isLoggedIn} />
+                <EmptyState 
+                  showFollowingOnly={showFollowingOnly} 
+                  toggleFollowingOnly={handleCustomToggleFollowing} 
+                  isLoggedIn={isLoggedIn} 
+                  category={category}
+                />
               ) : (
                 <div className="grid grid-cols-1 gap-6 items-stretch">
                   {journals.map((journal) => (
@@ -548,14 +584,17 @@ const PublicJournals = () => {
               <LoadMoreButton
                 loadingMore={loadingMore}
                 hasMore={hasMore}
-                onLoadMore={loadMore}
+                onLoadMore={handleLoadMore}
+                category={category}
               />
             </main>
+
             <aside className="hidden md:block md:col-span-4">
               <Sidebar
-                onTopicClick={handleTagSelect}
+                onTopicClick={handleTopicClick}
                 onWriterClick={handleWriterClick}
                 isLoggedIn={isLoggedIn}
+                category={category}
               />
             </aside>
           </div>

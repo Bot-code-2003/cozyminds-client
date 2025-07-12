@@ -1,9 +1,7 @@
 import { BookOpen, Sparkles, Lightbulb, ArrowRight, TrendingUp, Tag, Users, Smile, Info, Heart, MessageCircle, Clock, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import PopularTopics from "./PopularTopics";
-import PopularWriters from "./PopularWriters";
 import TrendingJournals from "./TrendingJournals";
-import TopMoodPosts from "./TopMoodPosts";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ActiveDiscussions from "./ActiveDiscussions";
@@ -96,7 +94,7 @@ const FeedbackBox = ({ isLoggedIn, onLogin }) => {
   );
 };
 
-const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
+const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn, category }) => {
 
   const handleTopicClick = (topic) => {
     if (onTopicClick) {
@@ -112,7 +110,7 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
 
   return (
     <div className="w-full  space-y-6 px-0 sm:px-0">
-      {isLoggedIn && (
+      {/* {isLoggedIn && (
         <div className="mt-4 sm:mt-0 bg-white dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-sm p-4">
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="w-5 h-5 text-[var(--accent)]" />
@@ -143,30 +141,11 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
             </Link>
           </div>
         </div>
-      )}
+      )} */}
 
       <SidebarSection 
         icon={<TrendingUp className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
-        title="Trending Journals"
-        showInfo={true}
-        infoContent={
-          <div>
-            <div className="font-semibold mb-1">How we calculate trending:</div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1">
-                <Heart className="w-3 h-3" />
-                <span>Likes + (Comments × 2)</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                <span>× Time decay (7 days)</span>
-              </div>
-              <div className="text-gray-300 text-[10px] mt-1">
-                Recent posts with high engagement get priority
-              </div>
-            </div>
-          </div>
-        }
+        title="Trending"
       >
         <TrendingJournals />
       </SidebarSection>
@@ -174,101 +153,23 @@ const Sidebar = ({ onTopicClick, onWriterClick, isLoggedIn }) => {
       <SidebarSection 
         icon={<BookOpen className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
         title="Active Discussions"
-        showInfo={true}
-        infoContent={
-          <div>
-            <div className="font-semibold mb-1">How we calculate active discussions:</div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1">
-                <MessageCircle className="w-3 h-3" />
-                <span>Comments × 3</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Heart className="w-3 h-3" />
-                <span>Likes × 2</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <BookOpen className="w-3 h-3" />
-                <span>Saves × 1.5</span>
-              </div>
-              <div className="text-gray-300 text-[10px] mt-1">
-                × Recency factor (newer posts get higher weight)
-              </div>
-            </div>
-          </div>
-        }
       >
         <ActiveDiscussions />
       </SidebarSection>
       
+      
+      
+      <SidebarSection 
+        icon={<Tag className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
+        title="Topics"
+      >
+        <PopularTopics type={category === 'story' ? 'story' : 'journal'} onTopicClick={handleTopicClick} />
+      </SidebarSection>
+
       <SidebarSection icon={<Lightbulb className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Feedback Box">
         <FeedbackBox isLoggedIn={isLoggedIn} onLogin={() => window.dispatchEvent(new CustomEvent('open-login-modal'))} />
       </SidebarSection>
       
-      <SidebarSection 
-        icon={<Tag className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
-        title="Popular Topics"
-        showInfo={true}
-        infoContent={
-          <div>
-            <div className="font-semibold mb-1">How we rank popular topics:</div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1">
-                <Heart className="w-3 h-3" />
-                <span>Total likes across all posts</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <BookOpen className="w-3 h-3" />
-                <span>Number of posts with this tag</span>
-              </div>
-              <div className="text-gray-300 text-[10px] mt-1">
-                Topics with high engagement and volume rank higher
-              </div>
-            </div>
-          </div>
-        }
-      >
-        <PopularTopics onTopicClick={handleTopicClick} />
-      </SidebarSection>
-      
-      <SidebarSection icon={<Smile className="w-5 h-5 text-gray-500 dark:text-gray-400" />} title="Top Posts by Mood" noPadding>
-        <TopMoodPosts />
-      </SidebarSection>
-      
-      <SidebarSection 
-        icon={<Users className="w-5 h-5 text-gray-500 dark:text-gray-400" />} 
-        title="Top Writers"
-        showInfo={true}
-        infoContent={
-          <div>
-            <div className="font-semibold mb-1">How we rank popular writers:</div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1">
-                <TrendingUp className="w-3 h-3" />
-                <span>Total Engagement (40%)</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3" />
-                <span>Avg Engagement (30%)</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                <span>Consistency (20%)</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Heart className="w-3 h-3" />
-                <span>Recent Activity (10%)</span>
-              </div>
-              <div className="text-gray-300 text-[10px] mt-1">
-                Based on likes, comments, saves, posting frequency & recency
-              </div>
-            </div>
-          </div>
-        }
-      >
-        <PopularWriters onWriterClick={handleWriterClick} isLoggedIn={isLoggedIn} />
-      </SidebarSection>
-
       <div className="bg-gradient-to-br from-[var(--accent)]/10 to-purple-100 dark:from-[var(--accent)]/5 dark:to-purple-900/20 rounded-2xl border border-[var(--accent)]/20 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Lightbulb className="w-5 h-5 text-[var(--accent)]" />

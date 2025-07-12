@@ -11,7 +11,6 @@ import Navbar from "./Navbar";
 import { useDarkMode } from "../../context/ThemeContext";
 import Footer from "./Footer";
 import Testimonials from "./Testimonials";
-import Features from "./Features";
 import AuthModals from "./AuthModals";
 import axios from "axios";
 import Home from "../../assets/home3.png";
@@ -20,6 +19,7 @@ import { getWithExpiry, setWithExpiry } from "../../utils/anonymousName";
 import PublicProfileShowcase from "./PublicProfileShowcase";
 import { Helmet } from "react-helmet";
 import Accordion from "../ui/Accordion";
+import HowItWorks from "./HowItWorks";
 
 const LandingPage = () => {
   const API = axios.create({
@@ -314,14 +314,11 @@ const LandingPage = () => {
         <header className="w-full max-w-6xl mt-32 mb-30 px-4 sm:px-8 z-[99]">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="order-2 md:order-1">
-              <div className="inline-block mb-6 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-sm font-medium tracking-wider rounded-full bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm">
-                GAMIFIED
-              </div>
               <h1 className="text-4xl md:text-hero font-bold tracking-tight mb-6 leading-tight">
                 Start Your Public Journal Adventure
               </h1>
               <p className="text-xl md:text-2xl opacity-80 font-medium sm:max-w-xl leading-relaxed mb-8">
-                Write anonymously. Earn rewards. Inspire the world.
+                Write freely. Inspire others. Stay anonymous.
               </p>
               <div className="mt-6">
                 <button
@@ -330,7 +327,7 @@ const LandingPage = () => {
                   aria-label="Begin your journaling journey"
                 >
                   <span className="flex items-center gap-2">
-                    Start Free – Get 50 Coins!
+                    Start Free
                     <ArrowRight
                       size={20}
                       className="transition-transform duration-500 ease-in-out group-hover:translate-x-1"
@@ -427,19 +424,13 @@ const LandingPage = () => {
             </div>
           </section>
 
-          {/* Features Section */}
-          <Features
-            setShowLoginModal={openLoginModal}
-            setShowSignupModal={openSignupModal}
-          />
-
           {/* Public Journals Showcase */}
           <PublicJournalsShowcase />
 
           <PublicProfileShowcase />
 
           {/* How It Works Section */}
-          {/* <HowItWorks setShowLoginModal={openLoginModal} /> */}
+          <HowItWorks setShowLoginModal={openLoginModal} />
 
           <section className="mt-16 max-w-6xl mx-auto w-full">
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-center tracking-tight">How Starlit Journals Protects Your Privacy</h2>

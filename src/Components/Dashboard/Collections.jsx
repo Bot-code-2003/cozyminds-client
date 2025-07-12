@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useJournals } from "../../context/JournalContext";
 import Navbar from "./Navbar";
-import { getCardClass } from "./ThemeDetails";
 import { logout } from "../../utils/anonymousName";
 
 const Collections = () => {
@@ -96,36 +95,14 @@ const Collections = () => {
     // Try to find images or themes in entries
     for (const entry of entries) {
       if (images.length >= 4) break;
-      const imageUrl = getFirstImageFromContent(entry.content);
-      if (imageUrl && !images.includes(imageUrl)) {
+      // Use thumbnail if present, else first image from content
+      const imageUrl = entry.thumbnail || getFirstImageFromContent(entry.content);
+      if (imageUrl && !images.some(img => img.value === imageUrl)) {
         images.push({ type: "image", value: imageUrl });
-      } else if (
-        entry.theme &&
-        !images.find((img) => img.value === entry.theme)
-      ) {
-        images.push({ type: "theme", value: entry.theme });
       }
     }
 
     return images;
-  };
-
-  // Get up to 4 unique themes for a collection
-  const getCollectionThemes = (collection) => {
-    const entries = getCollectionEntries(collection);
-
-    // Get unique themes
-    const themesSet = new Set(
-      entries.filter((entry) => entry.theme).map((entry) => entry.theme)
-    );
-    let themes = Array.from(themesSet).slice(0, 4);
-
-    // If no themes, use default
-    if (themes.length === 0) {
-      themes = ["default"];
-    }
-
-    return themes;
   };
 
   // Get dynamic grid classes based on number of items
@@ -233,7 +210,6 @@ const Collections = () => {
                 const items = getCollectionImages(collection);
                 const gridClasses = getGridClasses(items.length || 1);
                 const hasItems = items.length > 0;
-                const themes = getCollectionThemes(collection);
 
                 return (
                   <div
@@ -256,13 +232,13 @@ const Collections = () => {
                             <div
                               key={`${collection}-${item.type}-${i}`}
                               className={`w-full h-full ${
-                                item.type === "theme"
-                                  ? getCardClass(item.value)
-                                  : `bg-cover bg-center ${
+                                item.type === "image"
+                                  ? `bg-cover bg-center ${
                                       items.length === 3 && i === 0
                                         ? "col-span-2"
                                         : ""
                                     }`
+                                  : ""
                               }`}
                               style={
                                 item.type === "image"
@@ -284,30 +260,7 @@ const Collections = () => {
                                 )}
                             </div>
                           ))
-                        : themes.map((theme, i) => (
-                            <div
-                              key={`${collection}-theme-${i}`}
-                              className={`w-full h-full ${getCardClass(
-                                theme
-                              )} ${
-                                themes.length === 3 && i === 0
-                                  ? "col-span-2"
-                                  : ""
-                              }`}
-                              aria-label={`Theme preview ${
-                                i + 1
-                              } for ${collection}`}
-                            >
-                              {theme === "default" && (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-600">
-                                  <FolderOpen
-                                    size={24}
-                                    className="text-gray-400 dark:text-gray-500"
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          ))}
+                        : ""}
                     </div>
                     <div className="h-1/4 p-4 flex items-center justify-between bg-white dark:bg-gray-800">
                       <h3 className="text-lg font-medium truncate">

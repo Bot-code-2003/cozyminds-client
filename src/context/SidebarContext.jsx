@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -15,11 +16,19 @@ export const SidebarProvider = ({ children }) => {
     const [activeDiscussions, setActiveDiscussions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const location = useLocation();
 
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
+            // Determine category based on current route
+            let category = undefined;
+            if (typeof window !== 'undefined') {
+                const path = window.location.pathname;
+                if (path.includes('/journals')) category = 'journal';
+                else if (path.includes('/stories')) category = 'story';
+            }
             const [
                 topicsRes,
                 writersRes,
@@ -29,14 +38,14 @@ export const SidebarProvider = ({ children }) => {
             ] = await Promise.all([
                 API.get('/popular-topics?limit=8').catch(e => e.response),
                 API.get('/popular-writers?limit=6').catch(e => e.response),
-                API.get('/trending-journals?limit=8').catch(e => e.response),
+                API.get('/trending' + (category ? `?category=${category}` : '')).catch(e => e.response),
                 API.get('/journals/top-by-mood').catch(e => e.response),
-                API.get('/journals/with-comments?sort=-activityScore&limit=7').catch(e => e.response),
+                API.get('/active-discussions' + (category ? `?category=${category}` : '')).catch(e => e.response),
             ]);
             
             setTrendingTopics(topicsRes.data?.popularTopics || []);
             setPopularWriters(writersRes.data?.popularWriters || []);
-            setTrendingJournals(trendingJournalsRes.data?.trendingJournals || []);
+            setTrendingJournals(trendingJournalsRes.data?.journals || []);
             setTopMoodPosts(topMoodPostsRes.data || {});
             setActiveDiscussions(activeDiscussionsRes.data?.journals || []);
 
@@ -50,7 +59,7 @@ export const SidebarProvider = ({ children }) => {
 
     useEffect(() => {
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, location.pathname]);
 
     const value = {
         trendingTopics,

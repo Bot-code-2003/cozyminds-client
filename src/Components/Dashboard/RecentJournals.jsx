@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { getCardClass, getThemeDetails } from "./ThemeDetails.js";
 import { useState } from "react";
-import JournalCard from "./JorunalCard.jsx";
+import JournalCard from "../PublicJournals/PublicJournalCard.jsx";
 
 // Mood definitions with improved color palette
 const moods = [
@@ -69,16 +68,11 @@ const RecentJournals = ({ entries, darkMode, formatDate }) => {
       {entries.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
+        <div className="flex flex-col gap-6">
           {entries.map((entry) => (
             <JournalCard
               key={entry._id}
-              entry={entry}
-              moods={moods}
-              formatDate={formatDate}
-              getThemeDetails={getThemeDetails}
-              getCardClass={getCardClass}
-              className="h-full transition-transform duration-200 hover:scale-105"
+              journal={entry}
             />
           ))}
         </div>

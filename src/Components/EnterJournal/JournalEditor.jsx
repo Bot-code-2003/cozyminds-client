@@ -31,7 +31,7 @@ import LinkExtension from "@tiptap/extension-link";
 import ImageExtension from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
-import useAutoSave from "../../utils/useAutoSave";
+import "../styles/JournalContent.css";
 
 // Enhanced Full-Width Image Extension
 const FullWidthImageExtension = ImageExtension.extend({
@@ -57,13 +57,13 @@ const FullWidthImageExtension = ImageExtension.extend({
       img.alt = node.attrs.alt || "";
       img.style.cssText = `
         width: 100%;
+        max-width: 100%;
         height: auto;
         display: block;
-        object-fit: cover;
-        max-height: 500px;
+        margin: 2.5rem auto;
         border-radius: 12px;
-        margin: 0 auto;
         background: transparent;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       `;
 
       img.onerror = () => {
@@ -113,6 +113,7 @@ const JournalEditor = ({
   setJournalText,
   wordCount,
   onNext,
+  thumbnail, // add thumbnail prop
 }) => {
   const titleRef = useRef(null);
   const [isLinkMenuOpen, setIsLinkMenuOpen] = useState(false);
@@ -121,8 +122,6 @@ const JournalEditor = ({
   const [imageUrl, setImageUrl] = useState("");
   const [imageError, setImageError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showDraftRestore, setShowDraftRestore] = useState(false);
-  const { loadFromStorage, clearDraft } = useAutoSave(journalText, journalTitle, 'journal-draft');
 
   // Validate URL helper
   const isValidUrl = useCallback((string) => {
@@ -239,31 +238,6 @@ const JournalEditor = ({
       }
     }
   }, [editor, journalText]);
-
-  useEffect(() => {
-    const loadDraft = () => {
-      const savedDraft = loadFromStorage();
-      if (savedDraft && (savedDraft.content || savedDraft.title)) {
-        setShowDraftRestore(true);
-      }
-    };
-    const timer = setTimeout(loadDraft, 100);
-    return () => clearTimeout(timer);
-  }, [loadFromStorage]);
-
-  const restoreDraft = () => {
-    const savedDraft = loadFromStorage();
-    if (savedDraft) {
-      setJournalTitle(savedDraft.title || "");
-      setJournalText(savedDraft.content || "");
-      setShowDraftRestore(false);
-    }
-  };
-
-  const dismissDraft = () => {
-    clearDraft();
-    setShowDraftRestore(false);
-  };
 
   const setLink = useCallback(() => {
     if (!editor) return;
@@ -404,8 +378,13 @@ const JournalEditor = ({
   const hasContent = journalTitle.trim() || !editor.isEmpty;
 
   return (
-    <div className="py-2 ">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="journal-editor-container">
+      {thumbnail && (
+        <div className="mb-4 flex justify-center">
+          <img src={thumbnail} alt="Journal thumbnail" className="max-h-64 rounded-xl shadow-md object-cover" />
+        </div>
+      )}
+      <div className="mx-auto space-y-6">
         {/* Header */}
       
 
@@ -723,10 +702,10 @@ const JournalEditor = ({
 )}
 
           {/* Editor Content */}
-          <div className="relative">
+          <div className="journal-content">
             <EditorContent
               editor={editor}
-              className="min-h-[500px] sm:min-h-[400px] px-6 py-6 text-gray-900 dark:text-gray-100 leading-relaxed focus-within:outline-none journal-editor-content"
+              className="min-h-[500px] sm:min-h-[400px] px-6 py-6 text-gray-900 dark:text-gray-100 leading-relaxed focus-within:outline-none"
             />
 
             {/* Bubble Menu */}
@@ -976,44 +955,6 @@ const JournalEditor = ({
           }
         }
       `}</style>
-
-      {showDraftRestore && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[1000] w-full max-w-4xl px-4">
-          <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-4 shadow-lg">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0">
-                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                    Unsaved Draft Found
-                  </h3>
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    You have an unsaved draft. Would you like to restore it?
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={restoreDraft}
-                  className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
-                >
-                  Restore Draft
-                </button>
-                <button
-                  onClick={dismissDraft}
-                  className="px-4 py-2 text-sm font-semibold border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-300 bg-white dark:bg-blue-950 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-md transition-colors"
-                >
-                  Start Fresh
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
