@@ -20,6 +20,7 @@ import PublicProfileShowcase from "./PublicProfileShowcase";
 import { Helmet } from "react-helmet";
 import Accordion from "../ui/Accordion";
 import HowItWorks from "./HowItWorks";
+import FeatureShowcase from "./FeatureShowcase";
 
 const LandingPage = () => {
   const API = axios.create({
@@ -193,7 +194,7 @@ const LandingPage = () => {
       <Helmet>
         <title>Starlit Journals | Public Journals, Diaries & Confessions - Anonymous & Safe</title>
         <meta name="description" content="Read and write public journals, diaries, and confessions anonymously. Discover inspiring stories, share your thoughts, and connect with a vibrant community. No real name or email required." />
-        <meta name="keywords" content="public journals, public diaries, public confessions, anonymous stories, share secrets, online diary, confession site, safe journaling, mental health, storytelling, anonymous blog" />
+        <meta name="keywords" content="public journals, public diaries, public confessions, anonymous stories, share secrets, online diary, confession site, safe journaling, mental health, storytelling" />
         <meta property="og:title" content="Starlit Journals | Public Journals, Diaries & Confessions - Anonymous & Safe" />
         <meta property="og:description" content="Read and write public journals, diaries, and confessions anonymously. Discover inspiring stories, share your thoughts, and connect with a vibrant community. No real name or email required." />
         <meta property="og:type" content="website" />
@@ -423,6 +424,8 @@ const LandingPage = () => {
               </div>
             </div>
           </section>
+
+          <FeatureShowcase />
 
           {/* Public Journals Showcase */}
           <PublicJournalsShowcase />

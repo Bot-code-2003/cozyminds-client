@@ -11,6 +11,7 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Loader2, AlertCircle, Users, ArrowLeft, BookOpen, Bell, Filter, Grid, List, Clock, Heart, X, Compass } from 'lucide-react';
 import { Helmet } from "react-helmet";
+import { CheckCircle } from 'lucide-react';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -207,14 +208,20 @@ const ErrorState = ({ error, onRetry }) => (
 const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore, category }) => {
   if (!hasMore) {
     return (
-      <div className="text-center py-12">
-        <div className="inline-flex flex-col items-center gap-3 px-10 py-8 bg-gradient-to-br from-blue-50 to-green-50 dark:from-blue-900/30 dark:to-green-900/30 rounded-2xl border border-blue-200 dark:border-blue-800 shadow-xl animate-fadeIn">
-          <span className="text-4xl mb-2">🎉</span>
-          <h3 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-1 flex items-center gap-2">
-            You've reached the end!
+      <div className="flex justify-center py-12  transition-colors duration-200">
+        <div className="flex flex-col items-center gap-3 px-6 py-8 border-2 border-[var(--border)] rounded-xl border border-gray-100 dark:border-gray-700 max-w-sm w-full">
+          <CheckCircle className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white tracking-tight">
+            All Done!
           </h3>
-          <p className="text-gray-600 dark:text-gray-400 text-base mb-2 max-w-xs">
-            Thanks for exploring our community. Check back soon for more inspiring {category === "story" ? "stories" : category === "journal" ? "journals" : "content"}, or <Link to="/journaling-alt" className="text-[var(--accent)] underline hover:text-blue-600">start your own {category === "story" ? "story" : "journal"}</Link> to inspire others!
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
+            Explore more {category === "story" ? "stories" : category === "journal" ? "journals" : "content"}, or{' '}
+            <Link
+              to="/journaling-alt"
+              className="text-blue-500 hover:text-blue-600 font-medium transition-colors"
+            >
+              create your own
+            </Link>.
           </p>
         </div>
       </div>

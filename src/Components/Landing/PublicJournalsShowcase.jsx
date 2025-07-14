@@ -7,14 +7,14 @@ import { Helmet } from "react-helmet";
 const PublicJournalsShowcase = () => {
   const features = [
     {
-      icon: <BookOpen className="w-6 h-6" />,
-      title: "Latest Journals",
-      description: "Explore the newest anonymous journal entries shared by our community.",
+      icon: <BookOpen className="w-6 h-6" />, 
+      title: "Latest Entries",
+      description: "Explore the newest anonymous journals and stories shared by our community.",
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
-      title: "Trending Journals",
-      description: "Discover journals gaining traction and sparking conversations.",
+      title: "Trending Entries",
+      description: "Discover journals and stories gaining traction and sparking conversations.",
     },
     {
       icon: <Tag className="w-6 h-6" />,
@@ -24,7 +24,7 @@ const PublicJournalsShowcase = () => {
     {
       icon: <Smile className="w-6 h-6" />,
       title: "Entries by Mood",
-      description: "Find journal entries that resonate with your emotions.",
+      description: "Find journals and stories that resonate with your emotions.",
     },
     {
       icon: <Users className="w-6 h-6" />,
@@ -38,20 +38,20 @@ const PublicJournalsShowcase = () => {
     },
     {
       icon: <Share2 className="w-6 h-6" />,
-      title: "Share Stories",
+      title: "Share Stories & Journals",
       description: "Share inspiring entries to connect with like-minded readers.",
     },
     {
       icon: <Bell className="w-6 h-6" />,
       title: "Subscribe to Updates",
-      description: "Stay updated with new posts from journals you love.",
+      description: "Stay updated with new posts from writers you love.",
     },
   ];
 
   // Group features for editorial cards
   const discoverFeatures = features.filter(f => [
-    "Latest Journals",
-    "Trending Journals",
+    "Latest Entries",
+    "Trending Entries",
     "Popular Topics"
   ].includes(f.title));
   const engageFeatures = features.slice(4);
@@ -59,11 +59,11 @@ const PublicJournalsShowcase = () => {
   return (
     <>
       <Helmet>
-        <title>Trending Public Journals & Confessions | Discover Popular Diary Topics</title>
-        <meta name="description" content="Discover trending public journals, popular diary topics, and anonymous confessions. Read, engage, and connect with a vibrant community of storytellers." />
-        <meta name="keywords" content="trending public journals, popular diary topics, read confessions, anonymous stories, community journals, discover diaries, confession site, mental health stories" />
-        <meta property="og:title" content="Trending Public Journals & Confessions | Discover Popular Diary Topics" />
-        <meta property="og:description" content="Discover trending public journals, popular diary topics, and anonymous confessions. Read, engage, and connect with a vibrant community of storytellers." />
+        <title>Trending Public Journals & Stories | Discover Popular Diary Topics</title>
+        <meta name="description" content="Discover trending public journals and stories, popular diary topics, and anonymous confessions. Read, engage, and connect with a vibrant community of storytellers." />
+        <meta name="keywords" content="trending public journals, stories, popular diary topics, read confessions, anonymous stories, community journals, discover diaries, confession site, mental health stories" />
+        <meta property="og:title" content="Trending Public Journals & Stories | Discover Popular Diary Topics" />
+        <meta property="og:description" content="Discover trending public journals and stories, popular diary topics, and anonymous confessions. Read, engage, and connect with a vibrant community of storytellers." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://starlitjournals.com/public-journals" />
         <meta property="og:image" content="/public/andy_the_sailor.png" />
@@ -75,10 +75,10 @@ const PublicJournalsShowcase = () => {
             className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-[var(--text-primary)] tracking-tight font-sans"
             style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
           >
-            Vibrant Community Stories
+            Vibrant Community Stories & Journals
           </h2>
           <p className="text-xl sm:text-2xl text-[var(--text-secondary)] max-w-3xl mx-auto leading-relaxed font-sans" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
-            Discover, engage, and connect through trending journals, lively discussions, and curated content.
+            Discover, engage, and connect through trending entries, lively discussions, and curated content.
           </p>
         </div>
 
@@ -89,7 +89,7 @@ const PublicJournalsShowcase = () => {
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[var(--border)]">
               <img
                 src={PublicImg}
-                alt="Public Journals Preview"
+                alt="Public Journals & Stories Preview"
                 className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-[1.01]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent" />

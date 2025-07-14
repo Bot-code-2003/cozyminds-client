@@ -16,12 +16,10 @@ import Dashboard from "./Components/Dashboard/Dashboard"
 import JournalEntry from "./Components/JournalEntry"
 import JournalEntries from "./Components/Dashboard/JournalEntries"
 import ProfileSettings from "./Components/ProfileSettings"
-import CozyMindsBlog from "./Components/Landing/CozyMindsBlog"
 import SiteMaster from "./SiteMaster"
 import Collections from "./Components/Dashboard/Collections"
 import Privacy from "./Components/Landing/Privacy"
 import Terms from "./Components/Landing/Terms"
-import BlogPage from "./Components/Landing/BlogPage"
 import AboutUs from "./Components/Landing/AboutUs"
 import PublicJournals from "./Components/PublicJournals/PublicJournals"
 import PublicProfile from "./Components/PublicJournals/PublicProfile"
@@ -83,8 +81,6 @@ const App = () => {
                   <Route path="/journal-entries/:collection" element={<JournalEntries />} />
                   <Route path="/privacy-policy" element={<Privacy />} />
                   <Route path="/terms-of-service" element={<Terms />} />
-                  <Route path="/starlitblogs" element={<CozyMindsBlog />} />
-                  <Route path="/blog/:slug" element={<BlogPage />} />
                   <Route path="/collections" element={<Collections />} />
                   <Route path="/profile-settings" element={<ProfileSettings />} />
                   <Route path="/sitemaster" element={<SiteMaster />} />

@@ -57,7 +57,6 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
 
   const navigationItems = [
     { name: "Home", path: "/", icon: <Home size={16} /> },
-    { name: "Blog", path: "/starlitblogs", icon: <BookOpen size={16} /> },
     { name: "About", path: "/aboutus", icon: <Info size={16} /> },
     { name: "Journals", path: "/journals", icon: <BookOpen size={16} /> },
     { name: "Stories", path: "/stories", icon: <Sparkles size={16} /> },
