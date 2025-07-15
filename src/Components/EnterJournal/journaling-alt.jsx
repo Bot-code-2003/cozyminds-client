@@ -28,6 +28,7 @@ export default function JournalingAlt() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
 
   // Extract first image from editor content
   const getFirstImage = (content) => {
@@ -79,15 +80,17 @@ export default function JournalingAlt() {
         userId,
         title: journalTitle,
         content: editorContent,
-        // mood: "Neutral", // Default mood (removed, not in model)
         tags: selectedTags,
         collections: [collection || "All"],
         theme: null,
         isPublic,
         authorName: isPublic ? authorName : undefined,
         thumbnail,
-        category: type, // <-- Fix: include the selected type (journal or story)
+        category: type,
       };
+      if (type === 'story' && metaDescription) {
+        payload.metaDescription = metaDescription;
+      }
       const res = await API.post("/saveJournal", payload);
       setSuccess(true);
       // Optionally redirect or reset state here
@@ -145,6 +148,8 @@ export default function JournalingAlt() {
         content={editorContent}
         setType={setType}
         setThumbnail={setThumbnail}
+        setMetaDescription={setMetaDescription}
+        metaDescription={metaDescription}
       />
       {loading && <div className="text-center mt-4 text-sm text-gray-500">Publishing...</div>}
       {success && <div className="text-center mt-4 text-green-600 font-semibold">Published successfully!</div>}

@@ -22,9 +22,11 @@ export default function Final({
   content,
   setType,
   setThumbnail,
+  setMetaDescription: setMetaDescriptionProp,
 }) {
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [imageLink, setImageLink] = useState('');
+  const [metaDescription, setMetaDescription] = useState("");
 
   // Extract first image from content if no thumbnail
   const getFirstImage = (content) => {
@@ -184,26 +186,40 @@ export default function Final({
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Content Type</h3>
             <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-              <button
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  selectedType === 'journal' 
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm' 
+              <label className="flex-1">
+                <input
+                  type="radio"
+                  name="contentType"
+                  value="journal"
+                  checked={selectedType === 'journal'}
+                  onChange={() => setType('journal')}
+                  className="hidden"
+                />
+                <span className={`block w-full px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer transition-all ${
+                  selectedType === 'journal'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                }`}
-                onClick={() => setType('journal')}
-              >
-                Journal
-              </button>
-              <button
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  selectedType === 'story' 
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm' 
+                }`}>
+                  Journal
+                </span>
+              </label>
+              <label className="flex-1">
+                <input
+                  type="radio"
+                  name="contentType"
+                  value="story"
+                  checked={selectedType === 'story'}
+                  onChange={() => setType('story')}
+                  className="hidden"
+                />
+                <span className={`block w-full px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer transition-all ${
+                  selectedType === 'story'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                }`}
-                onClick={() => setType('story')}
-              >
-                Story
-              </button>
+                }`}>
+                  Story
+                </span>
+              </label>
             </div>
           </div>
 
@@ -242,6 +258,24 @@ export default function Final({
               Group your content with others in a collection
             </p>
           </div>
+
+          {/* Meta Description for Story */}
+          {selectedType === 'story' && (
+            <div>
+              <label className="block text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Meta Description <span className="text-gray-400 text-sm">(Optional, for SEO)</span></label>
+              <textarea
+                value={metaDescription}
+                onChange={e => {
+                  setMetaDescription(e.target.value);
+                  if (typeof window !== 'undefined' && typeof setMetaDescriptionProp === 'function') setMetaDescriptionProp(e.target.value);
+                }}
+                placeholder="Write a short description for search engines..."
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[60px]"
+                maxLength={160}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Recommended: 140-160 characters</p>
+            </div>
+          )}
 
           {/* Publish Buttons */}
           <div className="space-y-3 pt-4">
