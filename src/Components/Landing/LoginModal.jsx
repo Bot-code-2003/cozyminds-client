@@ -97,6 +97,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup, darkMode }) => {
     if (loginSuccess && !showLoadingScreen) {
       onClose();
       navigate("/", { replace: true });
+      window.location.reload(); // Force a full page refresh after login
     }
   }, [loginSuccess, showLoadingScreen, onClose, navigate]);
 
