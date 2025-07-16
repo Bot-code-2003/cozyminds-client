@@ -72,7 +72,10 @@ const PopularTopics = ({ onTopicClick, type = 'journal' }) => {
           return (
             <button
               key={topic}
-              onClick={() => onTopicClick && onTopicClick(topic)}
+              onClick={() => {
+                window.scrollTo(0, 0);
+                onTopicClick && onTopicClick(topic);
+              }}
               className="flex items-center gap-3 w-full px-4 py-3 bg-gray-50 dark:bg-slate-700/60 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-slate-700 text-gray-800 dark:text-gray-100 text-base font-medium transition-all duration-200 hover:bg-blue-50 dark:hover:bg-blue-900/40 focus:outline-none focus:ring-2 focus:ring-blue-400"
               title={topic}
             >

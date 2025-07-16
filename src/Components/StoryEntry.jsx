@@ -30,6 +30,7 @@ import {
 import JournalCard from "./PublicJournals/PublicJournalCard";
 import Comments from "./PublicJournals/Comments";
 import "./styles/JournalContent.css";
+import { Helmet } from "react-helmet";
 
 const avatarStyles = {
   avataaars,
@@ -149,6 +150,10 @@ const StoryEntry = () => {
     }
   }, [entry]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleSubscribe = async () => {
     if (!currentUser) {
       alert("Please log in to follow users.");
@@ -259,6 +264,12 @@ const StoryEntry = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{entry.title || "Untitled Story"} | Cozy Mind</title>
+        {entry.metaDescription && (
+          <meta name="description" content={entry.metaDescription} />
+        )}
+      </Helmet>
       {currentUser ? (
         <DashboardNavbar />
       ) : (
@@ -304,9 +315,14 @@ const StoryEntry = () => {
               </div>
             )}
             
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-8 leading-tight tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight tracking-tight">
               {entry.title || "Untitled Story"}
             </h1>
+            {entry.metaDescription && (
+              <div className="text-base text-gray-600 dark:text-gray-300 mb-6 whitespace-pre-line">
+                {entry.metaDescription}
+              </div>
+            )}
             
             <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-4">
               <div className="mb-6">
@@ -372,28 +388,11 @@ const StoryEntry = () => {
               <button
                 className={`flex items-center gap-3 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-base font-medium rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 ${isLiked ? 'opacity-90' : ''} ${likeLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                 onClick={handleStoryLike}
-                aria-pressed={isLiked}
                 disabled={likeLoading}
               >
-                {likeLoading ? (
-                  <Loader2 size={20} className="animate-spin" />
-                ) : (
-                  <Heart size={20} fill={isLiked ? 'currentColor' : 'none'} strokeWidth={2} className={isLiked ? 'text-pink-500' : ''} />
-                )}
-                <span>{isLiked ? 'Appreciated' : 'Appreciate'}</span>
-                <span className="ml-2 text-sm font-semibold">{likeCount}</span>
+                <Heart size={20} className={`${isLiked ? 'fill-red-500 dark:fill-red-400' : 'fill-gray-400 dark:fill-gray-500'}`} />
+                <span>{likeCount}</span>
               </button>
-            </div>
-          )}
-
-          {entry?.isPublic && (
-            <div className="mt-24">
-              <h2 className="text-xl font-bold mb-8 text-gray-900 dark:text-gray-100">
-                Comments
-              </h2>
-              <div className="rounded-2xl">
-                <Comments journalId={entry._id} />
-              </div>
             </div>
           )}
 

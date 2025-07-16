@@ -103,13 +103,16 @@ const JournalCard = ({
     return img?.src || null;
   }, [journal.thumbnail, journal.content, imageError]);
 
-  const textPreview = useMemo(() => {
+  const storyPreview = useMemo(() => {
+    if (journal.category === 'story' && journal.metaDescription) {
+      return journal.metaDescription;
+    }
     if (!journal.content) return "No content available.";
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = journal.content;
     const text = tempDiv.textContent || tempDiv.innerText || "";
     return text.trim().substring(0, 200) + (text.length > 200 ? "…" : "");
-  }, [journal.content]);
+  }, [journal.category, journal.metaDescription, journal.content]);
 
   const formattedDate = useMemo(() => {
     try {
@@ -310,7 +313,7 @@ const JournalCard = ({
 
               {/* Preview */}
               <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed line-clamp-3 mb-6">
-                {textPreview}
+                {storyPreview}
               </p>
 
               {/* Bottom Actions Row */}

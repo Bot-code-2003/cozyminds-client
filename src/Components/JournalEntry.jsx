@@ -149,6 +149,10 @@ const JournalEntry = () => {
     }
   }, [entry]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleSubscribe = async () => {
     if (!currentUser) {
       alert("Please log in to follow users.");

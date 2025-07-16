@@ -271,7 +271,6 @@ export default function Final({
                 }}
                 placeholder="Write a short description for search engines..."
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[60px]"
-                maxLength={160}
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Recommended: 140-160 characters</p>
             </div>
