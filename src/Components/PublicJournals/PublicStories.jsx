@@ -6,7 +6,7 @@ import { useDarkMode } from "../../context/ThemeContext";
 import PublicJournalCard, { PublicJournalCardSkeleton } from "./PublicJournalCard";
 import Sidebar from "./Sidebar";
 import Navbar from "../Dashboard/Navbar";
-import LandingNavbar from "../Landing/LandingNavbar";
+import LandingNavbar from "../Landing/Navbar";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Loader2, AlertCircle, Users, ArrowLeft, BookOpen, Bell, Filter, Grid, List, Clock, Heart, X, Compass } from 'lucide-react';
