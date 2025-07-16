@@ -28,6 +28,8 @@ import SavedEntries from "./Components/PublicJournals/SavedEntries"
 import JournalingAlt from "./Components/EnterJournal/journaling-alt"
 
 import "./index.css"
+import StoryEntry from "./Components/StoryEntry"
+import PublicStories from "./Components/PublicJournals/PublicStories"
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -85,9 +87,9 @@ const App = () => {
                   <Route path="/profile-settings" element={<ProfileSettings />} />
                   <Route path="/sitemaster" element={<SiteMaster />} />
                   <Route path="/journals" element={<PublicJournals />} />
-                  <Route path="/stories" element={<PublicJournals />} />
+                  <Route path="/stories" element={<PublicStories />} />
                   <Route path="/journals/:anonymousName/:slug" element={<JournalEntry />} />
-                  <Route path="/stories/:anonymousName/:slug" element={<JournalEntry />} />
+                  <Route path="/stories/:anonymousName/:slug" element={<StoryEntry />} />
                   <Route path="/profile/id/:userId" element={<PublicProfile />} />
                   <Route path="/profile/:anonymousName" element={<PublicProfile />} />
                   <Route path="/subscriptions" element={<SubscriptionsView />} />

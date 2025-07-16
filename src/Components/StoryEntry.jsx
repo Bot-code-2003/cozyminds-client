@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useDarkMode } from "../context/ThemeContext";
-import { usePublicJournals } from "../context/PublicJournalsContext";
+import { usePublicStories } from "../context/PublicStoriesContext";
 import { ArrowLeft, Loader2, Clock, Heart } from "lucide-react";
 import DashboardNavbar from "./Dashboard/Navbar";
 import LandingNavbar from "./Landing/Navbar";
@@ -72,10 +72,10 @@ const getCurrentUser = () => {
   }
 };
 
-const JournalEntry = () => {
+const StoryEntry = () => {
   const { anonymousName, slug } = useParams();
   const { darkMode } = useDarkMode();
-  const { fetchSingleJournal, journals, loading, error, handleLike } = usePublicJournals();
+  const { fetchSingleStory, stories, loading, error, handleLike } = usePublicStories();
   const navigate = useNavigate();
   const [entry, setEntry] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
@@ -92,28 +92,28 @@ const JournalEntry = () => {
   const author = entry && entry.userId && typeof entry.userId === "object" ? entry.userId : null;
 
   useEffect(() => {
-    const loadJournal = async () => {
+    const loadStory = async () => {
       try {
-        const journal = await fetchSingleJournal(anonymousName, slug);
-        setEntry(journal);
-        const wordCount = journal.content?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0;
+        const story = await fetchSingleStory(anonymousName, slug);
+        setEntry(story);
+        const wordCount = story.content?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0;
         setReadingTime(Math.ceil(wordCount / 200));
       } catch (err) {
         setEntry(null);
       }
     };
 
-    loadJournal();
-  }, [anonymousName, slug, fetchSingleJournal]);
+    loadStory();
+  }, [anonymousName, slug, fetchSingleStory]);
 
   useEffect(() => {
     setRecommendations([]);
   }, [anonymousName, slug]);
 
   useEffect(() => {
-    if (entry && entry.isPublic && entry._id && entry.category) {
+    if (entry && entry.isPublic && entry._id && entry.category === "story") {
       axios
-        .get(`${import.meta.env.VITE_API_URL}/recommendations?category=${entry.category}&exclude=${entry._id}`)
+        .get(`${import.meta.env.VITE_API_URL}/recommendations?category=story&exclude=${entry._id}`)
         .then((res) => setRecommendations(res.data.journals || []))
         .catch(() => setRecommendations([]));
     }
@@ -171,9 +171,9 @@ const JournalEntry = () => {
     }
   };
 
-  const handleJournalLike = async () => {
+  const handleStoryLike = async () => {
     if (!currentUser) {
-      alert("Please log in to appreciate this journal.");
+      alert("Please log in to appreciate this story.");
       return;
     }
     setLikeLoading(true);
@@ -241,10 +241,10 @@ const JournalEntry = () => {
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
         <div className="text-center max-w-md">
           <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">
-            Entry Not Found
+            Story Not Found
           </h2>
           <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-            {error || "This journal entry doesn't exist."}
+            {error || "This story doesn't exist."}
           </p>
           <button
             onClick={() => navigate(-1)}
@@ -281,7 +281,7 @@ const JournalEntry = () => {
               <div className="mb-12 flex justify-center">
                 <img
                   src={entry.thumbnail}
-                  alt="Journal thumbnail"
+                  alt="Story thumbnail"
                   className="rounded-2xl shadow-2xl max-h-96 w-full object-cover border border-gray-100 dark:border-gray-800"
                   style={{
                     maxWidth: "100%",
@@ -305,7 +305,7 @@ const JournalEntry = () => {
             )}
             
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-8 leading-tight tracking-tight">
-              {entry.title || "Untitled Entry"}
+              {entry.title || "Untitled Story"}
             </h1>
             
             <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-4">
@@ -371,7 +371,7 @@ const JournalEntry = () => {
             <div className="mt-20 pt-12 flex justify-center border-t border-gray-100 dark:border-gray-800">
               <button
                 className={`flex items-center gap-3 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-base font-medium rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 ${isLiked ? 'opacity-90' : ''} ${likeLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                onClick={handleJournalLike}
+                onClick={handleStoryLike}
                 aria-pressed={isLiked}
                 disabled={likeLoading}
               >
@@ -391,7 +391,7 @@ const JournalEntry = () => {
               <h2 className="text-xl font-bold mb-8 text-gray-900 dark:text-gray-100">
                 Comments
               </h2>
-              <div className=" rounded-2xl">
+              <div className="rounded-2xl">
                 <Comments journalId={entry._id} />
               </div>
             </div>
@@ -400,7 +400,7 @@ const JournalEntry = () => {
           {recommendations.length > 0 && (
             <section className="mt-28">
               <h2 className="text-xl font-bold mb-12 text-gray-900 dark:text-gray-100">
-                More to read
+                More Stories to Read
               </h2>
               <div className="space-y-8">
                 {recommendations.slice(0, 5).map((recommendation) => (
@@ -417,4 +417,4 @@ const JournalEntry = () => {
   );
 };
 
-export default JournalEntry;
+export default StoryEntry;
