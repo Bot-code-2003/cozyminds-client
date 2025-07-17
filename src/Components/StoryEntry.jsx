@@ -286,96 +286,163 @@ const StoryEntry = () => {
       </button>
 
       <div className="min-h-screen bg-[var(--bg-primary)]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-0">
-          <header className="mb-5">
-            {entry.thumbnail && (
-              <div className="mb-12 flex justify-center">
+        <div className=" mx-auto px-4 sm:px-0">
+        <header className="max-w-6xl mx-auto relative">
+  {/* Hero Image - Full viewport impact */}
+  {entry.thumbnail && (
+    <div className="relative h-[85vh] overflow-hidden">
+      <img
+        src={entry.thumbnail}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      {/* Gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+      
+      {/* Content overlay */}
+      <div className="absolute inset-0 flex flex-col justify-end">
+        <div className="max-w-4xl mx-auto w-full px-6 pb-16">
+          {/* Tags floating above title */}
+          {entry.tags && entry.tags.length > 0 && (
+            <div className="flex gap-3 mb-6">
+              {entry.tags.slice(0, 2).map((tag, index) => (
+                <span
+                  key={index}
+                  className="text-xs font-semibold tracking-[0.2em] uppercase text-white/90 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+          
+          {/* Title - Hero style */}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light text-white mb-6 leading-[0.9] tracking-tight font-serif max-w-4xl">
+            {entry.title || "Untitled Story"}
+          </h1>
+          
+          {/* Subtitle */}
+          {entry.metaDescription && (
+            <p className="text-md text-white sm:text-lg italic font-light leading-relaxed max-w-2xl mb-8">
+              {entry.metaDescription}
+            </p>
+          )}
+          
+          
+        </div>
+      </div>
+    </div>
+  )}
+  
+  {/* No image fallback - Minimalist header */}
+  {!entry.thumbnail && (
+    <div className="max-w-4xl mx-auto px-6 py-20">
+      {/* Tags */}
+      {entry.tags && entry.tags.length > 0 && (
+        <div className="flex gap-3 mb-12">
+          {entry.tags.slice(0, 2).map((tag, index) => (
+            <span
+              key={index}
+              className="text-xs font-semibold tracking-[0.2em] uppercase text-emerald-600 dark:text-emerald-400"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+      
+      {/* Title */}
+      <h1 className="text-5xl sm:text-7xl lg:text-8xl font-light text-gray-900 dark:text-gray-100 mb-8 leading-[0.9] tracking-tight font-serif">
+        {entry.title || "Untitled Story"}
+      </h1>
+      
+      {/* Subtitle */}
+      {entry.metaDescription && (
+        <p className="text-2xl sm:text-3xl text-gray-600 dark:text-gray-300 font-light leading-relaxed max-w-3xl mb-16">
+          {entry.metaDescription}
+        </p>
+      )}
+    </div>
+  )}
+  
+  {/* Author section - Clean separation */}
+  <div className=" dark:border-gray-800">
+    <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          {authorProfile && (
+            <div className="flex items-start gap-6">
+              <Link
+                to={`/profile/id/${authorProfile._id}`}
+                className="flex-shrink-0 group"
+              >
                 <img
-                  src={entry.thumbnail}
-                  alt="Story thumbnail"
-                  className="rounded-2xl shadow-2xl max-h-96 w-full object-cover border border-gray-100 dark:border-gray-800"
-                  style={{
-                    maxWidth: "100%",
-                    aspectRatio: "16/9",
-                  }}
-                />
-              </div>
-            )}
-            
-            {entry.tags && entry.tags.length > 0 && (
-              <div className="flex gap-2 mb-6">
-                {entry.tags.slice(0, 3).map((tag, index) => (
-                  <span
-                    key={index}
-                    className="text-xs font-medium tracking-wide uppercase text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400 px-3 py-1.5 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-            
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight tracking-tight">
-              {entry.title || "Untitled Story"}
-            </h1>
-            {entry.metaDescription && (
-              <div className="text-base text-gray-600 dark:text-gray-300 mb-6 whitespace-pre-line">
-                {entry.metaDescription}
-              </div>
-            )}
-            
-            <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-4">
-              <div className="mb-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <div className="flex items-center gap-3 min-w-0">
-                    {authorProfile && (
-                      <Link
-                        to={`/profile/id/${authorProfile._id}`}
-                        className="flex items-center gap-3 hover:text-gray-700 dark:hover:text-gray-300 transition-colors group min-w-0"
-                      >
-                        <img
-                          src={getAvatarSvg(
-                            authorProfile.profileTheme?.avatarStyle || "avataaars",
-                            authorProfile.anonymousName || "Anonymous"
-                          )}
-                          alt="Author"
-                          className="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-700 shadow-sm group-hover:scale-105 transition-transform"
-                        />
-                        <span className="font-semibold text-gray-900 dark:text-gray-100 block truncate text-lg">
-                          {authorProfile.anonymousName || "Anonymous"}
-                        </span>
-                      </Link>
-                    )}
-                  </div>
-                  {authorProfile && currentUser && authorProfile._id !== currentUser._id && (
-                    <button
-                      onClick={handleSubscribe}
-                      disabled={subscribing}
-                      className={`px-4 py-1.5 rounded-lg font-medium text-sm transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto ${isSubscribed ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200' : 'bg-blue-500 hover:bg-blue-600 text-white'} ${subscribing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {subscribing ? (
-                        <Loader2 size={16} className="inline-block mr-1 animate-spin align-middle" />
-                      ) : isSubscribed ? 'Following' : 'Follow'}
-                    </button>
+                  src={getAvatarSvg(
+                    authorProfile.profileTheme?.avatarStyle || "avataaars",
+                    authorProfile.anonymousName || "Anonymous"
                   )}
+                  alt="Author"
+                  className="w-16 h-16 rounded-full border-2 border-gray-200 dark:border-gray-700 group-hover:border-gray-400 dark:group-hover:border-gray-500 transition-colors"
+                />
+              </Link>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-500 dark:text-gray-400 mb-2">
+                  Written by
                 </div>
-                {authorProfile && authorProfile.bio && (
-                  <div className="mt-2 text-gray-500 dark:text-gray-400 text-sm break-words max-w-full line-clamp-2 sm:line-clamp-none">
+                <Link
+                  to={`/profile/id/${authorProfile._id}`}
+                  className="block group"
+                >
+                  <h2 className="text-2xl font-light text-gray-900 dark:text-gray-100 mb-3 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                    {authorProfile.anonymousName || "Anonymous"}
+                  </h2>
+                </Link>
+                {authorProfile.bio && (
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed max-w-2xl">
                     {authorProfile.bio}
-                  </div>
+                  </p>
                 )}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2 text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
-                  <span>{formatDate(entry.date)}</span>
-                  <span className="hidden sm:inline">•</span>
-                  <span>{readingTime} min read</span>
+                
+                {/* Publication details */}
+                <div className="flex items-center gap-6 mt-6 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    <span>Published {formatDate(entry.date)}</span>
+                  </div>
+                  <span>{readingTime} minute read</span>
                 </div>
               </div>
             </div>
-          </header>
+          )}
+        </div>
+        
+        {/* Follow button - Premium style */}
+        {authorProfile && currentUser && authorProfile._id !== currentUser._id && (
+          <div className="ml-8 flex-shrink-0">
+            <button
+              onClick={handleSubscribe}
+              disabled={subscribing}
+              className={`relative overflow-hidden px-8 py-3 text-sm font-medium transition-all duration-300 ${
+                isSubscribed 
+                  ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900' 
+                  : 'bg-transparent border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900'
+              } ${subscribing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {subscribing && (
+                <Loader2 size={16} className="inline-block mr-2 animate-spin" />
+              )}
+              {isSubscribed ? 'Following' : 'Follow'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
 
-          <div className="w-16 h-px bg-gray-200 dark:bg-gray-800 mx-auto"></div>
+</header>
+          <div className="w-16 h-px mb-10 bg-gray-200 dark:bg-gray-800 mx-auto"></div>
 
-          <article className="journal-content">
+          <article className="max-w-3xl mx-auto journal-content">
             <div
               dangerouslySetInnerHTML={{
                 __html: processContent(entry.content),
@@ -397,7 +464,7 @@ const StoryEntry = () => {
           )}
 
 {entry?.isPublic && (
-            <div className="mt-24">
+            <div className="max-w-3xl mx-auto  mt-24">
               <h2 className="text-xl font-bold mb-8 text-gray-900 dark:text-gray-100">
                 Comments
               </h2>
@@ -408,7 +475,7 @@ const StoryEntry = () => {
           )}
 
           {recommendations.length > 0 && (
-            <section className="mt-28">
+            <section className="max-w-3xl mx-auto  mt-28">
               <h2 className="text-xl font-bold mb-12 text-gray-900 dark:text-gray-100">
                 More Stories to Read
               </h2>

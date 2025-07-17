@@ -3,7 +3,7 @@ import { useEffect, useCallback, useMemo, useState } from "react";
 import { usePublicStories } from "../../context/PublicStoriesContext";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
-import PublicJournalCard, { PublicJournalCardSkeleton } from "./PublicJournalCard";
+import PublicJournalCard, { PublicJournalCardSkeleton } from "./PublicStoryCard";
 import Sidebar from "./Sidebar";
 import Navbar from "../Dashboard/Navbar";
 import LandingNavbar from "../Landing/Navbar";
@@ -506,7 +506,7 @@ const PublicStories = () => {
         </div>
       )}
 
-      <div className={`min-h-screen bg-[var(--bg-primary)] ${!isLoggedIn ? 'pt-16' : ''}`}>
+      <div className={`min-h-screen bg-[var(--bg-primary)]`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             <main className="md:col-span-8">
@@ -543,7 +543,7 @@ const PublicStories = () => {
                   category="story"
                 />
               ) : (
-                <div className="grid grid-cols-1 gap-6 items-stretch">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
                   {stories.map((story) => (
                     <div key={story._id} className="h-full">
                       <PublicJournalCard
