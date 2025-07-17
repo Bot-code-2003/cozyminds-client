@@ -208,23 +208,18 @@ const ErrorState = ({ error, onRetry }) => (
 const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore, category }) => {
   if (!hasMore) {
     return (
-      <div className="flex justify-center py-12  transition-colors duration-200">
-        <div className="flex flex-col items-center gap-3 px-6 py-8 border-2 border-[var(--border)] rounded-xl border border-gray-100 dark:border-gray-700 max-w-sm w-full">
-          <CheckCircle className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white tracking-tight">
-            All Done!
-          </h3>
-          <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
-            Explore more {category === "story" ? "stories" : category === "journal" ? "journals" : "content"}, or{' '}
-            <Link
-              to="/journaling-alt"
-              className="text-blue-500 hover:text-blue-600 font-medium transition-colors"
-            >
-              create your own
-            </Link>.
-          </p>
-        </div>
-      </div>
+      <div className="flex justify-center py-12 transition-colors duration-200">
+  <div className="flex flex-col items-center gap-3 px-6 py-8 border-2 border-[var(--border)] rounded-xl border border-gray-100 dark:border-gray-700 max-w-sm w-full">
+    <CheckCircle className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+    <h3 className="text-lg font-medium text-gray-900 dark:text-white tracking-tight">
+      All Done!
+    </h3>
+    <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
+      You've reached the end of the feed. Grab a cup of tea, reflect, or revisit your favorite story.
+    </p>
+  </div>
+</div>
+
     );
   }
 
@@ -290,6 +285,7 @@ const PublicJournals = () => {
     selectedTag,
     handleTagSelect,
     resetForNewCategory,
+    handleTagClear
   } = usePublicJournals();
 
   const { darkMode, setDarkMode } = useDarkMode();
@@ -396,11 +392,6 @@ const PublicJournals = () => {
     setShowFollowingOnly(newShowFollowingOnly);
     fetchJournals(1, feedType, false, category);
   }, [showFollowingOnly, feedType, fetchJournals, category, setShowFollowingOnly]);
-
-  // Handle tag clear
-  const handleTagClear = useCallback(() => {
-    fetchJournals(1, feedType, false, category);
-  }, [fetchJournals, feedType, category]);
 
   if (loading && !loadingMore) {
     return (

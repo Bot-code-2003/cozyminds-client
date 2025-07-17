@@ -261,7 +261,7 @@ const JournalCard = ({
         <div className="relative aspect-[3/4] overflow-hidden">
         <Link
   to={`${prefix}/${authorProfile?.anonymousName || "anonymous"}/${journal.slug}`}
-  className="block"
+  className="block h-full"
   onClick={() => {
     window.scrollTo({ top: 0, left: 0 });
   }}
@@ -270,7 +270,7 @@ const JournalCard = ({
             <img
               src={thumbnail || fallbackImage}
               alt=""
-              className={`w-full h-full object-cover transition-transform duration-700 ${
+              className={`min-h-[100%] object-cover transition-transform duration-700 ${
                 isHovered ? "scale-105" : "scale-100"
               }`}
               onError={() => setImageError(true)}

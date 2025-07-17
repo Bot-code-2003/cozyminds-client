@@ -2,6 +2,10 @@
 
 import { createContext, useContext, useState, useCallback, useEffect } from "react"
 import axios from "axios"
+import { useLocation, useNavigate } from "react-router-dom"
+import { useSearchParams } from "react-router-dom"; // Add this at top if not yet
+
+
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000" })
 
@@ -20,6 +24,9 @@ export function PublicJournalsProvider({ children }) {
   const [showFollowingOnly, setShowFollowingOnly] = useState(false)
   const [selectedTag, setSelectedTag] = useState(null)
   const [currentCategory, setCurrentCategory] = useState(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams] = useSearchParams();
 
   const getCurrentUser = () => {
     try {
@@ -303,13 +310,19 @@ export function PublicJournalsProvider({ children }) {
     }
   }, [page, hasMore, loadingMore, feedType, fetchJournals, selectedTag, fetchJournalsByTag, currentCategory])
 
-  const handleTagSelect = useCallback(
-    (tag) => {
-      setSelectedTag(tag)
-      fetchJournalsByTag(tag, 1, false)
-    },
-    [fetchJournalsByTag]
-  )
+  const handleTagSelect = useCallback((tag) => {
+    setSelectedTag(tag);
+    fetchJournalsByTag(tag, 1, false);
+    window.scrollTo(0, 0);
+    navigate(`/journals?tag=${encodeURIComponent(tag)}`); // 👈 Push to new URL
+  }, [fetchJournalsByTag, navigate]);
+
+  const handleTagClear = useCallback(() => {
+    setSelectedTag(null);
+    fetchJournals(1, feedType, false);
+    window.scrollTo(0, 0);
+    navigate(`/journals`);
+  }, [fetchJournals, feedType, navigate]);
 
   const resetForNewCategory = useCallback((newCategory) => {
     setJournals([])
@@ -318,6 +331,19 @@ export function PublicJournalsProvider({ children }) {
     setSelectedTag(null)
     setCurrentCategory(newCategory)
   }, [])
+
+  useEffect(() => {
+    const tagFromURL = searchParams.get("tag");
+  
+    if (tagFromURL && tagFromURL !== selectedTag) {
+      fetchJournalsByTag(tagFromURL, 1, false);
+    }
+  
+    if (!tagFromURL && selectedTag) {
+      fetchJournals(1, feedType, false);
+    }
+  }, [searchParams, selectedTag, fetchJournalsByTag, fetchJournals, feedType]);
+  
 
   const value = {
     journals,
@@ -343,6 +369,7 @@ export function PublicJournalsProvider({ children }) {
     setShowFollowingOnly,
     fetchJournalsByTag,
     resetForNewCategory,
+    handleTagClear,
   }
 
   return <PublicJournalsContext.Provider value={value}>{children}</PublicJournalsContext.Provider>

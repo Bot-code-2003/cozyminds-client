@@ -12,6 +12,7 @@ import axios from "axios";
 import { Loader2, AlertCircle, Users, ArrowLeft, BookOpen, Bell, Filter, Grid, List, Clock, Heart, X, Compass } from 'lucide-react';
 import { Helmet } from "react-helmet";
 import { CheckCircle } from 'lucide-react';
+import { useSearchParams } from "react-router-dom";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -191,22 +192,17 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
   if (!hasMore) {
     return (
       <div className="flex justify-center py-12 transition-colors duration-200">
-        <div className="flex flex-col items-center gap-3 px-6 py-8 border-2 border-[var(--border)] rounded-xl border border-gray-100 dark:border-gray-700 max-w-sm w-full">
-          <CheckCircle className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white tracking-tight">
-            All Done!
-          </h3>
-          <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
-            Explore more stories, or{' '}
-            <Link
-              to="/journaling-alt"
-              className="text-blue-500 hover:text-blue-600 font-medium transition-colors"
-            >
-              create your own
-            </Link>.
-          </p>
-        </div>
-      </div>
+  <div className="flex flex-col items-center gap-3 px-6 py-8 border-2 border-[var(--border)] rounded-xl border border-gray-100 dark:border-gray-700 max-w-sm w-full">
+    <CheckCircle className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+    <h3 className="text-lg font-medium text-gray-900 dark:text-white tracking-tight">
+      All Done!
+    </h3>
+    <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
+      You've reached the end of the feed. Grab a cup of tea, reflect, or revisit your favorite story.
+    </p>
+  </div>
+</div>
+
     );
   }
 
@@ -215,9 +211,7 @@ const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore }) => {
       <button
         onClick={onLoadMore}
         disabled={loadingMore}
-        className={`inline-flex items-center gap-2 px-10 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-200 font全世界
-
-        font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 relative ${loadingMore ? 'opacity-70 cursor-not-allowed' : ''}`}
+        className={`inline-flex items-center gap-2 px-10 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 relative ${loadingMore ? 'opacity-70 cursor-not-allowed' : ''}`}
         style={{ minWidth: 180 }}
       >
         {loadingMore ? (
@@ -255,7 +249,9 @@ const getCurrentUser = () => {
 const PublicStories = () => {
   const [hasSubscriptionNotifications, setHasSubscriptionNotifications] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+  const [searchParams] = useSearchParams();
+  const tagFromURL = searchParams.get("tag");
+
   const {
     stories,
     loading,
@@ -278,6 +274,7 @@ const PublicStories = () => {
     selectedTag,
     handleTagSelect,
     resetForNewCategory,
+    handleTagClear
   } = usePublicStories();
 
   const { darkMode, setDarkMode } = useDarkMode();
@@ -285,6 +282,74 @@ const PublicStories = () => {
   const user = useMemo(() => getCurrentUser(), []);
   const isLoggedIn = !!user;
   const location = useLocation();
+
+  // Dynamic SEO configuration
+const seoConfig = useMemo(() => {
+  const baseTitle = "Read Public Stories | Immersive Short Stories & Genre Tales";
+  const baseDescription = "Explore immersive short stories across fantasy, horror, sci-fi, and more. Join a creative community where every story is a world waiting to be read.";
+  const baseKeywords = "read short stories, genre fiction, fantasy stories, sci-fi stories, horror tales, storytelling platform, creative writing, user-submitted stories";
+  const baseUrl = `https://starlitjournals.com${location.pathname}`;
+  const baseImage = "/public/andy_the_sailor.png";
+
+  if (selectedTag) {
+    const tagTitle = `${selectedTag} Stories | Read ${selectedTag} Online | Starlit Journals`;
+    return {
+      title: tagTitle,
+      description: `Read powerful and original ${selectedTag.toLowerCase()} stories shared by our creative community. Discover hidden gems and timeless tales.`,
+      keywords: `${baseKeywords}, ${selectedTag.toLowerCase()} fiction, ${selectedTag.toLowerCase()} writing, ${selectedTag.toLowerCase()} short stories, community ${selectedTag.toLowerCase()} stories`,
+      ogTitle: tagTitle,
+      ogDescription: `Read powerful and original ${selectedTag.toLowerCase()} stories shared by our creative community. Discover hidden gems and timeless tales.`,
+      ogUrl: baseUrl,
+      ogImage: baseImage,
+      twitterTitle: tagTitle,
+      twitterDescription: `Read powerful and original ${selectedTag.toLowerCase()} stories shared by our creative community. Discover hidden gems and timeless tales.`,
+      twitterImage: baseImage,
+    };
+  }
+
+  if (showFollowingOnly) {
+    return {
+      title: "Your Feed | Curated Stories from Writers You Follow",
+      description: "Catch up on the latest short stories from your favorite writers. A personalized feed of every genre—from mystery to romance to sci-fi.",
+      keywords: `${baseKeywords}, personalized stories, followed authors, latest stories feed`,
+      ogTitle: "Your Feed | Curated Stories from Writers You Follow",
+      ogDescription: "Catch up on the latest short stories from your favorite writers. A personalized feed of every genre—from mystery to romance to sci-fi.",
+      ogUrl: baseUrl,
+      ogImage: baseImage,
+      twitterTitle: "Your Feed | Curated Stories from Writers You Follow",
+      twitterDescription: "Catch up on the latest short stories from your favorite writers. A personalized feed of every genre—from mystery to romance to sci-fi.",
+      twitterImage: baseImage,
+    };
+  }
+
+  if (feedType === "likeCount") {
+    return {
+      title: "Popular Stories | Most Loved Fiction from All Genres",
+      description: "Browse the top-rated stories loved by the community. Discover what’s trending in fantasy, horror, adventure, and beyond.",
+      keywords: `${baseKeywords}, popular fiction, trending short stories, most liked stories, top user stories`,
+      ogTitle: "Popular Stories | Most Loved Fiction from All Genres",
+      ogDescription: "Browse the top-rated stories loved by the community. Discover what’s trending in fantasy, horror, adventure, and beyond.",
+      ogUrl: baseUrl,
+      ogImage: baseImage,
+      twitterTitle: "Popular Stories | Most Loved Fiction from All Genres",
+      twitterDescription: "Browse the top-rated stories loved by the community. Discover what’s trending in fantasy, horror, adventure, and beyond.",
+      twitterImage: baseImage,
+    };
+  }
+
+  return {
+    title: baseTitle,
+    description: baseDescription,
+    keywords: baseKeywords,
+    ogTitle: baseTitle,
+    ogDescription: baseDescription,
+    ogUrl: baseUrl,
+    ogImage: baseImage,
+    twitterTitle: baseTitle,
+    twitterDescription: baseDescription,
+    twitterImage: baseImage,
+  };
+}, [location.pathname, selectedTag, showFollowingOnly, feedType]);
 
   // Fetch subscription notifications
   const fetchSubscriptionNotifications = useCallback(async () => {
@@ -371,26 +436,22 @@ const PublicStories = () => {
     fetchStories(1, feedType, false);
   }, [showFollowingOnly, feedType, fetchStories, setShowFollowingOnly]);
 
-  const handleTagClear = useCallback(() => {
-    fetchStories(1, feedType, false);
-  }, [fetchStories, feedType]);
-
   if (loading && !loadingMore) {
     return (
       <>
         <Helmet>
-          <title>Read Public Stories | Anonymous Confessions & Stories</title>
-          <meta name="description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
-          <meta name="keywords" content="read public stories, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
-          <meta property="og:title" content="Read Public Stories | Anonymous Confessions & Stories" />
-          <meta property="og:description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
+          <title>{seoConfig.title}</title>
+          <meta name="description" content={seoConfig.description} />
+          <meta name="keywords" content={seoConfig.keywords} />
+          <meta property="og:title" content={seoConfig.ogTitle} />
+          <meta property="og:description" content={seoConfig.ogDescription} />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
-          <meta property="og:image" content="/public/andy_the_sailor.png" />
+          <meta property="og:url" content={seoConfig.ogUrl} />
+          <meta property="og:image" content={seoConfig.ogImage} />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Read Public Stories | Anonymous Confessions & Stories" />
-          <meta name="twitter:description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
-          <meta name="twitter:image" content="/public/andy_the_sailor.png" />
+          <meta name="twitter:title" content={seoConfig.twitterTitle} />
+          <meta name="twitter:description" content={seoConfig.twitterDescription} />
+          <meta name="twitter:image" content={seoConfig.twitterImage} />
         </Helmet>
         {isLoggedIn ? (
           <Navbar name="New Story" link="/journaling-alt" />
@@ -415,18 +476,18 @@ const PublicStories = () => {
     return (
       <>
         <Helmet>
-          <title>Read Public Stories | Anonymous Confessions & Stories</title>
-          <meta name="description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
-          <meta name="keywords" content="read public stories, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
-          <meta property="og:title" content="Read Public Stories | Anonymous Confessions & Stories" />
-          <meta property="og:description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
+          <title>{seoConfig.title}</title>
+          <meta name="description" content={seoConfig.description} />
+          <meta name="keywords" content={seoConfig.keywords} />
+          <meta property="og:title" content={seoConfig.ogTitle} />
+          <meta property="og:description" content={seoConfig.ogDescription} />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
-          <meta property="og:image" content="/public/andy_the_sailor.png" />
+          <meta property="og:url" content={seoConfig.ogUrl} />
+          <meta property="og:image" content={seoConfig.ogImage} />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Read Public Stories | Anonymous Confessions & Stories" />
-          <meta name="twitter:description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
-          <meta name="twitter:image" content="/public/andy_the_sailor.png" />
+          <meta name="twitter:title" content={seoConfig.twitterTitle} />
+          <meta name="twitter:description" content={seoConfig.twitterDescription} />
+          <meta name="twitter:image" content={seoConfig.twitterImage} />
         </Helmet>
         {isLoggedIn ? (
           <Navbar name="New Story" link="/journaling-alt" />
@@ -446,18 +507,18 @@ const PublicStories = () => {
   return (
     <>
       <Helmet>
-        <title>Read Public Stories | Anonymous Confessions & Stories</title>
-        <meta name="description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
-        <meta name="keywords" content="read public stories, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories" />
-        <meta property="og:title" content="Read Public Stories | Anonymous Confessions & Stories" />
-        <meta property="og:description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
+        <title>{seoConfig.title}</title>
+        <meta name="description" content={seoConfig.description} />
+        <meta name="keywords" content={seoConfig.keywords} />
+        <meta property="og:title" content={seoConfig.ogTitle} />
+        <meta property="og:description" content={seoConfig.ogDescription} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
-        <meta property="og:image" content="/public/andy_the_sailor.png" />
+        <meta property="og:url" content={seoConfig.ogUrl} />
+        <meta property="og:image" content={seoConfig.ogImage} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Read Public Stories | Anonymous Confessions & Stories" />
-        <meta name="twitter:description" content="Explore and read public stories from real people. Join a safe, anonymous community to share your own story or discover others'." />
-        <meta name="twitter:image" content="/public/andy_the_sailor.png" />
+        <meta name="twitter:title" content={seoConfig.twitterTitle} />
+        <meta name="twitter:description" content={seoConfig.twitterDescription} />
+        <meta name="twitter:image" content={seoConfig.twitterImage} />
       </Helmet>
       {isLoggedIn ? (
         <Navbar name="New Story" link="/journaling-alt" />

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, useEffect } from "react"
 import axios from "axios"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000" })
 
@@ -19,6 +20,8 @@ export function PublicStoriesProvider({ children }) {
   const [feedType, setFeedType] = useState("-createdAt")
   const [showFollowingOnly, setShowFollowingOnly] = useState(false)
   const [selectedTag, setSelectedTag] = useState(null)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const getCurrentUser = () => {
     try {
@@ -282,13 +285,20 @@ export function PublicStoriesProvider({ children }) {
     }
   }, [page, hasMore, loadingMore, feedType, fetchStories])
 
-  const handleTagSelect = useCallback(
-    (tag) => {
-      setSelectedTag(tag)
-      fetchStoriesByTag(tag, 1, false)
-    },
-    [fetchStoriesByTag]
-  )
+  const handleTagSelect = useCallback((tag) => {
+    setSelectedTag(tag);
+    fetchStoriesByTag(tag, 1, false);
+    window.scrollTo(0, 0);
+    navigate(`/stories?tag=${encodeURIComponent(tag)}`); // 👈 Push to new URL
+  }, [fetchStoriesByTag, navigate]);
+
+  const handleTagClear = useCallback(() => {
+    setSelectedTag(null);
+    fetchStories(1, feedType, false);
+    window.scrollTo(0, 0);
+    navigate(`/stories`);
+  }, [fetchStories, feedType, navigate]);
+  
 
   const resetForNewCategory = useCallback(() => {
     setStories([])
@@ -320,6 +330,7 @@ export function PublicStoriesProvider({ children }) {
     setShowFollowingOnly,
     fetchStoriesByTag,
     resetForNewCategory,
+    handleTagClear,
   }
 
   return <PublicStoriesContext.Provider value={value}>{children}</PublicStoriesContext.Provider>
