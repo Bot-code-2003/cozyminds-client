@@ -396,6 +396,17 @@ const StoryEntry = () => {
             </div>
           )}
 
+{entry?.isPublic && (
+            <div className="mt-24">
+              <h2 className="text-xl font-bold mb-8 text-gray-900 dark:text-gray-100">
+                Comments
+              </h2>
+              <div className=" rounded-2xl">
+                <Comments journalId={entry._id} />
+              </div>
+            </div>
+          )}
+
           {recommendations.length > 0 && (
             <section className="mt-28">
               <h2 className="text-xl font-bold mb-12 text-gray-900 dark:text-gray-100">
