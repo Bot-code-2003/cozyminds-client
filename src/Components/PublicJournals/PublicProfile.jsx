@@ -333,7 +333,7 @@ const PublicProfile = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await API.get(userId ? `/profile/id/${userId}` : `/profile/${anonymousName}`);
+      const response = await API.get(`/profile/${anonymousName}`);
       console.log(response)
       setProfile({
         ...response.data.profile,
@@ -511,7 +511,7 @@ const PublicProfile = () => {
             transition={{ duration: 0.3 }}
           >
             <Link
-              to="/public-journals"
+              to="/journals"
               className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors group"
             >
               <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />

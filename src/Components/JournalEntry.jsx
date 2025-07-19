@@ -318,7 +318,7 @@ const JournalEntry = () => {
                   <div className="flex items-center gap-3 min-w-0">
                     {authorProfile && (
                       <Link
-                        to={`/profile/id/${authorProfile._id}`}
+                        to={`/journals/${authorProfile.anonymousName}`}
                         className="flex items-center gap-3 hover:text-gray-700 dark:hover:text-gray-300 transition-colors group min-w-0"
                       >
                         <img

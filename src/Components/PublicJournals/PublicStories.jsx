@@ -570,7 +570,7 @@ const seoConfig = useMemo(() => {
       <div className={`min-h-screen bg-[var(--bg-primary)]`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            <main className="md:col-span-8">
+            <main className="md:col-span-12">
               {selectedTag ? (
                 <TagHeader 
                   tag={selectedTag} 
@@ -604,7 +604,7 @@ const seoConfig = useMemo(() => {
                   category="story"
                 />
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-stretch">
                   {stories.map((story) => (
                     <div key={story._id} className="h-full">
                       <PublicJournalCard
@@ -628,14 +628,14 @@ const seoConfig = useMemo(() => {
               />
             </main>
 
-            <aside className="hidden md:block md:col-span-4">
+            {/* <aside className="hidden md:block md:col-span-4">
               <Sidebar
                 onTopicClick={handleTopicClick}
                 onWriterClick={handleWriterClick}
                 isLoggedIn={isLoggedIn}
                 category="story"
               />
-            </aside>
+            </aside> */}
           </div>
         </div>
       </div>

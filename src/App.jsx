@@ -92,8 +92,8 @@ const App = () => {
                     <Route path="/stories" element={<PublicStories />} />
                     <Route path="/journals/:anonymousName/:slug" element={<JournalEntry />} />
                     <Route path="/stories/:anonymousName/:slug" element={<StoryEntry />} />
-                    <Route path="/profile/id/:userId" element={<PublicProfile />} />
-                    <Route path="/profile/:anonymousName" element={<PublicProfile />} />
+                    <Route path="/stories/:anonymousName" element={<PublicProfile />} />
+                    <Route path="/journals/:anonymousName" element={<PublicProfile />} />
                     <Route path="/subscriptions" element={<SubscriptionsView />} />
                     <Route path="/saved-entries" element={<SavedEntries />} />
                     <Route path="/journaling-alt" element={<JournalingAlt />} />

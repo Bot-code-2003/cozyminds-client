@@ -373,7 +373,7 @@ const StoryEntry = () => {
           {authorProfile && (
             <div className="flex items-start gap-6">
               <Link
-                to={`/profile/id/${authorProfile._id}`}
+                to={`/stories/${authorProfile.anonymousName}`}
                 className="flex-shrink-0 group"
               >
                 <img
