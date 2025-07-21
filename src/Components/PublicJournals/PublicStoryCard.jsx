@@ -4,12 +4,8 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Heart,
-  MessageCircle,
   Bookmark,
   Clock,
-  MoreHorizontal,
-  ThumbsUp,
-  ArrowUpRight,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import AuthModals from "../Landing/AuthModals";
@@ -83,7 +79,6 @@ const JournalCard = ({
   const [isLiking, setIsLiking] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [authorProfile, setAuthorProfile] = useState(journal.author || null);
-  const [isHovered, setIsHovered] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -92,8 +87,9 @@ const JournalCard = ({
 
   const user = useMemo(() => getCurrentUser(), []);
 
-  // Determine prefix based on current route
-  const prefix = location.pathname.startsWith("/stories") ? "/stories" : "/journals";
+  const prefix = location.pathname.startsWith("/stories")
+    ? "/stories"
+    : "/journals";
 
   const thumbnail = useMemo(() => {
     if (journal.thumbnail && !imageError) return journal.thumbnail;
@@ -105,7 +101,7 @@ const JournalCard = ({
   }, [journal.thumbnail, journal.content, imageError]);
 
   const storyPreview = useMemo(() => {
-    if (journal.category === 'story' && journal.metaDescription) {
+    if (journal.category === "story" && journal.metaDescription) {
       return journal.metaDescription;
     }
     if (!journal.content) return "No content available.";
@@ -114,16 +110,6 @@ const JournalCard = ({
     const text = tempDiv.textContent || tempDiv.innerText || "";
     return text.trim().substring(0, 120) + (text.length > 120 ? "…" : "");
   }, [journal.category, journal.metaDescription, journal.content]);
-
-  const formattedDate = useMemo(() => {
-    try {
-      return formatDistanceToNow(new Date(journal.createdAt), {
-        addSuffix: true,
-      });
-    } catch {
-      return "some time ago";
-    }
-  }, [journal.createdAt]);
 
   const readingTime = useMemo(() => {
     if (!journal.content) return "1 min read";
@@ -202,7 +188,7 @@ const JournalCard = ({
       try {
         await onLike(journal);
       } catch (error) {
-        // Handle error
+        console.error("Error liking:", error);
       } finally {
         setIsLiking(false);
       }
@@ -219,7 +205,7 @@ const JournalCard = ({
       try {
         await onSave(journal._id, !isSavedProp);
       } catch (error) {
-        // Handle error
+        console.error("Error saving:", error);
       } finally {
         setIsSaving(false);
       }
@@ -227,140 +213,126 @@ const JournalCard = ({
     [user, onSave, journal._id, isSavedProp, openLoginModal]
   );
 
-  const handleCommentClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigate(`/public-journals/${journal.slug}#comments`);
-  };
-
-  const MetricButton = ({ icon: Icon, count, onClick, active = false }) => (
-    <button
-      onClick={onClick}
-      className={`flex items-center gap-1 px-2 py-1 rounded-md text-sm transition-all duration-200 ${
-        active
-          ? "text-white bg-blue-600 hover:bg-blue-700"
-          : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-      }`}
-    >
-      <Icon className="w-4 h-4" />
-      <span className="font-medium">{count}</span>
-    </button>
-  );
-
-  // Fallback image for when no thumbnail is available
-  const fallbackImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 600'%3E%3Crect width='400' height='600' fill='%23f3f4f6'/%3E%3Ctext x='200' y='300' text-anchor='middle' fill='%236b7280' font-size='16' font-family='system-ui'%3ENo Image%3C/text%3E%3C/svg%3E";
-
   return (
     <>
-      <article
-        className="group relative bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-800"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {/* Image Container with Overlay */}
-        <div className="relative aspect-[3/4] overflow-hidden">
+      <article className="group py-8 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
         <Link
-  to={`${prefix}/${authorProfile?.anonymousName || "anonymous"}/${journal.slug}`}
-  className="block h-full"
-  onClick={() => {
-    window.scrollTo({ top: 0, left: 0 });
-  }}
->
-
-            <img
-              src={thumbnail || fallbackImage}
-              alt=""
-              className={`min-h-[100%] object-cover transition-transform duration-700 ${
-                isHovered ? "scale-105" : "scale-100"
-              }`}
-              onError={() => setImageError(true)}
-            />
-            
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            
-            {/* Content Overlay */}
-            <div className="absolute inset-0 flex flex-col justify-end p-6">
-              {/* Reading Time Badge */}
-              <div className="absolute top-4 right-4">
-                <div className="flex items-center gap-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded-full">
-                  <Clock className="w-3 h-3" />
-                  {readingTime}
+          to={`${prefix}/${authorProfile?.anonymousName || "anonymous"}/${journal.slug}`}
+          className="block"
+        >
+          <div className="flex gap-6">
+            {/* Content Section */}
+            <div className="flex-1 min-w-0">
+              {/* Author Info */}
+              <div className="flex items-center gap-3 mb-3">
+                <div 
+                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-gray-200 dark:hover:ring-gray-700 flex-shrink-0"
+                  onClick={handleAuthorClick}
+                >
+                  <img
+                    src={getAvatarSvg(
+                      authorProfile?.profileTheme?.avatarStyle || "avataaars",
+                      authorProfile?.anonymousName || "Anonymous"
+                    )}
+                    alt=""
+                    className="w-full h-full"
+                  />
+                </div>
+                
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <span 
+                      className="font-medium text-gray-900 dark:text-white cursor-pointer hover:underline truncate"
+                      onClick={handleAuthorClick}
+                    >
+                      {authorProfile?.anonymousName || "Anonymous"}
+                    </span>
+                    <span className="text-gray-400">·</span>
+                    <time className="whitespace-nowrap">
+                      {formatDistanceToNow(new Date(journal.createdAt), {
+                        addSuffix: true,
+                      })}
+                    </time>
+                  </div>
                 </div>
               </div>
-              
+
+              {/* Category Tag */}
+              {journal.tags && journal.tags.length > 0 && (
+                <div className="mb-2">
+                  <span className="inline-block px-2 py-1 text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded">
+                    {journal.tags[0]}
+                  </span>
+                </div>
+              )}
+
               {/* Title */}
-              <h2 className="text-white text-xl font-bold leading-tight mb-2 line-clamp-2 group-hover:text-blue-200 transition-colors">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors line-clamp-2">
                 {journal.title}
               </h2>
-              
+
               {/* Description */}
-              <p className="text-gray-200 text-sm leading-relaxed mb-4 line-clamp-3">
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4 line-clamp-2">
                 {storyPreview}
               </p>
-              
-              {/* Author Info */}
-              <div 
-                className="flex items-center gap-2 cursor-pointer group/author mb-3"
-                onClick={handleAuthorClick}
-              >
-                <img
-                  src={getAvatarSvg(
-                    authorProfile?.profileTheme?.avatarStyle || "avataaars",
-                    authorProfile?.anonymousName || "Anonymous"
-                  )}
-                  alt=""
-                  className="w-8 h-8 rounded-full border-2 border-white/50 group-hover/author:border-white transition-colors"
-                />
-                <div>
-                  <div className="text-white text-sm font-medium group-hover/author:text-blue-200 transition-colors">
-                    {authorProfile?.anonymousName || "Anonymous"}
-                  </div>
-                  <div className="text-gray-300 text-xs">
-                    {new Date(journal.createdAt).toLocaleDateString("en-US", { 
-                      month: "short", 
-                      day: "numeric" 
-                    })}
-                  </div>
+
+              {/* Meta and Actions */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <Clock className="w-3 h-3" />
+                  <span>{readingTime}</span>
                 </div>
-              </div>
-              
-              {/* Actions */}
-              {journal.isPublic && (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <MetricButton
-                      icon={ThumbsUp}
-                      count={journal.likeCount || 0}
-                      onClick={handleLike}
-                      active={isLiked}
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleLike}
+                    disabled={isLiking}
+                    className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all ${
+                      isLiked
+                        ? "text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400"
+                        : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    <Heart
+                      className="w-3 h-3"
+                      fill={isLiked ? "currentColor" : "none"}
                     />
-                    <MetricButton
-                      icon={MessageCircle}
-                      count={journal.commentCount || 0}
-                      onClick={handleCommentClick}
-                    />
-                  </div>
-                  
+                    <span>{journal.likeCount || 0}</span>
+                  </button>
+
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className={`p-2 rounded-full transition-all duration-200 ${
+                    className={`p-1.5 rounded transition-all ${
                       isSavedProp
-                        ? "text-yellow-400 bg-yellow-400/20"
-                        : "text-white/70 hover:text-white hover:bg-white/20"
+                        ? "text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800"
+                        : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                     }`}
                   >
-                    <Bookmark 
-                      className="w-4 h-4" 
+                    <Bookmark
+                      className="w-3 h-3"
                       fill={isSavedProp ? "currentColor" : "none"}
                     />
                   </button>
                 </div>
-              )}
+              </div>
             </div>
-          </Link>
-        </div>
+
+            {/* Thumbnail */}
+            {thumbnail && (
+              <div className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0">
+                <div className="w-full h-full overflow-hidden bg-gray-100 dark:bg-gray-800 rounded">
+                  <img
+                    src={thumbnail}
+                    alt=""
+                    className="w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-105"
+                    onError={() => setImageError(true)}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </Link>
       </article>
       {modals}
     </>
@@ -369,51 +341,49 @@ const JournalCard = ({
 
 export default JournalCard;
 
-export const PublicJournalCardSkeleton = () => (
-  <article className="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-800 animate-pulse">
-    <div className="aspect-[3/4] relative">
-      <div className="w-full h-full bg-gray-200 dark:bg-gray-700" />
-      
-      {/* Skeleton overlay content */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      
-      <div className="absolute inset-0 flex flex-col justify-end p-6">
-        {/* Reading time skeleton */}
-        <div className="absolute top-4 right-4">
-          <div className="h-6 w-16 bg-white/20 rounded-full" />
-        </div>
-        
-        {/* Title skeleton */}
-        <div className="mb-2">
-          <div className="h-6 w-4/5 bg-white/20 rounded-md mb-1" />
-          <div className="h-6 w-3/5 bg-white/20 rounded-md" />
-        </div>
-        
-        {/* Description skeleton */}
-        <div className="space-y-2 mb-4">
-          <div className="h-4 w-full bg-white/20 rounded-md" />
-          <div className="h-4 w-4/5 bg-white/20 rounded-md" />
-          <div className="h-4 w-3/5 bg-white/20 rounded-md" />
-        </div>
-        
+export const JournalCardSkeleton = () => (
+  <div className="py-8 border-b border-gray-200 dark:border-gray-800 animate-pulse">
+    <div className="flex gap-6">
+      <div className="flex-1 min-w-0">
         {/* Author skeleton */}
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 bg-white/20 rounded-full" />
-          <div>
-            <div className="h-4 w-20 bg-white/20 rounded-md mb-1" />
-            <div className="h-3 w-16 bg-white/20 rounded-md" />
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full" />
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-20 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+            <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
           </div>
         </div>
-        
-        {/* Actions skeleton */}
+
+        {/* Category skeleton */}
+        <div className="mb-2">
+          <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+        </div>
+
+        {/* Title skeleton */}
+        <div className="mb-2 space-y-1">
+          <div className="h-5 bg-gray-200 dark:bg-gray-700 w-5/6 rounded" />
+          <div className="h-5 bg-gray-200 dark:bg-gray-700 w-3/4 rounded" />
+        </div>
+
+        {/* Description skeleton */}
+        <div className="mb-4 space-y-1">
+          <div className="h-3 bg-gray-200 dark:bg-gray-700 w-full rounded" />
+          <div className="h-3 bg-gray-200 dark:bg-gray-700 w-4/5 rounded" />
+        </div>
+
+        {/* Meta skeleton */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-12 bg-white/20 rounded-md" />
-            <div className="h-8 w-12 bg-white/20 rounded-md" />
+          <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+          <div className="flex gap-2">
+            <div className="h-6 w-12 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded" />
           </div>
-          <div className="h-8 w-8 bg-white/20 rounded-full" />
         </div>
       </div>
+
+      {/* Thumbnail skeleton */}
+      <div className="w-24 h-24 sm:w-28 sm:h-28 bg-gray-200 dark:bg-gray-700 rounded" />
     </div>
-  </article>
+  </div>
 );

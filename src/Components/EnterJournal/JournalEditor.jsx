@@ -845,7 +845,7 @@ const JournalEditor = ({
         }
 
         .journal-editor-content .ProseMirror blockquote {
-          border-left: 4px solid #3b82f6;
+          border-left: 4px solid #000;
           padding: 1rem 1.5rem;
           margin: 2rem 0;
           background: #f8fafc;

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import JournalCard from "../PublicJournals/PublicJournalCard.jsx";
+import JournalCard from "../PublicJournals/PublicStoryCard.jsx";
 
 // Mood definitions with improved color palette
 const moods = [

@@ -1,604 +1,526 @@
-"use client";
-import { useEffect, useCallback, useMemo, useState } from "react";
-import { usePublicJournals } from "../../context/PublicJournalsContext";
+import React, { useState, useEffect, useCallback } from 'react';
+import { Clock, Heart, Eye, BookOpen } from 'lucide-react';
+import axios from 'axios';
+import JournalCard, { JournalCardSkeleton } from './PublicStoryCard';
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
-import PublicJournalCard, { PublicJournalCardSkeleton } from "./PublicJournalCard";
-import Sidebar from "./Sidebar";
-import Navbar from "../Dashboard/Navbar";
-import LandingNavbar from "../Landing/Navbar";
-import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
-import { Loader2, AlertCircle, Users, ArrowLeft, BookOpen, Bell, Filter, Grid, List, Clock, Heart, X, Compass } from 'lucide-react';
-import { Helmet } from "react-helmet";
-import { CheckCircle } from 'lucide-react';
+import { createAvatar } from "@dicebear/core";
+import {
+  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+} from "@dicebear/collection";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
-const Header = ({ showFollowingOnly, isLoggedIn, onBackToAll, category }) => (
-  <div className="mb-8">
-    {showFollowingOnly && (
-      <button
-        onClick={onBackToAll}
-        className="flex items-center gap-2 text-[var(--accent)] font-medium mb-6 transition-colors group"
-      >
-        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-        <span>Back to All {category === "story" ? "Stories" : category === "journal" ? "Journals" : "Posts"}</span>
-      </button>
-    )}
-    <div className="text-center mb-8">
-      <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-        {showFollowingOnly 
-          ? "Your Feed" 
-          : category === "story" 
-            ? "Discover Stories" 
-            : category === "journal" 
-              ? "Discover Journals" 
-              : "Discover Posts"
-        }
-      </h1>
-      <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-        {showFollowingOnly
-          ? `Latest ${category === "story" ? "stories" : category === "journal" ? "journal entries" : "posts"} from writers you follow`
-          : category === "story"
-            ? "Explore captivating stories and narratives from our creative community"
-            : category === "journal"
-              ? "Explore personal thoughts and journal entries from our community of writers"
-              : "Explore stories and thoughts from our vibrant community of writers"
-        }
-      </p>
-    </div>
-  </div>
-);
+const avatarStyles = {
+  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+};
+const getAvatarSvg = (style, seed) => {
+  const collection = avatarStyles[style] || avataaars;
+  const svg = createAvatar(collection, { seed }).toString();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
 
-const TagHeader = ({ tag, onClear, category }) => (
-  <div className="mb-8">
-    <button
-      onClick={onClear}
-      className="flex items-center gap-2 text-[var(--accent)] font-medium mb-6 transition-colors group"
-    >
-      <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-      <span>Back to All {category === "story" ? "Stories" : category === "journal" ? "Journals" : "Posts"}</span>
-    </button>
-    <div className="text-center">
-      <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3 capitalize">
-        {category === "story" ? "Stories" : category === "journal" ? "Journals" : "Posts"} tagged with <span className="text-[var(--accent)]">#{tag.toLowerCase()}</span>
-      </h1>
-      
-    </div>
-  </div>
-);
-
-const ControlPanel = ({
-  isLoggedIn,
-  showFollowingOnly,
-  toggleFollowingOnly,
-  feedType,
-  handleFeedTypeChange,
-  hasNotifications,
-}) => (
-  <div className="bg-[var(--bg-primary)] rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 mb-8 p-2">
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-      {/* Left side: Feed type and filters */}
-      <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto overflow-x-auto">
-        {isLoggedIn && (
-          <div className="flex-shrink-0 flex gap-1 bg-gray-100 dark:bg-slate-700 rounded-xl p-1">
-            <button
-              onClick={() => showFollowingOnly && toggleFollowingOnly()}
-              className={`flex-1 px-3 py-1.5 rounded-lg font-medium transition-all duration-200 text-sm ${
-                !showFollowingOnly
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-gray-600 dark:text-gray-400"
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => !showFollowingOnly && toggleFollowingOnly()}
-              className={`flex-1 px-3 py-1.5 rounded-lg font-medium transition-all duration-200 text-sm whitespace-nowrap ${
-                showFollowingOnly
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-gray-600 dark:text-gray-400"
-              }`}
-            >
-              Following
-            </button>
-          </div>
-        )}
-        {!showFollowingOnly && (
-          <div className="flex-shrink-0 flex items-center gap-1 bg-gray-100 dark:bg-slate-700 p-1 rounded-xl">
-            {[
-              { type: "-createdAt", label: "Latest", icon: Clock },
-              { type: "likeCount", label: "Popular", icon: Heart },
-            ].map(({ type, label, icon: Icon }) => (
-              <button
-                key={type}
-                onClick={() => handleFeedTypeChange(type)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                  feedType === type
-                    ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-600"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{label}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-);
-
-const EmptyState = ({ showFollowingOnly, toggleFollowingOnly, isLoggedIn, category }) => (
-  <div className="text-center py-20">
-    <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
-      <span className="text-5xl">{showFollowingOnly ? "👥" : category === "story" ? "📚" : "📖"}</span>
-    </div>
-    <div className="max-w-md mx-auto space-y-4">
-      <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        {showFollowingOnly
-          ? `No ${category === "story" ? "stories" : category === "journal" ? "journal entries" : "posts"} from your follows`
-          : `No public ${category === "story" ? "stories" : category === "journal" ? "journals" : "posts"} yet`
-        }
-      </h3>
-      <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
-        {showFollowingOnly
-          ? `The writers you follow haven't posted any ${category === "story" ? "stories" : category === "journal" ? "journal entries" : "content"} yet. Explore all ${category === "story" ? "stories" : category === "journal" ? "journals" : "posts"} to discover new voices and stories.`
-          : `Be the first to share your ${category === "story" ? "story" : category === "journal" ? "thoughts" : "content"} with the community and inspire others to start their ${category === "story" ? "storytelling" : "journaling"} journey!`
-        }
-      </p>
-      {showFollowingOnly && (
-        <div className="pt-4">
-          <button
-            onClick={toggleFollowingOnly}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[var(--accent)] to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
-          >
-            <BookOpen className="w-5 h-5" />
-            <span>Explore All {category === "story" ? "Stories" : category === "journal" ? "Journals" : "Posts"}</span>
-          </button>
-        </div>
-      )}
-    </div>
-  </div>
-);
-
-const LoadingState = () => (
-  <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
-    <div className="flex flex-col items-center gap-4 bg-[var(--bg-primary)] px-8 py-12 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
-      <div className="relative">
-        <Loader2 className="h-8 w-8 animate-spin text-[var(--accent)]" />
-        <div className="absolute inset-0 h-8 w-8 animate-ping rounded-full bg-[var(--accent)] opacity-20" />
-      </div>
-      <div className="text-center">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
-          Loading content
-        </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Discovering amazing stories for you...
+// Hero Section Component
+const HeroSection = () => {
+  return (
+    <div className="bg-white border-b border-gray-200 py-8">
+      <div className="max-w-4xl mx-auto px-4 text-center">
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">
+          Explore personal thoughts and reflections
+        </h1>
+        <p className="text-gray-600">
+          Real stories, honest thoughts, authentic experiences
         </p>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
-const ErrorState = ({ error, onRetry }) => (
-  <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
-    <div className="text-center p-8 bg-[var(--bg-primary)] rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 max-w-md">
-      <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-        <AlertCircle className="w-8 h-8 text-red-500" />
-      </div>
-      <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">
-        Something went wrong
-      </h2>
-      <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-        {error}
-      </p>
-      <button
-        onClick={onRetry}
-        className="px-6 py-3 bg-[var(--accent)] text-white rounded-xl transition-colors font-medium shadow-lg hover:shadow-xl"
-      >
-        Try Again
-      </button>
-    </div>
-  </div>
-);
-
-const LoadMoreButton = ({ loadingMore, hasMore, onLoadMore, category }) => {
-  if (!hasMore) {
-    return (
-      <div className="flex justify-center py-12 transition-colors duration-200">
-  <div className="flex flex-col items-center gap-3 px-6 py-8 border-2 border-[var(--border)] rounded-xl border border-gray-100 dark:border-gray-700 max-w-sm w-full">
-    <CheckCircle className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-    <h3 className="text-lg font-medium text-gray-900 dark:text-white tracking-tight">
-      All Done!
-    </h3>
-    <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
-      You've reached the end of the feed. Grab a cup of tea, reflect, or revisit your favorite story.
-    </p>
-  </div>
-</div>
-
-    );
-  }
-
+// Tag Filter Component
+const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
   return (
-    <div className="text-center mt-12 lg:mt-16">
-      <button
-        onClick={onLoadMore}
-        disabled={loadingMore}
-        className={`inline-flex items-center gap-2 px-10 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 relative ${loadingMore ? 'opacity-70 cursor-not-allowed' : ''}`}
-        style={{ minWidth: 180 }}
-      >
-        {loadingMore ? (
-          <>
-            <Loader2 className="h-5 w-5 animate-spin mr-2" />
-            <span>Loading more...</span>
-          </>
-        ) : (
-          <>
-            <span>Load More</span>
-            <svg className="w-5 h-5 ml-1 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-          </>
-        )}
-      </button>
+    <div className="bg-white border-b border-gray-200 py-4">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2">
+          <button
+            onClick={() => onTagSelect(null)}
+            className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
+              !selectedTag 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            All
+          </button>
+          {tags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => onTagSelect(tag)}
+              className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
+                selectedTag === tag 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-const getCurrentUser = () => {
-  try {
-    const itemStr = localStorage.getItem('user');
-    if (!itemStr) return null;
-    const item = JSON.parse(itemStr);
-    if (item && item.value) return item.value;
-    return item;
-  } catch {
-    return null;
-  }
-};
-
+// Main PublicJournals Component
 const PublicJournals = () => {
-  const [hasSubscriptionNotifications, setHasSubscriptionNotifications] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-  const {
-    journals,
-    loading,
-    error,
-    likedJournals,
-    savedJournals,
-    hasMore,
-    loadingMore,
-    feedType,
-    showFollowingOnly,
-    fetchJournals,
-    handleLike,
-    handleSave,
-    setFeedType,
-    setShowFollowingOnly,
-    fetchJournalsByTag,
-    handleFeedTypeChange,
-    toggleFollowingOnly,
-    loadMore,
-    selectedTag,
-    handleTagSelect,
-    resetForNewCategory,
-    handleTagClear
-  } = usePublicJournals();
+  const [featuredJournals, setFeaturedJournals] = useState([]);
+  const [latestJournals, setLatestJournals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [selectedTag, setSelectedTag] = useState(null);
+  const [likedJournals, setLikedJournals] = useState(new Set());
+  const [savedJournals, setSavedJournals] = useState(new Set());
 
-  const { darkMode, setDarkMode } = useDarkMode();
-  const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
-  const user = useMemo(() => getCurrentUser(), []);
-  const isLoggedIn = !!user;
-  const location = useLocation();
+  const popularTags = ['Personal', 'Reflection', 'Life', 'Growth', 'Thoughts', 'Experience', 'Daily', 'Mindfulness'];
+  const { darkMode } = useDarkMode();
+  const { modals, openLoginModal } = AuthModals({ darkMode });
 
-  // Determine category based on current route
-  const category = useMemo(() => {
-    if (location.pathname.startsWith("/stories")) return "story";
-    if (location.pathname.startsWith("/journals")) return "journal";
-    return undefined;
-  }, [location.pathname]);
-
-  console.log('Current route:', location.pathname, 'Category:', category);
-
-  // Fetch subscription notifications
-  const fetchSubscriptionNotifications = useCallback(async () => {
-    if (!user?._id) return;
+  const getCurrentUser = () => {
     try {
-      const response = await API.get(`/subscriptions/${user._id}`);
-      const subscriptions = response.data.subscriptions || [];
-      const hasNotifications = subscriptions.some((sub) => sub.hasNewContent);
-      setHasSubscriptionNotifications(hasNotifications);
+      const itemStr = localStorage.getItem('user');
+      if (!itemStr) return null;
+      const item = JSON.parse(itemStr);
+      return item?.value || item;
+    } catch {
+      return null;
+    }
+  };
+
+  // Fetch featured journals (top liked from last 30 days)
+  const fetchFeaturedJournals = useCallback(async () => {
+    try {
+      const response = await API.get('/journals/top-liked');
+      setFeaturedJournals(response.data.journals || []);
     } catch (error) {
-      console.error("Error fetching subscription notifications:", error);
+      console.error('Error fetching featured journals:', error);
     }
-  }, [user]);
-
-  const handleShare = useCallback(
-    (journalId) => {
-      const journal = journals.find((j) => j._id === journalId);
-      if (journal) {
-        const url = `${window.location.origin}/publicjournal/${journal.slug}`;
-        navigator.clipboard.writeText(url);
-      }
-    },
-    [journals]
-  );
-
-  const handleBackToAll = useCallback(() => {
-    if (showFollowingOnly) {
-      toggleFollowingOnly();
-    }
-  }, [showFollowingOnly, toggleFollowingOnly]);
-
-  // Handle topic click from sidebar
-  const handleTopicClick = useCallback((topic) => {
-    handleTagSelect(topic);
-  }, [handleTagSelect]);
-
-  // Handle writer click from sidebar
-  const handleWriterClick = useCallback((writer) => {
-    // You can implement navigation to writer's profile here
   }, []);
 
-  // Reset and fetch journals when category changes
-  useEffect(() => {
-    console.log('Category changed, resetting and fetching journals for category:', category);
-    resetForNewCategory(category);
-    fetchJournals(1, feedType, false, category);
-  }, [category, resetForNewCategory, fetchJournals, feedType]);
+  // Fetch latest journals
+  const fetchLatestJournals = useCallback(async (pageNum = 1, append = false) => {
+    try {
+      if (!append) setLoading(true);
+      else setLoadingMore(true);
 
-  // Re-fetch journals when user logs in
-  useEffect(() => {
-    const handleUserLoggedIn = () => {
-      fetchJournals(1, feedType, false, category);
-    };
-    window.addEventListener("user-logged-in", handleUserLoggedIn);
-    return () => {
-      window.removeEventListener("user-logged-in", handleUserLoggedIn);
-    };
-  }, [fetchJournals, feedType, category]);
+      const params = {
+        page: pageNum,
+        limit: 12,
+        sort: '-createdAt',
+        category: 'journal'
+      };
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchSubscriptionNotifications();
-    }
-  }, [isLoggedIn, fetchSubscriptionNotifications]);
-
-  // Custom load more that respects category
-  const handleLoadMore = useCallback(() => {
-    if (hasMore && !loadingMore) {
       if (selectedTag) {
-        fetchJournalsByTag(selectedTag, Math.floor(journals.length / 20) + 1, true);
-      } else {
-        loadMore();
+        params.tag = selectedTag;
       }
-    }
-  }, [hasMore, loadingMore, selectedTag, fetchJournalsByTag, journals.length, loadMore]);
 
-  // Custom feed type change that respects category
-  const handleCustomFeedTypeChange = useCallback((newFeedType) => {
-    if (newFeedType !== feedType) {
-      setFeedType(newFeedType);
-      fetchJournals(1, newFeedType, false, category);
-    }
-  }, [feedType, fetchJournals, category, setFeedType]);
+      const endpoint = selectedTag ? `/journals/by-tag/${encodeURIComponent(selectedTag)}` : '/journals/public';
+      const response = await API.get(endpoint, { params });
+      
+      const newJournals = response.data.journals || [];
+      
+      if (append) {
+        setLatestJournals(prev => [...prev, ...newJournals]);
+      } else {
+        setLatestJournals(newJournals);
+      }
+      
+      setHasMore(response.data.hasMore);
+      setPage(pageNum);
 
-  // Custom toggle following that respects category
-  const handleCustomToggleFollowing = useCallback(() => {
-    const newShowFollowingOnly = !showFollowingOnly;
-    setShowFollowingOnly(newShowFollowingOnly);
-    fetchJournals(1, feedType, false, category);
-  }, [showFollowingOnly, feedType, fetchJournals, category, setShowFollowingOnly]);
+      // Update liked/saved status
+      const user = getCurrentUser();
+      if (user) {
+        const liked = new Set(newJournals.filter(journal => journal.likes?.includes(user._id)).map(journal => journal._id));
+        const saved = new Set(newJournals.filter(journal => user.savedEntries?.includes(journal._id)).map(journal => journal._id));
+        
+        if (append) {
+          setLikedJournals(prev => new Set([...prev, ...liked]));
+          setSavedJournals(prev => new Set([...prev, ...saved]));
+        } else {
+          setLikedJournals(liked);
+          setSavedJournals(saved);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching journals:', error);
+      setError('Failed to fetch journals');
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [selectedTag]);
+
+  // Handle like
+  const handleLike = useCallback(async (journal) => {
+    const user = getCurrentUser();
+    if (!user) return;
+
+    const journalId = journal._id;
+    const isCurrentlyLiked = likedJournals.has(journalId);
+
+    // Optimistic update
+    setLikedJournals(prev => {
+      const newSet = new Set(prev);
+      if (isCurrentlyLiked) {
+        newSet.delete(journalId);
+      } else {
+        newSet.add(journalId);
+      }
+      return newSet;
+    });
+
+    // Update journal in both lists
+    const updateJournal = (journals) => journals.map(j => 
+      j._id === journalId 
+        ? { ...j, likeCount: j.likeCount + (isCurrentlyLiked ? -1 : 1) }
+        : j
+    );
+
+    setFeaturedJournals(updateJournal);
+    setLatestJournals(updateJournal);
+
+    try {
+      await API.post(`/journals/${journalId}/like`, { userId: user._id });
+    } catch (error) {
+      // Revert on error
+      setLikedJournals(prev => {
+        const newSet = new Set(prev);
+        if (isCurrentlyLiked) {
+          newSet.add(journalId);
+        } else {
+          newSet.delete(journalId);
+        }
+        return newSet;
+      });
+      console.error('Error liking journal:', error);
+    }
+  }, [likedJournals]);
+
+  // Handle save
+  const handleSave = useCallback(async (journalId) => {
+    const user = getCurrentUser();
+    if (!user) return;
+
+    const isCurrentlySaved = savedJournals.has(journalId);
+
+    setSavedJournals(prev => {
+      const newSet = new Set(prev);
+      if (isCurrentlySaved) {
+        newSet.delete(journalId);
+      } else {
+        newSet.add(journalId);
+      }
+      return newSet;
+    });
+
+    try {
+      await API.post(`/journals/${journalId}/save`, { userId: user._id });
+    } catch (error) {
+      // Revert on error
+      setSavedJournals(prev => {
+        const newSet = new Set(prev);
+        if (isCurrentlySaved) {
+          newSet.add(journalId);
+        } else {
+          newSet.delete(journalId);
+        }
+        return newSet;
+      });
+      console.error('Error saving journal:', error);
+    }
+  }, [savedJournals]);
+
+  // Handle tag selection
+  const handleTagSelect = useCallback((tag) => {
+    setSelectedTag(tag);
+    setPage(1);
+  }, []);
+
+  // Load more journals
+  const loadMore = useCallback(() => {
+    if (hasMore && !loadingMore) {
+      fetchLatestJournals(page + 1, true);
+    }
+  }, [hasMore, loadingMore, page, fetchLatestJournals]);
+
+  // Initial load
+  useEffect(() => {
+    fetchFeaturedJournals();
+    fetchLatestJournals();
+  }, [fetchFeaturedJournals, fetchLatestJournals]);
 
   if (loading && !loadingMore) {
     return (
-      <>
-        <Helmet>
-          <title>{category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories</title>
-          <meta name="description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-          <meta name="keywords" content={`read public ${category === "story" ? "stories" : category === "journal" ? "journals" : "journals, stories"}, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories`} />
-          <meta property="og:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
-          <meta property="og:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
-          <meta property="og:image" content="/public/andy_the_sailor.png" />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
-          <meta name="twitter:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-          <meta name="twitter:image" content="/public/andy_the_sailor.png" />
-        </Helmet>
-        {isLoggedIn ? (
-          <Navbar name="New Entry" link="/journaling-alt" />
-        ) : (
-          <LandingNavbar
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            openLoginModal={openLoginModal}
-            openSignupModal={openSignupModal}
-          />
-        )}
-        <div className="max-w-4xl mx-auto px-4 py-12">
-          {[...Array(4)].map((_, i) => (
-            <PublicJournalCardSkeleton key={i} />
-          ))}
+      <div className="min-h-[50vh] bg-gray-50">
+        <HeroSection />
+        <TagFilters tags={popularTags} selectedTag={selectedTag} onTagSelect={handleTagSelect} />
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+            {[...Array(6)].map((_, i) => <JournalCardSkeleton key={i} />)}
+          </div>
         </div>
-      </>
+        {modals}
+      </div>
     );
   }
 
   if (error) {
     return (
-      <>
-        <Helmet>
-          <title>{category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories</title>
-          <meta name="description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-          <meta name="keywords" content={`read public ${category === "story" ? "stories" : category === "journal" ? "journals" : "journals, stories"}, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories`} />
-          <meta property="og:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
-          <meta property="og:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
-          <meta property="og:image" content="/public/andy_the_sailor.png" />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
-          <meta name="twitter:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-          <meta name="twitter:image" content="/public/andy_the_sailor.png" />
-        </Helmet>
-        {isLoggedIn ? (
-          <Navbar name="New Entry" link="/journaling-alt" />
-        ) : (
-          <LandingNavbar
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            openLoginModal={openLoginModal}
-            openSignupModal={openSignupModal}
-          />
-        )}
-        <ErrorState error={error} onRetry={() => fetchJournals(1, feedType, false, category)} />
-      </>
+      <div className="min-h-[50vh] bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              fetchLatestJournals();
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+        {modals}
+      </div>
     );
   }
 
   return (
-    <>
-      <Helmet>
-        <title>{category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories</title>
-        <meta name="description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-        <meta name="keywords" content={`read public ${category === "story" ? "stories" : category === "journal" ? "journals" : "journals, stories"}, public diaries, anonymous confessions, share secrets, online diary, confession stories, mental health, anonymous blog, community stories`} />
-        <meta property="og:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
-        <meta property="og:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://starlitjournals.com${location.pathname}`} />
-        <meta property="og:image" content="/public/andy_the_sailor.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${category === "story" ? "Read Public Stories" : category === "journal" ? "Read Public Journals & Diaries" : "Read Public Journals & Stories"} | Anonymous Confessions & Stories`} />
-        <meta name="twitter:description" content={`Explore and read public ${category === "story" ? "stories" : category === "journal" ? "journals, diaries, and confessions" : "journals, stories, and confessions"} from real people. Join a safe, anonymous community to share your own story or discover others'.`} />
-        <meta name="twitter:image" content="/public/andy_the_sailor.png" />
-      </Helmet>
-      {isLoggedIn ? (
-        <Navbar name="New Entry" link="/journaling-alt" />
-      ) : (
-        <LandingNavbar
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          openLoginModal={openLoginModal}
-          openSignupModal={openSignupModal}
-        />
-      )}
-      {modals}
-
-      {/* Mobile Sidebar Toggle Button */}
-      <button
-        onClick={() => setIsSidebarOpen(true)}
-        className="md:hidden fixed bottom-5 right-5 bg-blue-600 text-white p-4 rounded-full shadow-lg z-40 hover:bg-blue-700 transition-all"
-        aria-label="Open filters"
-      >
-        <Compass className="w-6 h-6" />
-      </button>
-
-      {/* Mobile Sidebar (Off-canvas) */}
-      {isSidebarOpen && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-[9999]" onClick={() => setIsSidebarOpen(false)}>
-          <button 
-            onClick={() => setIsSidebarOpen(false)}
-            className="fixed top-3 right-3 z-[10001] w-12 h-12 flex items-center justify-center rounded-full bg-white/95 dark:bg-gray-900/95 border border-gray-300 dark:border-gray-700 shadow-2xl text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-800 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 animate-float"
-            style={{ boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}
-            aria-label="Close sidebar"
-          >
-            <X className="w-7 h-7" />
-          </button>
-          <div
-            className="fixed top-0 left-0 h-full w-full max-w-full bg-[var(--bg-primary)] shadow-lg overflow-y-auto p-0 animate-slideInRight"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Sidebar
-              onTopicClick={(topic) => {
-                handleTopicClick(topic);
-                setIsSidebarOpen(false);
-              }}
-              onWriterClick={handleWriterClick}
-              isLoggedIn={isLoggedIn}
-              category={category}
-            />
-          </div>
-        </div>
-      )}
-
-      <div className={`min-h-screen bg-[var(--bg-primary)] `}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            <main className="md:col-span-8">
-              {selectedTag ? (
-                <TagHeader 
-                  tag={selectedTag} 
-                  onClear={handleTagClear} 
-                  category={category}
-                />
-              ) : (
-                <>
-                  <Header
-                    showFollowingOnly={showFollowingOnly}
-                    isLoggedIn={isLoggedIn}
-                    onBackToAll={handleCustomToggleFollowing}
-                    category={category}
-                  />
-                  <ControlPanel
-                    isLoggedIn={isLoggedIn}
-                    showFollowingOnly={showFollowingOnly}
-                    toggleFollowingOnly={handleCustomToggleFollowing}
-                    feedType={feedType}
-                    handleFeedTypeChange={handleCustomFeedTypeChange}
-                    hasNotifications={hasSubscriptionNotifications}
-                  />
-                </>
-              )}
-              
-              {journals.length === 0 && !loading ? (
-                <EmptyState 
-                  showFollowingOnly={showFollowingOnly} 
-                  toggleFollowingOnly={handleCustomToggleFollowing} 
-                  isLoggedIn={isLoggedIn} 
-                  category={category}
-                />
-              ) : (
-                <div className="grid grid-cols-1 gap-6 items-stretch">
-                  {journals.map((journal) => (
-                    <div key={journal._id} className="h-full">
-                      <PublicJournalCard
-                        journal={journal}
-                        onLike={() => handleLike(journal)}
-                        onShare={handleShare}
-                        isLiked={likedJournals.has(journal._id)}
-                        isSaved={savedJournals.has(journal._id)}
-                        onSave={() => handleSave(journal._id)}
-                      />
+    <div className="min-h-screen bg-gray-50">
+      <HeroSection />
+      <TagFilters tags={popularTags} selectedTag={selectedTag} onTagSelect={handleTagSelect} />
+      
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Featured Journals Section */}
+        {!selectedTag && featuredJournals.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center gap-2 mb-8">
+              <Heart className="w-5 h-5 text-red-500" />
+              <h2 className="text-2xl font-bold text-gray-900">Featured Journals</h2>
+            </div>
+            
+            {/* Bento Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4  h-auto lg:h-[600px]">
+              {featuredJournals.map((journal, index) => {
+                const isLarge = index === 0;
+                const isMedium = index === 1;
+                // Thumbnail logic: fallback to first image in content
+                let thumbnail = journal.thumbnail;
+                if (!thumbnail && journal.content) {
+                  try {
+                    const tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = journal.content;
+                    const img = tempDiv.querySelector("img");
+                    thumbnail = img?.src || null;
+                  } catch {}
+                }
+                // Author avatar logic
+                const avatarStyle = journal.author?.profileTheme?.avatarStyle || "avataaars";
+                const avatarSeed = journal.author?.anonymousName || "Anonymous";
+                const avatarUrl = getAvatarSvg(avatarStyle, avatarSeed);
+                
+                return (
+                  <div
+                    key={journal._id}
+                    className={`
+                      group rounded-lg relative overflow-hidden bg-gray-900 border border-gray-800 hover:shadow-lg transition-all duration-300
+                      ${isLarge ? 'md:col-span-2 md:row-span-2' : ''}
+                      ${isMedium ? 'lg:col-span-2' : ''}
+                    `}
+                  >
+                    {/* Background Image */}
+                    {thumbnail && (
+                      <div className="absolute inset-0">
+                        <img
+                          src={thumbnail}
+                          alt=""
+                          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      </div>
+                    )}
+                    
+                    {/* Content Overlay */}
+                    <div className={`
+                      relative z-10 p-6 h-full flex flex-col justify-between text-white
+                      ${isLarge ? 'p-8' : 'p-6'}
+                    `}>
+                      {/* Top Section */}
+                      <div>
+                        {/* Author Info */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <img
+                            src={avatarUrl}
+                            alt=""
+                            className="w-6 h-6 rounded-full border border-white/20"
+                          />
+                          <span className="text-sm font-medium text-white/90">
+                            {journal.author?.anonymousName || 'Anonymous'}
+                          </span>
+                        </div>
+                        
+                        {/* Title */}
+                        <h3 className={`
+                          font-bold leading-tight mb-2 line-clamp-3 text-white
+                          ${isLarge ? 'text-2xl' : 'text-lg'}
+                        `}>
+                          {journal.title}
+                        </h3>
+                        
+                        {/* Preview Text - Only for large card */}
+                        {isLarge && (
+                          <p className="text-sm leading-relaxed line-clamp-3 mb-4 text-white/80">
+                            {journal.metaDescription || 
+                             (journal.content ? 
+                               journal.content.replace(/<[^>]*>/g, '').substring(0, 120) + '...' : 
+                               'No preview available'
+                             )
+                            }
+                          </p>
+                        )}
+                      </div>
+                      
+                      {/* Bottom Section */}
+                      <div className="flex items-center justify-between">
+                        {/* Stats */}
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1">
+                            <Heart className="w-4 h-4 text-white/80" />
+                            <span className="text-sm text-white/80">
+                              {journal.likeCount || 0}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Eye className="w-4 h-4 text-white/80" />
+                            <span className="text-sm text-white/80">
+                              {journal.commentCount || 0}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleLike(journal);
+                            }}
+                            className={`
+                              p-2 rounded-full transition-colors
+                              ${likedJournals.has(journal._id) 
+                                ? 'bg-red-500 text-white' 
+                                : 'bg-white/20 text-white hover:bg-white/30'
+                              }
+                            `}
+                          >
+                            <Heart className="w-4 h-4" fill={likedJournals.has(journal._id) ? 'currentColor' : 'none'} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleSave(journal._id);
+                            }}
+                            className={`
+                              p-2 rounded-full transition-colors
+                              ${savedJournals.has(journal._id) 
+                                ? 'bg-blue-500 text-white' 
+                                : 'bg-white/20 text-white hover:bg-white/30'
+                              }
+                            `}
+                          >
+                            <BookOpen className="w-4 h-4" fill={savedJournals.has(journal._id) ? 'currentColor' : 'none'} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  ))}
+                    
+                    {/* Click Overlay */}
+                    <a
+                      href={`/journals/${journal.author?.anonymousName || 'anonymous'}/${journal.slug}`}
+                      className="absolute inset-0 z-20"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = `/journals/${journal.author?.anonymousName || 'anonymous'}/${journal.slug}`;
+                      }}
+                    />
+                  </div>
+                );
+              })}
+              
+              {/* Fill empty slots if less than 3 journals */}
+              {featuredJournals.length < 3 && (
+                <div className="hidden lg:block bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center">
+                  <div className="text-center text-gray-400">
+                    <BookOpen className="w-8 h-8 mx-auto mb-2" />
+                    <p className="text-sm">More journals coming soon</p>
+                  </div>
                 </div>
               )}
+            </div>
+          </section>
+        )}
 
-              <LoadMoreButton
-                loadingMore={loadingMore}
-                hasMore={hasMore}
-                onLoadMore={handleLoadMore}
-                category={category}
-              />
-            </main>
-
-            <aside className="hidden md:block md:col-span-4">
-              <Sidebar
-                onTopicClick={handleTopicClick}
-                onWriterClick={handleWriterClick}
-                isLoggedIn={isLoggedIn}
-                category={category}
-              />
-            </aside>
+        {/* Latest Journals Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-6">
+            <Clock className="w-5 h-5 text-blue-500" />
+            <h2 className="text-2xl font-bold text-gray-900">
+              {selectedTag ? `Journals tagged "${selectedTag}"` : 'Latest Journals'}
+            </h2>
           </div>
-        </div>
+          
+          {latestJournals.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No journals found.</p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                {latestJournals.map((journal) => (
+                  <JournalCard
+                    key={journal._id}
+                    journal={journal}
+                    onLike={handleLike}
+                    onSave={handleSave}
+                    isLiked={likedJournals.has(journal._id)}
+                    isSaved={savedJournals.has(journal._id)}
+                  />
+                ))}
+              </div>
+
+              {/* Load More Button */}
+              {hasMore && (
+                <div className="text-center mt-8">
+                  <button
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                  >
+                    {loadingMore ? 'Loading...' : 'Load More'}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </section>
       </div>
-    </>
+      {modals}
+    </div>
   );
 };
 

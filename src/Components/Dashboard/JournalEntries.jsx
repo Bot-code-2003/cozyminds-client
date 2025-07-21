@@ -5,7 +5,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useDarkMode } from "../../context/ThemeContext";
 import Navbar from "./Navbar";
-import JournalCard from "../PublicJournals/PublicJournalCard.jsx";
+import JournalCard from "../PublicJournals/PublicStoryCard.jsx";
 import { logout, getWithExpiry } from "../../utils/anonymousName";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });

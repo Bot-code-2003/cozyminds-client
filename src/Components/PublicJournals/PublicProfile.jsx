@@ -12,7 +12,7 @@ import {
   Share2,
   MapPin,
 } from "lucide-react";
-import PublicJournalCard from "../PublicJournals/PublicJournalCard";
+import PublicStoryCard from "../PublicJournals/PublicStoryCard";
 import Navbar from "../Dashboard/Navbar";
 import LandingNavbar from "../Landing/Navbar";
 import AuthModals from "../Landing/AuthModals";
@@ -290,7 +290,7 @@ const JournalsSection = ({ journals, onLike, onShare, onSave, currentUser }) => 
       transition={{ duration: 0.5, delay: 0.2 }}
     >
       {journals.map((journal) => (
-        <PublicJournalCard
+        <PublicStoryCard
           key={journal._id}
           journal={journal}
           onLike={() => onLike(journal._id)}

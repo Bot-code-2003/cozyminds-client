@@ -56,8 +56,6 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
 
   const navigationItems = [
-    { name: "Home", path: "/", icon: <Home size={16} /> },
-    { name: "About", path: "/aboutus", icon: <Info size={16} /> },
     { name: "Journals", path: "/journals", icon: <BookOpen size={16} /> },
     { name: "Stories", path: "/stories", icon: <Sparkles size={16} /> },
   ];
@@ -113,12 +111,8 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
         className="flex items-center group cursor-pointer"
         aria-label="Go to homepage"
       >
-        <div className="h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ease-out shadow-md text-2xl">
-          <span role="img" aria-label="Starlit Journals" style={{ fontSize: '1.7rem', lineHeight: 1 }}>🌠</span>
-        </div>
-        <div className="text-xl font-semibold tracking-tight flex items-baseline">
-          <span className="text-[var(--accent)]">Starlit</span>
-          <span className="text-gray-800 dark:text-white ml-1 opacity-80">Journals</span>
+        <div className="text-xl font-semibold tracking-tight">
+          <span className="text-gray-900 dark:text-white">Starlit Journals</span>
         </div>
       </button>
 
@@ -128,17 +122,18 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
             <button
               key={item.name}
               onClick={() => handleNavigation(item.path)}
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-600 dark:text-gray-300"
             >
               {item.icon}
               <span className="ml-2">{item.name}</span>
             </button>
           ))}
         </div>
-        <div className="flex items-center space-x-2">
+        
+        <div className="flex items-center space-x-3">
           <button
             onClick={toggleDarkMode}
-            className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
           >
             {darkMode ? (
@@ -147,29 +142,30 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
               <Moon size={16} className="text-gray-600 dark:text-gray-400" />
             )}
           </button>
+          
           {currentUser ? (
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 aria-label="Open user menu"
                 aria-expanded={dropdownOpen}
               >
                 <img
                   src={getAvatarSvg(currentUser.profileTheme?.avatarStyle || 'avataaars', currentUser.anonymousName || currentUser.nickname || currentUser.email)}
                   alt="User Avatar"
-                  className="w-8 h-8 rounded-full mr-2"
+                  className="w-6 h-6 rounded-full mr-2"
                 />
                 <span className="text-gray-900 dark:text-white font-medium text-sm mr-1">
                   {currentUser.nickname || currentUser.anonymousName || currentUser.email || "User"}
                 </span>
                 <ChevronDown
-                  size={16}
-                  className={`text-gray-600 dark:text-gray-400 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                  size={14}
+                  className={`text-gray-500 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
                 />
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-900/10 dark:border-white/10 py-1 z-10">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1">
                   <button
                     onClick={() => handleNavigation("/profile")}
                     className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -195,20 +191,18 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
               )}
             </div>
           ) : (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <button
                 onClick={openLoginModal}
-                className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
-                <LogIn size={16} className="mr-2" />
-                Login
+                Sign in
               </button>
               <button
                 onClick={openSignupModal}
-                className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-800"
               >
-                <UserPlus size={16} className="mr-2" />
-                Sign Up
+                Get Started
               </button>
             </div>
           )}
@@ -218,77 +212,78 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
       <div className="lg:hidden flex items-center">
         <button
           onClick={toggleMobileMenu}
-          className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-colors mobile-menu-button"
+          className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 mobile-menu-button"
           aria-label="Open menu"
         >
-          <Menu size={24} className="text-gray-700 dark:text-gray-300" />
+          <Menu size={20} className="text-gray-700 dark:text-gray-300" />
         </button>
       </div>
 
       {mobileMenuOpen && (
         <div
           ref={mobileMenuRef}
-          className="lg:hidden fixed inset-0 bg-black/40 z-[1000]"
+          className="lg:hidden fixed inset-0 bg-black/50 z-[1000]"
           onClick={() => setMobileMenuOpen(false)}
         >
           <div
-            className="fixed inset-y-0 left-0 w-4/5 max-w-sm bg-white dark:bg-gray-900 p-6 space-y-4 shadow-xl"
+            className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="font-semibold text-lg">Menu</h3>
+            <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700 mb-6">
+              <h3 className="font-medium text-gray-900 dark:text-white">Menu</h3>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10"
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
                 aria-label="Close menu"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1 mb-6">
               {navigationItems.map((item) => (
                 <button
                   key={item.name}
                   onClick={() => handleNavigation(item.path)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                  className="w-full flex items-center px-3 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
                 >
                   {item.icon}
-                  {item.name}
+                  <span className="ml-3">{item.name}</span>
                 </button>
               ))}
             </div>
 
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-1">
               <button
                 onClick={toggleDarkMode}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                className="w-full flex items-center px-3 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
               >
-                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                {darkMode ? 'Light Mode' : 'Dark Mode'}
+                {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+                <span className="ml-3">{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
               </button>
+              
               {currentUser ? (
                 <>
                   <button
                     onClick={() => handleNavigation("/profile")}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                    className="w-full flex items-center px-3 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
                   >
-                    <User size={18} />
-                    Profile
+                    <User size={16} />
+                    <span className="ml-3">Profile</span>
                   </button>
                   <button
                     onClick={() => handleNavigation("/profile-settings")}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                    className="w-full flex items-center px-3 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
                   >
-                    <Settings size={18} />
-                    Settings
+                    <Settings size={16} />
+                    <span className="ml-3">Settings</span>
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium"
+                    className="w-full flex items-center px-3 py-2 rounded-md text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium"
                   >
-                    <LogOut size={18} />
-                    Logout
+                    <LogOut size={16} />
+                    <span className="ml-3">Logout</span>
                   </button>
                 </>
               ) : (
@@ -298,20 +293,20 @@ const Navbar = ({ isScrolled, user, openLoginModal, openSignupModal }) => {
                       setMobileMenuOpen(false);
                       openLoginModal();
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                    className="w-full flex items-center px-3 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
                   >
-                    <LogIn size={18} />
-                    Login
+                    <LogIn size={16} />
+                    <span className="ml-3">Login</span>
                   </button>
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       openSignupModal();
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] font-medium"
+                    className="w-full flex items-center px-3 py-2 bg-black text-white rounded-md hover:bg-gray-800 font-medium"
                   >
-                    <UserPlus size={18} />
-                    Sign Up
+                    <UserPlus size={16} />
+                    <span className="ml-3">Sign Up</span>
                   </button>
                 </>
               )}

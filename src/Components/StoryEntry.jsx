@@ -27,7 +27,7 @@ import {
   shapes,
   thumbs,
 } from "@dicebear/collection";
-import JournalCard from "./PublicJournals/PublicJournalCard";
+import JournalCard from "./PublicJournals/PublicStoryCard";
 import Comments from "./PublicJournals/Comments";
 import "./styles/JournalContent.css";
 import { Helmet } from "react-helmet";

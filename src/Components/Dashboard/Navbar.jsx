@@ -20,6 +20,7 @@ import {
   Users,
   Bookmark,
   Sparkles, // Add Sparkles for Stories
+  LayoutDashboard
 } from "lucide-react";
 import InGameMail from "./Mail/InGameMail";
 import { useDarkMode } from "../../context/ThemeContext";
@@ -139,6 +140,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   const currentUser = getCurrentUser();
 
   const navigationItems = [
+    
     { name: "Journals", path: "/journals", icon: <BookOpen size={16} /> },
     { name: "Stories", path: "/stories", icon: <Sparkles size={16} /> },
     { name: "Saved", path: "/saved-entries", icon: <Bookmark size={16} /> },
