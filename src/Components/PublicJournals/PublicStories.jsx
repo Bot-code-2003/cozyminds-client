@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Clock, Heart, Eye, BookOpen } from 'lucide-react';
+import { Clock, Heart, MessageSquare, BookOpen } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import JournalCard, { JournalCardSkeleton } from './PublicStoryCard';
 import AuthModals from "../Landing/AuthModals";
@@ -11,7 +12,7 @@ import {
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
-// Avatar logic copied from PublicStoryCard
+// Avatar logic
 const avatarStyles = {
   avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
 };
@@ -21,30 +22,30 @@ const getAvatarSvg = (style, seed) => {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
-// Hero Section Component
-const HeroSection = () => {
-  return (
-    <div className="bg-white border-b border-gray-200 py-8">
-      <div className="max-w-4xl mx-auto px-4 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">
-          Dive into worlds imagined by our writers
-        </h1>
-        <p className="text-gray-600">
-          Short, strange, sweet — find your next favorite story
-        </p>
-      </div>
-    </div>
-  );
-};
-
 // Tag Filter Component
 const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
+  const navigate = useNavigate();
+  
+  const handleTagClick = (tag) => {
+    if (tag) {
+      navigate(`/tag/${tag.toLowerCase()}`, {
+        state: {
+          contentType: 'stories',
+          selectedTag: tag, // Pass the selected tag in state
+        },
+      });
+    } else {
+      navigate('/public', { state: { contentType: 'stories' } }); // Navigate to public stories when "All" is clicked
+      onTagSelect(null);
+    }
+  };
+
   return (
     <div className="bg-white border-b border-gray-200 py-4">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center gap-2 overflow-x-auto pb-2">
           <button
-            onClick={() => onTagSelect(null)}
+            onClick={() => handleTagClick(null)}
             className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
               !selectedTag 
                 ? 'bg-blue-600 text-white' 
@@ -56,10 +57,10 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
           {tags.map((tag) => (
             <button
               key={tag}
-              onClick={() => onTagSelect(tag)}
+              onClick={() => handleTagClick(tag)}
               className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
-                selectedTag === tag 
-                  ? 'bg-blue-600 text-white' 
+                selectedTag === tag
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -87,7 +88,18 @@ const PublicStories = () => {
 
   const popularTags = ['Fantasy', 'Horror', 'Science Fiction', 'Romance', 'Mystery', 'Adventure', 'Drama', 'Comedy'];
   const { darkMode } = useDarkMode();
-  const { modals, openLoginModal } = AuthModals({ darkMode });
+  const { modals } = AuthModals({ darkMode });
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Sync selectedTag with route state
+  useEffect(() => {
+    const tagFromRoute = location.state?.selectedTag || null;
+    if (tagFromRoute !== selectedTag) {
+      setSelectedTag(tagFromRoute);
+      setPage(1); // Reset page when tag changes
+    }
+  }, [location.state, selectedTag]);
 
   const getCurrentUser = () => {
     try {
@@ -120,7 +132,7 @@ const PublicStories = () => {
         page: pageNum,
         limit: 12,
         sort: '-createdAt',
-        category: 'story'
+        category: 'story',
       };
 
       if (selectedTag) {
@@ -244,12 +256,6 @@ const PublicStories = () => {
     }
   }, [savedStories]);
 
-  // Handle tag selection
-  const handleTagSelect = useCallback((tag) => {
-    setSelectedTag(tag);
-    setPage(1);
-  }, []);
-
   // Load more stories
   const loadMore = useCallback(() => {
     if (hasMore && !loadingMore) {
@@ -257,17 +263,16 @@ const PublicStories = () => {
     }
   }, [hasMore, loadingMore, page, fetchLatestStories]);
 
-  // Initial load
+  // Initial load and tag change
   useEffect(() => {
     fetchFeaturedStories();
-    fetchLatestStories();
+    fetchLatestStories(1, false);
   }, [fetchFeaturedStories, fetchLatestStories]);
 
   if (loading && !loadingMore) {
     return (
       <div className="min-h-[50vh] bg-gray-50">
-        <HeroSection />
-        <TagFilters tags={popularTags} selectedTag={selectedTag} onTagSelect={handleTagSelect} />
+        <TagFilters tags={popularTags} selectedTag={selectedTag} onTagSelect={setSelectedTag} />
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => <JournalCardSkeleton key={i} />)}
@@ -287,7 +292,7 @@ const PublicStories = () => {
           <button
             onClick={() => {
               setError(null);
-              fetchLatestStories();
+              fetchLatestStories(1, false);
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -300,9 +305,8 @@ const PublicStories = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <HeroSection />
-      <TagFilters tags={popularTags} selectedTag={selectedTag} onTagSelect={handleTagSelect} />
+    <div className="min-h-screen bg-white">
+      <TagFilters tags={popularTags} selectedTag={selectedTag} onTagSelect={setSelectedTag} />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Featured Stories Section */}
@@ -315,164 +319,151 @@ const PublicStories = () => {
             
             {/* Bento Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-auto lg:h-[600px]">
-  {featuredStories.map((story, index) => {
-    const isLarge = index === 0;
-    const isMedium = index === 1;
-    // Thumbnail logic: fallback to first image in content
-    let thumbnail = story.thumbnail;
-    if (!thumbnail && story.content) {
-      try {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = story.content;
-        const img = tempDiv.querySelector("img");
-        thumbnail = img?.src || null;
-      } catch {}
-    }
-    // Author avatar logic
-    const avatarStyle = story.author?.profileTheme?.avatarStyle || "avataaars";
-    const avatarSeed = story.author?.anonymousName || "Anonymous";
-    const avatarUrl = getAvatarSvg(avatarStyle, avatarSeed);
-    
-    return (
-      <div
-        key={story._id}
-        className={`
-          group rounded-lg relative overflow-hidden bg-gray-900 border border-gray-800 hover:shadow-lg transition-all duration-300
-          ${isLarge ? 'md:col-span-2 md:row-span-2' : ''}
-          ${isMedium ? 'lg:col-span-2' : ''}
-        `}
-      >
-        {/* Background Image */}
-        {thumbnail && (
-          <div className="absolute inset-0">
-            <img
-              src={thumbnail}
-              alt=""
-              className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          </div>
-        )}
-        
-        {/* Content Overlay */}
-        <div className={`
-          relative z-10 p-6 h-full flex flex-col justify-between text-white
-          ${isLarge ? 'p-8' : 'p-6'}
-        `}>
-          {/* Top Section */}
-          <div>
-            {/* Author Info */}
-            <div className="flex items-center gap-2 mb-3">
-              <img
-                src={avatarUrl}
-                alt=""
-                className="w-6 h-6 rounded-full border border-white/20"
-              />
-              <span className="text-sm font-medium text-white/90">
-                {story.author?.anonymousName || 'Anonymous'}
-              </span>
-            </div>
-            
-            {/* Title */}
-            <h3 className={`
-              font-bold leading-tight mb-2 line-clamp-3 text-white
-              ${isLarge ? 'text-2xl' : 'text-lg'}
-            `}>
-              {story.title}
-            </h3>
-            
-            {/* Preview Text - Only for large card */}
-            {isLarge && (
-              <p className="text-sm leading-relaxed line-clamp-3 mb-4 text-white/80">
-                {story.metaDescription || 
-                 (story.content ? 
-                   story.content.replace(/<[^>]*>/g, '').substring(0, 120) + '...' : 
-                   'No preview available'
-                 )
+              {featuredStories.map((story, index) => {
+                const isLarge = index === 0;
+                const isMedium = index === 1;
+                let thumbnail = story.thumbnail;
+                if (!thumbnail && story.content) {
+                  try {
+                    const tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = story.content;
+                    const img = tempDiv.querySelector("img");
+                    thumbnail = img?.src || null;
+                  } catch {}
                 }
-              </p>
-            )}
-          </div>
-          
-          {/* Bottom Section */}
-          <div className="flex items-center justify-between">
-            {/* Stats */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <Heart className="w-4 h-4 text-white/80" />
-                <span className="text-sm text-white/80">
-                  {story.likeCount || 0}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Eye className="w-4 h-4 text-white/80" />
-                <span className="text-sm text-white/80">
-                  {story.commentCount || 0}
-                </span>
-              </div>
+                const avatarStyle = story.author?.profileTheme?.avatarStyle || "avataaars";
+                const avatarSeed = story.author?.anonymousName || "Anonymous";
+                const avatarUrl = getAvatarSvg(avatarStyle, avatarSeed);
+                
+                return (
+                  <div
+                    key={story._id}
+                    className={`
+                      group rounded-lg relative overflow-hidden bg-gray-900 border border-gray-800 hover:shadow-lg transition-all duration-300
+                      ${isLarge ? 'md:col-span-2 md:row-span-2' : ''}
+                      ${isMedium ? 'lg:col-span-2' : ''}
+                    `}
+                  >
+                    {thumbnail && (
+                      <div className="absolute inset-0">
+                        <img
+                          src={thumbnail}
+                          alt=""
+                          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      </div>
+                    )}
+                    
+                    <div className={`
+                      relative z-10 p-6 h-full flex flex-col justify-between text-white
+                      ${isLarge ? 'p-8' : 'p-6'}
+                    `}>
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <img
+                            src={avatarUrl}
+                            alt=""
+                            className="w-6 h-6 rounded-full border border-white/20"
+                          />
+                          <span className="text-sm font-medium text-white/90">
+                            {story.author?.anonymousName || 'Anonymous'}
+                          </span>
+                        </div>
+                        
+                        <h3 className={`
+                          font-bold leading-tight mb-2 line-clamp-3 text-white
+                          ${isLarge ? 'text-2xl' : 'text-lg'}
+                        `}>
+                          {story.title}
+                        </h3>
+                        
+                        {isLarge && (
+                          <p className="text-sm leading-relaxed line-clamp-3 mb-4 text-white/80">
+                            {story.metaDescription || 
+                             (story.content ? 
+                               story.content.replace(/<[^>]*>/g, '').substring(0, 120) + '...' : 
+                               'No preview available'
+                             )
+                            }
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-1">
+                            <Heart className="w-4 h-4 text-white/80" />
+                            <span className="text-sm text-white/80">
+                              {story.likeCount || 0}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <MessageSquare className="w-4 h-4 text-white/80" />
+                            <span className="text-sm text-white/80">
+                              {story.commentCount || 0}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleLike(story);
+                            }}
+                            className={`
+                              p-2 rounded-full transition-colors
+                              ${likedStories.has(story._id) 
+                                ? 'bg-red-500 text-white' 
+                                : 'bg-white/20 text-white hover:bg-white/30'
+                              }
+                            `}
+                          >
+                            <Heart className="w-4 h-4" fill={likedStories.has(story._id) ? 'currentColor' : 'none'} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleSave(story._id);
+                            }}
+                            className={`
+                              p-2 rounded-full transition-colors
+                              ${savedStories.has(story._id) 
+                                ? 'bg-blue-500 text-white' 
+                                : 'bg-white/20 text-white hover:bg-white/30'
+                              }
+                            `}
+                          >
+                            <BookOpen className="w-4 h-4" fill={savedStories.has(story._id) ? 'currentColor' : 'none'} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <a
+                      href={`/${story.author?.anonymousName || 'anonymous'}/${story.slug}`}
+                      className="absolute inset-0 z-20"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = `/${story.author?.anonymousName || 'anonymous'}/${story.slug}`;
+                      }}
+                    />
+                  </div>
+                );
+              })}
+              
+              {featuredStories.length < 3 && (
+                <div className="hidden lg:block bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center">
+                  <div className="text-center text-gray-400">
+                    <BookOpen className="w-8 h-8 mx-auto mb-2" />
+                    <p className="text-sm">More stories coming soon</p>
+                  </div>
+                </div>
+              )}
             </div>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleLike(story);
-                }}
-                className={`
-                  p-2 rounded-full transition-colors
-                  ${likedStories.has(story._id) 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-white/20 text-white hover:bg-white/30'
-                  }
-                `}
-              >
-                <Heart className="w-4 h-4" fill={likedStories.has(story._id) ? 'currentColor' : 'none'} />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleSave(story._id);
-                }}
-                className={`
-                  p-2 rounded-full transition-colors
-                  ${savedStories.has(story._id) 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-white/20 text-white hover:bg-white/30'
-                  }
-                `}
-              >
-                <BookOpen className="w-4 h-4" fill={savedStories.has(story._id) ? 'currentColor' : 'none'} />
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        {/* Click Overlay */}
-        <a
-          href={`/stories/${story.author?.anonymousName || 'anonymous'}/${story.slug}`}
-          className="absolute inset-0 z-20"
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.href = `/stories/${story.author?.anonymousName || 'anonymous'}/${story.slug}`;
-          }}
-        />
-      </div>
-    );
-  })}
-  
-  {/* Fill empty slots if less than 3 stories */}
-  {featuredStories.length < 3 && (
-    <div className="hidden lg:block bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center">
-      <div className="text-center text-gray-400">
-        <BookOpen className="w-8 h-8 mx-auto mb-2" />
-        <p className="text-sm">More stories coming soon</p>
-      </div>
-    </div>
-  )}
-</div>
           </section>
         )}
 
@@ -504,7 +495,6 @@ const PublicStories = () => {
                 ))}
               </div>
 
-              {/* Load More Button */}
               {hasMore && (
                 <div className="text-center mt-8">
                   <button

@@ -30,6 +30,7 @@ import "./index.css";
 import StoryEntry from "./Components/StoryEntry";
 import PublicStories from "./Components/PublicJournals/PublicStories";
 import Public from "./Components/Public";
+import TagEntries from "./Components/PublicJournals/TagEntries";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -80,9 +81,9 @@ const App = () => {
                   <Routes>
                     <Route
                       path="/"
-                      element={user ? <Dashboard /> : <LandingPage />}
+                      element={user ? <Public /> : <LandingPage />}
                     />
-                    <Route path="/public" element={<Public />} />
+                    <Route path="/tag/:tag" element={<TagEntries />} />
                     <Route path="/journal/:id" element={<JournalEntry />} />
                     <Route
                       path="/journal-entries/:collection"
@@ -96,24 +97,16 @@ const App = () => {
                       element={<ProfileSettings />}
                     />
                     <Route path="/sitemaster" element={<SiteMaster />} />
-                    <Route path="/journals" element={<PublicJournals />} />
-                    <Route path="/stories" element={<PublicStories />} />
+                    
                     <Route
-                      path="/journals/:anonymousName/:slug"
-                      element={<JournalEntry />}
-                    />
-                    <Route
-                      path="/stories/:anonymousName/:slug"
+                      path="/:anonymousName/:slug"
                       element={<StoryEntry />}
                     />
                     <Route
-                      path="/stories/:anonymousName"
+                      path="/:anonymousName"
                       element={<PublicProfile />}
                     />
-                    <Route
-                      path="/journals/:anonymousName"
-                      element={<PublicProfile />}
-                    />
+                    
                     <Route
                       path="/subscriptions"
                       element={<SubscriptionsView />}

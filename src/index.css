@@ -72,7 +72,7 @@
 
 /* Reset for sharp corners */
 * {
-  border-radius: 4px !important;
+  /* border-radius: 4px !important; */
   font-family: "SF Pro Display", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
@@ -82,6 +82,31 @@
 
 button:hover {
   cursor: pointer;
+}
+
+.newsreader {
+  font-family: "Newsreader", serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+.epilogue {
+  font-family: "Epilogue", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+.roboto> {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 :root {
@@ -95,9 +120,9 @@ button:hover {
   --text-secondary: #5a6b7b;      /* Calm blue-gray */
   --text-journal-title: #1a2533;  /* Even deeper for titles */
 
-  --accent: #2563EB;              /* Modern blue accent */
+  --accent: #000000;              /* Modern blue accent */
   --accent-rgb: 58, 125, 216;
-  --accent-hover: #1c58d9;
+  --accent-hover: #21242a;
   --accent-light: #b3d4fc;        /* Soft sky blue */
   --accent-light-hover: #a0c4e8;
 

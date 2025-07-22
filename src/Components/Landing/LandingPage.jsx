@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import AuthModals from "./AuthModals";
 import LoginModal from "./LoginModal";
 import SignupModal from "./SignupModal";
@@ -25,19 +24,19 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7eee0] text-black font-serif">
+    <div className="min-h-screen bg-[#f7eee0] text-black relative overflow-hidden">
       {/* Navigation */}
-      <nav className="border-b border-gray-500">
-        <div className="max-w-7xl mx-auto px-6">
+      <nav className="relative z-10 border-b border-gray-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="text-2xl font-semibold font-">
+            <div className="flex items-center">
+              <div className="text-2xl sm:text-3xl font-semibold">
                 Starlit Journals
               </div>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
               <a
                 href="#"
                 className="text-gray-700 hover:text-black transition-colors text-sm"
@@ -77,7 +76,7 @@ const LandingPage = () => {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className="md:hidden border-t border-gray-500 py-4">
+            <div className="md:hidden border-t border-gray-500 py-4 bg-[#f7eee0]">
               <div className="flex flex-col space-y-3">
                 <a
                   href="#"
@@ -109,39 +108,44 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-200px)]">
-          {/* Left Content */}
-          <div className="lg:pr-16">
-            <h1 className="text-7xl font-serif  lg:text-8xl font-normal leading-tight mb-8 text-black">
-              Anonymous
-              <br />
-              stories & journals
-            </h1>
-            <p className="text-xl text-gray-700 mb-12 leading-relaxed max-w-lg">
-              A place to read, write, and share authentic experiences without
-              revealing who you are
-            </p>
-
-            <Link
-              to={"/public"}
-              className="bg-black text-white px-12 py-3 rounded-full text-lg hover:bg-gray-800 transition-colors"
-            >
-              Start Reading
-            </Link>
+      {/* Main Content Container */}
+      <div className="relative min-h-[calc(100vh-120px)] flex items-center">
+        {/* Background Image - Only visible on large screens */}
+        <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-1/2 xl:w-2/5">
+          <div className="relative h-full flex items-center justify-center">
+            <img src="/absr.png" alt="" className="max-w-full h-auto" />
           </div>
-          {/* Right Content - Simple Illustration */}
-          <div className="hidden lg:flex justify-center items-center">
-            <img src="/absr.png" alt="" />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:w-1/2 xl:w-3/5 py-12 sm:py-16 lg:py-20">
+            <div className="text-left">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-normal leading-[0.9] mb-6 sm:mb-8 text-black tracking-tight">
+                Anonymous
+                <br />
+                stories & ideas
+              </h1>
+              <p className="text-lg sm:text-xl lg:text-2xl text-black/80 mb-8 sm:mb-10 lg:mb-12 leading-relaxed max-w-md font-light">
+                A place to read, write, and share authentic experiences without
+                revealing who you are
+              </p>
+
+              <button
+                onClick={openLoginModal}
+                className="bg-black text-white px-8 sm:px-10 lg:px-12 py-3 lg:py-4 rounded-full text-base sm:text-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 font-light"
+              >
+                Start reading
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-500 mt-16">
-        <div className="max-w-7xl mx-auto py-4">
-          <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-600">
+      <footer className="relative z-10 border-t border-gray-500 bg-[#f7eee0]">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-gray-600">
             <a href="#" className="hover:text-black transition-colors">
               Help
             </a>

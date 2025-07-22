@@ -217,7 +217,7 @@ const JournalCard = ({
     <>
       <article className="group py-8 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
         <Link
-          to={`${prefix}/${authorProfile?.anonymousName || "anonymous"}/${journal.slug}`}
+          to={`/${authorProfile?.anonymousName || "anonymous"}/${journal.slug}`}
           className="block"
         >
           <div className="flex gap-6">

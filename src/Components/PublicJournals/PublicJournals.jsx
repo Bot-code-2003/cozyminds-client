@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Clock, Heart, Eye, BookOpen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import JournalCard, { JournalCardSkeleton } from './PublicStoryCard';
 import AuthModals from "../Landing/AuthModals";
@@ -20,24 +21,16 @@ const getAvatarSvg = (style, seed) => {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
-// Hero Section Component
-const HeroSection = () => {
-  return (
-    <div className="bg-white border-b border-gray-200 py-8">
-      <div className="max-w-4xl mx-auto px-4 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">
-          Explore personal thoughts and reflections
-        </h1>
-        <p className="text-gray-600">
-          Real stories, honest thoughts, authentic experiences
-        </p>
-      </div>
-    </div>
-  );
-};
-
 // Tag Filter Component
 const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
+  const navigate = useNavigate();
+  
+  const handleTagClick = (tag) => {
+    if (tag) {
+      navigate(`/tag/${tag.toLowerCase()}`, { state: { contentType: 'journals' } });
+    }
+  };
+
   return (
     <div className="bg-white border-b border-gray-200 py-4">
       <div className="max-w-7xl mx-auto px-4">
@@ -55,12 +48,8 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
           {tags.map((tag) => (
             <button
               key={tag}
-              onClick={() => onTagSelect(tag)}
-              className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
-                selectedTag === tag 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              onClick={() => handleTagClick(tag)}
+              className="px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
             >
               {tag}
             </button>
@@ -243,7 +232,7 @@ const PublicJournals = () => {
     }
   }, [savedJournals]);
 
-  // Handle tag selection
+  // Handle tag selection (now just resets to show all)
   const handleTagSelect = useCallback((tag) => {
     setSelectedTag(tag);
     setPage(1);
@@ -265,7 +254,6 @@ const PublicJournals = () => {
   if (loading && !loadingMore) {
     return (
       <div className="min-h-[50vh] bg-gray-50">
-        <HeroSection />
         <TagFilters tags={popularTags} selectedTag={selectedTag} onTagSelect={handleTagSelect} />
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -300,7 +288,6 @@ const PublicJournals = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <HeroSection />
       <TagFilters tags={popularTags} selectedTag={selectedTag} onTagSelect={handleTagSelect} />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -451,11 +438,11 @@ const PublicJournals = () => {
                     
                     {/* Click Overlay */}
                     <a
-                      href={`/journals/${journal.author?.anonymousName || 'anonymous'}/${journal.slug}`}
+                      href={`/${journal.author?.anonymousName || 'anonymous'}/${journal.slug}`}
                       className="absolute inset-0 z-20"
                       onClick={(e) => {
                         e.preventDefault();
-                        window.location.href = `/journals/${journal.author?.anonymousName || 'anonymous'}/${journal.slug}`;
+                        window.location.href = `/${journal.author?.anonymousName || 'anonymous'}/${journal.slug}`;
                       }}
                     />
                   </div>

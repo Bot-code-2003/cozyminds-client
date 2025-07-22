@@ -339,28 +339,6 @@ const Comments = ({ journalId, onLoginRequired }) => {
     return authorName?.charAt(0).toUpperCase() || "A";
   };
 
-  // Get random gradient for avatar
-  const getAvatarGradient = (authorName) => {
-    if (!authorName) return "from-blue-500 to-purple-500";
-
-    const gradients = [
-      "from-blue-500 to-purple-500",
-      "from-green-500 to-blue-500",
-      "from-yellow-500 to-orange-500",
-      "from-pink-500 to-red-500",
-      "from-purple-500 to-pink-500",
-      "from-indigo-500 to-blue-500",
-      "from-red-500 to-orange-500",
-      "from-teal-500 to-green-500",
-    ];
-
-    // Use the sum of character codes to determine a consistent gradient
-    const charSum = authorName
-      .split("")
-      .reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    return gradients[charSum % gradients.length];
-  };
-
   // Format comment content to highlight mentions
   const formatCommentContent = (content) => {
     if (!content) return "";
@@ -412,9 +390,7 @@ const Comments = ({ journalId, onLoginRequired }) => {
         <form onSubmit={handleSubmitComment} className="space-y-4">
           <div className="flex gap-3 mt-2 mb-2">
             <div
-              className={`w-10 h-10 bg-gradient-to-br ${getAvatarGradient(
-                getCurrentUser()?.anonymousName || getCurrentUser()?.username
-              )} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
+              className={`w-10 h-10 bg-gradient-to-br rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
             >
               <img
                 src={getAvatarSvg(
@@ -485,9 +461,7 @@ const Comments = ({ journalId, onLoginRequired }) => {
               {/* Main Comment */}
               <div className="flex gap-3 mb-2 mt-2">
                 <div
-                  className={`w-10 h-10 bg-gradient-to-br ${getAvatarGradient(
-                    comment.authorName
-                  )} rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
+                  className={`w-10 h-10 bg-gradient-to-br  rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0`}
                 >
                   <img
                     src={getAvatarSvg(
@@ -645,10 +619,7 @@ const Comments = ({ journalId, onLoginRequired }) => {
                     <div className="mt-3 ml-4">
                       <div className="flex gap-2">
                         <div
-                          className={`w-8 h-8 bg-gradient-to-br ${getAvatarGradient(
-                            getCurrentUser()?.anonymousName ||
-                              getCurrentUser()?.username
-                          )} rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
+                          className={`w-8 h-8 bg-gradient-to-br  rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
                         >
                           <img
                             src={getAvatarSvg(
@@ -717,9 +688,7 @@ const Comments = ({ journalId, onLoginRequired }) => {
                     return (
                       <div key={reply._id} className="flex gap-3 mb-2 mt-2">
                         <div
-                          className={`w-8 h-8 bg-gradient-to-br ${getAvatarGradient(
-                            reply.authorName
-                          )} rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
+                          className={`w-8 h-8 bg-gradient-to-br  rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0`}
                         >
                           <img
                             src={getAvatarSvg(

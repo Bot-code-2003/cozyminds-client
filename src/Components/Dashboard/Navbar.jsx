@@ -141,10 +141,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
   const navigationItems = [
     
-    { name: "Journals", path: "/journals", icon: <BookOpen size={16} /> },
-    { name: "Stories", path: "/stories", icon: <Sparkles size={16} /> },
-    { name: "Saved", path: "/saved-entries", icon: <Bookmark size={16} /> },
-    { name: "Subscriptions", path: "/subscriptions", icon: <Users size={16} /> },
+    // { name: "Dashboard", path: "/dashboard", icon: <LayoutDashboard size={16} /> },
   ];
 
   return (
@@ -155,12 +152,10 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           className="flex items-center group cursor-pointer"
           aria-label="Go to homepage"
         >
-          <div className=" h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ease-out shadow-md text-2xl">
-            <span role="img" aria-label="Starlit Journals" style={{fontSize: '1.7rem', lineHeight: 1}}>🌠</span>
-          </div>
-          <div className="text-xl font-semibold tracking-tight flex items-baseline">
-            <span className="text-[var(--accent)]">Starlit</span>
-            <span className="text-gray-800 dark:text-white ml-1 opacity-80">Journals</span>
+
+          <div className="text-2xl font-bold tracking-tight flex items-baseline">
+            <span className="text-[var(--accent)] newsreader">Starlit</span>
+            <span className="text-gray-800 dark:text-white ml-1 newsreader opacity-80">Journals</span>
           </div>
         </button>
 

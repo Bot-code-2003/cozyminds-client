@@ -1,72 +1,96 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
-  Save,
   Trash2,
   Check,
   X,
-  Lock,
   User,
-  Mail,
-  Calendar,
-  ChevronLeft,
   Eye,
   EyeOff,
   Shield,
-  Settings,
-  AlertTriangle,
-  Users,
-  MapPin,
-  Award,
   BookOpen,
-  Flame,
+  Edit3,
+  Plus,
+  Users,
+  Calendar,
+  MapPin,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useDarkMode } from "../context/ThemeContext";
 import Navbar from "./Dashboard/Navbar";
 import { getWithExpiry, setWithExpiry, logout } from "../utils/anonymousName";
+import JournalCard, { JournalCardSkeleton } from "./PublicJournals/PublicStoryCard";
 import { createAvatar } from '@dicebear/core';
-import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
-import { motion } from "framer-motion";
+import {
+  avataaars,
+  bottts,
+  funEmoji,
+  miniavs,
+  croodles,
+  micah,
+  pixelArt,
+  adventurer,
+  bigEars,
+  bigSmile,
+  lorelei,
+  openPeeps,
+  personas,
+  rings,
+  shapes,
+  thumbs,
+} from '@dicebear/collection';
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
-// Map of avatar styles
-const avatarStyles = {
-  avataaars: avataaars,
-  bottts: bottts,
-  funEmoji: funEmoji,
-  miniavs: miniavs,
-  croodles: croodles,
-  micah: micah,
-  pixelArt: pixelArt,
-  adventurer: adventurer,
-  bigEars: bigEars,
-  bigSmile: bigSmile,
-  lorelei: lorelei,
-  openPeeps: openPeeps,
-  personas: personas,
-  rings: rings,
-  shapes: shapes,
-  thumbs: thumbs,
+// Real collection objects for avatar rendering
+const avatarCollections = {
+  avataaars,
+  bottts,
+  funEmoji,
+  miniavs,
+  croodles,
+  micah,
+  pixelArt,
+  adventurer,
+  bigEars,
+  bigSmile,
+  lorelei,
+  openPeeps,
+  personas,
+  rings,
+  shapes,
+  thumbs,
 };
 
-// Helper for generating avatar SVG
+// Friendly display names for UI
+const avatarLabels = {
+  avataaars: "Avataaars",
+  bottts: "Bottts",
+  funEmoji: "Fun Emoji",
+  miniavs: "Miniavs",
+  croodles: "Croodles",
+  micah: "Micah",
+  pixelArt: "Pixel Art",
+  adventurer: "Adventurer",
+  bigEars: "Big Ears",
+  bigSmile: "Big Smile",
+  lorelei: "Lorelei",
+  openPeeps: "Open Peeps",
+  personas: "Personas",
+  rings: "Rings",
+  shapes: "Shapes",
+  thumbs: "Thumbs",
+};
+
+// Actual avatar SVG generator
 const getAvatarSvg = (style, seed) => {
-  const collection = avatarStyles[style] || avataaars;
+  const collection = avatarCollections[style] || avataaars;
   const svg = createAvatar(collection, { seed }).toString();
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
-// Helper to pick a deterministic random avatar style based on a seed (anonymousName)
+// Helper to pick a deterministic avatar style
 const getDeterministicAvatarStyle = (seed) => {
-  const styles = [
-    'avataaars', 'bottts', 'funEmoji', 'miniavs', 'croodles', 'micah', 'pixelArt',
-    'adventurer', 'bigEars', 'bigSmile', 'lorelei', 'openPeeps', 'personas',
-    'rings', 'shapes', 'thumbs'
-  ];
+  const styles = Object.keys(avatarCollections);
   if (!seed) return styles[0];
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
@@ -76,15 +100,13 @@ const getDeterministicAvatarStyle = (seed) => {
   return styles[Math.abs(hash) % styles.length];
 };
 
-// When initializing DEFAULT_PROFILE_THEME, use the deterministic style if anonymousName is available
 const getDefaultProfileTheme = (anonymousName) => ({
   type: 'color',
-  value: '#b6e3f4',
+  value: '#000000',
   avatarStyle: getDeterministicAvatarStyle(anonymousName),
 });
 
 const ProfileSettings = () => {
-  const { darkMode, toggleDarkMode } = useDarkMode();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -107,14 +129,16 @@ const ProfileSettings = () => {
     new: false,
     confirm: false,
   });
-  const [editing, setEditing] = useState(false);
-  const [changingPwd, setChangingPwd] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [activeSection, setActiveSection] = useState("profile"); // profile, security, publicCard
+  const [activeSection, setActiveSection] = useState("profile");
+  const [journals, setJournals] = useState([]);
+  const [journalsLoading, setJournalsLoading] = useState(false);
+  const [profileTheme, setProfileTheme] = useState(null);
+  const [savedCard, setSavedCard] = useState(null);
   const [editingCard, setEditingCard] = useState(false);
-  const [profileTheme, setProfileTheme] = useState(getDefaultProfileTheme(form.anonymousName));
-  const [savedCard, setSavedCard] = useState(getDefaultProfileTheme(form.anonymousName));
+  const [likedJournals, setLikedJournals] = useState(new Set());
+  const [savedJournals, setSavedJournals] = useState(new Set());
 
   const navigate = useNavigate();
 
@@ -133,12 +157,20 @@ const ProfileSettings = () => {
           bio: user.bio || "",
           anonymousName: user.anonymousName || "",
         });
+        
+        // Initialize profile theme from user data
         if (user.profileTheme) {
           setProfileTheme(user.profileTheme);
           setSavedCard(user.profileTheme);
         } else {
-          setProfileTheme(getDefaultProfileTheme(user.anonymousName));
-          setSavedCard(getDefaultProfileTheme(user.anonymousName));
+          const defaultTheme = getDefaultProfileTheme(user.anonymousName);
+          setProfileTheme(defaultTheme);
+          setSavedCard(defaultTheme);
+        }
+
+        // Fetch journals if on journals tab
+        if (activeSection === "journals") {
+          fetchJournals(user._id);
         }
       } catch (e) {
         setError("Failed to load profile");
@@ -147,16 +179,36 @@ const ProfileSettings = () => {
       }
     };
     fetchData();
+  }, [navigate, activeSection]);
 
-    // Auto-clear messages after 5 seconds
-    if (error || success) {
-      const timer = setTimeout(() => {
-        setError(null);
-        setSuccess(null);
-      }, 5000);
-      return () => clearTimeout(timer);
+  const fetchJournals = async (userId) => {
+    setJournalsLoading(true);
+    try {
+      const response = await API.get(`/journals/${userId}`);
+      const journalsData = response.data.journals || [];
+      setJournals(journalsData);
+      
+      // Initialize liked and saved states
+      if (userData) {
+        const liked = new Set();
+        const saved = new Set(userData.savedEntries || []);
+        
+        journalsData.forEach(journal => {
+          if (journal.likes && journal.likes.includes(userData._id)) {
+            liked.add(journal._id);
+          }
+        });
+        
+        setLikedJournals(liked);
+        setSavedJournals(saved);
+      }
+    } catch (error) {
+      console.error("Failed to fetch journals:", error);
+      setError("Failed to load journals");
+    } finally {
+      setJournalsLoading(false);
     }
-  }, [navigate, error, success]);
+  };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -172,7 +224,6 @@ const ProfileSettings = () => {
       setWithExpiry("user", updated, 2 * 60 * 60 * 1000);
       setUserData(updated);
       setSuccess("Profile updated successfully");
-      setEditing(false);
     } catch (e) {
       setError("Update failed");
     } finally {
@@ -201,7 +252,6 @@ const ProfileSettings = () => {
       });
       setSuccess("Password changed successfully");
       setPasswords({ current: "", new: "", confirm: "" });
-      setChangingPwd(false);
     } catch (e) {
       setError("Password update failed");
     } finally {
@@ -220,26 +270,6 @@ const ProfileSettings = () => {
     }
   };
 
-  const cancelEditing = () => {
-    if (userData) {
-      setForm({
-        nickname: userData.nickname || "",
-        email: userData.email || "",
-        age: userData.age || "",
-        gender: userData.gender || "",
-        bio: userData.bio || "",
-        anonymousName: userData.anonymousName || "",
-      });
-    }
-    setEditing(false);
-  };
-
-  const cancelPasswordChange = () => {
-    setPasswords({ current: "", new: "", confirm: "" });
-    setShowPasswords({ current: false, new: false, confirm: false });
-    setChangingPwd(false);
-  };
-
   const togglePasswordVisibility = (field) => {
     setShowPasswords((prev) => ({
       ...prev,
@@ -248,576 +278,642 @@ const ProfileSettings = () => {
   };
 
   const handleSaveProfileCard = async () => {
-    const updated = {
-      ...userData,
-      profileTheme,
-    };
-    await API.put(`/user/${userData._id}`, { profileTheme });
-    setWithExpiry("user", updated, 2 * 60 * 60 * 1000);
-    setUserData(updated);
-    setSavedCard(profileTheme);
-    setSuccess("Profile card updated!");
-    setEditingCard(false);
+    try {
+      setSaving(true);
+      const updated = {
+        ...userData,
+        profileTheme,
+      };
+      await API.put(`/user/${userData._id}`, { profileTheme });
+      setWithExpiry("user", updated, 2 * 60 * 60 * 1000);
+      setUserData(updated);
+      setSavedCard(profileTheme);
+      setSuccess("Profile card updated successfully");
+      setEditingCard(false);
+    } catch (e) {
+      setError("Failed to update profile card");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLike = async (journal) => {
+    try {
+      const response = await API.post(`/journals/${journal._id}/like`, {
+        userId: userData._id,
+      });
+      
+      // Update the journal in the list
+      setJournals(prev => prev.map(j => 
+        j._id === journal._id 
+          ? { ...j, likeCount: response.data.likeCount }
+          : j
+      ));
+      
+      // Update liked state
+      setLikedJournals(prev => {
+        const newSet = new Set(prev);
+        if (response.data.isLiked) {
+          newSet.add(journal._id);
+        } else {
+          newSet.delete(journal._id);
+        }
+        return newSet;
+      });
+    } catch (error) {
+      console.error("Error liking journal:", error);
+      setError("Failed to like journal");
+    }
+  };
+
+  const handleSave = async (journalId, shouldSave) => {
+    try {
+      await API.post(`/journals/${journalId}/save`, {
+        userId: userData._id,
+      });
+      
+      // Update saved state
+      setSavedJournals(prev => {
+        const newSet = new Set(prev);
+        if (shouldSave) {
+          newSet.add(journalId);
+        } else {
+          newSet.delete(journalId);
+        }
+        return newSet;
+      });
+      
+      // Update user data in localStorage
+      const updatedUser = { ...userData };
+      if (shouldSave) {
+        updatedUser.savedEntries = [...(updatedUser.savedEntries || []), journalId];
+      } else {
+        updatedUser.savedEntries = (updatedUser.savedEntries || []).filter(id => id !== journalId);
+      }
+      setWithExpiry("user", updatedUser, 2 * 60 * 60 * 1000);
+      setUserData(updatedUser);
+    } catch (error) {
+      console.error("Error saving journal:", error);
+      setError("Failed to save journal");
+    }
   };
 
   const getBannerStyle = () => {
-    if (profileTheme.type === 'color') return { background: profileTheme.value };
+    if (!profileTheme) return { backgroundColor: '#000000' };
+    if (profileTheme.type === 'color') return { backgroundColor: profileTheme.value };
     if (profileTheme.type === 'gradient') return { background: profileTheme.value };
-    if (profileTheme.type === 'texture') return { background: `url(${profileTheme.value})` };
-    return {};
+    return { backgroundColor: '#000000' };
   };
 
-  // Dummy stats for preview (replace with real stats if available)
-  const previewStats = {
-    subscriberCount: userData?.subscriberCount || 0,
-    currentStreak: userData?.currentStreak || 0,
-    journalCount: userData?.journalCount || userData?.journals?.length || 0,
-    longestStreak: userData?.longestStreak || 0,
-    bio: form.bio,
-    anonymousName: form.anonymousName || userData?.anonymousName || "Anonymous",
-    createdAt: userData?.createdAt || new Date().toISOString(),
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
-  // Public Profile Card Preview (simplified ProfileHeader)
-  const PublicProfileCardPreview = () => (
-    <motion.div
-      className="bg-white dark:bg-slate-800 rounded-apple shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden mb-8"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* Cover/Header Background */}
-      <div
-        className="h-32 relative"
-        style={getBannerStyle()}
-      >
-        <div className="absolute inset-0 bg-black/20" />
-        {/* Edit button: visible in top-right on desktop, below header on mobile */}
-        <button
-          className="hidden sm:block absolute bottom-2 right-2 px-4 py-1 bg-[var(--accent)] z-20 text-white rounded shadow hover:bg-[var(--accent-hover)]"
-          onClick={() => {
-            setSavedCard(profileTheme);
-            setEditingCard(true);
-          }}
-        >Edit</button>
-      </div>
-      {/* Mobile Edit button below header */}
-      {/* {!editingCard && (
-        <button
-          className="block sm:hidden w-full mt-2 mb-4 px-4 py-3 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)] text-base font-semibold"
-          onClick={() => {
-            setSavedCard(profileTheme);
-            setEditingCard(true);
-          }}
-        >Edit Public Profile Card</button>
-      )} */}
-      <div className="px-6 sm:px-8 pb-8">
-        {/* Avatar and Basic Info */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 -mt-16 relative z-10">
-          {/* Avatar */}
-          <motion.div
-            className="w-32 h-32 rounded-apple flex items-center justify-center text-white text-4xl font-bold shadow-xl border-4 border-white dark:border-slate-800 flex-shrink-0 bg-white"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            style={{ overflow: 'hidden' }}
-          >
-            {/* Avatar SVG preview */}
-            <img
-              src={getAvatarSvg(profileTheme.avatarStyle || 'avataaars', form.anonymousName || userData?.anonymousName || 'Anonymous')}
-              alt="Avatar Preview"
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
-          {/* Name and Info */}
-          <div className="flex-1 min-w-0 pt-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                  {previewStats.anonymousName}
+  const truncateContent = (content, maxLength = 150) => {
+    if (content.length <= maxLength) return content;
+    return content.substring(0, maxLength) + "...";
+  };
+
+  // Public Profile Card Preview
+  const PublicProfileCardPreview = () => {
+    if (!profileTheme) return null;
+    
+    return (
+      <div className="space-y-12">
+        <div className="bg-white border border-gray-100 overflow-hidden">
+          {/* Cover/Header Background */}
+          <div
+            className="h-24 relative"
+            style={getBannerStyle()}
+          />
+          
+          <div className="px-8 pb-8">
+            {/* Avatar and Basic Info */}
+            <div className="flex items-end gap-6 -mt-12 relative z-10">
+              {/* Avatar */}
+              <div className="w-24 h-24 rounded-full flex items-center justify-center shadow-sm border-2 border-white flex-shrink-0 bg-white overflow-hidden">
+                <img
+                  src={getAvatarSvg(
+                    profileTheme.avatarStyle || userData?.profileTheme?.avatarStyle || 'avataaars', 
+                    form.anonymousName || userData?.anonymousName || 'Anonymous'
+                  )}
+                  alt="Avatar Preview"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Name and Info */}
+              <div className="flex-1 min-w-0 pt-2">
+                <h1 className="text-2xl font-normal text-black mb-1">
+                  {form.anonymousName || userData?.anonymousName || "Anonymous"}
                 </h1>
-                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>Joined {new Date(previewStats.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    <span>Community Member</span>
-                  </div>
+                <div className="flex items-center gap-3 text-xs text-gray-500">
+                  <span>Joined {new Date(userData?.createdAt || new Date()).toLocaleDateString("en-US", { year: "numeric", month: "long" })}</span>
                 </div>
               </div>
             </div>
+            
+            {/* Bio */}
+            {form.bio && (
+              <div className="mt-6">
+                <p className="text-gray-700 leading-relaxed text-sm">
+                  {form.bio}
+                </p>
+              </div>
+            )}
           </div>
         </div>
-        {/* Bio */}
-        {previewStats.bio && (
-          <motion.div
-            className="mt-6 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              {previewStats.bio}
-            </p>
-          </motion.div>
-        )}
-        {/* Stats Grid */}
-        <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-2">
-              <Users className="w-5 h-5" />
-              <span className="text-sm font-medium">Followers</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {previewStats.subscriberCount}
-            </p>
+        
+        {/* Customization Controls */}
+        {!editingCard ? (
+          <div>
+            <button
+              onClick={() => {
+                setSavedCard(profileTheme);
+                setEditingCard(true);
+              }}
+              className="text-sm text-black hover:text-gray-600 transition-colors underline"
+            >
+              Customize profile
+            </button>
           </div>
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4 rounded-xl border border-orange-200 dark:border-orange-800">
-            <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 mb-2">
-              <Flame className="w-5 h-5" />
-              <span className="text-sm font-medium">Streak</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {previewStats.currentStreak}
-              <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-1">days</span>
-            </p>
-          </div>
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl border border-green-200 dark:border-green-800">
-            <div className="flex items-center gap-2 text-green-600 dark:text-green-400 mb-2">
-              <BookOpen className="w-5 h-5" />
-              <span className="text-sm font-medium">Journals</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {previewStats.journalCount}
-            </p>
-          </div>
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl border border-purple-200 dark:border-purple-800">
-            <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-2">
-              <Award className="w-5 h-5" />
-              <span className="text-sm font-medium">Best Streak</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {previewStats.longestStreak}
-              <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-1">days</span>
-            </p>
-          </div>
-        </motion.div>
-        {/* Mobile Edit button below stats grid */}
-        {!editingCard && (
-          <button
-            className="block sm:hidden w-full mt-6 mb-4 px-4 py-3 bg-[var(--accent)] text-white rounded shadow hover:bg-[var(--accent-hover)] text-base font-semibold"
-            onClick={() => {
-              setSavedCard(profileTheme);
-              setEditingCard(true);
-            }}
-          >Edit Public Profile Card</button>
-        )}
-        {/* Edit controls */}
-        {editingCard && (
-          <div className="mt-8">
-            <h2 className="text-xl font-bold mb-2">Customize Your Public Profile Card</h2>
-            {/* Avatar Style Selection */}
-            <div className="mb-4 flex flex-col gap-2">
-              <label className="block font-medium mb-1">Avatar Style</label>
-              <div className="flex gap-2 flex-wrap">
-                {Object.keys(avatarStyles).map((style) => (
+        ) : (
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-lg font-normal text-black mb-6">Customize Profile</h3>
+              
+              {/* Avatar Style Selection */}
+              <div className="mb-8">
+                <label className="block text-sm text-gray-600 mb-4">Avatar Style</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {Object.keys(avatarCollections).map((key) => (
+                    <button
+                      key={key}
+                      className={`px-3 py-2 text-xs transition-colors ${
+                        profileTheme.avatarStyle === key
+                          ? 'bg-black text-white'
+                          : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                      }`}
+                      onClick={() => setProfileTheme({ ...profileTheme, avatarStyle: key })}
+                    >
+                      {avatarLabels[key]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Banner Style Selection */}
+              <div className="mb-8">
+                <label className="block text-sm text-gray-600 mb-4">Banner</label>
+                <div className="flex gap-3 mb-4">
                   <button
-                    key={style}
-                    className={`px-3 py-1 rounded ${profileTheme.avatarStyle === style ? 'bg-[var(--accent)] text-white' : 'bg-gray-200'}`}
-                    onClick={() => setProfileTheme({ ...profileTheme, avatarStyle: style })}
+                    className={`px-4 py-2 text-sm transition-colors ${
+                      profileTheme.type === 'color'
+                        ? 'bg-black text-white'
+                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setProfileTheme({ 
+                      ...profileTheme, 
+                      type: 'color', 
+                      value: profileTheme.type === 'color' ? profileTheme.value : '#000000' 
+                    })}
                   >
-                    {style}
+                    Color
                   </button>
-                ))}
+                  <button
+                    className={`px-4 py-2 text-sm transition-colors ${
+                      profileTheme.type === 'gradient'
+                        ? 'bg-black text-white'
+                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setProfileTheme({ 
+                      ...profileTheme, 
+                      type: 'gradient', 
+                      value: profileTheme.type === 'gradient' ? profileTheme.value : 'linear-gradient(90deg, #000000 0%, #666666 100%)' 
+                    })}
+                  >
+                    Gradient
+                  </button>
+                </div>
+                
+                {profileTheme.type === 'color' && (
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={profileTheme.value}
+                      onChange={e => setProfileTheme({ ...profileTheme, value: e.target.value })}
+                      className="w-8 h-8 border border-gray-200 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={profileTheme.value}
+                      onChange={e => setProfileTheme({ ...profileTheme, value: e.target.value })}
+                      className="flex-1 px-0 py-2 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none text-sm"
+                      placeholder="#000000"
+                    />
+                  </div>
+                )}
+                
+                {profileTheme.type === 'gradient' && (
+                  <input
+                    type="text"
+                    value={profileTheme.value}
+                    onChange={e => setProfileTheme({ ...profileTheme, value: e.target.value })}
+                    className="w-full px-0 py-2 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none text-sm"
+                    placeholder="linear-gradient(90deg, #000000 0%, #666666 100%)"
+                  />
+                )}
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { 
+                    setProfileTheme(savedCard); 
+                    setEditingCard(false); 
+                  }}
+                  className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveProfileCard}
+                  disabled={saving}
+                  className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition-colors disabled:opacity-50 text-sm"
+                >
+                  {saving ? "Saving..." : "Save"}
+                </button>
               </div>
             </div>
-            {/* Banner Selection */}
-            <div className="mb-4 flex flex-col gap-2">
-              <label className="block font-medium mb-1">Banner Style</label>
-              <div className="flex gap-2">
-                <button
-                  className={`px-3 py-1 rounded ${profileTheme.type === 'color' ? 'bg-[var(--accent)] text-white' : 'bg-gray-200'}`}
-                  onClick={() => setProfileTheme({ ...profileTheme, type: 'color', value: profileTheme.type === 'color' ? profileTheme.value : '#b6e3f4' })}
-                >Color</button>
-                <button
-                  className={`px-3 py-1 rounded ${profileTheme.type === 'gradient' ? 'bg-[var(--accent)] text-white' : 'bg-gray-200'}`}
-                  onClick={() => setProfileTheme({ ...profileTheme, type: 'gradient', value: profileTheme.type === 'gradient' ? profileTheme.value : 'linear-gradient(90deg, #b6e3f4 0%, #fbc2eb 100%)' })}
-                >Gradient</button>
-                <button
-                  className={`px-3 py-1 rounded ${profileTheme.type === 'texture' ? 'bg-[var(--accent)] text-white' : 'bg-gray-200'}`}
-                  onClick={() => setProfileTheme({ ...profileTheme, type: 'texture', value: profileTheme.type === 'texture' ? profileTheme.value : '' })}
-                >Texture</button>
-              </div>
-              {profileTheme.type === 'color' && (
-                <input
-                  type="color"
-                  value={profileTheme.value}
-                  onChange={e => setProfileTheme({ ...profileTheme, type: 'color', value: e.target.value })}
-                  className="w-16 h-10 border rounded mt-2"
-                  style={{ cursor: 'pointer' }}
-                />
-              )}
-              {profileTheme.type === 'gradient' && (
-                <input
-                  type="text"
-                  value={profileTheme.value}
-                  onChange={e => setProfileTheme({ ...profileTheme, type: 'gradient', value: e.target.value })}
-                  className="w-full border rounded p-2 mt-2"
-                  placeholder="CSS gradient value"
-                />
-              )}
-              {profileTheme.type === 'texture' && (
-                <input
-                  type="text"
-                  value={profileTheme.value}
-                  onChange={e => setProfileTheme({ ...profileTheme, type: 'texture', value: e.target.value })}
-                  className="w-full border rounded p-2 mt-2"
-                  placeholder="Image URL for texture"
-                />
-              )}
-            </div>
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={handleSaveProfileCard}
-                className="px-4 py-2 bg-[var(--accent)] text-white rounded hover:bg-[var(--accent-hover)]"
-              >Save</button>
-              <button
-                onClick={() => { setProfileTheme(savedCard); setEditingCard(false); }}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-              >Cancel</button>
-            </div>
-            {success && <div className="text-green-600 mt-2">{success}</div>}
           </div>
         )}
       </div>
-    </motion.div>
-  );
-
-  const renderProfileSection = () => (
-    <div className="space-y-4 sm:space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-          Display Name
-        </label>
-        <input
-          type="text"
-          value={form.nickname}
-          onChange={(e) => setForm({ ...form, nickname: e.target.value })}
-          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-          placeholder="Enter your display name"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-          Anonymous Name
-        </label>
-        <input
-          type="text"
-          value={form.anonymousName}
-          onChange={(e) => setForm({ ...form, anonymousName: e.target.value })}
-          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-          placeholder="Enter your anonymous name"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-          Bio
-        </label>
-        <textarea
-          value={form.bio}
-          onChange={(e) => setForm({ ...form, bio: e.target.value })}
-          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 min-h-[80px] sm:min-h-[100px] resize-y text-sm sm:text-base"
-          placeholder="Tell us about yourself"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-          Email
-        </label>
-        <input
-          type="email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-          placeholder="Enter your email"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-            Age
-          </label>
-          <input
-            type="number"
-            value={form.age}
-            onChange={(e) => setForm({ ...form, age: e.target.value })}
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-            placeholder="Enter your age"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-            Gender
-          </label>
-          <select
-            value={form.gender}
-            onChange={(e) => setForm({ ...form, gender: e.target.value })}
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-          >
-            <option value="">Select gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderSecuritySection = () => (
-    <div className="space-y-4 sm:space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-          Current Password
-        </label>
-        <div className="relative">
-          <input
-            type={showPasswords.current ? "text" : "password"}
-            value={passwords.current}
-            onChange={(e) =>
-              setPasswords({ ...passwords, current: e.target.value })
-            }
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-            placeholder="Enter current password"
-          />
-          <button
-            type="button"
-            onClick={() => togglePasswordVisibility("current")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-          >
-            {showPasswords.current ? (
-              <EyeOff size={16} className="sm:w-5 sm:h-5" />
-            ) : (
-              <Eye size={16} className="sm:w-5 sm:h-5" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-          New Password
-        </label>
-        <div className="relative">
-          <input
-            type={showPasswords.new ? "text" : "password"}
-            value={passwords.new}
-            onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-            placeholder="Enter new password"
-          />
-          <button
-            type="button"
-            onClick={() => togglePasswordVisibility("new")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-          >
-            {showPasswords.new ? (
-              <EyeOff size={16} className="sm:w-5 sm:h-5" />
-            ) : (
-              <Eye size={16} className="sm:w-5 sm:h-5" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1 sm:mb-2">
-          Confirm New Password
-        </label>
-        <div className="relative">
-          <input
-            type={showPasswords.confirm ? "text" : "password"}
-            value={passwords.confirm}
-            onChange={(e) =>
-              setPasswords({ ...passwords, confirm: e.target.value })
-            }
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-apple border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[#E68A41] focus:border-transparent transition-all duration-200 text-sm sm:text-base"
-            placeholder="Confirm new password"
-          />
-          <button
-            type="button"
-            onClick={() => togglePasswordVisibility("confirm")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-          >
-            {showPasswords.confirm ? (
-              <EyeOff size={16} className="sm:w-5 sm:h-5" />
-            ) : (
-              <Eye size={16} className="sm:w-5 sm:h-5" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
-        <button
-          onClick={cancelPasswordChange}
-          className="w-full sm:w-auto px-4 sm:px-6 py-2 border border-[var(--border)] rounded-apple text-[var(--text-primary)] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-sm sm:text-base"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handlePwdChange}
-          disabled={saving}
-          className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-[#E68A41] text-white rounded-apple hover:bg-[#D67A31] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-        >
-          {saving ? "Saving..." : "Change Password"}
-        </button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-primary)]">
+      <div className="min-h-screen bg-white">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#E68A41] border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border border-gray-200 border-t-black"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)]">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+      <div className="max-w-2xl mx-auto px-6 py-16">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-2">
-            Profile Settings
-          </h1>
-          <p className="text-sm sm:text-base text-[var(--text-secondary)]">
-            Manage your account settings and preferences
+        <div className="mb-16">
+          <h1 className="text-3xl font-normal text-black mb-2">Settings</h1>
+          <p className="text-gray-500 text-sm">
+            Manage your account and preferences
           </p>
         </div>
 
         {/* Alert Messages */}
         {(error || success) && (
-          <div
-            className={`mb-6 sm:mb-8 p-3 sm:p-4 rounded-apple border-2 flex justify-between items-center ${
-              error
-                ? "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 border-red-500"
-                : "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 border-green-500"
-            }`}
-          >
-            <div className="flex items-center">
-              {error ? (
-                <X size={16} className="mr-2 sm:mr-3 text-red-500" />
-              ) : (
-                <Check size={16} className="mr-2 sm:mr-3 text-green-500" />
-              )}
-              <span className="text-sm sm:text-base font-medium">{error || success}</span>
+          <div className="mb-8 p-4 bg-gray-50 border-l-2 border-black">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-800">{error || success}</span>
+              <button
+                onClick={() => (error ? setError(null) : setSuccess(null))}
+                className="text-gray-400 hover:text-black transition-colors"
+              >
+                <X size={14} />
+              </button>
             </div>
-            <button
-              onClick={() => (error ? setError(null) : setSuccess(null))}
-              className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
-            >
-              <X size={16} />
-            </button>
           </div>
         )}
 
-        {/* Navigation Tabs */}
-        <div className="flex space-x-2 sm:space-x-4 mb-6 sm:mb-8 border-b border-[var(--border)] overflow-x-auto pb-2">
+        {/* Navigation */}
+        <div className="flex gap-8 mb-12 border-b border-gray-100">
           {[
             { id: "profile", label: "Profile", icon: User },
             { id: "security", label: "Security", icon: Shield },
-            { id: "publicCard", label: "Public Profile Card", icon: Users },
+            { id: "publicProfile", label: "Public Profile", icon: Users },
+            { id: "journals", label: "Journals", icon: BookOpen },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveSection(tab.id)}
-              className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 border-b-2 transition-colors duration-200 whitespace-nowrap ${
+              className={`flex items-center gap-2 pb-4 border-b-2 transition-colors text-sm ${
                 activeSection === tab.id
-                  ? "border-[#E68A41] text-[#E68A41]"
-                  : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  ? "border-black text-black"
+                  : "border-transparent text-gray-500 hover:text-black"
               }`}
             >
-              <tab.icon size={16} className="sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">{tab.label}</span>
+              <tab.icon size={16} />
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Content Sections */}
-        <div className="bg-[var(--bg-secondary)] rounded-apple p-4 sm:p-6 shadow-apple">
-          {activeSection === "profile" && renderProfileSection()}
-          {activeSection === "security" && renderSecuritySection()}
-          {activeSection === "publicCard" && <PublicProfileCardPreview />}
+        {/* Content */}
+        <div>
+          {/* Profile Section */}
+          {activeSection === "profile" && (
+            <div className="space-y-8">
+              <div>
+                <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                  Display Name
+                </label>
+                <input
+                  type="text"
+                  value={form.nickname}
+                  onChange={(e) => setForm({ ...form, nickname: e.target.value })}
+                  className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none"
+                  placeholder="Enter your display name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                  Anonymous Name
+                </label>
+                <input
+                  type="text"
+                  value={form.anonymousName}
+                  onChange={(e) => setForm({ ...form, anonymousName: e.target.value })}
+                  className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none"
+                  placeholder="Enter your anonymous name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                  Bio
+                </label>
+                <textarea
+                  value={form.bio}
+                  onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                  className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none resize-none"
+                  placeholder="Tell us about yourself"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none"
+                  placeholder="Enter your email"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                    Age
+                  </label>
+                  <input
+                    type="number"
+                    value={form.age}
+                    onChange={(e) => setForm({ ...form, age: e.target.value })}
+                    className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none"
+                    placeholder="Age"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                    Gender
+                  </label>
+                  <select
+                    value={form.gender}
+                    onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                    className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none"
+                  >
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-8">
+                <button
+                  onClick={() => setForm({
+                    nickname: userData?.nickname || "",
+                    email: userData?.email || "",
+                    age: userData?.age || "",
+                    gender: userData?.gender || "",
+                    bio: userData?.bio || "",
+                    anonymousName: userData?.anonymousName || "",
+                  })}
+                  className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdate}
+                  disabled={saving}
+                  className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition-colors disabled:opacity-50 text-sm"
+                >
+                  {saving ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Security Section */}
+          {activeSection === "security" && (
+            <div className="space-y-8">
+              <div>
+                <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                  Current Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.current ? "text" : "password"}
+                    value={passwords.current}
+                    onChange={(e) =>
+                      setPasswords({ ...passwords, current: e.target.value })
+                    }
+                    className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none pr-8"
+                    placeholder="Current password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility("current")}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                  >
+                    {showPasswords.current ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                  New Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.new ? "text" : "password"}
+                    value={passwords.new}
+                    onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
+                    className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none pr-8"
+                    placeholder="New password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility("new")}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                  >
+                    {showPasswords.new ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wide">
+                  Confirm New Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.confirm ? "text" : "password"}
+                    value={passwords.confirm}
+                    onChange={(e) =>
+                      setPasswords({ ...passwords, confirm: e.target.value })
+                    }
+                    className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none pr-8"
+                    placeholder="Confirm new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility("confirm")}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                  >
+                    {showPasswords.confirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-8">
+                <button
+                  onClick={() => setPasswords({ current: "", new: "", confirm: "" })}
+                  className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePwdChange}
+                  disabled={saving}
+                  className="px-4 py-2 bg-black text-white hover:bg-gray-800 transition-colors disabled:opacity-50 text-sm"
+                >
+                  {saving ? "Updating..." : "Update"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Public Profile Section */}
+          {activeSection === "publicProfile" && <PublicProfileCardPreview />}
+
+          {/* Journals Section */}
+          {activeSection === "journals" && (
+            <div>
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <h2 className="text-xl font-normal text-black mb-1">Your Journals</h2>
+                  <p className="text-gray-500 text-sm">
+                    {journals.length} {journals.length === 1 ? "entry" : "entries"}
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate("/journaling-alt")}
+                  className="flex items-center gap-2 px-4 py-2 bg-black text-white hover:bg-gray-800 transition-colors text-sm"
+                >
+                  <Plus size={14} />
+                  New Journal
+                </button>
+              </div>
+
+              {journalsLoading ? (
+                <div className="flex justify-center py-12">
+                  <div className="w-full space-y-0">
+                    {[...Array(3)].map((_, i) => (
+                      <JournalCardSkeleton key={i} />
+                    ))}
+                  </div>
+                </div>
+              ) : journals.length === 0 ? (
+                <div className="text-center py-16">
+                  <BookOpen size={32} className="mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-lg font-normal text-black mb-2">No journals yet</h3>
+                  <p className="text-gray-500 mb-6 text-sm">Start writing your first journal entry</p>
+                  <button
+                    onClick={() => navigate("/dashboard/create")}
+                    className="px-6 py-2 bg-black text-white hover:bg-gray-800 transition-colors text-sm"
+                  >
+                    Create Your First Journal
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-0">
+                  {journals.map((journal) => (
+                    <JournalCard
+                      key={journal._id}
+                      journal={journal}
+                      onLike={handleLike}
+                      isLiked={likedJournals.has(journal._id)}
+                      isSaved={savedJournals.has(journal._id)}
+                      onSave={handleSave}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+        {/* Delete Account */}
+        <div className="mt-20 pt-8 border-t border-gray-100">
+          <h3 className="text-sm font-normal text-black mb-2">Delete Account</h3>
+          <p className="text-gray-500 mb-4 text-xs">
+            This action cannot be undone. All your journals and data will be permanently deleted.
+          </p>
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="flex items-center gap-2 text-red-500 hover:text-red-600 transition-colors duration-200 text-sm sm:text-base"
+            className="flex items-center gap-2 text-red-500 hover:text-red-700 transition-colors text-xs"
           >
-            <Trash2 size={16} className="sm:w-5 sm:h-5" />
+            <Trash2 size={12} />
             Delete Account
           </button>
-
-          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-            <button
-              onClick={cancelEditing}
-              className="w-full sm:w-auto px-4 sm:px-6 py-2 border border-[var(--border)] rounded-apple text-[var(--text-primary)] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-sm sm:text-base"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleUpdate}
-              disabled={saving}
-              className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-[#E68A41] text-white rounded-apple hover:bg-[#D67A31] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
         </div>
       </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-secondary)] rounded-apple p-4 sm:p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] mb-3 sm:mb-4">
-              Delete Account
-            </h3>
-            <p className="text-sm sm:text-base text-[var(--text-secondary)] mb-4 sm:mb-6">
-              Are you sure you want to delete your account? This action cannot be
-              undone.
+        <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50">
+          <div className="bg-white p-8 max-w-sm w-full mx-4 border border-gray-100">
+            <h3 className="text-lg font-normal text-black mb-4">Delete Account</h3>
+            <p className="text-gray-600 mb-6 text-sm">
+              Are you sure you want to delete your account? This action cannot be undone.
             </p>
-            <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="w-full sm:w-auto px-4 sm:px-6 py-2 border border-[var(--border)] rounded-apple text-[var(--text-primary)] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-sm sm:text-base"
+                className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="w-full sm:w-auto px-4 sm:px-6 py-2 bg-red-500 text-white rounded-apple hover:bg-red-600 transition-colors duration-200 text-sm sm:text-base"
+                className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 transition-colors text-sm"
               >
                 Delete Account
               </button>
