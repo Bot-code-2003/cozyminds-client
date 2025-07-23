@@ -3,10 +3,179 @@
 import { useState, useEffect } from "react";
 import { X, Eye, EyeOff, AlertCircle } from "lucide-react";
 import axios from "axios";
-import Signup from "../../assets/signup.png";
+import Signup from "/signup.png";
 import { useNavigate } from "react-router-dom";
 import TermsModal from "./TermsModal";
 import { setWithExpiry } from "../../utils/anonymousName";
+
+// Production-ready typewriter component (same as LoginModal)
+const StarlitJournalsLoader = () => {
+  const [animationPhase, setAnimationPhase] = useState("typing");
+
+  const text = "Starlit Journals";
+  const typingDuration = 2000; // 2 seconds
+  const pauseDuration = 2000; // 2 seconds pause
+  const erasingDuration = 1500; // 1.5 seconds
+
+  useEffect(() => {
+    const cycleAnimation = () => {
+      // Typing phase
+      setAnimationPhase("typing");
+
+      setTimeout(() => {
+        // Pause phase
+        setAnimationPhase("pause");
+
+        setTimeout(() => {
+          // Erasing phase
+          setAnimationPhase("erasing");
+
+          setTimeout(() => {
+            // Restart cycle
+            cycleAnimation();
+          }, erasingDuration);
+        }, pauseDuration);
+      }, typingDuration);
+    };
+
+    cycleAnimation();
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-900 transition-colors duration-300">
+      {/* Main content */}
+      <div className="relative text-center px-4">
+        <div className="mb-8">
+          <h1
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-800 dark:text-gray-100 tracking-wide select-none"
+            role="heading"
+            aria-level="1"
+            aria-live="polite"
+            aria-label={`${text} - Loading`}
+          >
+            <span
+              className={`typewriter ${animationPhase}`}
+              style={{
+                "--text-length": `${text.length}ch`,
+                "--typing-duration": `${typingDuration}ms`,
+                "--erasing-duration": `${erasingDuration}ms`,
+              }}
+            >
+              {text}
+            </span>
+          </h1>
+        </div>
+
+        {/* Loading indicator */}
+        <div className="flex justify-center space-x-1 opacity-60">
+          <div
+            className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-pulse"
+            style={{ animationDelay: "0ms" }}
+          ></div>
+          <div
+            className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-pulse"
+            style={{ animationDelay: "200ms" }}
+          ></div>
+          <div
+            className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-pulse"
+            style={{ animationDelay: "400ms" }}
+          ></div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .typewriter {
+          display: inline-block;
+          overflow: hidden;
+          white-space: nowrap;
+          border-right: 3px solid currentColor;
+          font-feature-settings: "tnum";
+          letter-spacing: 0.1em;
+        }
+
+        .typewriter.typing {
+          width: 0;
+          animation: typing var(--typing-duration) steps(${text.length}, end)
+              forwards,
+            blink 1s step-end infinite;
+        }
+
+        .typewriter.pause {
+          width: var(--text-length);
+          animation: blink 1s step-end infinite;
+        }
+
+        .typewriter.erasing {
+          width: var(--text-length);
+          animation: erasing var(--erasing-duration) steps(${text.length}, end)
+              forwards,
+            blink 1s step-end infinite;
+        }
+
+        @keyframes typing {
+          from {
+            width: 0;
+          }
+          to {
+            width: var(--text-length);
+          }
+        }
+
+        @keyframes erasing {
+          from {
+            width: var(--text-length);
+          }
+          to {
+            width: 0;
+          }
+        }
+
+        @keyframes blink {
+          0%,
+          50% {
+            border-color: currentColor;
+            opacity: 1;
+          }
+          51%,
+          100% {
+            border-color: transparent;
+            opacity: 0.7;
+          }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+          .typewriter {
+            animation: none !important;
+            width: var(--text-length) !important;
+            border-right-color: currentColor;
+          }
+
+          .animate-pulse {
+            animation: none !important;
+          }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+          .typewriter {
+            border-right-width: 4px;
+            font-weight: 500;
+          }
+        }
+
+        /* Print styles */
+        @media print {
+          .typewriter {
+            animation: none !important;
+            width: var(--text-length) !important;
+            border-right: none !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
 
 const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -110,6 +279,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
       );
 
       setSignupSuccess(true);
+      setShowLoadingScreen(false); // Hide loading screen after both API and timer resolve
     } catch (err) {
       setSignupError(
         err?.response?.data?.message || "Signup failed. Try again."
@@ -117,18 +287,16 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
       setIsLoading(false);
       setShowLoadingScreen(false);
       setSignupSuccess(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (signupSuccess && showLoadingScreen) {
-      const timer = setTimeout(() => {
-        setShowLoadingScreen(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    } else if (signupSuccess && !showLoadingScreen) {
+    if (signupSuccess && !showLoadingScreen) {
       onClose();
       navigate("/", { replace: true });
+      window.location.reload(); // Force a full page refresh after signup
     }
   }, [signupSuccess, showLoadingScreen, onClose, navigate]);
 
@@ -139,68 +307,25 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
 
   if (!isOpen) return null;
 
+  // Show loading screen during signup (now using the same component as LoginModal)
   if (showLoadingScreen) {
-    return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-900 dark:via-black dark:to-gray-900">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.03),transparent_50%)]"></div>
-        <div className="relative flex flex-col items-center justify-center space-y-8 animate-[fadeInUp_0.8s_ease-out]">
-          <div className="relative">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#5999a8] to-[#4a8ba0] shadow-2xl shadow-[#5999a8]/20 flex items-center justify-center animate-[float_3s_ease-in-out_infinite]">
-              <svg
-                className="w-10 h-10 text-white"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <div className="absolute inset-0 rounded-2xl border-2 border-[#5999a8]/30 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] animation-delay-75"></div>
-            <div className="absolute inset-0 rounded-2xl border-2 border-[#5999a8]/20 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] animation-delay-150"></div>
-          </div>
-          <div className="relative w-64">
-            <div className="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-[#5999a8] to-[#4a8ba0] rounded-full animate-[loading_2s_ease-in-out_infinite]"></div>
-            </div>
-          </div>
-          <div className="text-center space-y-2 animate-[fadeIn_1s_ease-out_0.3s_both]">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
-              Starlit Journals
-            </h2>
-            <p className="text-base text-gray-600 dark:text-gray-400 font-medium">
-              Creating your Starlit Journals account...
-            </p>
-          </div>
-          <div className="flex space-x-1">
-            <div className="w-2 h-2 bg-[#5999a8] rounded-full animate-[bounce_1.4s_ease-in-out_infinite] animation-delay-0"></div>
-            <div className="w-2 h-2 bg-[#5999a8] rounded-full animate-[bounce_1.4s_ease-in-out_infinite] animation-delay-200"></div>
-            <div className="w-2 h-2 bg-[#5999a8] rounded-full animate-[bounce_1.4s_ease-in-out_infinite] animation-delay-400"></div>
-          </div>
-        </div>
-        <style>{`
-          @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-          @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-          @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-          @keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-          @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
-        `}</style>
-      </div>
-    );
+    return <StarlitJournalsLoader />;
   }
 
   return (
     <>
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4">
-        <div className="w-full max-w-5xl bg-[#f3f9fc] dark:bg-[#1A1A1A] text-[#1A1A1A] dark:text-[#F8F1E9] rounded-2xl overflow-hidden border-2 border-[#1A1A1A] dark:border-[#F8F1E9] max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
+        <div className="w-full max-w-5xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg shadow-xl overflow-hidden border border-gray-200 dark:border-gray-800 max-h-[95vh] overflow-y-auto">
           <div className="relative flex flex-col lg:flex-row min-h-[600px]">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 bg-black/20 dark:bg-white/20 rounded-full transition-colors z-10"
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors z-10"
               aria-label="Close signup modal"
             >
-              <X size={20} className="text-white" />
+              <X size={20} />
             </button>
             <div
-              className="flex-1 p-6 lg:p-8 flex items-center justify-center relative min-h-[200px] lg:min-h-[600px]"
+              className="flex-1 p-8 lg:p-12 flex items-center justify-center relative min-h-[250px] lg:min-h-[600px]"
               style={{
                 backgroundImage: `url(${Signup})`,
                 backgroundSize: "cover",
@@ -208,36 +333,41 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
               }}
             >
               <div
-                className="absolute inset-0 bg-black/40"
+                className="absolute inset-0 bg-black/50"
                 aria-hidden="true"
               ></div>
-              <div className="text-center relative z-10">
-                <h2 className="text-2xl lg:text-4xl font-bold text-gray-200 mb-2 lg:mb-4">
+              <div className="text-center relative z-10 max-w-md">
+                <h2 className="text-3xl lg:text-4xl font-light text-white mb-4 tracking-tight">
                   Hello, new friend
                 </h2>
-                <p className="text-base lg:text-lg text-gray-400">
+                <p className="text-lg text-gray-200 font-light">
                   Let's start writing your story, one page at a time.
                 </p>
               </div>
             </div>
-            <div className="flex-1 p-6 lg:p-8 flex items-center">
+            <div className="flex-1 p-8 lg:p-12 flex items-center">
               <div className="w-full max-w-md mx-auto">
                 <form
                   onSubmit={handleSubmit}
-                  className="w-full space-y-4"
+                  className="w-full space-y-5"
                   aria-labelledby="signup-form-heading"
                 >
-                  <h2
-                    id="signup-form-heading"
-                    className="text-2xl font-bold mb-6 text-center"
-                  >
-                    Join Starlit Journals
-                  </h2>
+                  <div className="text-center mb-8">
+                    <h2
+                      id="signup-form-heading"
+                      className="text-2xl font-semibold mb-2 text-gray-900 dark:text-gray-100"
+                    >
+                      Join Starlit Journals
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      Create your account to get started
+                    </p>
+                  </div>
 
                   {signupError && (
-                    <div className="text-red-500 text-sm p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center gap-2">
-                      <AlertCircle size={16} />
-                      {signupError}
+                    <div className="text-red-600 text-sm p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 flex items-start gap-2">
+                      <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                      <span>{signupError}</span>
                     </div>
                   )}
 
@@ -248,8 +378,9 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                     value={signupForm.nickname}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus:outline-none focus:ring-2 focus:ring-[#5999a8] transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent transition-all placeholder-gray-500 dark:placeholder-gray-400"
                     aria-label="Nickname"
+                    disabled={isLoading}
                   />
 
                   <div className="space-y-2">
@@ -260,8 +391,9 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                       value={signupForm.email}
                       onChange={handleChange}
                       required
-                      className="w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus:outline-none focus:ring-2 focus:ring-[#5999a8] transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent transition-all placeholder-gray-500 dark:placeholder-gray-400"
                       aria-label="Email address"
+                      disabled={isLoading}
                     />
                     <div className="text-xs text-gray-500 dark:text-gray-400 px-1">
                       💡 No need for your real email! Feel free to use something
@@ -269,7 +401,7 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-3">
                     <input
                       type="number"
                       name="age"
@@ -278,21 +410,21 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                       onChange={handleChange}
                       required
                       min={1}
-                      className="w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus:outline-none focus:ring-2 focus:ring-[#5999a8] transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent transition-all placeholder-gray-500 dark:placeholder-gray-400"
                       aria-label="Age"
+                      disabled={isLoading}
                     />
-                  </div>
 
-                  <div className="space-y-2">
                     <select
                       name="gender"
                       value={signupForm.gender}
                       onChange={handleChange}
                       required
-                      className="w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus:outline-none focus:ring-2 focus:ring-[#5999a8] transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent transition-all text-gray-900 dark:text-gray-100"
                       aria-label="Gender"
+                      disabled={isLoading}
                     >
-                      <option value="">Select Gender</option>
+                      <option value="">Gender</option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>
@@ -300,24 +432,26 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                   </div>
 
                   <div className="space-y-2">
-                    <div className="relative flex items-center w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus-within:ring-2 focus-within:ring-[#5999a8] transition-all">
+                    <div className="relative">
                       <input
                         type={showPassword ? "text" : "password"}
                         name="password"
-                        placeholder="Enter a strong password"
+                        placeholder="Password"
                         value={signupForm.password}
                         onChange={handleChange}
                         required
-                        className="w-full bg-transparent focus:outline-none"
+                        className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent transition-all placeholder-gray-500 dark:placeholder-gray-400"
                         aria-label="Password"
+                        disabled={isLoading}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="hover:opacity-70 transition-opacity"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         aria-label={
                           showPassword ? "Hide password" : "Show password"
                         }
+                        disabled={isLoading}
                       >
                         {showPassword ? (
                           <EyeOff size={18} />
@@ -328,33 +462,35 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                     </div>
                     {passwordError && (
                       <div className="text-red-500 text-xs px-1 flex items-center gap-1">
-                        <AlertCircle size={14} />
+                        <AlertCircle size={12} />
                         {passwordError}
                       </div>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <div className="relative flex items-center w-full rounded-lg p-3 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] bg-transparent focus-within:ring-2 focus-within:ring-[#5999a8] transition-all">
+                    <div className="relative">
                       <input
                         type={showVerifyPassword ? "text" : "password"}
                         name="verifyPassword"
-                        placeholder="Verify password"
+                        placeholder="Confirm password"
                         value={signupForm.verifyPassword}
                         onChange={handleChange}
                         required
-                        className="w-full bg-transparent focus:outline-none"
+                        className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent transition-all placeholder-gray-500 dark:placeholder-gray-400"
                         aria-label="Verify Password"
+                        disabled={isLoading}
                       />
                       <button
                         type="button"
                         onClick={() =>
                           setShowVerifyPassword(!showVerifyPassword)
                         }
-                        className="hover:opacity-70 transition-opacity"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         aria-label={
                           showVerifyPassword ? "Hide password" : "Show password"
                         }
+                        disabled={isLoading}
                       >
                         {showVerifyPassword ? (
                           <EyeOff size={18} />
@@ -364,46 +500,54 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                       </button>
                     </div>
                     {signupForm.verifyPassword && !passwordMatch && (
-                      <div className="text-red-500 text-xs px-1">
+                      <div className="text-red-500 text-xs px-1 flex items-center gap-1">
+                        <AlertCircle size={12} />
                         Passwords do not match.
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="agreedToTerms"
-                      name="agreedToTerms"
-                      checked={signupForm.agreedToTerms}
-                      onChange={handleChange}
-                      className="h-4 w-4 rounded border-gray-300 text-[#5999a8] focus:ring-[#5999a8]"
-                    />
-                    <label htmlFor="agreedToTerms" className="text-sm">
-                      I agree to the{" "}
-                      <button
-                        type="button"
-                        onClick={() => setIsTermsModalOpen(true)}
-                        className="text-[#5999a8] underline hover:no-underline"
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="agreedToTerms"
+                        name="agreedToTerms"
+                        checked={signupForm.agreedToTerms}
+                        onChange={handleChange}
+                        className="mt-1 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 dark:focus:ring-gray-100"
+                        disabled={isLoading}
+                      />
+                      <label
+                        htmlFor="agreedToTerms"
+                        className="text-sm text-gray-600 dark:text-gray-400"
                       >
-                        Terms and Conditions
-                      </button>
-                    </label>
-                  </div>
-                  <div className="text-xs text-center mt-1">
-                    <a
-                      href="/terms"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#5999a8] underline hover:no-underline"
-                    >
-                      Read the full Terms and Conditions
-                    </a>
+                        I agree to the{" "}
+                        <button
+                          type="button"
+                          onClick={() => setIsTermsModalOpen(true)}
+                          className="text-gray-900 dark:text-gray-100 underline hover:no-underline"
+                          disabled={isLoading}
+                        >
+                          Terms and Conditions
+                        </button>
+                      </label>
+                    </div>
+                    <div className="text-xs text-center">
+                      <a
+                        href="/terms-of-service"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-600 dark:text-gray-400 underline hover:no-underline"
+                      >
+                        Read the full Terms and Conditions
+                      </a>
+                    </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full rounded-lg p-3 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:opacity-90 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={
                       isLoading ||
                       !passwordMatch ||
@@ -412,19 +556,29 @@ const SignupModal = ({ isOpen, onClose, onSwitchToLogin, darkMode }) => {
                     }
                     aria-label="Create your account"
                   >
-                    {isLoading ? "Creating Account..." : "Create Account"}
+                    {isLoading ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                        Creating Account...
+                      </div>
+                    ) : (
+                      "Create Account"
+                    )}
                   </button>
 
-                  <p className="text-sm text-center mt-4">
-                    Already have an account?{" "}
-                    <button
-                      onClick={handleSwitchToLogin}
-                      className="text-[#5999a8] underline hover:no-underline transition-all"
-                      aria-label="Open login modal"
-                    >
-                      Log In
-                    </button>
-                  </p>
+                  <div className="text-center pt-4">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Already have an account?{" "}
+                      <button
+                        onClick={handleSwitchToLogin}
+                        className="text-gray-900 dark:text-gray-100 underline hover:no-underline font-medium"
+                        aria-label="Open login modal"
+                        disabled={isLoading}
+                      >
+                        Log In
+                      </button>
+                    </p>
+                  </div>
                 </form>
               </div>
             </div>

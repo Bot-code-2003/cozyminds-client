@@ -6,7 +6,6 @@ import { useDarkMode } from "../context/ThemeContext";
 import { usePublicJournals } from "../context/PublicJournalsContext";
 import { ArrowLeft, Loader2, Clock, Heart } from "lucide-react";
 import DashboardNavbar from "./Dashboard/Navbar";
-import LandingNavbar from "./Landing/Navbar";
 import AuthModals from "./Landing/AuthModals";
 import { createAvatar } from "@dicebear/core";
 import {
@@ -75,7 +74,8 @@ const getCurrentUser = () => {
 const JournalEntry = () => {
   const { anonymousName, slug } = useParams();
   const { darkMode } = useDarkMode();
-  const { fetchSingleJournal, journals, loading, error, handleLike } = usePublicJournals();
+  const { fetchSingleJournal, journals, loading, error, handleLike } =
+    usePublicJournals();
   const navigate = useNavigate();
   const [entry, setEntry] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
@@ -89,14 +89,18 @@ const JournalEntry = () => {
   const [authorProfile, setAuthorProfile] = useState(null);
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
-  const author = entry && entry.userId && typeof entry.userId === "object" ? entry.userId : null;
+  const author =
+    entry && entry.userId && typeof entry.userId === "object"
+      ? entry.userId
+      : null;
 
   useEffect(() => {
     const loadJournal = async () => {
       try {
         const journal = await fetchSingleJournal(anonymousName, slug);
         setEntry(journal);
-        const wordCount = journal.content?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0;
+        const wordCount =
+          journal.content?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0;
         setReadingTime(Math.ceil(wordCount / 200));
       } catch (err) {
         setEntry(null);
@@ -113,7 +117,11 @@ const JournalEntry = () => {
   useEffect(() => {
     if (entry && entry.isPublic && entry._id && entry.category) {
       axios
-        .get(`${import.meta.env.VITE_API_URL}/recommendations?category=${entry.category}&exclude=${entry._id}`)
+        .get(
+          `${import.meta.env.VITE_API_URL}/recommendations?category=${
+            entry.category
+          }&exclude=${entry._id}`
+        )
         .then((res) => setRecommendations(res.data.journals || []))
         .catch(() => setRecommendations([]));
     }
@@ -133,7 +141,11 @@ const JournalEntry = () => {
   useEffect(() => {
     if (!author || !currentUser || author._id === currentUser._id) return;
     axios
-      .get(`${import.meta.env.VITE_API_URL}/subscription-status/${currentUser._id}/${author._id}`)
+      .get(
+        `${import.meta.env.VITE_API_URL}/subscription-status/${
+          currentUser._id
+        }/${author._id}`
+      )
       .then((res) => {
         setIsSubscribed(res.data.isSubscribed || res.data.subscribed);
       })
@@ -161,10 +173,13 @@ const JournalEntry = () => {
     if (!author) return;
     try {
       setSubscribing(true);
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/subscribe`, {
-        subscriberId: currentUser._id,
-        targetUserId: author._id,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/subscribe`,
+        {
+          subscriberId: currentUser._id,
+          targetUserId: author._id,
+        }
+      );
       setTimeout(() => {
         setIsSubscribed(response.data.subscribed);
         setSubscribing(false);
@@ -234,7 +249,9 @@ const JournalEntry = () => {
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
         <div className="flex items-center space-x-3">
           <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-          <p className="text-gray-500 dark:text-gray-400 font-medium">Loading...</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">
+            Loading...
+          </p>
         </div>
       </div>
     );
@@ -263,11 +280,8 @@ const JournalEntry = () => {
 
   return (
     <>
-      {currentUser ? (
-        <DashboardNavbar />
-      ) : (
-        <LandingNavbar openLoginModal={openLoginModal} openSignupModal={openSignupModal} />
-      )}
+      <DashboardNavbar />
+
       {modals}
 
       <button
@@ -294,7 +308,7 @@ const JournalEntry = () => {
                 />
               </div>
             )}
-            
+
             {entry.tags && entry.tags.length > 0 && (
               <div className="flex gap-2 mb-6">
                 {entry.tags.slice(0, 3).map((tag, index) => (
@@ -307,11 +321,11 @@ const JournalEntry = () => {
                 ))}
               </div>
             )}
-            
+
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-8 leading-tight tracking-tight">
               {entry.title || "Untitled Entry"}
             </h1>
-            
+
             <div className="flex items-center justify-between text-gray-500 dark:text-gray-400 mb-4">
               <div className="mb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -323,7 +337,8 @@ const JournalEntry = () => {
                       >
                         <img
                           src={getAvatarSvg(
-                            authorProfile.profileTheme?.avatarStyle || "avataaars",
+                            authorProfile.profileTheme?.avatarStyle ||
+                              "avataaars",
                             authorProfile.anonymousName || "Anonymous"
                           )}
                           alt="Author"
@@ -335,17 +350,32 @@ const JournalEntry = () => {
                       </Link>
                     )}
                   </div>
-                  {authorProfile && currentUser && authorProfile._id !== currentUser._id && (
-                    <button
-                      onClick={handleSubscribe}
-                      disabled={subscribing}
-                      className={`px-4 py-1.5 rounded-lg font-medium text-sm transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto ${isSubscribed ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200' : 'bg-blue-500 hover:bg-blue-600 text-white'} ${subscribing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {subscribing ? (
-                        <Loader2 size={16} className="inline-block mr-1 animate-spin align-middle" />
-                      ) : isSubscribed ? 'Following' : 'Follow'}
-                    </button>
-                  )}
+                  {authorProfile &&
+                    currentUser &&
+                    authorProfile._id !== currentUser._id && (
+                      <button
+                        onClick={handleSubscribe}
+                        disabled={subscribing}
+                        className={`px-4 py-1.5 rounded-lg font-medium text-sm transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto ${
+                          isSubscribed
+                            ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                            : "bg-blue-500 hover:bg-blue-600 text-white"
+                        } ${
+                          subscribing ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                      >
+                        {subscribing ? (
+                          <Loader2
+                            size={16}
+                            className="inline-block mr-1 animate-spin align-middle"
+                          />
+                        ) : isSubscribed ? (
+                          "Following"
+                        ) : (
+                          "Follow"
+                        )}
+                      </button>
+                    )}
                 </div>
                 {authorProfile && authorProfile.bio && (
                   <div className="mt-2 text-gray-500 dark:text-gray-400 text-sm break-words max-w-full line-clamp-2 sm:line-clamp-none">
@@ -374,7 +404,9 @@ const JournalEntry = () => {
           {entry?.isPublic && (
             <div className="mt-20 pt-12 flex justify-center border-t border-gray-100 dark:border-gray-800">
               <button
-                className={`flex items-center gap-3 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-base font-medium rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 ${isLiked ? 'opacity-90' : ''} ${likeLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                className={`flex items-center gap-3 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-base font-medium rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 ${
+                  isLiked ? "opacity-90" : ""
+                } ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}`}
                 onClick={handleJournalLike}
                 aria-pressed={isLiked}
                 disabled={likeLoading}
@@ -382,9 +414,14 @@ const JournalEntry = () => {
                 {likeLoading ? (
                   <Loader2 size={20} className="animate-spin" />
                 ) : (
-                  <Heart size={20} fill={isLiked ? 'currentColor' : 'none'} strokeWidth={2} className={isLiked ? 'text-pink-500' : ''} />
+                  <Heart
+                    size={20}
+                    fill={isLiked ? "currentColor" : "none"}
+                    strokeWidth={2}
+                    className={isLiked ? "text-pink-500" : ""}
+                  />
                 )}
-                <span>{isLiked ? 'Appreciated' : 'Appreciate'}</span>
+                <span>{isLiked ? "Appreciated" : "Appreciate"}</span>
                 <span className="ml-2 text-sm font-semibold">{likeCount}</span>
               </button>
             </div>

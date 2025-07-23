@@ -17,16 +17,47 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import Navbar from "../Dashboard/Navbar";
-import LandingNavbar from "../Landing/Navbar";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
-import { createAvatar } from '@dicebear/core';
-import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
+import { createAvatar } from "@dicebear/core";
+import {
+  avataaars,
+  bottts,
+  funEmoji,
+  miniavs,
+  croodles,
+  micah,
+  pixelArt,
+  adventurer,
+  bigEars,
+  bigSmile,
+  lorelei,
+  openPeeps,
+  personas,
+  rings,
+  shapes,
+  thumbs,
+} from "@dicebear/collection";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 const avatarStyles = {
-  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+  avataaars,
+  bottts,
+  funEmoji,
+  miniavs,
+  croodles,
+  micah,
+  pixelArt,
+  adventurer,
+  bigEars,
+  bigSmile,
+  lorelei,
+  openPeeps,
+  personas,
+  rings,
+  shapes,
+  thumbs,
 };
 
 const getAvatarSvg = (style, seed) => {
@@ -44,7 +75,7 @@ const SubscriptionsView = () => {
 
   const getCurrentUser = () => {
     try {
-      const itemStr = localStorage.getItem('user');
+      const itemStr = localStorage.getItem("user");
       if (!itemStr) return null;
       const item = JSON.parse(itemStr);
       if (item && item.value) return item.value;
@@ -108,17 +139,7 @@ const SubscriptionsView = () => {
   if (loading) {
     return (
       <>
-        {isLoggedIn ? (
-          <Navbar name="New Entry" link="/journaling-alt" />
-        ) : (
-          <LandingNavbar
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            user={currentUser}
-            openLoginModal={openLoginModal}
-            openSignupModal={openSignupModal}
-          />
-        )}
+        <Navbar name="New Entry" link="/journaling-alt" />
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
           <div className="flex items-center gap-3">
             <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
@@ -134,17 +155,8 @@ const SubscriptionsView = () => {
   if (error) {
     return (
       <>
-        {isLoggedIn ? (
-          <Navbar name="New Entry" link="/journaling-alt" />
-        ) : (
-          <LandingNavbar
-            darkMode={darkMode}
-            setDarkMode={setDarkMode}
-            user={currentUser}
-            openLoginModal={openLoginModal}
-            openSignupModal={openSignupModal}
-          />
-        )}
+        <Navbar name="New Entry" link="/journaling-alt" />
+
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
           <div className="text-center p-6 bg-white dark:bg-slate-800 rounded-apple shadow-lg border border-gray-200 dark:border-gray-700 max-w-md">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
@@ -166,17 +178,7 @@ const SubscriptionsView = () => {
 
   return (
     <>
-      {isLoggedIn ? (
-        <Navbar name="New Entry" link="/journaling-alt" />
-      ) : (
-        <LandingNavbar
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          user={currentUser}
-          openLoginModal={openLoginModal}
-          openSignupModal={openSignupModal}
-        />
-      )}
+      <Navbar name="New Entry" link="/journaling-alt" />
 
       <div className="min-h-screen bg-[var(--bg-primary)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
@@ -198,7 +200,9 @@ const SubscriptionsView = () => {
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Writers you follow • {subscriptions.length}{" "}
-                  {subscriptions.length === 1 ? "subscription" : "subscriptions"}
+                  {subscriptions.length === 1
+                    ? "subscription"
+                    : "subscriptions"}
                 </p>
               </div>
 
@@ -259,7 +263,7 @@ const SubscriptionsView = () => {
                     <div className="relative">
                       <img
                         src={getAvatarSvg(
-                          subscription.profileTheme?.avatarStyle || 'avataaars',
+                          subscription.profileTheme?.avatarStyle || "avataaars",
                           subscription.anonymousName
                         )}
                         alt={subscription.anonymousName}

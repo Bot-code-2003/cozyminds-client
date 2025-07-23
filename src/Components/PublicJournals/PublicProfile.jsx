@@ -14,11 +14,10 @@ import {
 } from "lucide-react";
 import PublicStoryCard from "../PublicJournals/PublicStoryCard";
 import Navbar from "../Dashboard/Navbar";
-import LandingNavbar from "../Landing/Navbar";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
 import { motion } from "framer-motion";
-import { createAvatar } from '@dicebear/core';
+import { createAvatar } from "@dicebear/core";
 import {
   avataaars,
   bottts,
@@ -36,7 +35,7 @@ import {
   rings,
   shapes,
   thumbs,
-} from '@dicebear/collection';
+} from "@dicebear/collection";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -135,15 +134,27 @@ const ProfileHeader = ({
   }, []);
 
   const getBannerStyle = () => {
-    if (profile.profileTheme?.type === 'color') return { background: profile.profileTheme.value };
-    if (profile.profileTheme?.type === 'gradient') return { background: profile.profileTheme.value };
-    if (profile.profileTheme?.type === 'texture') return { background: `url(${profile.profileTheme.value})`, backgroundSize: 'contain', backgroundPosition: 'center' };
-    return { background: 'linear-gradient(to right, #6b7280 0%, #d1d5db 100%)' };
+    if (profile.profileTheme?.type === "color")
+      return { background: profile.profileTheme.value };
+    if (profile.profileTheme?.type === "gradient")
+      return { background: profile.profileTheme.value };
+    if (profile.profileTheme?.type === "texture")
+      return {
+        background: `url(${profile.profileTheme.value})`,
+        backgroundSize: "contain",
+        backgroundPosition: "center",
+      };
+    return {
+      background: "linear-gradient(to right, #6b7280 0%, #d1d5db 100%)",
+    };
   };
 
   const avatarUrl = profile.anonymousName
-    ? getAvatarSvg(profile.profileTheme?.avatarStyle || 'avataaars', profile.anonymousName)
-    : getAvatarSvg('avataaars', 'default');
+    ? getAvatarSvg(
+        profile.profileTheme?.avatarStyle || "avataaars",
+        profile.anonymousName
+      )
+    : getAvatarSvg("avataaars", "default");
 
   return (
     <motion.div
@@ -172,9 +183,13 @@ const ProfileHeader = ({
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            style={{ overflow: 'hidden' }}
+            style={{ overflow: "hidden" }}
           >
-            <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            <img
+              src={avatarUrl}
+              alt="Avatar"
+              className="w-full h-full object-cover"
+            />
           </motion.div>
 
           <div className="flex-1 min-w-0 pt-2">
@@ -195,30 +210,33 @@ const ProfileHeader = ({
                 </div>
               </div>
 
-              {currentUser && profile && currentUser._id !== profile._id && canSubscribe && (
-                <motion.button
-                  onClick={onSubscribe}
-                  disabled={subscribing}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
-                    isSubscribed
-                      ? "bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-600"
-                      : "bg-blue-500 hover:bg-blue-600 text-white"
-                  } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
-                  whileHover={{ scale: subscribing ? 1 : 1.02 }}
-                  whileTap={{ scale: subscribing ? 1 : 0.98 }}
-                >
-                  {subscribing ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Processing...</span>
-                    </div>
-                  ) : isSubscribed ? (
-                    "Following"
-                  ) : (
-                    "Follow"
-                  )}
-                </motion.button>
-              )}
+              {currentUser &&
+                profile &&
+                currentUser._id !== profile._id &&
+                canSubscribe && (
+                  <motion.button
+                    onClick={onSubscribe}
+                    disabled={subscribing}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
+                      isSubscribed
+                        ? "bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-600"
+                        : "bg-blue-500 hover:bg-blue-600 text-white"
+                    } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                    whileHover={{ scale: subscribing ? 1 : 1.02 }}
+                    whileTap={{ scale: subscribing ? 1 : 0.98 }}
+                  >
+                    {subscribing ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Processing...</span>
+                      </div>
+                    ) : isSubscribed ? (
+                      "Following"
+                    ) : (
+                      "Follow"
+                    )}
+                  </motion.button>
+                )}
             </div>
           </div>
         </div>
@@ -257,7 +275,13 @@ const ProfileHeader = ({
   );
 };
 
-const JournalsSection = ({ journals, onLike, onShare, onSave, currentUser }) => {
+const JournalsSection = ({
+  journals,
+  onLike,
+  onShare,
+  onSave,
+  currentUser,
+}) => {
   if (journals.length === 0) {
     return (
       <motion.div
@@ -296,7 +320,11 @@ const JournalsSection = ({ journals, onLike, onShare, onSave, currentUser }) => 
           onLike={() => onLike(journal._id)}
           onShare={onShare}
           isLiked={journal.likes?.includes(currentUser?._id)}
-          isSaved={currentUser && journal.saved && Array.isArray(journal.saved) ? journal.saved.includes(currentUser._id) : false}
+          isSaved={
+            currentUser && journal.saved && Array.isArray(journal.saved)
+              ? journal.saved.includes(currentUser._id)
+              : false
+          }
           onSave={onSave}
         />
       ))}
@@ -317,7 +345,8 @@ const PublicProfile = () => {
 
   const getCurrentUser = () => {
     try {
-      const itemStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+      const itemStr =
+        localStorage.getItem("user") || sessionStorage.getItem("user");
       if (!itemStr) return null;
       const item = JSON.parse(itemStr);
       return item?.value || item;
@@ -334,7 +363,7 @@ const PublicProfile = () => {
       setLoading(true);
       setError(null);
       const response = await API.get(`/profile/${anonymousName}`);
-      console.log(response)
+      console.log(response);
       setProfile({
         ...response.data.profile,
         journalCount: response.data.journals?.length || 0,
@@ -342,7 +371,8 @@ const PublicProfile = () => {
       const normalizedJournals = (response.data.journals || []).map(
         (journal) => ({
           ...journal,
-          createdAt: journal.createdAt || journal.date || new Date().toISOString(),
+          createdAt:
+            journal.createdAt || journal.date || new Date().toISOString(),
         })
       );
       setJournals(normalizedJournals);
@@ -354,9 +384,12 @@ const PublicProfile = () => {
   }, [userId, anonymousName]);
 
   const checkSubscriptionStatus = useCallback(async () => {
-    if (!currentUser || !profile?._id || currentUser._id === profile._id) return;
+    if (!currentUser || !profile?._id || currentUser._id === profile._id)
+      return;
     try {
-      const response = await API.get(`/subscription-status/${currentUser._id}/${profile._id}`);
+      const response = await API.get(
+        `/subscription-status/${currentUser._id}/${profile._id}`
+      );
       setIsSubscribed(response.data.isSubscribed);
     } catch (error) {
       console.error("Error checking subscription status:", error);
@@ -386,7 +419,8 @@ const PublicProfile = () => {
       setIsSubscribed(response.data.subscribed);
       setProfile((prev) => ({
         ...prev,
-        subscriberCount: prev.subscriberCount + (response.data.subscribed ? 1 : -1),
+        subscriberCount:
+          prev.subscriberCount + (response.data.subscribed ? 1 : -1),
       }));
     } catch (error) {
       console.error("Error handling subscription:", error);
@@ -395,61 +429,81 @@ const PublicProfile = () => {
     }
   }, [currentUser, profile, openLoginModal]);
 
-  const handleLike = useCallback(async (journalId) => {
-    if (!currentUser) {
-      openLoginModal();
-      return;
-    }
-    try {
-      const response = await API.post(`/journals/${journalId}/like`, { userId: currentUser._id });
-      setJournals((prevJournals) =>
-        prevJournals.map((journal) =>
-          journal._id === journalId
-            ? {
-                ...journal,
-                likes: response.data.isLiked
-                  ? [...journal.likes, currentUser._id]
-                  : journal.likes.filter((id) => id !== currentUser._id),
-                likeCount: response.data.likeCount,
-              }
-            : journal
-        )
-      );
-    } catch (error) {
-      console.error("Error liking journal:", error);
-    }
-  }, [currentUser, openLoginModal]);
-
-  const handleShare = useCallback((journalId) => {
-    const journal = journals.find((j) => j._id === journalId);
-    if (journal) {
-      const url = `${window.location.origin}/publicjournal/${journal.slug}`;
-      navigator.clipboard.writeText(url);
-    }
-  }, [journals]);
-
-  const handleSave = useCallback(async (journalId, shouldSave, setIsSaved) => {
-    if (!currentUser) {
-      openLoginModal();
-      return;
-    }
-    try {
-      if (shouldSave) {
-        await API.post(`/users/${currentUser._id}/save-journal`, { journalId });
-        setIsSaved(true);
-      } else {
-        await API.post(`/users/${currentUser._id}/unsave-journal`, { journalId });
-        setIsSaved(false);
+  const handleLike = useCallback(
+    async (journalId) => {
+      if (!currentUser) {
+        openLoginModal();
+        return;
       }
-      setJournals((prev) =>
-        prev.map((j) => j._id === journalId ? { ...j, isSaved: shouldSave } : j)
-      );
-    } catch (err) {
-      console.error('Error saving/unsaving journal:', err);
-    }
-  }, [currentUser, openLoginModal]);
+      try {
+        const response = await API.post(`/journals/${journalId}/like`, {
+          userId: currentUser._id,
+        });
+        setJournals((prevJournals) =>
+          prevJournals.map((journal) =>
+            journal._id === journalId
+              ? {
+                  ...journal,
+                  likes: response.data.isLiked
+                    ? [...journal.likes, currentUser._id]
+                    : journal.likes.filter((id) => id !== currentUser._id),
+                  likeCount: response.data.likeCount,
+                }
+              : journal
+          )
+        );
+      } catch (error) {
+        console.error("Error liking journal:", error);
+      }
+    },
+    [currentUser, openLoginModal]
+  );
 
-  const canSubscribe = useMemo(() => currentUser && profile && currentUser._id !== profile._id, [currentUser, profile]);
+  const handleShare = useCallback(
+    (journalId) => {
+      const journal = journals.find((j) => j._id === journalId);
+      if (journal) {
+        const url = `${window.location.origin}/publicjournal/${journal.slug}`;
+        navigator.clipboard.writeText(url);
+      }
+    },
+    [journals]
+  );
+
+  const handleSave = useCallback(
+    async (journalId, shouldSave, setIsSaved) => {
+      if (!currentUser) {
+        openLoginModal();
+        return;
+      }
+      try {
+        if (shouldSave) {
+          await API.post(`/users/${currentUser._id}/save-journal`, {
+            journalId,
+          });
+          setIsSaved(true);
+        } else {
+          await API.post(`/users/${currentUser._id}/unsave-journal`, {
+            journalId,
+          });
+          setIsSaved(false);
+        }
+        setJournals((prev) =>
+          prev.map((j) =>
+            j._id === journalId ? { ...j, isSaved: shouldSave } : j
+          )
+        );
+      } catch (err) {
+        console.error("Error saving/unsaving journal:", err);
+      }
+    },
+    [currentUser, openLoginModal]
+  );
+
+  const canSubscribe = useMemo(
+    () => currentUser && profile && currentUser._id !== profile._id,
+    [currentUser, profile]
+  );
 
   if (loading) {
     return (
@@ -538,7 +592,8 @@ const PublicProfile = () => {
               </h2>
               {journals.length > 0 && (
                 <span className="px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium">
-                  {journals.length} {journals.length === 1 ? "journal" : "journals"}
+                  {journals.length}{" "}
+                  {journals.length === 1 ? "journal" : "journals"}
                 </span>
               )}
             </motion.div>

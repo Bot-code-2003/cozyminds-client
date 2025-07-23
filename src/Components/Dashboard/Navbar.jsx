@@ -20,19 +20,51 @@ import {
   Users,
   Bookmark,
   Sparkles, // Add Sparkles for Stories
-  LayoutDashboard
+  LayoutDashboard,
 } from "lucide-react";
 import InGameMail from "./Mail/InGameMail";
 import { useDarkMode } from "../../context/ThemeContext";
 import { useMails } from "../../context/MailContext";
 import { logout } from "../../utils/anonymousName";
-import { createAvatar } from '@dicebear/core';
-import { avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs } from '@dicebear/collection';
+import { createAvatar } from "@dicebear/core";
+import {
+  avataaars,
+  bottts,
+  funEmoji,
+  miniavs,
+  croodles,
+  micah,
+  pixelArt,
+  adventurer,
+  bigEars,
+  bigSmile,
+  lorelei,
+  openPeeps,
+  personas,
+  rings,
+  shapes,
+  thumbs,
+} from "@dicebear/collection";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 const avatarStyles = {
-  avataaars, bottts, funEmoji, miniavs, croodles, micah, pixelArt, adventurer, bigEars, bigSmile, lorelei, openPeeps, personas, rings, shapes, thumbs,
+  avataaars,
+  bottts,
+  funEmoji,
+  miniavs,
+  croodles,
+  micah,
+  pixelArt,
+  adventurer,
+  bigEars,
+  bigSmile,
+  lorelei,
+  openPeeps,
+  personas,
+  rings,
+  shapes,
+  thumbs,
 };
 
 const getAvatarSvg = (style, seed) => {
@@ -43,12 +75,12 @@ const getAvatarSvg = (style, seed) => {
 
 const getCurrentUser = () => {
   try {
-    const itemStr = localStorage.getItem('user');
+    const itemStr = localStorage.getItem("user");
     if (!itemStr) return null;
     const item = JSON.parse(itemStr);
     const now = new Date();
     if (now.getTime() > item.expiry) {
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
       return null;
     }
     return item.value;
@@ -63,7 +95,8 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mailModalOpen, setMailModalOpen] = useState(false);
-  const [hasSubscriptionNotifications, setHasSubscriptionNotifications] = useState(false);
+  const [hasSubscriptionNotifications, setHasSubscriptionNotifications] =
+    useState(false);
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const { darkMode, setDarkMode } = useDarkMode();
@@ -140,7 +173,6 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
   const currentUser = getCurrentUser();
 
   const navigationItems = [
-    
     // { name: "Dashboard", path: "/dashboard", icon: <LayoutDashboard size={16} /> },
   ];
 
@@ -152,10 +184,11 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           className="flex items-center group cursor-pointer"
           aria-label="Go to homepage"
         >
-
           <div className="text-2xl font-bold tracking-tight flex items-baseline">
             <span className="text-[var(--accent)] newsreader">Starlit</span>
-            <span className="text-gray-800 dark:text-white ml-1 newsreader opacity-80">Journals</span>
+            <span className="text-gray-800 dark:text-white ml-1 newsreader opacity-80">
+              Journals
+            </span>
           </div>
         </button>
 
@@ -186,7 +219,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full" />
               )}
             </button>
-            <button
+            {/* <button
               onClick={toggleDarkMode}
               className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
@@ -196,12 +229,12 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               ) : (
                 <Moon size={16} className="text-gray-600 dark:text-gray-400" />
               )}
-            </button>
+            </button> */}
           </div>
           {!isJournalingAlt && (
             <button
               onClick={() => handleNavigation(link)}
-              className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-full hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             >
               <Plus size={16} className="mr-2" />
               {name}
@@ -215,13 +248,27 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 aria-label="Open user menu"
                 aria-expanded={dropdownOpen}
               >
-                <img src={getAvatarSvg(currentUser.profileTheme?.avatarStyle || 'avataaars', currentUser.anonymousName || currentUser.nickname || currentUser.email)} alt="User Avatar" className="w-8 h-8 rounded-full mr-2" />
+                <img
+                  src={getAvatarSvg(
+                    currentUser.profileTheme?.avatarStyle || "avataaars",
+                    currentUser.anonymousName ||
+                      currentUser.nickname ||
+                      currentUser.email
+                  )}
+                  alt="User Avatar"
+                  className="w-8 h-8 rounded-full mr-2"
+                />
                 <span className="text-gray-900 dark:text-white font-medium text-sm mr-1">
-                  {currentUser.nickname || currentUser.anonymousName || currentUser.email || "User"}
+                  {currentUser.nickname ||
+                    currentUser.anonymousName ||
+                    currentUser.email ||
+                    "User"}
                 </span>
                 <ChevronDown
                   size={16}
-                  className={`text-gray-600 dark:text-gray-400 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                  className={`text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
+                    dropdownOpen ? "rotate-180" : ""
+                  }`}
                 />
               </button>
               {dropdownOpen && (
@@ -291,7 +338,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="space-y-2">
               {navigationItems.map((item) => (
                 <button
@@ -318,7 +365,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
               >
                 {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                {darkMode ? 'Light Mode' : 'Dark Mode'}
+                {darkMode ? "Light Mode" : "Dark Mode"}
               </button>
               <button
                 onClick={handleLogout}
@@ -344,7 +391,9 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
         </div>
       )}
 
-      {mailModalOpen && <InGameMail closeModal={() => setMailModalOpen(false)} />}
+      {mailModalOpen && (
+        <InGameMail closeModal={() => setMailModalOpen(false)} />
+      )}
     </>
   );
 };

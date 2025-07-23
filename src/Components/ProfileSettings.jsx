@@ -18,8 +18,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Dashboard/Navbar";
 import { getWithExpiry, setWithExpiry, logout } from "../utils/anonymousName";
-import JournalCard, { JournalCardSkeleton } from "./PublicJournals/PublicStoryCard";
-import { createAvatar } from '@dicebear/core';
+import JournalCard, {
+  JournalCardSkeleton,
+} from "./PublicJournals/PublicStoryCard";
+import { createAvatar } from "@dicebear/core";
 import {
   avataaars,
   bottts,
@@ -37,7 +39,7 @@ import {
   rings,
   shapes,
   thumbs,
-} from '@dicebear/collection';
+} from "@dicebear/collection";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -101,8 +103,8 @@ const getDeterministicAvatarStyle = (seed) => {
 };
 
 const getDefaultProfileTheme = (anonymousName) => ({
-  type: 'color',
-  value: '#000000',
+  type: "color",
+  value: "#000000",
   avatarStyle: getDeterministicAvatarStyle(anonymousName),
 });
 
@@ -147,7 +149,7 @@ const ProfileSettings = () => {
       try {
         const user = getWithExpiry("user");
         if (!user) return navigate("/login");
-        
+
         setUserData(user);
         setForm({
           nickname: user.nickname || "",
@@ -157,7 +159,7 @@ const ProfileSettings = () => {
           bio: user.bio || "",
           anonymousName: user.anonymousName || "",
         });
-        
+
         // Initialize profile theme from user data
         if (user.profileTheme) {
           setProfileTheme(user.profileTheme);
@@ -187,18 +189,18 @@ const ProfileSettings = () => {
       const response = await API.get(`/journals/${userId}`);
       const journalsData = response.data.journals || [];
       setJournals(journalsData);
-      
+
       // Initialize liked and saved states
       if (userData) {
         const liked = new Set();
         const saved = new Set(userData.savedEntries || []);
-        
-        journalsData.forEach(journal => {
+
+        journalsData.forEach((journal) => {
           if (journal.likes && journal.likes.includes(userData._id)) {
             liked.add(journal._id);
           }
         });
-        
+
         setLikedJournals(liked);
         setSavedJournals(saved);
       }
@@ -302,16 +304,18 @@ const ProfileSettings = () => {
       const response = await API.post(`/journals/${journal._id}/like`, {
         userId: userData._id,
       });
-      
+
       // Update the journal in the list
-      setJournals(prev => prev.map(j => 
-        j._id === journal._id 
-          ? { ...j, likeCount: response.data.likeCount }
-          : j
-      ));
-      
+      setJournals((prev) =>
+        prev.map((j) =>
+          j._id === journal._id
+            ? { ...j, likeCount: response.data.likeCount }
+            : j
+        )
+      );
+
       // Update liked state
-      setLikedJournals(prev => {
+      setLikedJournals((prev) => {
         const newSet = new Set(prev);
         if (response.data.isLiked) {
           newSet.add(journal._id);
@@ -331,9 +335,9 @@ const ProfileSettings = () => {
       await API.post(`/journals/${journalId}/save`, {
         userId: userData._id,
       });
-      
+
       // Update saved state
-      setSavedJournals(prev => {
+      setSavedJournals((prev) => {
         const newSet = new Set(prev);
         if (shouldSave) {
           newSet.add(journalId);
@@ -342,13 +346,18 @@ const ProfileSettings = () => {
         }
         return newSet;
       });
-      
+
       // Update user data in localStorage
       const updatedUser = { ...userData };
       if (shouldSave) {
-        updatedUser.savedEntries = [...(updatedUser.savedEntries || []), journalId];
+        updatedUser.savedEntries = [
+          ...(updatedUser.savedEntries || []),
+          journalId,
+        ];
       } else {
-        updatedUser.savedEntries = (updatedUser.savedEntries || []).filter(id => id !== journalId);
+        updatedUser.savedEntries = (updatedUser.savedEntries || []).filter(
+          (id) => id !== journalId
+        );
       }
       setWithExpiry("user", updatedUser, 2 * 60 * 60 * 1000);
       setUserData(updatedUser);
@@ -359,10 +368,12 @@ const ProfileSettings = () => {
   };
 
   const getBannerStyle = () => {
-    if (!profileTheme) return { backgroundColor: '#000000' };
-    if (profileTheme.type === 'color') return { backgroundColor: profileTheme.value };
-    if (profileTheme.type === 'gradient') return { background: profileTheme.value };
-    return { backgroundColor: '#000000' };
+    if (!profileTheme) return { backgroundColor: "#000000" };
+    if (profileTheme.type === "color")
+      return { backgroundColor: profileTheme.value };
+    if (profileTheme.type === "gradient")
+      return { background: profileTheme.value };
+    return { backgroundColor: "#000000" };
   };
 
   const formatDate = (dateString) => {
@@ -381,16 +392,13 @@ const ProfileSettings = () => {
   // Public Profile Card Preview
   const PublicProfileCardPreview = () => {
     if (!profileTheme) return null;
-    
+
     return (
       <div className="space-y-12">
         <div className="bg-white border border-gray-100 overflow-hidden">
           {/* Cover/Header Background */}
-          <div
-            className="h-24 relative"
-            style={getBannerStyle()}
-          />
-          
+          <div className="h-24 relative" style={getBannerStyle()} />
+
           <div className="px-8 pb-8">
             {/* Avatar and Basic Info */}
             <div className="flex items-end gap-6 -mt-12 relative z-10">
@@ -398,25 +406,35 @@ const ProfileSettings = () => {
               <div className="w-24 h-24 rounded-full flex items-center justify-center shadow-sm border-2 border-white flex-shrink-0 bg-white overflow-hidden">
                 <img
                   src={getAvatarSvg(
-                    profileTheme.avatarStyle || userData?.profileTheme?.avatarStyle || 'avataaars', 
-                    form.anonymousName || userData?.anonymousName || 'Anonymous'
+                    profileTheme.avatarStyle ||
+                      userData?.profileTheme?.avatarStyle ||
+                      "avataaars",
+                    form.anonymousName || userData?.anonymousName || "Anonymous"
                   )}
                   alt="Avatar Preview"
                   className="w-full h-full object-cover"
                 />
               </div>
-              
+
               {/* Name and Info */}
               <div className="flex-1 min-w-0 pt-2">
                 <h1 className="text-2xl font-normal text-black mb-1">
                   {form.anonymousName || userData?.anonymousName || "Anonymous"}
                 </h1>
                 <div className="flex items-center gap-3 text-xs text-gray-500">
-                  <span>Joined {new Date(userData?.createdAt || new Date()).toLocaleDateString("en-US", { year: "numeric", month: "long" })}</span>
+                  <span>
+                    Joined{" "}
+                    {new Date(
+                      userData?.createdAt || new Date()
+                    ).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                    })}
+                  </span>
                 </div>
               </div>
             </div>
-            
+
             {/* Bio */}
             {form.bio && (
               <div className="mt-6">
@@ -427,7 +445,7 @@ const ProfileSettings = () => {
             )}
           </div>
         </div>
-        
+
         {/* Customization Controls */}
         {!editingCard ? (
           <div>
@@ -444,96 +462,129 @@ const ProfileSettings = () => {
         ) : (
           <div className="space-y-8">
             <div>
-              <h3 className="text-lg font-normal text-black mb-6">Customize Profile</h3>
-              
+              <h3 className="text-lg font-normal text-black mb-6">
+                Customize Profile
+              </h3>
+
               {/* Avatar Style Selection */}
               <div className="mb-8">
-                <label className="block text-sm text-gray-600 mb-4">Avatar Style</label>
+                <label className="block text-sm text-gray-600 mb-4">
+                  Avatar Style
+                </label>
                 <div className="grid grid-cols-3 gap-2">
                   {Object.keys(avatarCollections).map((key) => (
                     <button
                       key={key}
                       className={`px-3 py-2 text-xs transition-colors ${
                         profileTheme.avatarStyle === key
-                          ? 'bg-black text-white'
-                          : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                          ? "bg-black text-white"
+                          : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                       }`}
-                      onClick={() => setProfileTheme({ ...profileTheme, avatarStyle: key })}
+                      onClick={() =>
+                        setProfileTheme({ ...profileTheme, avatarStyle: key })
+                      }
                     >
                       {avatarLabels[key]}
                     </button>
                   ))}
                 </div>
               </div>
-              
+
               {/* Banner Style Selection */}
               <div className="mb-8">
-                <label className="block text-sm text-gray-600 mb-4">Banner</label>
+                <label className="block text-sm text-gray-600 mb-4">
+                  Banner
+                </label>
                 <div className="flex gap-3 mb-4">
                   <button
                     className={`px-4 py-2 text-sm transition-colors ${
-                      profileTheme.type === 'color'
-                        ? 'bg-black text-white'
-                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                      profileTheme.type === "color"
+                        ? "bg-black text-white"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                     }`}
-                    onClick={() => setProfileTheme({ 
-                      ...profileTheme, 
-                      type: 'color', 
-                      value: profileTheme.type === 'color' ? profileTheme.value : '#000000' 
-                    })}
+                    onClick={() =>
+                      setProfileTheme({
+                        ...profileTheme,
+                        type: "color",
+                        value:
+                          profileTheme.type === "color"
+                            ? profileTheme.value
+                            : "#000000",
+                      })
+                    }
                   >
                     Color
                   </button>
                   <button
                     className={`px-4 py-2 text-sm transition-colors ${
-                      profileTheme.type === 'gradient'
-                        ? 'bg-black text-white'
-                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                      profileTheme.type === "gradient"
+                        ? "bg-black text-white"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                     }`}
-                    onClick={() => setProfileTheme({ 
-                      ...profileTheme, 
-                      type: 'gradient', 
-                      value: profileTheme.type === 'gradient' ? profileTheme.value : 'linear-gradient(90deg, #000000 0%, #666666 100%)' 
-                    })}
+                    onClick={() =>
+                      setProfileTheme({
+                        ...profileTheme,
+                        type: "gradient",
+                        value:
+                          profileTheme.type === "gradient"
+                            ? profileTheme.value
+                            : "linear-gradient(90deg, #000000 0%, #666666 100%)",
+                      })
+                    }
                   >
                     Gradient
                   </button>
                 </div>
-                
-                {profileTheme.type === 'color' && (
+
+                {profileTheme.type === "color" && (
                   <div className="flex items-center gap-3">
                     <input
                       type="color"
                       value={profileTheme.value}
-                      onChange={e => setProfileTheme({ ...profileTheme, value: e.target.value })}
+                      onChange={(e) =>
+                        setProfileTheme({
+                          ...profileTheme,
+                          value: e.target.value,
+                        })
+                      }
                       className="w-8 h-8 border border-gray-200 cursor-pointer"
                     />
                     <input
                       type="text"
                       value={profileTheme.value}
-                      onChange={e => setProfileTheme({ ...profileTheme, value: e.target.value })}
+                      onChange={(e) =>
+                        setProfileTheme({
+                          ...profileTheme,
+                          value: e.target.value,
+                        })
+                      }
                       className="flex-1 px-0 py-2 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none text-sm"
                       placeholder="#000000"
                     />
                   </div>
                 )}
-                
-                {profileTheme.type === 'gradient' && (
+
+                {profileTheme.type === "gradient" && (
                   <input
                     type="text"
                     value={profileTheme.value}
-                    onChange={e => setProfileTheme({ ...profileTheme, value: e.target.value })}
+                    onChange={(e) =>
+                      setProfileTheme({
+                        ...profileTheme,
+                        value: e.target.value,
+                      })
+                    }
                     className="w-full px-0 py-2 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none text-sm"
                     placeholder="linear-gradient(90deg, #000000 0%, #666666 100%)"
                   />
                 )}
               </div>
-              
+
               <div className="flex gap-3">
                 <button
-                  onClick={() => { 
-                    setProfileTheme(savedCard); 
-                    setEditingCard(false); 
+                  onClick={() => {
+                    setProfileTheme(savedCard);
+                    setEditingCard(false);
                   }}
                   className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors"
                 >
@@ -628,7 +679,9 @@ const ProfileSettings = () => {
                 <input
                   type="text"
                   value={form.nickname}
-                  onChange={(e) => setForm({ ...form, nickname: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, nickname: e.target.value })
+                  }
                   className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none"
                   placeholder="Enter your display name"
                 />
@@ -641,7 +694,9 @@ const ProfileSettings = () => {
                 <input
                   type="text"
                   value={form.anonymousName}
-                  onChange={(e) => setForm({ ...form, anonymousName: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, anonymousName: e.target.value })
+                  }
                   className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none"
                   placeholder="Enter your anonymous name"
                 />
@@ -693,7 +748,9 @@ const ProfileSettings = () => {
                   </label>
                   <select
                     value={form.gender}
-                    onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, gender: e.target.value })
+                    }
                     className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none"
                   >
                     <option value="">Select gender</option>
@@ -706,14 +763,16 @@ const ProfileSettings = () => {
 
               <div className="flex justify-end gap-3 pt-8">
                 <button
-                  onClick={() => setForm({
-                    nickname: userData?.nickname || "",
-                    email: userData?.email || "",
-                    age: userData?.age || "",
-                    gender: userData?.gender || "",
-                    bio: userData?.bio || "",
-                    anonymousName: userData?.anonymousName || "",
-                  })}
+                  onClick={() =>
+                    setForm({
+                      nickname: userData?.nickname || "",
+                      email: userData?.email || "",
+                      age: userData?.age || "",
+                      gender: userData?.gender || "",
+                      bio: userData?.bio || "",
+                      anonymousName: userData?.anonymousName || "",
+                    })
+                  }
                   className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors"
                 >
                   Cancel
@@ -744,14 +803,17 @@ const ProfileSettings = () => {
                       setPasswords({ ...passwords, current: e.target.value })
                     }
                     className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none pr-8"
-                    placeholder="Current password"
                   />
                   <button
                     type="button"
                     onClick={() => togglePasswordVisibility("current")}
                     className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
                   >
-                    {showPasswords.current ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPasswords.current ? (
+                      <EyeOff size={16} />
+                    ) : (
+                      <Eye size={16} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -764,16 +826,21 @@ const ProfileSettings = () => {
                   <input
                     type={showPasswords.new ? "text" : "password"}
                     value={passwords.new}
-                    onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
+                    onChange={(e) =>
+                      setPasswords({ ...passwords, new: e.target.value })
+                    }
                     className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none pr-8"
-                    placeholder="New password"
                   />
                   <button
                     type="button"
                     onClick={() => togglePasswordVisibility("new")}
                     className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
                   >
-                    {showPasswords.new ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPasswords.new ? (
+                      <EyeOff size={16} />
+                    ) : (
+                      <Eye size={16} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -790,21 +857,26 @@ const ProfileSettings = () => {
                       setPasswords({ ...passwords, confirm: e.target.value })
                     }
                     className="w-full px-0 py-3 border-0 border-b border-gray-200 bg-transparent text-black focus:border-black focus:outline-none pr-8"
-                    placeholder="Confirm new password"
                   />
                   <button
                     type="button"
                     onClick={() => togglePasswordVisibility("confirm")}
                     className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
                   >
-                    {showPasswords.confirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPasswords.confirm ? (
+                      <EyeOff size={16} />
+                    ) : (
+                      <Eye size={16} />
+                    )}
                   </button>
                 </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-8">
                 <button
-                  onClick={() => setPasswords({ current: "", new: "", confirm: "" })}
+                  onClick={() =>
+                    setPasswords({ current: "", new: "", confirm: "" })
+                  }
                   className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors"
                 >
                   Cancel
@@ -828,9 +900,12 @@ const ProfileSettings = () => {
             <div>
               <div className="flex justify-between items-center mb-8">
                 <div>
-                  <h2 className="text-xl font-normal text-black mb-1">Your Journals</h2>
+                  <h2 className="text-xl font-normal text-black mb-1">
+                    Your Journals
+                  </h2>
                   <p className="text-gray-500 text-sm">
-                    {journals.length} {journals.length === 1 ? "entry" : "entries"}
+                    {journals.length}{" "}
+                    {journals.length === 1 ? "entry" : "entries"}
                   </p>
                 </div>
                 <button
@@ -853,8 +928,12 @@ const ProfileSettings = () => {
               ) : journals.length === 0 ? (
                 <div className="text-center py-16">
                   <BookOpen size={32} className="mx-auto mb-4 text-gray-300" />
-                  <h3 className="text-lg font-normal text-black mb-2">No journals yet</h3>
-                  <p className="text-gray-500 mb-6 text-sm">Start writing your first journal entry</p>
+                  <h3 className="text-lg font-normal text-black mb-2">
+                    No journals yet
+                  </h3>
+                  <p className="text-gray-500 mb-6 text-sm">
+                    Start writing your first journal entry
+                  </p>
                   <button
                     onClick={() => navigate("/dashboard/create")}
                     className="px-6 py-2 bg-black text-white hover:bg-gray-800 transition-colors text-sm"
@@ -882,9 +961,12 @@ const ProfileSettings = () => {
 
         {/* Delete Account */}
         <div className="mt-20 pt-8 border-t border-gray-100">
-          <h3 className="text-sm font-normal text-black mb-2">Delete Account</h3>
+          <h3 className="text-sm font-normal text-black mb-2">
+            Delete Account
+          </h3>
           <p className="text-gray-500 mb-4 text-xs">
-            This action cannot be undone. All your journals and data will be permanently deleted.
+            This action cannot be undone. All your journals and data will be
+            permanently deleted.
           </p>
           <button
             onClick={() => setShowDeleteConfirm(true)}
@@ -900,9 +982,12 @@ const ProfileSettings = () => {
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50">
           <div className="bg-white p-8 max-w-sm w-full mx-4 border border-gray-100">
-            <h3 className="text-lg font-normal text-black mb-4">Delete Account</h3>
+            <h3 className="text-lg font-normal text-black mb-4">
+              Delete Account
+            </h3>
             <p className="text-gray-600 mb-6 text-sm">
-              Are you sure you want to delete your account? This action cannot be undone.
+              Are you sure you want to delete your account? This action cannot
+              be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button

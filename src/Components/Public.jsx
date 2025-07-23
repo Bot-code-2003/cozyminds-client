@@ -3,14 +3,13 @@ import { Helmet } from "react-helmet";
 import { useDarkMode } from "../context/ThemeContext";
 import AuthModals from "./Landing/AuthModals";
 import Navbar from "./Dashboard/Navbar";
-import LandingNavbar from "./Landing/Navbar";
 import PublicStories from "./PublicJournals/PublicStories";
 import PublicJournals from "./PublicJournals/PublicJournals";
-import { BookOpen, FileText } from 'lucide-react';
+import { BookOpen, FileText } from "lucide-react";
 
 const getCurrentUser = () => {
   try {
-    const itemStr = localStorage.getItem('user');
+    const itemStr = localStorage.getItem("user");
     if (!itemStr) return null;
     const item = JSON.parse(itemStr);
     if (item && item.value) return item.value;
@@ -45,30 +44,31 @@ const Public = () => {
       <Helmet>
         <title>{seo.title}</title>
         <meta name="description" content={seo.description} />
-        <meta name="keywords" content="stories, journals, creative writing, online journal, short stories, daily writing, starlit journals" />
+        <meta
+          name="keywords"
+          content="stories, journals, creative writing, online journal, short stories, daily writing, starlit journals"
+        />
         <meta property="og:title" content={seo.title} />
         <meta property="og:description" content={seo.description} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://starlitjournals.com/${activeTab}`} />
+        <meta
+          property="og:url"
+          content={`https://starlitjournals.com/${activeTab}`}
+        />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href={`https://starlitjournals.com/${activeTab}`} />
+        <link
+          rel="canonical"
+          href={`https://starlitjournals.com/${activeTab}`}
+        />
       </Helmet>
 
       {/* Navbar */}
-      {isLoggedIn ? (
-        <Navbar name="New Entry" link="/journaling-alt" />
-      ) : (
-        <LandingNavbar
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          openLoginModal={openLoginModal}
-          openSignupModal={openSignupModal}
-        />
-      )}
+      <Navbar name="New Entry" link="/journaling-alt" />
+
       {modals}
 
       {/* Sub Navigation */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-[100]">
+      <div className="bg-white sticky top-0 z-[100]">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-center">
             <div className="flex bg-gray-100 rounded-lg p-1 my-4">

@@ -6,7 +6,6 @@ import { useDarkMode } from "../context/ThemeContext";
 import { usePublicStories } from "../context/PublicStoriesContext";
 import { ArrowLeft, Loader2, Clock, Heart } from "lucide-react";
 import DashboardNavbar from "./Dashboard/Navbar";
-import LandingNavbar from "./Landing/Navbar";
 import AuthModals from "./Landing/AuthModals";
 import { createAvatar } from "@dicebear/core";
 import {
@@ -76,7 +75,8 @@ const getCurrentUser = () => {
 const StoryEntry = () => {
   const { anonymousName, slug } = useParams();
   const { darkMode } = useDarkMode();
-  const { fetchSingleStory, stories, loading, error, handleLike } = usePublicStories();
+  const { fetchSingleStory, stories, loading, error, handleLike } =
+    usePublicStories();
   const navigate = useNavigate();
   const [entry, setEntry] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
@@ -90,14 +90,18 @@ const StoryEntry = () => {
   const [authorProfile, setAuthorProfile] = useState(null);
   const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
 
-  const author = entry && entry.userId && typeof entry.userId === "object" ? entry.userId : null;
+  const author =
+    entry && entry.userId && typeof entry.userId === "object"
+      ? entry.userId
+      : null;
 
   useEffect(() => {
     const loadStory = async () => {
       try {
         const story = await fetchSingleStory(anonymousName, slug);
         setEntry(story);
-        const wordCount = story.content?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0;
+        const wordCount =
+          story.content?.replace(/<[^>]*>/g, "").split(/\s+/).length || 0;
         setReadingTime(Math.ceil(wordCount / 200));
       } catch (err) {
         setEntry(null);
@@ -114,7 +118,11 @@ const StoryEntry = () => {
   useEffect(() => {
     if (entry && entry.isPublic && entry._id) {
       axios
-        .get(`${import.meta.env.VITE_API_URL}/recommendations?category=${entry.category}&exclude=${entry._id}`)
+        .get(
+          `${import.meta.env.VITE_API_URL}/recommendations?category=${
+            entry.category
+          }&exclude=${entry._id}`
+        )
         .then((res) => setRecommendations(res.data.journals || []))
         .catch(() => setRecommendations([]));
     }
@@ -134,7 +142,11 @@ const StoryEntry = () => {
   useEffect(() => {
     if (!author || !currentUser || author._id === currentUser._id) return;
     axios
-      .get(`${import.meta.env.VITE_API_URL}/subscription-status/${currentUser._id}/${author._id}`)
+      .get(
+        `${import.meta.env.VITE_API_URL}/subscription-status/${
+          currentUser._id
+        }/${author._id}`
+      )
       .then((res) => {
         setIsSubscribed(res.data.isSubscribed || res.data.subscribed);
       })
@@ -162,10 +174,13 @@ const StoryEntry = () => {
     if (!author) return;
     try {
       setSubscribing(true);
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/subscribe`, {
-        subscriberId: currentUser._id,
-        targetUserId: author._id,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/subscribe`,
+        {
+          subscriberId: currentUser._id,
+          targetUserId: author._id,
+        }
+      );
       setTimeout(() => {
         setIsSubscribed(response.data.subscribed);
         setSubscribing(false);
@@ -235,7 +250,9 @@ const StoryEntry = () => {
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
         <div className="flex items-center space-x-3">
           <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-          <p className="text-gray-500 dark:text-gray-400 font-medium">Loading...</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">
+            Loading...
+          </p>
         </div>
       </div>
     );
@@ -270,11 +287,8 @@ const StoryEntry = () => {
           <meta name="description" content={entry.metaDescription} />
         )}
       </Helmet>
-      {currentUser ? (
-        <DashboardNavbar />
-      ) : (
-        <LandingNavbar openLoginModal={openLoginModal} openSignupModal={openSignupModal} />
-      )}
+      <DashboardNavbar />
+
       {modals}
 
       <button
@@ -294,7 +308,7 @@ const StoryEntry = () => {
                 <img
                   src={entry.thumbnail}
                   alt=""
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
                 <div className="absolute inset-0 flex flex-col justify-end">
@@ -363,7 +377,8 @@ const StoryEntry = () => {
                         >
                           <img
                             src={getAvatarSvg(
-                              authorProfile.profileTheme?.avatarStyle || "avataaars",
+                              authorProfile.profileTheme?.avatarStyle ||
+                                "avataaars",
                               authorProfile.anonymousName || "Anonymous"
                             )}
                             alt="Author"
@@ -398,24 +413,31 @@ const StoryEntry = () => {
                       </div>
                     )}
                   </div>
-                  {authorProfile && currentUser && authorProfile._id !== currentUser._id && (
-                    <div className="ml-8 flex-shrink-0">
-                      <button
-                        onClick={handleSubscribe}
-                        disabled={subscribing}
-                        className={`relative overflow-hidden px-8 py-3 text-sm font-medium transition-all duration-300 ${
-                          isSubscribed 
-                            ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900' 
-                            : 'bg-transparent border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900'
-                        } ${subscribing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        {subscribing && (
-                          <Loader2 size={16} className="inline-block mr-2 animate-spin" />
-                        )}
-                        {isSubscribed ? 'Following' : 'Follow'}
-                      </button>
-                    </div>
-                  )}
+                  {authorProfile &&
+                    currentUser &&
+                    authorProfile._id !== currentUser._id && (
+                      <div className="ml-8 flex-shrink-0">
+                        <button
+                          onClick={handleSubscribe}
+                          disabled={subscribing}
+                          className={`relative overflow-hidden px-8 py-3 text-sm font-medium transition-all duration-300 ${
+                            isSubscribed
+                              ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
+                              : "bg-transparent border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900"
+                          } ${
+                            subscribing ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
+                        >
+                          {subscribing && (
+                            <Loader2
+                              size={16}
+                              className="inline-block mr-2 animate-spin"
+                            />
+                          )}
+                          {isSubscribed ? "Following" : "Follow"}
+                        </button>
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
@@ -434,11 +456,20 @@ const StoryEntry = () => {
           {entry?.isPublic && (
             <div className="mt-20 pt-12 flex justify-center border-t border-gray-100 dark:border-gray-800">
               <button
-                className={`flex items-center gap-3 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-base font-medium rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 ${isLiked ? 'opacity-90' : ''} ${likeLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                className={`flex items-center gap-3 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-base font-medium rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 ${
+                  isLiked ? "opacity-90" : ""
+                } ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}`}
                 onClick={handleStoryLike}
                 disabled={likeLoading}
               >
-                <Heart size={20} className={`${isLiked ? 'fill-red-500 dark:fill-red-400' : 'fill-gray-400 dark:fill-gray-500'}`} />
+                <Heart
+                  size={20}
+                  className={`${
+                    isLiked
+                      ? "fill-red-500 dark:fill-red-400"
+                      : "fill-gray-400 dark:fill-gray-500"
+                  }`}
+                />
                 <span>{likeCount}</span>
               </button>
             </div>
@@ -458,7 +489,8 @@ const StoryEntry = () => {
           {recommendations.length > 0 && (
             <section className="max-w-3xl mx-auto mt-28">
               <h2 className="text-xl font-bold mb-12 text-gray-900 dark:text-gray-100">
-                More {entry.category === "story" ? "Stories" : "Journals"} to Read
+                More {entry.category === "story" ? "Stories" : "Journals"} to
+                Read
               </h2>
               <div className="space-y-8">
                 {recommendations.slice(0, 5).map((recommendation) => (

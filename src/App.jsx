@@ -4,31 +4,23 @@ import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import { ThemeProvider } from "./context/ThemeContext";
-import { JournalProvider } from "./context/JournalContext";
 import { MailProvider } from "./context/MailContext";
 import { PublicJournalsProvider } from "./context/PublicJournalsContext";
-import { SidebarProvider } from "./context/SidebarContext";
 import { getWithExpiry, setWithExpiry } from "./utils/anonymousName";
 import { PublicStoriesProvider } from "./context/PublicStoriesContext";
 
 // Components
 import LandingPage from "./Components/Landing/LandingPage";
-import Dashboard from "./Components/Dashboard/Dashboard";
 import JournalEntry from "./Components/JournalEntry";
-import JournalEntries from "./Components/Dashboard/JournalEntries";
 import ProfileSettings from "./Components/ProfileSettings";
-import SiteMaster from "./SiteMaster";
-import Collections from "./Components/Dashboard/Collections";
 import Privacy from "./Components/Landing/Privacy";
 import Terms from "./Components/Landing/Terms";
-import PublicJournals from "./Components/PublicJournals/PublicJournals";
 import PublicProfile from "./Components/PublicJournals/PublicProfile";
 import SubscriptionsView from "./Components/PublicJournals/SubscriptionsView";
 import JournalingAlt from "./Components/EnterJournal/journaling-alt";
 
 import "./index.css";
 import StoryEntry from "./Components/StoryEntry";
-import PublicStories from "./Components/PublicJournals/PublicStories";
 import Public from "./Components/Public";
 import TagEntries from "./Components/PublicJournals/TagEntries";
 
@@ -74,49 +66,25 @@ const App = () => {
     <ThemeProvider>
       <PublicJournalsProvider>
         <PublicStoriesProvider>
-          <SidebarProvider>
-            <JournalProvider>
-              <MailProvider>
-                <div>
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={user ? <Public /> : <LandingPage />}
-                    />
-                    <Route path="/tag/:tag" element={<TagEntries />} />
-                    <Route path="/journal/:id" element={<JournalEntry />} />
-                    <Route
-                      path="/journal-entries/:collection"
-                      element={<JournalEntries />}
-                    />
-                    <Route path="/privacy-policy" element={<Privacy />} />
-                    <Route path="/terms-of-service" element={<Terms />} />
-                    <Route path="/collections" element={<Collections />} />
-                    <Route
-                      path="/profile-settings"
-                      element={<ProfileSettings />}
-                    />
-                    <Route path="/sitemaster" element={<SiteMaster />} />
-                    
-                    <Route
-                      path="/:anonymousName/:slug"
-                      element={<StoryEntry />}
-                    />
-                    <Route
-                      path="/:anonymousName"
-                      element={<PublicProfile />}
-                    />
-                    
-                    <Route
-                      path="/subscriptions"
-                      element={<SubscriptionsView />}
-                    />
-                    <Route path="/journaling-alt" element={<JournalingAlt />} />
-                  </Routes>
-                </div>
-              </MailProvider>
-            </JournalProvider>
-          </SidebarProvider>
+          <MailProvider>
+            <div>
+              <Routes>
+                <Route path="/" element={user ? <Public /> : <LandingPage />} />
+                <Route path="/tag/:tag" element={<TagEntries />} />
+                <Route path="/journal/:id" element={<JournalEntry />} />
+
+                <Route path="/privacy-policy" element={<Privacy />} />
+                <Route path="/terms-of-service" element={<Terms />} />
+                <Route path="/profile-settings" element={<ProfileSettings />} />
+
+                <Route path="/:anonymousName/:slug" element={<StoryEntry />} />
+                <Route path="/:anonymousName" element={<PublicProfile />} />
+
+                <Route path="/subscriptions" element={<SubscriptionsView />} />
+                <Route path="/journaling-alt" element={<JournalingAlt />} />
+              </Routes>
+            </div>
+          </MailProvider>
         </PublicStoriesProvider>
       </PublicJournalsProvider>
     </ThemeProvider>

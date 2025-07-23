@@ -29,11 +29,14 @@ const LandingPage = () => {
       <nav className="relative z-10 border-b border-gray-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="text-2xl sm:text-3xl font-semibold">
-                Starlit Journals
+            <button className="flex items-center">
+              <div className="text-2xl font-bold tracking-tight flex items-baseline">
+                <span className="text-[var(--accent)] newsreader">Starlit</span>
+                <span className="text-gray-800 dark:text-white ml-1 newsreader opacity-80">
+                  Journals
+                </span>
               </div>
-            </div>
+            </button>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
