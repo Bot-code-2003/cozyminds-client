@@ -1,158 +1,134 @@
 "use client";
 
 import { useEffect } from "react";
-
 import {
-  Shield,
-  FileText,
   Globe,
+  FileText,
+  BookText,
+  Shield,
+  Copyright,
   RefreshCw,
   Mail,
   Calendar,
-  Copyright,
-  BookText,
 } from "lucide-react";
 
 const Terms = ({ darkMode }) => {
   useEffect(() => {
     scrollTo(0, 0);
   }, []);
+
   const sections = [
     {
       icon: <Globe size={24} />,
-      title: "User Eligibility & Age Restrictions",
+      title: "User Eligibility",
       content:
-        "You must be at least 13 years old to use Starlit Journals. If you are under 18, you must use the platform with parental guidance. By using the platform, you confirm you meet these requirements.",
+        "You must be at least 13 years old to use Starlit Journals. Users under 18 require parental guidance. By accessing the platform, you confirm compliance with these age requirements.",
     },
     {
       icon: <FileText size={24} />,
-      title: "User Responsibilities & Conduct",
+      title: "User Conduct",
       content:
-        "You agree to use Starlit Journals for lawful, personal, and non-commercial purposes. You will not post illegal, harmful, or abusive content, nor attempt to disrupt or exploit the platform. You are responsible for your own content and interactions.",
+        "Use Starlit Journals for lawful, personal, and non-commercial purposes only. Avoid posting illegal, harmful, or abusive content, and refrain from disrupting or exploiting the platform. You are accountable for your content and interactions.",
     },
     {
       icon: <BookText size={24} />,
-      title: "Content Ownership & Public Visibility",
+      title: "Content Ownership",
       content:
-        "You retain ownership of your journal entries and data. Public journals are visible to all users and may be indexed by search engines. By posting public content, you grant Starlit Journals a license to display, share, and promote your entries within the platform. Do not include personal information in public journals.",
+        "You retain ownership of your journal entries. Public journals are visible to all users and may be indexed by search engines. Posting public content grants Starlit Journals a license to display and promote it within the platform. Avoid personal details in public entries.",
     },
     {
       icon: <Shield size={24} />,
-      title: "Content Moderation & Takedown",
+      title: "Content Moderation",
       content:
-        "We reserve the right to moderate, remove, or restrict content that violates our guidelines, is illegal, or is reported by users. You can report inappropriate content via the platform or by email. We respond promptly to all valid reports.",
+        "We may moderate, remove, or restrict content violating guidelines, laws, or user reports. Report issues via the platform or email. We address valid reports with urgency.",
     },
     {
       icon: <Copyright size={24} />,
-      title: "Copyright & DMCA",
+      title: "Copyright Compliance",
       content:
-        "If you believe your copyright has been infringed, contact us with details. We comply with DMCA and will promptly remove infringing content upon valid notice.",
+        "Report copyright infringements with detailed notices. We comply with DMCA and will remove infringing content upon valid requests.",
     },
     {
       icon: <RefreshCw size={24} />,
-      title: "Disclaimers & Limitation of Liability",
+      title: "Disclaimers",
       content:
-        "Starlit Journals is provided as-is, without warranties. We are not liable for user content, data loss, or damages arising from use of the platform. Use at your own risk.",
+        "Starlit Journals is provided 'as-is' without warranties. We are not liable for user content, data loss, or damages from platform use. Proceed at your own risk.",
     },
     {
       icon: <Shield size={24} />,
-      title: "Service Availability & Changes",
+      title: "Service Availability",
       content:
-        "We strive to keep Starlit Journals running smoothly, but cannot guarantee uninterrupted service. Features may change or be discontinued at any time.",
+        "We aim for consistent service but cannot guarantee uninterrupted access. Features may be modified or discontinued at our discretion.",
     },
     {
       icon: <Mail size={24} />,
       title: "Third-Party Services",
       content:
-        "We may use third-party services for hosting, analytics, and email delivery. These providers are contractually obligated to protect your data and may only use it as necessary to provide their services.",
+        "Third-party providers support hosting, analytics, and email. They are contractually bound to protect your data and use it only as needed.",
     },
     {
       icon: <Shield size={24} />,
-      title: "Jurisdiction & Dispute Resolution",
+      title: "Jurisdiction",
       content:
-        "These terms are governed by the laws of India. Any disputes will be resolved in the courts of Hyderabad, India. By using the platform, you consent to this jurisdiction.",
+        "These terms are governed by Indian law. Disputes will be resolved in Hyderabad courts. Using the platform implies consent to this jurisdiction.",
     },
     {
       icon: <RefreshCw size={24} />,
-      title: "Updates to Terms",
+      title: "Terms Updates",
       content:
-        "We may update these Terms of Service from time to time. If we make significant changes, we will notify users via the platform or email. Continued use of Starlit Journals after changes means you accept the updated terms.",
+        "Terms may be updated periodically. Significant changes will be notified via the platform or email. Continued use post-updates indicates acceptance.",
     },
   ];
 
   return (
-    <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans transition-colors duration-300">
-      {/* Gradient Accents */}
-      <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
-
-      {/* Grid Pattern Background */}
-      <div className="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none">
-        <div className="absolute inset-0 grid grid-cols-12 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-full border-r border-black dark:border-white"
-            ></div>
-          ))}
-        </div>
-        <div className="absolute inset-0 grid grid-rows-12 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-full border-b border-black dark:border-white"
-            ></div>
-          ))}
-        </div>
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto p-6 sm:p-8">
-        {/* Header */}
+    <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#F9FBFC] text-[#1A1A1A] font-sans transition-colors duration-300">
+      <div className="absolute top-0 left-0 w-full h-1/4 bg-gradient-to-b from-[#A3BFFA]/30 to-transparent opacity-50 dark:opacity-20 transition-opacity duration-300"></div>
+      <div className="relative z-10 max-w-5xl mx-auto p-6 sm:p-10">
         <div className="text-center mb-16">
-          <div className="inline-block mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
-            LEGAL TERMS
+          <div className="inline-block mb-6 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-lg text-sm font-semibold uppercase tracking-wide">
+            Legal Agreement
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
-            <span className="relative">
-              Terms of <span className="text-[#5999a8]">Service</span>
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 leading-tight">
+            <span className="relative inline-block">
+              Terms of
+              <span className="text-[#4A90E2]"> Service</span>
               <svg
-                className="absolute -bottom-2 left-0 w-full h-2 text-[#5999a8]"
-                viewBox="0 0 100 10"
+                className="absolute -bottom-2 left-0 w-full h-1.5 text-[#4A90E2]"
+                viewBox="0 0 100 5"
                 preserveAspectRatio="none"
               >
                 <path
-                  d="M0,5 Q25,0 50,5 T100,5"
+                  d="M0,2.5 Q25,0 50,2.5 T100,2.5"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="1.5"
                   fill="none"
                 />
               </svg>
             </span>
           </h1>
-          <p className="text-lg md:text-xl opacity-80 font-medium max-w-2xl mx-auto">
-            Welcome to <strong>Starlit Journals</strong>. These terms govern
-            your use of our platform. By accessing or using the app, you agree
-            to these terms.
+          <p className="text-base sm:text-lg opacity-80 font-medium max-w-3xl mx-auto">
+            Welcome to <strong>Starlit Journals</strong>. These terms outline
+            your responsibilities and rights while using our platform.
           </p>
         </div>
 
-        {/* Terms Sections */}
-        <div className="space-y-8 mb-16">
+        <div className="space-y-10 mb-20">
           {sections.map((section, index) => (
             <div
               key={index}
-              className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-apple p-8 hover:shadow-xl transition-all duration-300 bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm"
+              className="border border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-xl p-6 sm:p-8 bg-white/70 dark:bg-[#2A2A2A]/70 backdrop-blur-sm hover:shadow-lg transition-all duration-300"
             >
-              <div className="flex items-start gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-apple flex items-center justify-center bg-[#5999a8]/10 dark:bg-[#5999a8]/20">
+              <div className="flex items-start gap-5">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-12 h-12 flex items-center justify-center bg-[#4A90E2]/10 dark:bg-[#4A90E2]/20 rounded-lg">
                     {section.icon}
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold mb-4 tracking-tight">
+                  <h2 className="text-xl sm:text-2xl font-semibold mb-3 tracking-tight">
                     {index + 1}. {section.title}
                   </h2>
-                  <p className="text-lg opacity-80 leading-relaxed">
+                  <p className="text-sm sm:text-base opacity-90 leading-relaxed">
                     {section.content}
                   </p>
                 </div>
@@ -161,38 +137,34 @@ const Terms = ({ darkMode }) => {
           ))}
         </div>
 
-        {/* Contact Section */}
-        <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl p-8 mb-8 bg-[#5999a8]/10 dark:bg-[#5999a8]/5">
-          <div className="text-center">
-            <div className="mb-6">
-              <div className="inline-block p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl">
-                <Mail size={32} />
-              </div>
+        <div className="border border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-2xl p-8 mb-12 bg-[#4A90E2]/10 dark:bg-[#4A90E2]/5 text-center">
+          <div className="mb-6">
+            <div className="inline-flex p-3 border-2 border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-xl">
+              <Mail size={24} />
             </div>
-            <h2 className="text-3xl font-bold mb-4 tracking-tight">
-              6. Contact Us
-            </h2>
-            <p className="text-lg opacity-80 mb-6 max-w-xl mx-auto">
-              Questions? We're here to help and would love to hear from you.
-            </p>
-            <a
-              href="mailto:madisettydharmadeep@gmail.com"
-              className="inline-flex items-center gap-3 px-6 py-3 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:opacity-90 transition-opacity rounded-md font-semibold border-2 border-transparent"
-            >
-              <Mail size={18} />
-              madisettydharmadeep@gmail.com
-            </a>
           </div>
+          <h2 className="text-2xl sm:text-3xl font-semibold mb-4 tracking-tight">
+            Contact Us
+          </h2>
+          <p className="text-sm sm:text-base opacity-90 mb-6 max-w-lg mx-auto">
+            For questions or assistance, feel free to reach out.
+          </p>
+          <a
+            href="mailto:madisettydharmadeep@gmail.com"
+            className="inline-flex items-center gap-2 px-6 py-2 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:bg-opacity-90 transition-all rounded-lg font-medium"
+          >
+            <Mail size={16} />
+            madisettydharmadeep@gmail.com
+          </a>
         </div>
 
-        {/* Footer */}
-        <div className="text-center border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl p-6">
-          <div className="flex items-center justify-center gap-3 opacity-70">
-            <div className="p-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl">
-              <Calendar size={16} />
+        <div className="text-center border border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-xl p-6">
+          <div className="flex items-center justify-center gap-2 opacity-70">
+            <div className="p-1.5 border-2 border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-lg">
+              <Calendar size={14} />
             </div>
-            <span className="text-sm font-medium tracking-wider">
-              Last updated: May 4, 2025
+            <span className="text-xs sm:text-sm font-medium tracking-wide">
+              Last Updated: May 4, 2025
             </span>
           </div>
         </div>

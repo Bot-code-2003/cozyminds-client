@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
-
 import {
   Database,
+  User,
   BarChart3,
-  Cookie,
   UserCheck,
+  Shield,
+  Cookie,
   Mail,
   Calendar,
-  User,
-  Shield,
   RefreshCw,
 } from "lucide-react";
 
@@ -18,142 +17,119 @@ const Privacy = ({ darkMode }) => {
   useEffect(() => {
     scrollTo(0, 0);
   }, []);
+
   const sections = [
     {
       icon: <Database size={24} />,
-      title: "What Data We Collect",
+      title: "Data Collection",
       content:
-        "We collect only the information you choose to provide during signup, such as anonymous nickname, password, and (optionally) age or gender. Your journal entries, including public journals, are stored securely. We do not require real names or emails for account creation. If you use third-party logins, we may receive basic profile info from those services.",
+        "We collect only the data you voluntarily provide during signup, including an anonymous nickname, password, and optionally age or gender. Your journal entries, whether public or private, are securely stored. No real names or email addresses are required for account creation. If you opt for third-party logins, we may receive minimal profile data from those services.",
     },
     {
       icon: <User size={24} />,
-      title: "How We Use Your Data",
+      title: "Data Usage",
       content:
-        "We use your information to provide and improve Starlit Journals, personalize your experience, deliver features like mood tracking and rewards, and ensure platform safety. Public journal entries are visible to all users and may be indexed by search engines. Private entries remain accessible only to you.",
+        "Your data is used to deliver and enhance the Starlit Journals experience, personalize features such as mood tracking and rewards, and maintain platform security. Public journal entries are accessible to all users and may be indexed by search engines, while private entries remain exclusive to you.",
     },
     {
       icon: <BarChart3 size={24} />,
-      title: "Public Content & Visibility",
+      title: "Public Content",
       content:
-        "When you post a public journal, it is visible to anyone on the platform and may be shared, commented on, or featured. Public journals may be indexed by search engines and are not private. Please do not include personal information in public entries. You can delete your own public journals at any time.",
+        "Public journals are visible to all platform users and may be shared, commented on, or featured. They may also be indexed by search engines and are not considered private. Avoid including personal details in public entries. You retain the ability to delete your public journals at any time.",
     },
     {
       icon: <UserCheck size={24} />,
-      title: "Your Rights & Choices",
+      title: "User Rights",
       content:
-        "You have the right to access, correct, export, or delete your data at any time. You can delete your account and all associated data from your profile settings. For data export or additional requests, contact us at the email below. We comply with global privacy laws, including GDPR and India's DPDP Act.",
+        "You may access, correct, export, or delete your data at any time via your profile settings. Account deletion removes all associated data. For data export requests or further assistance, contact us at the email provided below. We adhere to global privacy standards, including GDPR and India’s DPDP Act.",
     },
     {
       icon: <Shield size={24} />,
-      title: "Content Moderation & Reporting",
+      title: "Content Moderation",
       content:
-        "We reserve the right to moderate, remove, or restrict content that violates our community guidelines, is illegal, or is reported by users. You can report inappropriate content via the platform or by email. We respond promptly to all valid reports and take user safety seriously.",
+        "We reserve the right to moderate, remove, or restrict content that violates our community guidelines, is illegal, or is reported. Report inappropriate content through the platform or email. We prioritize user safety and respond promptly to valid reports.",
     },
     {
       icon: <Cookie size={24} />,
       title: "Cookies & Analytics",
       content:
-        "Starlit Journals uses cookies for login sessions, rewards, and essential features. We use anonymized analytics (e.g., Google Analytics) to understand usage and improve the platform. No personal data is sold or used for advertising.",
+        "Cookies are used for login sessions, rewards, and essential functionality. Anonymized analytics (e.g., Google Analytics) help us understand usage patterns and improve the platform. We do not sell data or use it for advertising purposes.",
     },
     {
       icon: <Mail size={24} />,
       title: "Third-Party Services",
       content:
-        "We may use third-party services for hosting, analytics, and email delivery. These providers are contractually obligated to protect your data and may only use it as necessary to provide their services.",
+        "Third-party providers assist with hosting, analytics, and email delivery. These partners are bound by contracts to safeguard your data and use it solely for service provision.",
     },
     {
       icon: <Shield size={24} />,
       title: "Data Security",
       content:
-        "We use industry-standard security measures to protect your data. All journal entries are encrypted in transit and at rest. We do not sell or share your data with advertisers. In the event of a data breach, we will notify affected users promptly.",
+        "We employ industry-standard encryption for data in transit and at rest. Your information is never sold or shared with advertisers. In case of a data breach, affected users will be notified promptly.",
     },
     {
       icon: <User size={24} />,
-      title: "Age Restrictions & Parental Consent",
+      title: "Age Restrictions",
       content:
-        "Starlit Journals is intended for users 13 and older. If you are under 18, please use the platform with parental guidance. We do not knowingly collect data from children under 13. Parents can request deletion of a minor's data by contacting us.",
+        "Starlit Journals is designed for users aged 13 and above. Users under 18 should use the platform with parental oversight. We do not collect data from children under 13. Parents may request data deletion by contacting us.",
     },
     {
       icon: <RefreshCw size={24} />,
-      title: "Changes to This Policy",
+      title: "Policy Updates",
       content:
-        "We may update this Privacy Policy from time to time. If we make significant changes, we will notify users via the platform or email. Continued use of Starlit Journals after changes means you accept the updated policy.",
+        "This Privacy Policy may be updated periodically. Significant changes will be communicated via the platform or email. Continued use after updates signifies acceptance of the revised policy.",
     },
   ];
 
   return (
-    <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#f3f9fc] text-[#1A1A1A] font-sans transition-colors duration-300">
-      {/* Gradient Accents */}
-      <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#8fa9af] to-transparent opacity-70 dark:opacity-20 transition-opacity duration-300"></div>
-
-      {/* Grid Pattern Background */}
-      <div className="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none">
-        <div className="absolute inset-0 grid grid-cols-12 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-full border-r border-black dark:border-white"
-            ></div>
-          ))}
-        </div>
-        <div className="absolute inset-0 grid grid-rows-12 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-full border-b border-black dark:border-white"
-            ></div>
-          ))}
-        </div>
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto p-6 sm:p-8">
-        {/* Header */}
+    <div className="min-h-screen dark:bg-[#1A1A1A] dark:text-[#F8F1E9] bg-[#F9FBFC] text-[#1A1A1A] font-sans transition-colors duration-300">
+      <div className="absolute top-0 left-0 w-full h-1/4 bg-gradient-to-b from-[#A3BFFA]/30 to-transparent opacity-50 dark:opacity-20 transition-opacity duration-300"></div>
+      <div className="relative z-10 max-w-5xl mx-auto p-6 sm:p-10">
         <div className="text-center mb-16">
-          <div className="inline-block mb-4 px-3 py-1 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] text-xs font-medium tracking-wider">
-            YOUR PRIVACY
+          <div className="inline-block mb-6 px-4 py-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-lg text-sm font-semibold uppercase tracking-wide">
+            Privacy Commitment
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
-            <span className="relative">
-              Privacy <span className="text-[#5999a8]">Policy</span>
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 leading-tight">
+            <span className="relative inline-block">
+              Privacy
+              <span className="text-[#4A90E2]"> Policy</span>
               <svg
-                className="absolute -bottom-2 left-0 w-full h-2 text-[#5999a8]"
-                viewBox="0 0 100 10"
+                className="absolute -bottom-2 left-0 w-full h-1.5 text-[#4A90E2]"
+                viewBox="0 0 100 5"
                 preserveAspectRatio="none"
               >
                 <path
-                  d="M0,5 Q25,0 50,5 T100,5"
+                  d="M0,2.5 Q25,0 50,2.5 T100,2.5"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="1.5"
                   fill="none"
                 />
               </svg>
             </span>
           </h1>
-          <p className="text-lg md:text-xl opacity-80 font-medium max-w-2xl mx-auto">
-            At <strong>Cozy Minds</strong>, your privacy is important to us.
-            We're all about creating a safe, calming space — and that includes
-            respecting your data.
+          <p className="text-base sm:text-lg opacity-80 font-medium max-w-3xl mx-auto">
+            At <strong>Starlit Journals</strong>, we prioritize your privacy as
+            the foundation of a secure and trustworthy experience.
           </p>
         </div>
 
-        {/* Privacy Sections */}
-        <div className="space-y-8 mb-16">
+        <div className="space-y-10 mb-20">
           {sections.map((section, index) => (
             <div
               key={index}
-              className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-apple p-8 hover:shadow-xl transition-all duration-300 bg-white/50 dark:bg-[#2A2A2A]/50 backdrop-blur-sm"
+              className="border border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-xl p-6 sm:p-8 bg-white/70 dark:bg-[#2A2A2A]/70 backdrop-blur-sm hover:shadow-lg transition-all duration-300"
             >
-              <div className="flex items-start gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-apple flex items-center justify-center bg-[#5999a8]/10 dark:bg-[#5999a8]/20">
+              <div className="flex items-start gap-5">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-12 h-12 flex items-center justify-center bg-[#4A90E2]/10 dark:bg-[#4A90E2]/20 rounded-lg">
                     {section.icon}
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold mb-4 tracking-tight">
+                  <h2 className="text-xl sm:text-2xl font-semibold mb-3 tracking-tight">
                     {index + 1}. {section.title}
                   </h2>
-                  <p className="text-lg opacity-80 leading-relaxed">
+                  <p className="text-sm sm:text-base opacity-90 leading-relaxed">
                     {section.content}
                   </p>
                 </div>
@@ -162,39 +138,34 @@ const Privacy = ({ darkMode }) => {
           ))}
         </div>
 
-        {/* Contact Section */}
-        <div className="border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl p-8 mb-8 bg-[#5999a8]/10 dark:bg-[#5999a8]/5">
-          <div className="text-center">
-            <div className="mb-6">
-              <div className="inline-block p-4 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl">
-                <Mail size={32} />
-              </div>
+        <div className="border border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-2xl p-8 mb-12 bg-[#4A90E2]/10 dark:bg-[#4A90E2]/5 text-center">
+          <div className="mb-6">
+            <div className="inline-flex p-3 border-2 border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-xl">
+              <Mail size={24} />
             </div>
-            <h2 className="text-3xl font-bold mb-4 tracking-tight">
-              6. Contact
-            </h2>
-            <p className="text-lg opacity-80 mb-6 max-w-xl mx-auto">
-              Questions or concerns? Drop us an email and we'll get back to you
-              as soon as possible.
-            </p>
-            <a
-              href="mailto:madisettydharmadeep@gmail.com"
-              className="inline-flex items-center gap-3 px-6 py-3 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:opacity-90 transition-opacity rounded-md font-semibold border-2 border-transparent"
-            >
-              <Mail size={18} />
-              madisettydharmadeep@gmail.com
-            </a>
           </div>
+          <h2 className="text-2xl sm:text-3xl font-semibold mb-4 tracking-tight">
+            Contact Us
+          </h2>
+          <p className="text-sm sm:text-base opacity-90 mb-6 max-w-lg mx-auto">
+            For inquiries or support, please reach out to our team.
+          </p>
+          <a
+            href="mailto:madisettydharmadeep@gmail.com"
+            className="inline-flex items-center gap-2 px-6 py-2 bg-[#1A1A1A] dark:bg-[#F8F1E9] text-[#F8F1E9] dark:text-[#1A1A1A] hover:bg-opacity-90 transition-all rounded-lg font-medium"
+          >
+            <Mail size={16} />
+            madisettydharmadeep@gmail.com
+          </a>
         </div>
 
-        {/* Footer */}
-        <div className="text-center border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl p-6">
-          <div className="flex items-center justify-center gap-3 opacity-70">
-            <div className="p-2 border-2 border-[#1A1A1A] dark:border-[#F8F1E9] rounded-2xl">
-              <Calendar size={16} />
+        <div className="text-center border border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-xl p-6">
+          <div className="flex items-center justify-center gap-2 opacity-70">
+            <div className="p-1.5 border-2 border-[#1A1A1A]/20 dark:border-[#F8F1E9]/20 rounded-lg">
+              <Calendar size={14} />
             </div>
-            <span className="text-sm font-medium tracking-wider">
-              Last updated: May 4, 2025
+            <span className="text-xs sm:text-sm font-medium tracking-wide">
+              Last Updated: May 4, 2025
             </span>
           </div>
         </div>

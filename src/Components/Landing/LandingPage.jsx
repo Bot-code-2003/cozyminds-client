@@ -41,17 +41,12 @@ const LandingPage = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
               <a
-                href="#"
+                href="/aboutus"
                 className="text-gray-700 hover:text-black transition-colors text-sm"
               >
                 Our story
               </a>
-              <a
-                href="#"
-                className="text-gray-700 hover:text-black transition-colors text-sm"
-              >
-                Write
-              </a>
+
               <button
                 onClick={openLoginModal}
                 className="text-gray-700 hover:text-black transition-colors text-sm"
@@ -82,17 +77,12 @@ const LandingPage = () => {
             <div className="md:hidden border-t border-gray-500 py-4 bg-[#f7eee0]">
               <div className="flex flex-col space-y-3">
                 <a
-                  href="#"
+                  href="/aboutus"
                   className="text-gray-700 hover:text-black px-4 py-2 text-sm"
                 >
                   Our story
                 </a>
-                <a
-                  href="#"
-                  className="text-gray-700 hover:text-black px-4 py-2 text-sm"
-                >
-                  Write
-                </a>
+
                 <button
                   onClick={openLoginModal}
                   className="text-gray-700 hover:text-black px-4 py-2 text-sm text-left"
@@ -149,26 +139,27 @@ const LandingPage = () => {
       <footer className="relative z-10 border-t border-gray-500 bg-[#f7eee0]">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-gray-600">
-            <a href="#" className="hover:text-black transition-colors">
+            <a
+              href="mailto:madisettydharmadeep@gmail.com"
+              className="hover:text-black transition-colors"
+            >
               Help
             </a>
-            <a href="#" className="hover:text-black transition-colors">
-              Status
-            </a>
-            <a href="#" className="hover:text-black transition-colors">
+
+            <a href="/aboutus" className="hover:text-black transition-colors">
               About
             </a>
-            <a href="#" className="hover:text-black transition-colors">
-              Careers
-            </a>
-            <a href="#" className="hover:text-black transition-colors">
+            <a
+              href="/privacy-policy"
+              className="hover:text-black transition-colors"
+            >
               Privacy
             </a>
-            <a href="#" className="hover:text-black transition-colors">
+            <a
+              href="/terms-of-service"
+              className="hover:text-black transition-colors"
+            >
               Terms
-            </a>
-            <a href="#" className="hover:text-black transition-colors">
-              Text to speech
             </a>
           </div>
         </div>

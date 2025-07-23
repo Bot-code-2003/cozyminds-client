@@ -291,17 +291,17 @@ const StoryEntry = () => {
 
       {modals}
 
-      <button
+      {/* <button
         onClick={() => navigate(-1)}
         className="relative p-3 rounded-full"
         aria-label="Back"
       >
         <ArrowLeft size={18} className="text-gray-600 dark:text-gray-400" />
-      </button>
+      </button> */}
 
       <div className="min-h-screen bg-[var(--bg-primary)]">
         <div className="mx-auto px-4 sm:px-0">
-          <header className="max-w-6xl mx-auto relative">
+          <header className="max-w-6xl mx-auto mt-5 relative">
             {/* Hero Image - Full viewport impact */}
             {entry.thumbnail && (
               <div className="relative h-[85vh] overflow-hidden">

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import LoginModal from "../Landing/LoginModal";
+import SignupModal from "../Landing/SignupModal";
 import axios from "axios";
 import {
   Sun,
@@ -90,6 +92,22 @@ const getCurrentUser = () => {
 };
 
 const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
+
+  const openLoginModal = () => {
+    setShowSignup(false);
+    setShowLogin(true);
+  };
+  const openSignupModal = () => {
+    setShowLogin(false);
+    setShowSignup(true);
+  };
+  const closeModals = () => {
+    setShowLogin(false);
+    setShowSignup(false);
+  };
+
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -209,16 +227,36 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             ))}
           </div>
           <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setMailModalOpen(!mailModalOpen)}
-              className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-              aria-label="Open mail"
-            >
-              <Mail size={16} className="text-gray-600 dark:text-gray-400" />
-              {hasUnreadMails && (
-                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full" />
-              )}
-            </button>
+            {currentUser && (
+              <button
+                onClick={() => setMailModalOpen(!mailModalOpen)}
+                className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                aria-label="Open mail"
+              >
+                <Mail size={16} className="text-gray-600 dark:text-gray-400" />
+                {hasUnreadMails && (
+                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full" />
+                )}
+              </button>
+            )}
+
+            {!currentUser && (
+              <>
+                <button
+                  onClick={openLoginModal}
+                  className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors text-sm"
+                >
+                  Sign in
+                </button>
+                <button
+                  onClick={openSignupModal}
+                  className="bg-black text-white px-4 py-2 rounded-full text-sm hover:bg-gray-800 transition-colors"
+                >
+                  Get started
+                </button>
+              </>
+            )}
+
             {/* <button
               onClick={toggleDarkMode}
               className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
@@ -231,7 +269,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               )}
             </button> */}
           </div>
-          {!isJournalingAlt && (
+          {currentUser && !isJournalingAlt && (
             <button
               onClick={() => handleNavigation(link)}
               className="flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-full hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
@@ -352,31 +390,52 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               ))}
             </div>
 
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
-              <button
-                onClick={() => handleNavigation("/profile-settings")}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
-              >
-                <Settings size={18} />
-                Settings
-              </button>
-              <button
+            <div className="">
+              {currentUser && (
+                <button
+                  onClick={() => handleNavigation("/profile-settings")}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                >
+                  <Settings size={18} />
+                  Settings
+                </button>
+              )}
+              {/* <button
                 onClick={toggleDarkMode}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
               >
                 {darkMode ? <Sun size={18} /> : <Moon size={18} />}
                 {darkMode ? "Light Mode" : "Dark Mode"}
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium"
-              >
-                <LogOut size={18} />
-                Logout
-              </button>
+              </button> */}
+              {currentUser && (
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              )}
             </div>
 
-            {!isJournalingAlt && (
+            {!currentUser && (
+              <div className="pt-4 space-y-2">
+                <button
+                  onClick={openLoginModal}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                >
+                  Sign in
+                </button>
+                <button
+                  onClick={openSignupModal}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-200 font-medium"
+                >
+                  Get started
+                </button>
+              </div>
+            )}
+
+            {currentUser && !isJournalingAlt && (
               <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => handleNavigation(link)}
@@ -394,6 +453,18 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
       {mailModalOpen && (
         <InGameMail closeModal={() => setMailModalOpen(false)} />
       )}
+
+      {/* Auth Modals */}
+      <LoginModal
+        isOpen={showLogin}
+        onClose={closeModals}
+        onSwitchToSignup={openSignupModal}
+      />
+      <SignupModal
+        isOpen={showSignup}
+        onClose={closeModals}
+        onSwitchToLogin={openLoginModal}
+      />
     </>
   );
 };

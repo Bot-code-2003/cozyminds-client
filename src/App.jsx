@@ -23,6 +23,7 @@ import "./index.css";
 import StoryEntry from "./Components/StoryEntry";
 import Public from "./Components/Public";
 import TagEntries from "./Components/PublicJournals/TagEntries";
+import AboutUs from "./Components/Landing/AboutUs";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -82,6 +83,8 @@ const App = () => {
 
                 <Route path="/subscriptions" element={<SubscriptionsView />} />
                 <Route path="/journaling-alt" element={<JournalingAlt />} />
+
+                <Route path="/aboutus" element={<AboutUs />} />
               </Routes>
             </div>
           </MailProvider>
