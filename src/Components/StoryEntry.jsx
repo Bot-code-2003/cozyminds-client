@@ -372,7 +372,7 @@ const StoryEntry = () => {
                     {authorProfile && (
                       <div className="flex items-start gap-6">
                         <Link
-                          to={`/profile/id/${authorProfile._id}`}
+                          to={`/${authorProfile.anonymousName}`}
                           className="flex-shrink-0 group"
                         >
                           <img
@@ -390,7 +390,7 @@ const StoryEntry = () => {
                             Written by
                           </div>
                           <Link
-                            to={`/profile/id/${authorProfile._id}`}
+                            to={`/${authorProfile.anonymousName}`}
                             className="block group"
                           >
                             <h2 className="text-2xl font-light text-gray-900 dark:text-gray-100 mb-3 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
