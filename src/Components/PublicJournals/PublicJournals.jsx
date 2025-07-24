@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+"use client";
+
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { Clock, Heart, Eye, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,6 +8,7 @@ import JournalCard, { JournalCardSkeleton } from "./PublicStoryCard";
 import AuthModals from "../Landing/AuthModals";
 import { useDarkMode } from "../../context/ThemeContext";
 import { createAvatar } from "@dicebear/core";
+import { Link } from "react-router-dom";
 import {
   avataaars,
   bottts,
@@ -45,6 +48,7 @@ const avatarStyles = {
   shapes,
   thumbs,
 };
+
 const getAvatarSvg = (style, seed) => {
   const collection = avatarStyles[style] || avataaars;
   const svg = createAvatar(collection, { seed }).toString();
@@ -52,28 +56,32 @@ const getAvatarSvg = (style, seed) => {
 };
 
 // Tag Filter Component
-const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
+const TagFilters = memo(({ tags, selectedTag, onTagSelect }) => {
   const navigate = useNavigate();
 
-  const handleTagClick = (tag) => {
-    if (tag) {
-      navigate(`/tag/${tag.toLowerCase()}`, {
-        state: { contentType: "journals" },
-      });
-    }
-  };
+  const handleTagClick = useCallback(
+    (tag) => {
+      if (tag) {
+        navigate(`/tag/${tag.toLowerCase()}`, {
+          state: { contentType: "journals" },
+        });
+      }
+    },
+    [navigate]
+  );
 
   return (
-    <div className="bg-white border-b border-gray-200 pb-4 pt-2">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2">
+    <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 pb-4 pt-2 sticky top-0 z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
           <button
             onClick={() => onTagSelect(null)}
-            className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
+            className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               !selectedTag
                 ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
+            aria-label="Show all journals"
           >
             All
           </button>
@@ -81,7 +89,8 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
             <button
               key={tag}
               onClick={() => handleTagClick(tag)}
-              className="px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label={`Filter by ${tag} tag`}
             >
               {tag}
             </button>
@@ -90,7 +99,9 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
       </div>
     </div>
   );
-};
+});
+
+TagFilters.displayName = "TagFilters";
 
 // Main PublicJournals Component
 const PublicJournals = () => {
@@ -118,7 +129,7 @@ const PublicJournals = () => {
   const { darkMode } = useDarkMode();
   const { modals, openLoginModal } = AuthModals({ darkMode });
 
-  const getCurrentUser = () => {
+  const getCurrentUser = useCallback(() => {
     try {
       const itemStr = localStorage.getItem("user");
       if (!itemStr) return null;
@@ -127,12 +138,36 @@ const PublicJournals = () => {
     } catch {
       return null;
     }
-  };
+  }, []);
 
-  // Fetch featured journals (top liked from last 30 days)
+  const getThumbnail = useCallback((journal) => {
+    if (!journal.content) return null;
+    if (journal.thumbnail) {
+      try {
+        new URL(journal.thumbnail);
+        return journal.thumbnail;
+      } catch {
+        return null;
+      }
+    }
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(journal.content, "text/html");
+    const img = doc.querySelector("img[src]");
+    if (img?.src) {
+      try {
+        new URL(img.src);
+        return img.src;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }, []);
+
+  // Fetch featured journals
   const fetchFeaturedJournals = useCallback(async () => {
     try {
-      const response = await API.get("/journals/top-liked");
+      const response = await API.get("/journals/top-liked", { timeout: 5000 });
       setFeaturedJournals(response.data.journals || []);
     } catch (error) {
       console.error("Error fetching featured journals:", error);
@@ -160,7 +195,7 @@ const PublicJournals = () => {
         const endpoint = selectedTag
           ? `/journals/by-tag/${encodeURIComponent(selectedTag)}`
           : "/journals/public";
-        const response = await API.get(endpoint, { params });
+        const response = await API.get(endpoint, { params, timeout: 5000 });
 
         const newJournals = response.data.journals || [];
 
@@ -173,7 +208,6 @@ const PublicJournals = () => {
         setHasMore(response.data.hasMore);
         setPage(pageNum);
 
-        // Update liked/saved status
         const user = getCurrentUser();
         if (user) {
           const liked = new Set(
@@ -203,30 +237,27 @@ const PublicJournals = () => {
         setLoadingMore(false);
       }
     },
-    [selectedTag]
+    [selectedTag, getCurrentUser]
   );
 
   // Handle like
   const handleLike = useCallback(
     async (journal) => {
       const user = getCurrentUser();
-      if (!user) return;
+      if (!user) {
+        openLoginModal();
+        return;
+      }
 
       const journalId = journal._id;
       const isCurrentlyLiked = likedJournals.has(journalId);
 
-      // Optimistic update
       setLikedJournals((prev) => {
         const newSet = new Set(prev);
-        if (isCurrentlyLiked) {
-          newSet.delete(journalId);
-        } else {
-          newSet.add(journalId);
-        }
+        isCurrentlyLiked ? newSet.delete(journalId) : newSet.add(journalId);
         return newSet;
       });
 
-      // Update journal in both lists
       const updateJournal = (journals) =>
         journals.map((j) =>
           j._id === journalId
@@ -240,64 +271,57 @@ const PublicJournals = () => {
       try {
         await API.post(`/journals/${journalId}/like`, { userId: user._id });
       } catch (error) {
-        // Revert on error
         setLikedJournals((prev) => {
           const newSet = new Set(prev);
-          if (isCurrentlyLiked) {
-            newSet.add(journalId);
-          } else {
-            newSet.delete(journalId);
-          }
+          isCurrentlyLiked ? newSet.add(journalId) : newSet.delete(journalId);
           return newSet;
         });
+        setFeaturedJournals(updateJournal);
+        setLatestJournals(updateJournal);
         console.error("Error liking journal:", error);
       }
     },
-    [likedJournals]
+    [likedJournals, getCurrentUser, openLoginModal]
   );
 
   // Handle save
   const handleSave = useCallback(
-    async (journalId) => {
+    async (journalId, isSaved) => {
       const user = getCurrentUser();
-      if (!user) return;
-
-      const isCurrentlySaved = savedJournals.has(journalId);
+      if (!user) {
+        openLoginModal();
+        return;
+      }
 
       setSavedJournals((prev) => {
         const newSet = new Set(prev);
-        if (isCurrentlySaved) {
-          newSet.delete(journalId);
-        } else {
-          newSet.add(journalId);
-        }
+        isSaved ? newSet.add(journalId) : newSet.delete(journalId);
         return newSet;
       });
 
       try {
         await API.post(`/journals/${journalId}/save`, { userId: user._id });
       } catch (error) {
-        // Revert on error
         setSavedJournals((prev) => {
           const newSet = new Set(prev);
-          if (isCurrentlySaved) {
-            newSet.add(journalId);
-          } else {
-            newSet.delete(journalId);
-          }
+          isSaved ? newSet.delete(journalId) : newSet.add(journalId);
           return newSet;
         });
         console.error("Error saving journal:", error);
       }
     },
-    [savedJournals]
+    [savedJournals, getCurrentUser, openLoginModal]
   );
 
-  // Handle tag selection (now just resets to show all)
-  const handleTagSelect = useCallback((tag) => {
-    setSelectedTag(tag);
-    setPage(1);
-  }, []);
+  // Handle tag selection
+  const handleTagSelect = useCallback(
+    (tag) => {
+      setSelectedTag(tag);
+      setPage(1);
+      fetchLatestJournals(1, false);
+    },
+    [fetchLatestJournals]
+  );
 
   // Load more journals
   const loadMore = useCallback(() => {
@@ -314,14 +338,14 @@ const PublicJournals = () => {
 
   if (loading && !loadingMore) {
     return (
-      <div className="min-h-[50vh] bg-gray-50">
+      <div className="min-h-[50vh] bg-gray-50 dark:bg-gray-900">
         <TagFilters
           tags={popularTags}
           selectedTag={selectedTag}
           onTagSelect={handleTagSelect}
         />
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 sm:gap-6">
             {[...Array(6)].map((_, i) => (
               <JournalCardSkeleton key={i} />
             ))}
@@ -334,18 +358,19 @@ const PublicJournals = () => {
 
   if (error) {
     return (
-      <div className="min-h-[50vh] bg-gray-50 flex items-center justify-center">
+      <div className="min-h-[50vh] bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Something went wrong
           </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
           <button
             onClick={() => {
               setError(null);
               fetchLatestJournals();
             }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            aria-label="Retry loading journals"
           >
             Try Again
           </button>
@@ -356,40 +381,32 @@ const PublicJournals = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <TagFilters
         tags={popularTags}
         selectedTag={selectedTag}
         onTagSelect={handleTagSelect}
       />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Featured Journals Section */}
         {!selectedTag && featuredJournals.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center gap-2 mb-8">
-              <Heart className="w-5 h-5 text-red-500" />
-              <h2 className="text-2xl font-bold text-gray-900">
+          <section className="mb-12" aria-labelledby="featured-journals">
+            <div className="flex items-center gap-2 mb-6">
+              <Heart className="w-5 h-5 text-red-500" aria-hidden="true" />
+              <h2
+                id="featured-journals"
+                className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white"
+              >
                 Featured Journals
               </h2>
             </div>
 
-            {/* Bento Grid Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4  h-auto lg:h-[600px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 h-auto sm:h-[500px] lg:h-[600px]">
               {featuredJournals.map((journal, index) => {
                 const isLarge = index === 0;
                 const isMedium = index === 1;
-                // Thumbnail logic: fallback to first image in content
-                let thumbnail = journal.thumbnail;
-                if (!thumbnail && journal.content) {
-                  try {
-                    const tempDiv = document.createElement("div");
-                    tempDiv.innerHTML = journal.content;
-                    const img = tempDiv.querySelector("img");
-                    thumbnail = img?.src || null;
-                  } catch {}
-                }
-                // Author avatar logic
+                const thumbnail = getThumbnail(journal);
                 const avatarStyle =
                   journal.author?.profileTheme?.avatarStyle || "avataaars";
                 const avatarSeed = journal.author?.anonymousName || "Anonymous";
@@ -400,54 +417,59 @@ const PublicJournals = () => {
                     key={journal._id}
                     className={`
                       group rounded-lg relative overflow-hidden bg-gray-900 border border-gray-800 hover:shadow-lg transition-all duration-300
-                      ${isLarge ? "md:col-span-2 md:row-span-2" : ""}
+                      ${isLarge ? "sm:col-span-2 sm:row-span-2" : ""}
                       ${isMedium ? "lg:col-span-2" : ""}
                     `}
+                    role="article"
+                    aria-labelledby={`featured-journal-${journal._id}`}
                   >
-                    {/* Background Image */}
                     {thumbnail && (
                       <div className="absolute inset-0">
                         <img
                           src={thumbnail}
-                          alt=""
+                          alt={`Thumbnail for ${journal.title}`}
                           className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                       </div>
                     )}
 
-                    {/* Content Overlay */}
                     <div
                       className={`
-                      relative z-10 p-6 h-full flex flex-col justify-between text-white
-                      ${isLarge ? "p-8" : "p-6"}
-                    `}
+                        relative z-10 p-4 sm:p-6 h-full flex flex-col justify-between text-white
+                        ${isLarge ? "p-6 sm:p-8" : "p-4 sm:p-6"}
+                      `}
                     >
-                      {/* Top Section */}
                       <div>
-                        {/* Author Info */}
                         <div className="flex items-center gap-2 mb-3">
                           <img
                             src={avatarUrl}
-                            alt=""
+                            alt={`Avatar of ${
+                              journal.author?.anonymousName || "Anonymous"
+                            }`}
                             className="w-6 h-6 rounded-full border border-white/20"
+                            loading="lazy"
                           />
-                          <span className="text-sm font-medium text-white/90">
+                          <span className="text-sm font-medium text-white/90 truncate max-w-[150px] sm:max-w-[200px]">
                             {journal.author?.anonymousName || "Anonymous"}
                           </span>
                         </div>
 
-                        {/* Title */}
                         <h3
+                          id={`featured-journal-${journal._id}`}
                           className={`
-                          font-bold leading-tight mb-2 line-clamp-3 text-white
-                          ${isLarge ? "text-2xl" : "text-lg"}
-                        `}
+                            font-bold leading-tight mb-2 line-clamp-3 text-white
+                            ${
+                              isLarge
+                                ? "text-xl sm:text-2xl"
+                                : "text-base sm:text-lg"
+                            }
+                          `}
                         >
                           {journal.title}
                         </h3>
 
-                        {/* Preview Text - Only for large card */}
                         {isLarge && (
                           <p className="text-sm leading-relaxed line-clamp-3 mb-4 text-white/80">
                             {journal.metaDescription ||
@@ -460,25 +482,28 @@ const PublicJournals = () => {
                         )}
                       </div>
 
-                      {/* Bottom Section */}
                       <div className="flex items-center justify-between">
-                        {/* Stats */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4">
                           <div className="flex items-center gap-1">
-                            <Heart className="w-4 h-4 text-white/80" />
+                            <Heart
+                              className="w-4 h-4 text-white/80"
+                              aria-hidden="true"
+                            />
                             <span className="text-sm text-white/80">
                               {journal.likeCount || 0}
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Eye className="w-4 h-4 text-white/80" />
+                            <Eye
+                              className="w-4 h-4 text-white/80"
+                              aria-hidden="true"
+                            />
                             <span className="text-sm text-white/80">
                               {journal.commentCount || 0}
                             </span>
                           </div>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="flex items-center gap-2">
                           <button
                             onClick={(e) => {
@@ -487,13 +512,18 @@ const PublicJournals = () => {
                               handleLike(journal);
                             }}
                             className={`
-                              p-2 rounded-full transition-colors
+                              p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500
                               ${
                                 likedJournals.has(journal._id)
                                   ? "bg-red-500 text-white"
                                   : "bg-white/20 text-white hover:bg-white/30"
                               }
                             `}
+                            aria-label={
+                              likedJournals.has(journal._id)
+                                ? "Unlike journal"
+                                : "Like journal"
+                            }
                           >
                             <Heart
                               className="w-4 h-4"
@@ -502,22 +532,31 @@ const PublicJournals = () => {
                                   ? "currentColor"
                                   : "none"
                               }
+                              aria-hidden="true"
                             />
                           </button>
                           <button
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              handleSave(journal._id);
+                              handleSave(
+                                journal._id,
+                                !savedJournals.has(journal._id)
+                              );
                             }}
                             className={`
-                              p-2 rounded-full transition-colors
+                              p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500
                               ${
                                 savedJournals.has(journal._id)
                                   ? "bg-blue-500 text-white"
                                   : "bg-white/20 text-white hover:bg-white/30"
                               }
                             `}
+                            aria-label={
+                              savedJournals.has(journal._id)
+                                ? "Unsave journal"
+                                : "Save journal"
+                            }
                           >
                             <BookOpen
                               className="w-4 h-4"
@@ -526,34 +565,31 @@ const PublicJournals = () => {
                                   ? "currentColor"
                                   : "none"
                               }
+                              aria-hidden="true"
                             />
                           </button>
                         </div>
                       </div>
                     </div>
 
-                    {/* Click Overlay */}
-                    <a
-                      href={`/${journal.author?.anonymousName || "anonymous"}/${
+                    <Link
+                      to={`/${journal.author?.anonymousName || "anonymous"}/${
                         journal.slug
                       }`}
                       className="absolute inset-0 z-20"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.location.href = `/${
-                          journal.author?.anonymousName || "anonymous"
-                        }/${journal.slug}`;
-                      }}
+                      aria-label={`Read journal: ${journal.title}`}
                     />
                   </div>
                 );
               })}
 
-              {/* Fill empty slots if less than 3 journals */}
               {featuredJournals.length < 3 && (
-                <div className="hidden lg:block bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center">
-                  <div className="text-center text-gray-400">
-                    <BookOpen className="w-8 h-8 mx-auto mb-2" />
+                <div className="hidden lg:block bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                  <div className="text-center text-gray-400 dark:text-gray-500">
+                    <BookOpen
+                      className="w-8 h-8 mx-auto mb-2"
+                      aria-hidden="true"
+                    />
                     <p className="text-sm">More journals coming soon</p>
                   </div>
                 </div>
@@ -563,10 +599,13 @@ const PublicJournals = () => {
         )}
 
         {/* Latest Journals Section */}
-        <section>
+        <section aria-labelledby="latest-journals">
           <div className="flex items-center gap-2 mb-6">
-            <Clock className="w-5 h-5 text-blue-500" />
-            <h2 className="text-2xl font-bold text-gray-900">
+            <Clock className="w-5 h-5 text-blue-500" aria-hidden="true" />
+            <h2
+              id="latest-journals"
+              className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white"
+            >
               {selectedTag
                 ? `Journals tagged "${selectedTag}"`
                 : "Latest Journals"}
@@ -575,11 +614,13 @@ const PublicJournals = () => {
 
           {latestJournals.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600">No journals found.</p>
+              <p className="text-gray-600 dark:text-gray-400">
+                No journals found.
+              </p>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 sm:gap-6">
                 {latestJournals.map((journal) => (
                   <JournalCard
                     key={journal._id}
@@ -592,13 +633,13 @@ const PublicJournals = () => {
                 ))}
               </div>
 
-              {/* Load More Button */}
               {hasMore && (
                 <div className="text-center mt-8">
                   <button
                     onClick={loadMore}
                     disabled={loadingMore}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    aria-label="Load more journals"
                   >
                     {loadingMore ? "Loading..." : "Load More"}
                   </button>

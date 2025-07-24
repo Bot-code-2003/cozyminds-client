@@ -98,13 +98,10 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
     </div>
   );
 };
-
 const LatestStoryCard = ({
   story,
   likedStories,
   savedStories,
-  // handleLike,
-  // handleSave,
   getAvatarSvg,
 }) => {
   let thumbnail = story.thumbnail;
@@ -122,44 +119,35 @@ const LatestStoryCard = ({
   const avatarUrl = getAvatarSvg(avatarStyle, avatarSeed);
 
   return (
-    <div className="group relative bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 hover:shadow-md transition-all duration-300">
-      <div className="aspect-[3/2] relative overflow-hidden">
-        {thumbnail ? (
-          <img
-            src={thumbnail}
-            alt={story.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-            <BookOpen className="w-8 h-8 text-gray-300" />
-          </div>
-        )}
-        <div className="absolute top-3 left-3">
-          <span className="bg-white text-gray-700 text-xs font-medium px-2 py-1 rounded">
-            {story.genre}
-          </span>
-        </div>
-      </div>
-
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 line-clamp-2 leading-tight mb-3">
-          {story.title}
-        </h3>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+    <div
+      className="relative bg-cover bg-center rounded-none border-0 overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
+      style={{
+        backgroundImage: `url(${thumbnail || "/default-book-bg.jpg"})`,
+        aspectRatio: "4/5",
+      }}
+    >
+      <div className="absolute inset-0 bg-black bg-opacity-30 transition-opacity duration-300 group-hover:bg-opacity-20"></div>
+      <div className="relative z-10 h-full flex flex-col justify-end p-4">
+        <div className="bg-white bg-opacity-90 p-3 rounded-t-lg">
+          <h3 className="font-semibold text-gray-900 text-lg line-clamp-2 leading-tight">
+            {story.title}
+          </h3>
+          <div className="flex items-center gap-2 mt-2">
             <img src={avatarUrl} alt="" className="w-5 h-5 rounded-full" />
             <span className="text-sm text-gray-600">
               {story.author?.anonymousName || "Anonymous"}
             </span>
           </div>
+          <div className="mt-2">
+            <span className="bg-gray-700 text-white text-xs font-medium px-2 py-1 rounded">
+              {story.genre}
+            </span>
+          </div>
         </div>
       </div>
-
       <a
         href={`/${story.author?.anonymousName || "anonymous"}/${story.slug}`}
-        className="absolute inset-0 z-10"
+        className="absolute inset-0 z-20"
         onClick={(e) => {
           e.preventDefault();
           window.location.href = `/${
@@ -611,7 +599,7 @@ const PublicStories = () => {
         )}
 
         {!selectedTag && (
-          <section className="mb-16">
+          <section className=" mb-16">
             <div className="flex items-center gap-3 mb-8">
               <Clock className="w-5 h-5 text-gray-700" />
               <h2 className="text-2xl font-bold text-gray-900">

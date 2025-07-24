@@ -25,6 +25,8 @@ import Public from "./Components/Public";
 import TagEntries from "./Components/PublicJournals/TagEntries";
 import AboutUs from "./Components/Landing/AboutUs";
 
+import Footer from "./Footer";
+
 const App = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,15 +72,34 @@ const App = () => {
           <MailProvider>
             <div>
               <Routes>
-                <Route path="/" element={user ? <Public /> : <LandingPage />} />
+                <Route
+                  path="/"
+                  element={
+                    user ? (
+                      <>
+                        <Public />
+                        <Footer />
+                      </>
+                    ) : (
+                      <LandingPage />
+                    )
+                  }
+                />
                 <Route path="/tag/:tag" element={<TagEntries />} />
-                <Route path="/journal/:id" element={<JournalEntry />} />
 
                 <Route path="/privacy-policy" element={<Privacy />} />
                 <Route path="/terms-of-service" element={<Terms />} />
                 <Route path="/profile-settings" element={<ProfileSettings />} />
 
-                <Route path="/:anonymousName/:slug" element={<StoryEntry />} />
+                <Route
+                  path="/:anonymousName/:slug"
+                  element={
+                    <>
+                      <StoryEntry />
+                      <Footer />
+                    </>
+                  }
+                />
                 <Route path="/:anonymousName" element={<PublicProfile />} />
 
                 <Route path="/subscriptions" element={<SubscriptionsView />} />

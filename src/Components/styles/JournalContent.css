@@ -200,6 +200,49 @@
   border-bottom-color: #2c2c2e;
 }
 
+/* Ensure the wrapper allows sticky positioning */
+.action-bar-wrapper {
+  position: relative;
+  min-height: 80vh;
+}
+
+/* Action bar container */
+.action-bar-container {
+  position: sticky;
+  bottom: 24px;
+  z-index: 40;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Visibility states */
+.action-bar-container.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.action-bar-container.invisible {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Action bar styling */
+.action-bar {
+  pointer-events: auto;
+}
+
+/* Space above comments to prevent overlap */
+section#comments {
+  padding-top: 80px;
+  margin-top: -80px;
+}
+
+/* Ensure no parent containers break sticky */
+.min-h-screen {
+  overflow: visible;
+}
+
 @media (max-width: 768px) {
   .journal-content {
     font-size: 15px;

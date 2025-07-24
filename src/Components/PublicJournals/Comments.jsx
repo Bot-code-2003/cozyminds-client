@@ -373,10 +373,7 @@ const Comments = ({ journalId, onLoginRequired }) => {
   }
 
   return (
-    <div
-      id="comments"
-      className="border-t mb-10 border-gray-200 dark:border-gray-700"
-    >
+    <div id="comments" className="mb-10 ">
       {/* Comments Header */}
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">

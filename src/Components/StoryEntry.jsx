@@ -34,6 +34,7 @@ import {
   thumbs,
 } from "@dicebear/collection";
 import JournalCard from "./PublicJournals/PublicStoryCard";
+import RecommendationCard from "./PublicJournals/RecommendationCard";
 import Comments from "./PublicJournals/Comments";
 import "./styles/JournalContent.css";
 import { Helmet } from "react-helmet";
@@ -93,8 +94,7 @@ const StoryEntry = () => {
   const [likeLoading, setLikeLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
-  const [isActionBarVisible, setIsActionBarVisible] = useState(true);
-  const [isActionBarFixed, setIsActionBarFixed] = useState(false);
+  const [isActionBarVisible, setIsActionBarVisible] = useState(false);
   const currentUser = getCurrentUser();
   const [authorProfile, setAuthorProfile] = useState(null);
   const { modals, openLoginModal, openSignupModal } = AuthModals({});
@@ -128,9 +128,7 @@ const StoryEntry = () => {
     if (entry && entry.isPublic && entry._id) {
       axios
         .get(
-          `${import.meta.env.VITE_API_URL}/recommendations?category=${
-            entry.category
-          }&exclude=${entry._id}`
+          `${import.meta.env.VITE_API_URL}/recommendations?entryId=${entry._id}`
         )
         .then((res) => setRecommendations(res.data.journals || []))
         .catch(() => setRecommendations([]));
@@ -177,24 +175,8 @@ const StoryEntry = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const article = document.querySelector(".journal-content");
-      const actionBar = document.querySelector(".action-bar");
-
-      if (article && actionBar) {
-        const articleRect = article.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const scrollY = window.scrollY;
-        const documentHeight = document.documentElement.scrollHeight;
-        const windowBottom = scrollY + windowHeight;
-
-        // Show action bar when scrolling through content
-        const shouldShowActionBar = scrollY > 300;
-        setIsActionBarVisible(shouldShowActionBar);
-
-        // Fix action bar when reaching end of article content
-        const shouldFixActionBar = articleRect.bottom <= windowHeight + 100;
-        setIsActionBarFixed(shouldFixActionBar);
-      }
+      const scrollY = window.scrollY;
+      setIsActionBarVisible(scrollY > 300);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -363,7 +345,6 @@ const StoryEntry = () => {
       <div className="min-h-screen bg-white">
         {/* Modern Header */}
         <header className="relative">
-          {/* Back Button */}
           <button
             onClick={handleBack}
             className="fixed top-20 left-6 z-50 p-3 rounded-full bg-white/90 backdrop-blur-md hover:bg-white shadow-lg border border-gray-200/50 transition-all duration-200 hover:scale-105"
@@ -374,7 +355,6 @@ const StoryEntry = () => {
 
           {entry.thumbnail ? (
             <div className="relative h-[80vh] overflow-hidden">
-              {/* Blurred Background */}
               <div className="absolute inset-0 z-0">
                 <img
                   src={entry.thumbnail}
@@ -382,21 +362,14 @@ const StoryEntry = () => {
                   className="w-full h-full object-cover object-center blur-xl scale-110 opacity-50"
                 />
               </div>
-
-              {/* Foreground Image */}
               <img
                 src={entry.thumbnail}
                 alt="main thumbnail"
                 className="absolute inset-0 mx-auto h-full object-cover object-top z-10"
               />
-
-              {/* Gradient Overlay */}
               <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-
-              {/* Content Overlay */}
               <div className="absolute inset-0 flex items-end z-30">
                 <div className="max-w-4xl mx-auto w-full px-6 pb-16">
-                  {/* Tags */}
                   {entry.tags && entry.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-6">
                       {entry.tags.slice(0, 3).map((tag, index) => (
@@ -409,20 +382,14 @@ const StoryEntry = () => {
                       ))}
                     </div>
                   )}
-
-                  {/* Title */}
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
                     {entry.title || "Untitled Entry"}
                   </h1>
-
-                  {/* Meta Description */}
                   {entry.metaDescription && (
                     <p className="text-lg text-white/85 leading-relaxed max-w-3xl mb-8">
                       {entry.metaDescription}
                     </p>
                   )}
-
-                  {/* Reading Info */}
                   <div className="flex items-center gap-6 text-white/70">
                     <div className="flex items-center gap-2">
                       <Calendar size={16} />
@@ -437,10 +404,8 @@ const StoryEntry = () => {
               </div>
             </div>
           ) : (
-            // your "no thumbnail" version remains unchanged
             <div className="bg-gradient-to-br from-gray-50 to-white pt-32 pb-20">
               <div className="max-w-4xl mx-auto px-6">
-                {/* Tags */}
                 {entry.tags && entry.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-8">
                     {entry.tags.slice(0, 3).map((tag, index) => (
@@ -453,20 +418,14 @@ const StoryEntry = () => {
                     ))}
                   </div>
                 )}
-
-                {/* Title */}
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
                   {entry.title || "Untitled Entry"}
                 </h1>
-
-                {/* Meta Description */}
                 {entry.metaDescription && (
                   <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mb-10">
                     {entry.metaDescription}
                   </p>
                 )}
-
-                {/* Reading Info */}
                 <div className="flex items-center gap-6 text-gray-500">
                   <div className="flex items-center gap-2">
                     <Calendar size={16} />
@@ -481,7 +440,6 @@ const StoryEntry = () => {
             </div>
           )}
 
-          {/* Author Section */}
           <div className="bg-white border-b border-gray-100">
             <div className="max-w-4xl mx-auto px-6 py-8">
               <div className="flex items-center justify-between">
@@ -520,7 +478,6 @@ const StoryEntry = () => {
                     </>
                   )}
                 </div>
-
                 {authorProfile &&
                   currentUser &&
                   authorProfile._id !== currentUser._id && (
@@ -547,84 +504,77 @@ const StoryEntry = () => {
           </div>
         </header>
 
-        {/* Article Content */}
-        <main className="max-w-3xl mx-auto px-6 py-16">
-          <article
-            className="journal-content prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{
-              __html: processContent(entry.content),
-            }}
-          />
-        </main>
+        <div className="action-bar-wrapper">
+          <main className="max-w-3xl mx-auto px-6 py-16">
+            <article
+              className="journal-content prose prose-lg max-w-none"
+              dangerouslySetInnerHTML={{
+                __html: processContent(entry.content),
+              }}
+            />
+          </main>
 
-        {/* Action Bar */}
+          {entry?.isPublic && (
+            <div
+              className={`action-bar-container ${
+                isActionBarVisible ? "visible" : "invisible"
+              } transition-all duration-300 mb-14 `}
+            >
+              <div className="action-bar flex items-center justify-center px-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-gray-300 max-w-sm mx-auto">
+                <button
+                  className={`p-2 rounded-full transition-all duration-200 hover:bg-gray-100 ${
+                    isLiked ? "text-red-500" : "text-gray-600"
+                  } ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                  onClick={handleStoryLike}
+                  disabled={likeLoading}
+                  title={`${isLiked ? "Unlike" : "Like"} (${likeCount})`}
+                >
+                  <Heart size={20} className={isLiked ? "fill-current" : ""} />
+                </button>
+                <div className="h-5 w-px bg-gray-300 mx-1" />
+                <button
+                  className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                  onClick={handleCommentClick}
+                  title="Comments"
+                >
+                  <MessageCircle size={20} />
+                </button>
+                <div className="h-5 w-px bg-gray-300 mx-1" />
+                <button
+                  className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                  onClick={handleSave}
+                  title="Save"
+                >
+                  <Bookmark size={20} />
+                </button>
+                <div className="h-5 w-px bg-gray-300 mx-1" />
+                <button
+                  className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                  onClick={handleShare}
+                  title="Share"
+                >
+                  <Share2 size={20} />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         {entry?.isPublic && (
-          <div
-            className={`action-bar flex items-center justify-center gap-1 p-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-gray-200/50 transition-all duration-300 ${
-              isActionBarVisible
-                ? isActionBarFixed
-                  ? "fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40"
-                  : "fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40"
-                : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <button
-              className={`p-3 rounded-full transition-all duration-200 hover:bg-gray-100 ${
-                isLiked ? "text-red-500" : "text-gray-600"
-              } ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}`}
-              onClick={handleStoryLike}
-              disabled={likeLoading}
-              title={`${isLiked ? "Unlike" : "Like"} (${likeCount})`}
-            >
-              <Heart size={20} className={isLiked ? "fill-current" : ""} />
-            </button>
-
-            <button
-              className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
-              onClick={handleCommentClick}
-              title="Comments"
-            >
-              <MessageCircle size={20} />
-            </button>
-
-            <button
-              className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
-              onClick={handleSave}
-              title="Save"
-            >
-              <Bookmark size={20} />
-            </button>
-
-            <button
-              className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
-              onClick={handleShare}
-              title="Share"
-            >
-              <Share2 size={20} />
-            </button>
-          </div>
-        )}
-
-        {/* Comments Section */}
-        {entry?.isPublic && (
-          <section
-            id="comments"
-            className="max-w-3xl mx-auto px-6 py-16 border-t border-gray-100"
-          >
+          <section id="comments" className="max-w-3xl mx-auto px-6 ">
             <h2 className="text-2xl font-bold mb-8 text-gray-900">Comments</h2>
             <Comments journalId={entry._id} />
           </section>
         )}
 
-        {/* Recommendations */}
         {recommendations.length > 0 && (
-          <section className="max-w-3xl mx-auto px-6 py-16 border-t border-gray-100">
-            <h2 className="text-2xl font-bold mb-12 text-gray-900">
-              More {entry.category === "story" ? "Stories" : "Journals"} to Read
+          <section className="max-w-7xl mx-auto px-6 pb-16">
+            <h2 className="text-xl uppercase text-center mb-12 text-gray-600">
+              More to Read
             </h2>
-            <div className="space-y-8">
-              {recommendations.slice(0, 5).map((recommendation) => (
-                <JournalCard
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recommendations.slice(0, 9).map((recommendation) => (
+                <RecommendationCard
                   key={recommendation._id}
                   journal={recommendation}
                 />
