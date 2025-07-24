@@ -275,10 +275,15 @@ const JournalCard = memo(
 
                 {/* Category Tag */}
                 {journal.tags && journal.tags.length > 0 && (
-                  <div className="mb-2">
-                    <span className="inline-block px-2 py-1 text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded">
-                      {journal.tags[0]}
-                    </span>
+                  <div className="mb-2 flex flex-wrap gap-2">
+                    {journal.tags.slice(0, 4).map((tag, index) => (
+                      <span
+                        key={index}
+                        className="inline-block px-2 py-1 text-xs font-medium lowercase tracking-wide text-gray-700 bg-gray-100 rounded-md"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 )}
 

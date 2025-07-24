@@ -447,12 +447,14 @@ const PublicStories = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {!selectedTag && featuredStories.length > 0 && (
           <section className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <Heart className="w-5 h-5 text-red-500" />
-              <h2 className="text-2xl font-bold text-gray-900">
+            <div className="flex max-w-3xl mx-auto items-center gap-4 my-8 ">
+              <div className="flex-1 h-[0.5px] bg-gray-300" />
+              <h2 className="text-2xl  text-gray-900 whitespace-nowrap">
                 Featured Stories
               </h2>
+              <div className="flex-1 h-[0.5px] bg-gray-300" />
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-auto lg:h-[600px]">
               {featuredStories.map((story, index) => {
                 const isLarge = index === 0;
@@ -600,11 +602,12 @@ const PublicStories = () => {
 
         {!selectedTag && (
           <section className=" mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <Clock className="w-5 h-5 text-gray-700" />
-              <h2 className="text-2xl font-bold text-gray-900">
-                Latest by Genre
+            <div className="flex max-w-3xl mx-auto items-center gap-4 my-8 ">
+              <div className="flex-1 h-[0.5px] bg-gray-300" />
+              <h2 className="text-2xl  text-gray-900 whitespace-nowrap">
+                Latest Stories
               </h2>
+              <div className="flex-1 h-[0.5px] bg-gray-300" />
             </div>
             {latestByGenre.length === 0 ? (
               <div className="text-center py-12">
@@ -631,11 +634,12 @@ const PublicStories = () => {
 
         {selectedTag ? (
           <section>
-            <div className="flex items-center gap-3 mb-8">
-              <BookOpen className="w-5 h-5 text-gray-700" />
-              <h2 className="text-2xl font-bold text-gray-900">
+            <div className="flex max-w-3xl mx-auto items-center gap-4 my-8 ">
+              <div className="flex-1 h-[0.5px] bg-gray-300" />
+              <h2 className="text-2xl  text-gray-900 whitespace-nowrap">
                 Top Stories in {selectedTag}
               </h2>
+              <div className="flex-1 h-[0.5px] bg-gray-300" />
             </div>
             {topByGenre[selectedTag]?.length === 0 ? (
               <div className="text-center py-12">
@@ -663,11 +667,12 @@ const PublicStories = () => {
         ) : (
           popularTags.map((tag) => (
             <section key={tag} className="mb-16">
-              <div className="flex items-center gap-3 mb-8">
-                <BookOpen className="w-5 h-5 text-gray-700" />
-                <h2 className="text-2xl font-bold text-gray-900">
+              <div className="flex max-w-3xl mx-auto items-center gap-4 my-8 ">
+                <div className="flex-1 h-[0.5px] bg-gray-300" />
+                <h2 className="text-2xl  text-gray-900 whitespace-nowrap">
                   Top Stories in {tag}
                 </h2>
+                <div className="flex-1 h-[0.5px] bg-gray-300" />
               </div>
               {topByGenre[tag]?.length === 0 ? (
                 <div className="text-center py-12">

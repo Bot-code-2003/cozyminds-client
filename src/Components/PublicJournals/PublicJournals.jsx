@@ -392,14 +392,12 @@ const PublicJournals = () => {
         {/* Featured Journals Section */}
         {!selectedTag && featuredJournals.length > 0 && (
           <section className="mb-12" aria-labelledby="featured-journals">
-            <div className="flex items-center gap-2 mb-6">
-              <Heart className="w-5 h-5 text-red-500" aria-hidden="true" />
-              <h2
-                id="featured-journals"
-                className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white"
-              >
+            <div className="flex max-w-3xl mx-auto items-center gap-4 my-8 ">
+              <div className="flex-1 h-[0.5px] bg-gray-300" />
+              <h2 className="text-2xl  text-gray-900 whitespace-nowrap">
                 Featured Journals
               </h2>
+              <div className="flex-1 h-[0.5px] bg-gray-300" />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 h-auto sm:h-[500px] lg:h-[600px]">
@@ -600,16 +598,12 @@ const PublicJournals = () => {
 
         {/* Latest Journals Section */}
         <section aria-labelledby="latest-journals">
-          <div className="flex items-center gap-2 mb-6">
-            <Clock className="w-5 h-5 text-blue-500" aria-hidden="true" />
-            <h2
-              id="latest-journals"
-              className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white"
-            >
-              {selectedTag
-                ? `Journals tagged "${selectedTag}"`
-                : "Latest Journals"}
+          <div className="flex max-w-3xl mx-auto items-center gap-4 my-8 ">
+            <div className="flex-1 h-[0.5px] bg-gray-300" />
+            <h2 className="text-2xl  text-gray-900 whitespace-nowrap">
+              Latest Journals
             </h2>
+            <div className="flex-1 h-[0.5px] bg-gray-300" />
           </div>
 
           {latestJournals.length === 0 ? (
