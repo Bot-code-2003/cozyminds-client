@@ -6,8 +6,6 @@ import LoginModal from "../Landing/LoginModal";
 import SignupModal from "../Landing/SignupModal";
 import axios from "axios";
 import {
-  Sun,
-  Moon,
   Plus,
   ChevronDown,
   Mail,
@@ -21,11 +19,10 @@ import {
   BookOpen,
   Users,
   Bookmark,
-  Sparkles, // Add Sparkles for Stories
+  Sparkles,
   LayoutDashboard,
 } from "lucide-react";
 import InGameMail from "./Mail/InGameMail";
-import { useDarkMode } from "../../context/ThemeContext";
 import { useMails } from "../../context/MailContext";
 import { logout } from "../../utils/anonymousName";
 import { createAvatar } from "@dicebear/core";
@@ -117,7 +114,6 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
     useState(false);
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
-  const { darkMode, setDarkMode } = useDarkMode();
   const { user: userData, hasUnreadMails } = useMails();
 
   const isRootPath = location.pathname === "/";
@@ -173,10 +169,6 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
   if (isRootPath && link === "/") return null;
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -190,13 +182,11 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
 
   const currentUser = getCurrentUser();
 
-  const navigationItems = [
-    // { name: "Dashboard", path: "/dashboard", icon: <LayoutDashboard size={16} /> },
-  ];
+  const navigationItems = [];
 
   return (
     <>
-      <nav className="relative w-full bg-white/70 dark:bg-gray-950/70 backdrop-blur-xl border-b border-gray-900/10 dark:border-white/10 py-3 px-8 flex justify-between items-center fixed top-0 left-0 z-[999]">
+      <nav className="relative w-full bg-white/70 backdrop-blur-xl border-b border-gray-900/10 py-3 px-8 flex justify-between items-center fixed top-0 left-0 z-[999]">
         <button
           onClick={() => handleNavigation("/")}
           className="flex items-center group cursor-pointer"
@@ -204,7 +194,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
         >
           <div className="text-2xl font-bold tracking-tight flex items-baseline">
             <span className="text-[var(--accent)] newsreader">Starlit</span>
-            <span className="text-gray-800 dark:text-white ml-1 newsreader opacity-80">
+            <span className="text-gray-800 ml-1 newsreader opacity-80">
               Journals
             </span>
           </div>
@@ -216,7 +206,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               <Link
                 key={item.name}
                 to={item.path}
-                className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 transition-all duration-200 text-sm font-medium text-gray-700 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
               >
                 {item.icon}
                 <span className="ml-2">{item.name}</span>
@@ -230,10 +220,10 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             {currentUser && (
               <button
                 onClick={() => setMailModalOpen(!mailModalOpen)}
-                className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="p-2 rounded-lg hover:bg-gray-900/5 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
                 aria-label="Open mail"
               >
-                <Mail size={16} className="text-gray-600 dark:text-gray-400" />
+                <Mail size={16} className="text-gray-600" />
                 {hasUnreadMails && (
                   <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full" />
                 )}
@@ -244,7 +234,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               <>
                 <button
                   onClick={openLoginModal}
-                  className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors text-sm"
+                  className="text-gray-700 hover:text-black transition-colors text-sm"
                 >
                   Sign in
                 </button>
@@ -256,18 +246,6 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 </button>
               </>
             )}
-
-            {/* <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
-              aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
-            >
-              {darkMode ? (
-                <Sun size={16} className="text-gray-600 dark:text-gray-400" />
-              ) : (
-                <Moon size={16} className="text-gray-600 dark:text-gray-400" />
-              )}
-            </button> */}
           </div>
           {currentUser && !isJournalingAlt && (
             <button
@@ -282,7 +260,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             <div ref={dropdownRef} className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-900/5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
                 aria-label="Open user menu"
                 aria-expanded={dropdownOpen}
               >
@@ -296,7 +274,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                   alt="User Avatar"
                   className="w-8 h-8 rounded-full mr-2"
                 />
-                <span className="text-gray-900 dark:text-white font-medium text-sm mr-1">
+                <span className="text-gray-900 font-medium text-sm mr-1">
                   {currentUser.nickname ||
                     currentUser.anonymousName ||
                     currentUser.email ||
@@ -304,37 +282,37 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 </span>
                 <ChevronDown
                   size={16}
-                  className={`text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
+                  className={`text-gray-600 transition-transform duration-200 ${
                     dropdownOpen ? "rotate-180" : ""
                   }`}
                 />
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-900/10 dark:border-white/10 py-1 z-10">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-900/10 py-1 z-10">
                   <button
                     onClick={() => handleNavigation("/saved-entries")}
-                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <Bookmark size={14} className="mr-2" />
                     Saved
                   </button>
                   <button
                     onClick={() => handleNavigation("/subscriptions")}
-                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <Users size={14} className="mr-2" />
                     Subscriptions
                   </button>
                   <button
                     onClick={() => handleNavigation("/profile-settings")}
-                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <Settings size={14} className="mr-2" />
                     Settings
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                   >
                     <LogOut size={14} className="mr-2" />
                     Logout
@@ -348,10 +326,10 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
         <div className="lg:hidden flex items-center">
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10 transition-colors mobile-menu-button"
+            className="p-2 rounded-lg hover:bg-gray-900/5 transition-colors mobile-menu-button"
             aria-label="Open menu"
           >
-            <Menu size={24} className="text-gray-700 dark:text-gray-300" />
+            <Menu size={24} className="text-gray-700" />
           </button>
         </div>
       </nav>
@@ -363,14 +341,14 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
           onClick={() => setMobileMenuOpen(false)}
         >
           <div
-            className="fixed inset-y-0 left-0 w-4/5 max-w-sm bg-white dark:bg-gray-900 p-6 space-y-4 shadow-xl"
+            className="fixed inset-y-0 left-0 w-4/5 max-w-sm bg-white p-6 space-y-4 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center pb-4 border-b border-gray-200">
               <h3 className="font-semibold text-lg">Menu</h3>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-lg hover:bg-gray-900/5 dark:hover:bg-white/10"
+                className="p-2 rounded-lg hover:bg-gray-900/5"
                 aria-label="Close menu"
               >
                 <X size={20} />
@@ -382,7 +360,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
                 <button
                   key={item.name}
                   onClick={() => handleNavigation(item.path)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:bg-gray-100 font-medium"
                 >
                   {item.icon}
                   {item.name}
@@ -394,23 +372,16 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               {currentUser && (
                 <button
                   onClick={() => handleNavigation("/profile-settings")}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:bg-gray-100 font-medium"
                 >
                   <Settings size={18} />
                   Settings
                 </button>
               )}
-              {/* <button
-                onClick={toggleDarkMode}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
-              >
-                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                {darkMode ? "Light Mode" : "Dark Mode"}
-              </button> */}
               {currentUser && (
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 font-medium"
                 >
                   <LogOut size={18} />
                   Logout
@@ -422,7 +393,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
               <div className="pt-4 space-y-2">
                 <button
                   onClick={openLoginModal}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:bg-gray-100 font-medium"
                 >
                   Sign in
                 </button>
@@ -436,7 +407,7 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
             )}
 
             {currentUser && !isJournalingAlt && (
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-4 border-t border-gray-200">
                 <button
                   onClick={() => handleNavigation(link)}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-all duration-200 font-medium"
@@ -454,7 +425,6 @@ const Navbar = ({ name = "New Entry", link = "/journaling-alt" }) => {
         <InGameMail closeModal={() => setMailModalOpen(false)} />
       )}
 
-      {/* Auth Modals */}
       <LoginModal
         isOpen={showLogin}
         onClose={closeModals}

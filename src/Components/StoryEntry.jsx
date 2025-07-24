@@ -2,9 +2,16 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { useDarkMode } from "../context/ThemeContext";
-import { usePublicStories } from "../context/PublicStoriesContext";
-import { ArrowLeft, Loader2, Clock, Heart } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  Heart,
+  MessageCircle,
+  Bookmark,
+  Share2,
+  Clock,
+  Calendar,
+} from "lucide-react";
 import DashboardNavbar from "./Dashboard/Navbar";
 import AuthModals from "./Landing/AuthModals";
 import { createAvatar } from "@dicebear/core";
@@ -30,6 +37,7 @@ import JournalCard from "./PublicJournals/PublicStoryCard";
 import Comments from "./PublicJournals/Comments";
 import "./styles/JournalContent.css";
 import { Helmet } from "react-helmet";
+import { usePublicStories } from "../context/PublicStoriesContext";
 
 const avatarStyles = {
   avataaars,
@@ -74,7 +82,6 @@ const getCurrentUser = () => {
 
 const StoryEntry = () => {
   const { anonymousName, slug } = useParams();
-  const { darkMode } = useDarkMode();
   const { fetchSingleStory, stories, loading, error, handleLike } =
     usePublicStories();
   const navigate = useNavigate();
@@ -86,9 +93,11 @@ const StoryEntry = () => {
   const [likeLoading, setLikeLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
+  const [isActionBarVisible, setIsActionBarVisible] = useState(true);
+  const [isActionBarFixed, setIsActionBarFixed] = useState(false);
   const currentUser = getCurrentUser();
   const [authorProfile, setAuthorProfile] = useState(null);
-  const { modals, openLoginModal, openSignupModal } = AuthModals({ darkMode });
+  const { modals, openLoginModal, openSignupModal } = AuthModals({});
 
   const author =
     entry && entry.userId && typeof entry.userId === "object"
@@ -166,6 +175,32 @@ const StoryEntry = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const article = document.querySelector(".journal-content");
+      const actionBar = document.querySelector(".action-bar");
+
+      if (article && actionBar) {
+        const articleRect = article.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const scrollY = window.scrollY;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowBottom = scrollY + windowHeight;
+
+        // Show action bar when scrolling through content
+        const shouldShowActionBar = scrollY > 300;
+        setIsActionBarVisible(shouldShowActionBar);
+
+        // Fix action bar when reaching end of article content
+        const shouldFixActionBar = articleRect.bottom <= windowHeight + 100;
+        setIsActionBarFixed(shouldFixActionBar);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleSubscribe = async () => {
     if (!currentUser) {
       alert("Please log in to follow users.");
@@ -184,7 +219,7 @@ const StoryEntry = () => {
       setTimeout(() => {
         setIsSubscribed(response.data.subscribed);
         setSubscribing(false);
-      }, 2000);
+      }, 1000);
     } catch (error) {
       setSubscribing(false);
       alert("Error following user.");
@@ -203,18 +238,54 @@ const StoryEntry = () => {
         setLikeCount(res.likeCount);
         setIsLiked(res.isLiked);
         setLikeLoading(false);
-      }, 2000);
+      }, 800);
     } catch (err) {
       setLikeLoading(false);
       alert("Failed to update like. Please try again.");
     }
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: entry.title || "Untitled Entry",
+      text:
+        entry.metaDescription || "Check out this story on Starlit Journals!",
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      }
+    } catch (err) {
+      alert("Failed to share. Link copied to clipboard!");
+      navigator.clipboard.writeText(window.location.href);
+    }
+  };
+
+  const handleCommentClick = () => {
+    const commentsSection = document.querySelector("#comments");
+    if (commentsSection) {
+      commentsSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleSave = () => {
+    alert("Save functionality will be implemented soon!");
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const formatDate = (dateString) => {
     try {
       return new Date(dateString).toLocaleDateString("en-US", {
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric",
       });
     } catch (error) {
@@ -235,8 +306,8 @@ const StoryEntry = () => {
           height: auto;
           display: block;
           margin: 2.5rem auto;
-          border-radius: 12px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          border-radius: 16px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
         `;
       });
       return tempDiv.innerHTML;
@@ -247,12 +318,10 @@ const StoryEntry = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex items-center space-x-3">
-          <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-          <p className="text-gray-500 dark:text-gray-400 font-medium">
-            Loading...
-          </p>
+          <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+          <p className="text-gray-600 font-medium">Loading story...</p>
         </div>
       </div>
     );
@@ -260,17 +329,17 @@ const StoryEntry = () => {
 
   if (error || !entry) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-md">
-          <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">
-            Entry Not Found
+          <h2 className="text-2xl font-bold mb-4 text-gray-900">
+            Story Not Found
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-            {error || "This entry doesn't exist."}
+          <p className="text-gray-600 mb-8 leading-relaxed">
+            {error || "This story doesn't exist or has been removed."}
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+            className="px-8 py-3 bg-gray-900 text-white font-medium rounded-xl hover:bg-gray-800 transition-colors"
           >
             Go Back
           </button>
@@ -282,226 +351,287 @@ const StoryEntry = () => {
   return (
     <>
       <Helmet>
-        <title>{entry.title || "Untitled Entry"} | Cozy Mind</title>
+        <title>{entry.title || "Untitled Entry"} | Starlit Journals</title>
         {entry.metaDescription && (
           <meta name="description" content={entry.metaDescription} />
         )}
       </Helmet>
-      <DashboardNavbar />
 
+      <DashboardNavbar />
       {modals}
 
-      {/* <button
-        onClick={() => navigate(-1)}
-        className="relative p-3 rounded-full"
-        aria-label="Back"
-      >
-        <ArrowLeft size={18} className="text-gray-600 dark:text-gray-400" />
-      </button> */}
+      <div className="min-h-screen bg-white">
+        {/* Modern Header */}
+        <header className="relative">
+          {/* Back Button */}
+          <button
+            onClick={handleBack}
+            className="fixed top-20 left-6 z-50 p-3 rounded-full bg-white/90 backdrop-blur-md hover:bg-white shadow-lg border border-gray-200/50 transition-all duration-200 hover:scale-105"
+            aria-label="Back"
+          >
+            <ArrowLeft size={20} className="text-gray-700" />
+          </button>
 
-      <div className="min-h-screen bg-[var(--bg-primary)]">
-        <div className="mx-auto px-4 sm:px-0">
-          <header className="max-w-6xl mx-auto mt-5 relative">
-            {/* Hero Image - Full viewport impact */}
-            {entry.thumbnail && (
-              <div className="relative h-[85vh] overflow-hidden">
+          {entry.thumbnail ? (
+            <div className="relative h-[80vh] overflow-hidden">
+              {/* Blurred Background */}
+              <div className="absolute inset-0 z-0">
                 <img
                   src={entry.thumbnail}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover object-top"
+                  alt="blurred background"
+                  className="w-full h-full object-cover object-center blur-xl scale-110 opacity-50"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                <div className="absolute inset-0 flex flex-col justify-end">
-                  <div className="max-w-4xl mx-auto w-full px-6 pb-16">
-                    {entry.tags && entry.tags.length > 0 && (
-                      <div className="flex gap-3 mb-6">
-                        {entry.tags.slice(0, 2).map((tag, index) => (
-                          <span
-                            key={index}
-                            className="text-xs font-semibold tracking-[0.2em] uppercase text-white/90 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light text-white mb-6 leading-[0.9] tracking-tight font-serif max-w-4xl">
-                      {entry.title || "Untitled Entry"}
-                    </h1>
-                    {entry.metaDescription && (
-                      <p className="text-md text-white sm:text-lg italic font-light leading-relaxed max-w-2xl mb-8">
-                        {entry.metaDescription}
-                      </p>
-                    )}
+              </div>
+
+              {/* Foreground Image */}
+              <img
+                src={entry.thumbnail}
+                alt="main thumbnail"
+                className="absolute inset-0 mx-auto h-full object-cover object-top z-10"
+              />
+
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+              {/* Content Overlay */}
+              <div className="absolute inset-0 flex items-end z-30">
+                <div className="max-w-4xl mx-auto w-full px-6 pb-16">
+                  {/* Tags */}
+                  {entry.tags && entry.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {entry.tags.slice(0, 3).map((tag, index) => (
+                        <span
+                          key={index}
+                          className="text-sm font-medium text-white/90 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Title */}
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
+                    {entry.title || "Untitled Entry"}
+                  </h1>
+
+                  {/* Meta Description */}
+                  {entry.metaDescription && (
+                    <p className="text-lg text-white/85 leading-relaxed max-w-3xl mb-8">
+                      {entry.metaDescription}
+                    </p>
+                  )}
+
+                  {/* Reading Info */}
+                  <div className="flex items-center gap-6 text-white/70">
+                    <div className="flex items-center gap-2">
+                      <Calendar size={16} />
+                      <span className="text-sm">{formatDate(entry.date)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock size={16} />
+                      <span className="text-sm">{readingTime} min read</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            )}
-
-            {/* No image fallback - Minimalist header */}
-            {!entry.thumbnail && (
-              <div className="max-w-4xl mx-auto px-6 py-20">
+            </div>
+          ) : (
+            // your "no thumbnail" version remains unchanged
+            <div className="bg-gradient-to-br from-gray-50 to-white pt-32 pb-20">
+              <div className="max-w-4xl mx-auto px-6">
+                {/* Tags */}
                 {entry.tags && entry.tags.length > 0 && (
-                  <div className="flex gap-3 mb-12">
-                    {entry.tags.slice(0, 2).map((tag, index) => (
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {entry.tags.slice(0, 3).map((tag, index) => (
                       <span
                         key={index}
-                        className="text-xs font-semibold tracking-[0.2em] uppercase text-emerald-600 dark:text-emerald-400"
+                        className="text-sm font-medium text-emerald-700 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-200"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
                 )}
-                <h1 className="text-5xl sm:text-7xl lg:text-8xl font-light text-gray-900 dark:text-gray-100 mb-8 leading-[0.9] tracking-tight font-serif">
+
+                {/* Title */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
                   {entry.title || "Untitled Entry"}
                 </h1>
+
+                {/* Meta Description */}
                 {entry.metaDescription && (
-                  <p className="text-2xl sm:text-3xl text-gray-600 dark:text-gray-300 font-light leading-relaxed max-w-3xl mb-16">
+                  <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mb-10">
                     {entry.metaDescription}
                   </p>
                 )}
-              </div>
-            )}
 
-            {/* Author section - Clean separation */}
-            <div className="dark:border-gray-800">
-              <div className="max-w-3xl mx-auto px-6 py-12">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    {authorProfile && (
-                      <div className="flex items-start gap-6">
-                        <Link
-                          to={`/${authorProfile.anonymousName}`}
-                          className="flex-shrink-0 group"
-                        >
-                          <img
-                            src={getAvatarSvg(
-                              authorProfile.profileTheme?.avatarStyle ||
-                                "avataaars",
-                              authorProfile.anonymousName || "Anonymous"
-                            )}
-                            alt="Author"
-                            className="w-16 h-16 rounded-full border-2 border-gray-200 dark:border-gray-700 group-hover:border-gray-400 dark:group-hover:border-gray-500 transition-colors"
-                          />
-                        </Link>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-500 dark:text-gray-400 mb-2">
-                            Written by
-                          </div>
-                          <Link
-                            to={`/${authorProfile.anonymousName}`}
-                            className="block group"
-                          >
-                            <h2 className="text-2xl font-light text-gray-900 dark:text-gray-100 mb-3 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
-                              {authorProfile.anonymousName || "Anonymous"}
-                            </h2>
-                          </Link>
-                          {authorProfile.bio && (
-                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed max-w-2xl">
-                              {authorProfile.bio}
-                            </p>
-                          )}
-                          <div className="flex items-center gap-6 mt-6 text-sm text-gray-500 dark:text-gray-400">
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                              <span>Published {formatDate(entry.date)}</span>
-                            </div>
-                            <span>{readingTime} minute read</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                {/* Reading Info */}
+                <div className="flex items-center gap-6 text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} />
+                    <span className="text-sm">{formatDate(entry.date)}</span>
                   </div>
-                  {authorProfile &&
-                    currentUser &&
-                    authorProfile._id !== currentUser._id && (
-                      <div className="ml-8 flex-shrink-0">
-                        <button
-                          onClick={handleSubscribe}
-                          disabled={subscribing}
-                          className={`relative overflow-hidden px-8 py-3 text-sm font-medium transition-all duration-300 ${
-                            isSubscribed
-                              ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
-                              : "bg-transparent border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900"
-                          } ${
-                            subscribing ? "opacity-50 cursor-not-allowed" : ""
-                          }`}
-                        >
-                          {subscribing && (
-                            <Loader2
-                              size={16}
-                              className="inline-block mr-2 animate-spin"
-                            />
-                          )}
-                          {isSubscribed ? "Following" : "Follow"}
-                        </button>
-                      </div>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} />
+                    <span className="text-sm">{readingTime} min read</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </header>
+          )}
 
-          <div className="w-16 h-px mb-10 bg-gray-200 dark:bg-gray-800 mx-auto"></div>
+          {/* Author Section */}
+          <div className="bg-white border-b border-gray-100">
+            <div className="max-w-4xl mx-auto px-6 py-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  {authorProfile && (
+                    <>
+                      <Link
+                        to={`/${authorProfile.anonymousName}`}
+                        className="flex-shrink-0"
+                      >
+                        <img
+                          src={getAvatarSvg(
+                            authorProfile.profileTheme?.avatarStyle ||
+                              "avataaars",
+                            authorProfile.anonymousName || "Anonymous"
+                          )}
+                          alt="Author"
+                          className="w-14 h-14 rounded-full ring-2 ring-gray-100 hover:ring-gray-200 transition-all"
+                        />
+                      </Link>
+                      <div>
+                        <Link
+                          to={`/${authorProfile.anonymousName}`}
+                          className="block"
+                        >
+                          <h2 className="text-lg font-semibold text-gray-900 hover:text-gray-700 transition-colors">
+                            {authorProfile.anonymousName || "Anonymous"}
+                          </h2>
+                        </Link>
+                        {authorProfile?.bio && (
+                          <p className="text-sm text-gray-600 mt-1 max-w-md line-clamp-2">
+                            {authorProfile.bio}
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
 
-          <article className="max-w-3xl mx-auto journal-content">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: processContent(entry.content),
-              }}
-            />
-          </article>
+                {authorProfile &&
+                  currentUser &&
+                  authorProfile._id !== currentUser._id && (
+                    <button
+                      onClick={handleSubscribe}
+                      disabled={subscribing}
+                      className={`px-6 py-2.5 text-sm font-medium rounded-full transition-all duration-200 ${
+                        isSubscribed
+                          ? "bg-gray-900 text-white hover:bg-gray-800"
+                          : "bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
+                      } ${subscribing ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      {subscribing && (
+                        <Loader2
+                          size={16}
+                          className="inline-block mr-2 animate-spin"
+                        />
+                      )}
+                      {isSubscribed ? "Following" : "Follow"}
+                    </button>
+                  )}
+              </div>
+            </div>
+          </div>
+        </header>
 
-          {entry?.isPublic && (
-            <div className="mt-20 pt-12 flex justify-center border-t border-gray-100 dark:border-gray-800">
-              <button
-                className={`flex items-center gap-3 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-base font-medium rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 ${
-                  isLiked ? "opacity-90" : ""
-                } ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}`}
-                onClick={handleStoryLike}
-                disabled={likeLoading}
-              >
-                <Heart
-                  size={20}
-                  className={`${
-                    isLiked
-                      ? "fill-red-500 dark:fill-red-400"
-                      : "fill-gray-400 dark:fill-gray-500"
-                  }`}
+        {/* Article Content */}
+        <main className="max-w-3xl mx-auto px-6 py-16">
+          <article
+            className="journal-content prose prose-lg max-w-none"
+            dangerouslySetInnerHTML={{
+              __html: processContent(entry.content),
+            }}
+          />
+        </main>
+
+        {/* Action Bar */}
+        {entry?.isPublic && (
+          <div
+            className={`action-bar flex items-center justify-center gap-1 p-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-gray-200/50 transition-all duration-300 ${
+              isActionBarVisible
+                ? isActionBarFixed
+                  ? "fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40"
+                  : "fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40"
+                : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <button
+              className={`p-3 rounded-full transition-all duration-200 hover:bg-gray-100 ${
+                isLiked ? "text-red-500" : "text-gray-600"
+              } ${likeLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+              onClick={handleStoryLike}
+              disabled={likeLoading}
+              title={`${isLiked ? "Unlike" : "Like"} (${likeCount})`}
+            >
+              <Heart size={20} className={isLiked ? "fill-current" : ""} />
+            </button>
+
+            <button
+              className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
+              onClick={handleCommentClick}
+              title="Comments"
+            >
+              <MessageCircle size={20} />
+            </button>
+
+            <button
+              className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
+              onClick={handleSave}
+              title="Save"
+            >
+              <Bookmark size={20} />
+            </button>
+
+            <button
+              className="p-3 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-200"
+              onClick={handleShare}
+              title="Share"
+            >
+              <Share2 size={20} />
+            </button>
+          </div>
+        )}
+
+        {/* Comments Section */}
+        {entry?.isPublic && (
+          <section
+            id="comments"
+            className="max-w-3xl mx-auto px-6 py-16 border-t border-gray-100"
+          >
+            <h2 className="text-2xl font-bold mb-8 text-gray-900">Comments</h2>
+            <Comments journalId={entry._id} />
+          </section>
+        )}
+
+        {/* Recommendations */}
+        {recommendations.length > 0 && (
+          <section className="max-w-3xl mx-auto px-6 py-16 border-t border-gray-100">
+            <h2 className="text-2xl font-bold mb-12 text-gray-900">
+              More {entry.category === "story" ? "Stories" : "Journals"} to Read
+            </h2>
+            <div className="space-y-8">
+              {recommendations.slice(0, 5).map((recommendation) => (
+                <JournalCard
+                  key={recommendation._id}
+                  journal={recommendation}
                 />
-                <span>{likeCount}</span>
-              </button>
+              ))}
             </div>
-          )}
-
-          {entry?.isPublic && (
-            <div className="max-w-3xl mx-auto mt-24">
-              <h2 className="text-xl font-bold mb-8 text-gray-900 dark:text-gray-100">
-                Comments
-              </h2>
-              <div className="rounded-2xl">
-                <Comments journalId={entry._id} />
-              </div>
-            </div>
-          )}
-
-          {recommendations.length > 0 && (
-            <section className="max-w-3xl mx-auto mt-28">
-              <h2 className="text-xl font-bold mb-12 text-gray-900 dark:text-gray-100">
-                More {entry.category === "story" ? "Stories" : "Journals"} to
-                Read
-              </h2>
-              <div className="space-y-8">
-                {recommendations.slice(0, 5).map((recommendation) => (
-                  <div key={recommendation._id}>
-                    <JournalCard journal={recommendation} />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
+          </section>
+        )}
       </div>
     </>
   );
