@@ -775,7 +775,7 @@ const PublicStories = () => {
                   ))}
                 </div>
               ) : topByGenre[tag]?.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                   {topByGenre[tag].map((story) => (
                     <JournalCard
                       key={story._id}
