@@ -120,6 +120,7 @@ const RecommendationCard = memo(({ journal }) => {
     <article
       className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
       role="article"
+      onClick={() => scrollTo(0, 0)}
       aria-labelledby={`recommendation-${journal._id}`}
     >
       <Link

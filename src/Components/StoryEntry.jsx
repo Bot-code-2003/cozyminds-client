@@ -505,7 +505,7 @@ const StoryEntry = () => {
         </header>
 
         <div className="action-bar-wrapper">
-          <main className="max-w-3xl mx-auto px-6 py-16">
+          <main className="max-w-2xl mx-auto px-6 py-16">
             <article
               className="journal-content prose prose-lg max-w-none"
               dangerouslySetInnerHTML={{

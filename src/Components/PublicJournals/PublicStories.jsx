@@ -98,7 +98,6 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
     </div>
   );
 };
-
 const LatestStoryCard = ({
   story,
   likedStories,
@@ -120,41 +119,62 @@ const LatestStoryCard = ({
   const avatarUrl = getAvatarSvg(avatarStyle, avatarSeed);
 
   return (
-    <div
-      className="relative bg-cover bg-center rounded-none border-0 overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
-      style={{
-        backgroundImage: `url(${thumbnail || "/default-book-bg.jpg"})`,
-        aspectRatio: "4/5",
-      }}
-    >
-      <div className="absolute inset-0 bg-black bg-opacity-30 transition-opacity duration-300 group-hover:bg-opacity-20"></div>
-      <div className="relative z-10 h-full flex flex-col justify-end p-4">
-        <div className="bg-white bg-opacity-90 p-3 rounded-t-lg">
-          <h3 className="font-semibold text-gray-900 text-lg line-clamp-2 leading-tight">
-            {story.title}
-          </h3>
-          <div className="flex items-center gap-2 mt-2">
-            <img src={avatarUrl} alt="" className="w-5 h-5 rounded-full" />
-            <span className="text-sm text-gray-600">
+    <div className="relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1">
+      {/* Thumbnail */}
+      <div className="relative h-52">
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+          style={{
+            backgroundImage: `url(${thumbnail || "/default-book-bg.jpg"})`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
+        {story.genre && (
+          <span className="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+            {story.genre}
+          </span>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-5 flex flex-col gap-4">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 leading-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">
+          {story.title}
+        </h3>
+
+        <div className="flex items-center gap-3">
+          <img
+            src={avatarUrl}
+            alt={`${story.author?.anonymousName || "Anonymous"}'s avatar`}
+            className="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-gray-700 group-hover:border-blue-400 dark:group-hover:border-blue-500 transition-colors"
+          />
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
               {story.author?.anonymousName || "Anonymous"}
             </span>
-          </div>
-          <div className="mt-2">
-            <span className="bg-gray-700 text-white text-xs font-medium px-2 py-1 rounded">
-              {story.genre}
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {new Date(story.createdAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
             </span>
           </div>
         </div>
       </div>
+
+      {/* Link Overlay */}
       <a
         href={`/${story.author?.anonymousName || "anonymous"}/${story.slug}`}
-        className="absolute inset-0 z-20"
+        className="absolute inset-0 z-10"
         onClick={(e) => {
           e.preventDefault();
           window.location.href = `/${
             story.author?.anonymousName || "anonymous"
           }/${story.slug}`;
         }}
+        aria-label={`Read ${story.title} by ${
+          story.author?.anonymousName || "Anonymous"
+        }`}
       />
     </div>
   );
@@ -186,14 +206,14 @@ const PublicStories = () => {
   const [selectedTag, setSelectedTag] = useState(null);
 
   const popularTags = [
-    "Fantasy",
     "Horror",
     "Science Fiction",
-    "Romance",
+    "Comedy",
     "Mystery",
+    "Romance",
+    "Fantasy",
     "Adventure",
     "Drama",
-    "Comedy",
   ];
 
   const { darkMode } = useDarkMode();
@@ -661,19 +681,19 @@ const PublicStories = () => {
 
         {/* Latest Stories Section */}
         {!selectedTag && (
-          <section className="mb-16">
-            <div className="flex max-w-3xl mx-auto items-center gap-4 my-8">
-              <div className="flex-1 h-[0.5px] bg-gray-300" />
-              <h2 className="text-2xl text-gray-900 whitespace-nowrap">
+          <section className="mb-12">
+            <div className="flex max-w-4xl mx-auto items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">
                 Latest Stories
               </h2>
-              <div className="flex-1 h-[0.5px] bg-gray-300" />
+              <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
             </div>
 
             {loadingStates.latest ? (
               <LoadingSkeleton />
             ) : latestByGenre.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
                 {latestByGenre.map((story) => (
                   <LatestStoryCard
                     key={story._id}
@@ -685,9 +705,11 @@ const PublicStories = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-600">No latest stories found.</p>
+              <div className="text-center py-10">
+                <BookOpen className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                  No latest stories found.
+                </p>
               </div>
             )}
           </section>
@@ -740,7 +762,7 @@ const PublicStories = () => {
             <section key={tag} className="mb-16">
               <div className="flex max-w-3xl mx-auto items-center gap-4 my-8">
                 <div className="flex-1 h-[0.5px] bg-gray-300" />
-                <h2 className="text-2xl text-gray-900 whitespace-nowrap">
+                <h2 className="text-2xl bold text-gray-900 whitespace-nowrap">
                   Top Stories in {tag}
                 </h2>
                 <div className="flex-1 h-[0.5px] bg-gray-300" />
@@ -753,7 +775,7 @@ const PublicStories = () => {
                   ))}
                 </div>
               ) : topByGenre[tag]?.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   {topByGenre[tag].map((story) => (
                     <JournalCard
                       key={story._id}
