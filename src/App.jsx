@@ -26,6 +26,7 @@ import TagEntries from "./Components/PublicJournals/TagEntries";
 import AboutUs from "./Components/Landing/AboutUs";
 
 import Footer from "./Footer";
+import PublicStories from "./Components/PublicJournals/PublicStories2";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -85,7 +86,25 @@ const App = () => {
                     )
                   }
                 />
-                <Route path="/tag/:tag" element={<TagEntries />} />
+                <Route
+                  path="/tag/:tag"
+                  element={
+                    <>
+                      <TagEntries />
+                      <Footer />
+                    </>
+                  }
+                />
+
+                <Route
+                  path="/part"
+                  element={
+                    <>
+                      <PublicStories />
+                      <Footer />
+                    </>
+                  }
+                />
 
                 <Route path="/privacy-policy" element={<Privacy />} />
                 <Route path="/terms-of-service" element={<Terms />} />

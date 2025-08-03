@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Clock, Heart, MessageSquare, BookOpen } from "lucide-react";
+import { Clock, Heart, MessageSquare, BookOpen, Star } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import JournalCard, { JournalCardSkeleton } from "./PublicStoryCard";
@@ -98,6 +98,8 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
     </div>
   );
 };
+
+// Redesigned LatestStoryCard - Full image background with overlay content
 const LatestStoryCard = ({
   story,
   likedStories,
@@ -119,53 +121,74 @@ const LatestStoryCard = ({
   const avatarUrl = getAvatarSvg(avatarStyle, avatarSeed);
 
   return (
-    <div className="relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1">
-      {/* Thumbnail */}
-      <div className="relative h-52">
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-          style={{
-            backgroundImage: `url(${thumbnail || "/default-book-bg.jpg"})`,
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
-        {story.genre && (
-          <span className="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+    <div className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+        style={{
+          backgroundImage: `url(${thumbnail || "/default-book-bg.jpg"})`,
+        }}
+      />
+
+      {/* Gradient Overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      {/* Genre Badge - Top Left */}
+      {story.genre && (
+        <div className="absolute top-4 left-4 z-10">
+          <span className="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm border border-white/20">
             {story.genre}
           </span>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Content */}
-      <div className="p-5 flex flex-col gap-4">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 leading-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">
-          {story.title}
-        </h3>
-
-        <div className="flex items-center gap-3">
+      {/* Author Info - Top Left Below Genre */}
+      <div className="absolute top-16 left-4 z-10 flex items-center gap-3">
+        <div className="relative">
           <img
             src={avatarUrl}
             alt={`${story.author?.anonymousName || "Anonymous"}'s avatar`}
-            className="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-gray-700 group-hover:border-blue-400 dark:group-hover:border-blue-500 transition-colors"
+            className="w-10 h-10 rounded-full border-2 border-white/80 shadow-lg backdrop-blur-sm bg-white/10"
           />
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-              {story.author?.anonymousName || "Anonymous"}
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {new Date(story.createdAt).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white shadow-sm"></div>
+        </div>
+        <div className="text-white">
+          <div className="font-semibold text-sm drop-shadow-lg">
+            {story.author?.anonymousName || "Anonymous"}
+          </div>
+          <div className="text-xs text-white/80 font-medium">
+            {new Date(story.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}
           </div>
         </div>
+      </div>
+
+      {/* Title and Content - Bottom */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+        <h3 className="text-xl font-bold mb-2 line-clamp-2 leading-tight drop-shadow-lg group-hover:text-blue-200 transition-colors duration-300">
+          {story.title}
+        </h3>
+
+        {/* Reading Time */}
+        <div className="flex items-center gap-2 text-white/80 text-sm">
+          <Clock className="w-4 h-4" />
+          <span className="font-medium">5 min read</span>
+          <div className="w-1 h-1 bg-white/60 rounded-full"></div>
+        </div>
+      </div>
+
+      {/* Hover Effect Shimmer */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform translate-x-full group-hover:-translate-x-full transition-transform duration-1000"></div>
       </div>
 
       {/* Link Overlay */}
       <a
         href={`/${story.author?.anonymousName || "anonymous"}/${story.slug}`}
-        className="absolute inset-0 z-10"
+        className="absolute inset-0 z-20"
         onClick={(e) => {
           e.preventDefault();
           window.location.href = `/${
@@ -275,14 +298,28 @@ const PublicStories = () => {
   };
 
   const fetchFeaturedStories = useCallback(async () => {
+    const cacheKey = "featuredStories";
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      console.log("📦 Loaded featuredStories from localStorage");
+      setFeaturedStories(parsed);
+      updateUserStates(parsed);
+      updateLoadingState("featured", false);
+      return;
+    }
+
     try {
+      console.log("🌐 Fetching featuredStories from API...");
       updateLoadingState("featured", true);
       const response = await API.get("/stories/top-liked");
       const stories = response.data.stories || [];
       setFeaturedStories(stories);
+      localStorage.setItem(cacheKey, JSON.stringify(stories));
       updateUserStates(stories);
     } catch (error) {
-      console.error("Error fetching featured stories:", error);
+      console.error("❌ Error fetching featured stories:", error);
       setError("Failed to fetch featured stories");
     } finally {
       updateLoadingState("featured", false);
@@ -290,24 +327,37 @@ const PublicStories = () => {
   }, []);
 
   const fetchLatestByGenre = useCallback(async () => {
+    const cacheKey = "latestByGenre";
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      console.log("📦 Loaded latestByGenre from localStorage");
+      setLatestByGenre(parsed);
+      updateUserStates(parsed);
+      updateLoadingState("latest", false);
+      return;
+    }
+
     try {
+      console.log("🌐 Fetching latestByGenre from API...");
       updateLoadingState("latest", true);
       const response = await API.get("/stories/latest-by-genre", {
         params: { genres: popularTags.join(",") },
       });
       const stories = response.data.stories || [];
       setLatestByGenre(stories);
+      localStorage.setItem(cacheKey, JSON.stringify(stories));
       updateUserStates(stories);
     } catch (error) {
-      console.error("Error fetching latest stories by genre:", error);
+      console.error("❌ Error fetching latest stories by genre:", error);
       setError("Failed to fetch latest stories by genre");
     } finally {
       updateLoadingState("latest", false);
     }
   }, []);
 
-  const fetchTopByGenre = useCallback(async () => {
-    // Initialize loading states for all genres
+  const fetchTopByGenre = useCallback(() => {
     const initialLoadingStates = {};
     popularTags.forEach((tag) => {
       initialLoadingStates[tag] = true;
@@ -317,22 +367,30 @@ const PublicStories = () => {
       topGenres: initialLoadingStates,
     }));
 
-    // Fetch each genre independently
     popularTags.forEach(async (tag) => {
+      const cacheKey = `topByGenre_${tag}`;
+      const cached = localStorage.getItem(cacheKey);
+
+      if (cached) {
+        const stories = JSON.parse(cached);
+        console.log(`📦 Loaded topByGenre(${tag}) from localStorage`);
+        setTopByGenre((prev) => ({ ...prev, [tag]: stories }));
+        updateUserStates(stories);
+        updateLoadingState("topGenres", false, tag);
+        return;
+      }
+
       try {
+        console.log(`🌐 Fetching topByGenre(${tag}) from API...`);
         const response = await API.get(
           `/stories/top-by-genre/${encodeURIComponent(tag)}`
         );
         const stories = response.data.stories || [];
-
-        setTopByGenre((prev) => ({
-          ...prev,
-          [tag]: stories,
-        }));
-
+        setTopByGenre((prev) => ({ ...prev, [tag]: stories }));
+        localStorage.setItem(cacheKey, JSON.stringify(stories));
         updateUserStates(stories);
       } catch (error) {
-        console.error(`Error fetching top stories for ${tag}:`, error);
+        console.error(`❌ Error fetching top stories for ${tag}:`, error);
       } finally {
         updateLoadingState("topGenres", false, tag);
       }
@@ -510,12 +568,10 @@ const PublicStories = () => {
         {/* Featured Stories Section */}
         {!selectedTag && (
           <section className="mb-16">
-            <div className="flex max-w-3xl mx-auto items-center gap-4 my-8">
-              <div className="flex-1 h-[0.5px] bg-gray-300" />
-              <h2 className="text-2xl text-gray-900 whitespace-nowrap">
+            <div className="flex items-center gap-4 my-8">
+              <h2 className="text-2xl md:text-3xl text-left font-semibold text-gray-900 whitespace-nowrap">
                 Featured Stories
               </h2>
-              <div className="flex-1 h-[0.5px] bg-gray-300" />
             </div>
 
             {loadingStates.featured ? (
@@ -582,8 +638,8 @@ const PublicStories = () => {
                             </span>
                           </div>
                           <h3
-                            className={`font-bold leading-tight mb-2 line-clamp-3 text-white ${
-                              isLarge ? "text-2xl" : "text-lg"
+                            className={`font-semibold leading-tight mb-2 line-clamp-3 text-white ${
+                              isLarge ? "text-2xl md:text-3xl" : "text-lg"
                             }`}
                           >
                             {story.title}
@@ -682,12 +738,10 @@ const PublicStories = () => {
         {/* Latest Stories Section */}
         {!selectedTag && (
           <section className="mb-12">
-            <div className="flex max-w-4xl mx-auto items-center gap-4 my-6">
-              <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+            <div className="flex items-center gap-4 my-6">
+              <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">
                 Latest Stories
               </h2>
-              <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
             </div>
 
             {loadingStates.latest ? (
@@ -719,11 +773,11 @@ const PublicStories = () => {
         {selectedTag ? (
           <section>
             <div className="flex max-w-3xl mx-auto items-center gap-4 my-8">
-              <div className="flex-1 h-[0.5px] bg-gray-300" />
-              <h2 className="text-2xl text-gray-900 whitespace-nowrap">
+              {/* <div className="flex-1 h-[0.5px] bg-gray-300" /> */}
+              <h2 className="text-2xl md:text-3xl bold text-gray-900 whitespace-nowrap">
                 Top Stories in {selectedTag}
               </h2>
-              <div className="flex-1 h-[0.5px] bg-gray-300" />
+              {/* <div className="flex-1 h-[0.5px] bg-gray-300" /> */}
             </div>
 
             {loadingStates.selectedGenre ||
@@ -760,12 +814,12 @@ const PublicStories = () => {
           // Top Stories by Genre Sections
           popularTags.map((tag) => (
             <section key={tag} className="mb-16">
-              <div className="flex max-w-3xl mx-auto items-center gap-4 my-8">
-                <div className="flex-1 h-[0.5px] bg-gray-300" />
-                <h2 className="text-2xl bold text-gray-900 whitespace-nowrap">
+              <div className="flex items-center gap-4 my-8">
+                {/* <div className="flex-1 h-[0.5px] bg-gray-300" /> */}
+                <h2 className="text-2xl md:text-3xl text-left font-semibold text-gray-900 whitespace-nowrap">
                   Top Stories in {tag}
                 </h2>
-                <div className="flex-1 h-[0.5px] bg-gray-300" />
+                {/* <div className="flex-1 h-[0.5px] bg-gray-300" /> */}
               </div>
 
               {loadingStates.topGenres[tag] ? (
