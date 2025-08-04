@@ -1,36 +1,3 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
-  "redirects": [
-    {
-      "source": "/romance.html",
-      "destination": "/tag/romance",
-      "permanent": true
-    },
-    {
-      "source": "/horror.html",
-      "destination": "/tag/horror",
-      "permanent": true
-    },
-    {
-      "source": "/comedy.html",
-      "destination": "/tag/comedy",
-      "permanent": true
-    },
-    {
-      "source": "/adventure.html",
-      "destination": "/tag/adventure",
-      "permanent": true
-    },
-    {
-      "source": "/science-fiction.html",
-      "destination": "/tag/science%20fiction",
-      "permanent": true
-    },
-    {
-      "source": "/mystery.html",
-      "destination": "/tag/mystery",
-      "permanent": true
-    },
-    { "source": "/drama.html", "destination": "/tag/drama", "permanent": true }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
