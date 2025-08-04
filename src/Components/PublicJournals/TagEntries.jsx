@@ -79,7 +79,7 @@ const RelatedTags = ({ currentTag, contentType, onTagSelect }) => {
   if (relatedTags.length === 0) return null;
 
   return (
-    <div className="bg-black rounded-b-2xl max-w-7xl mx-auto backdrop-blur-sm border-b border-white/20 py-4  relative z-10">
+    <div className="bg-black p-2 rounded-b-2xl max-w-7xl mx-auto backdrop-blur-sm border-b border-white/20 py-4  relative z-10">
       <div className="">
         <div className="text-center">
           <p className="text-white/90 text-sm mb-3 font-medium">
@@ -428,7 +428,7 @@ const TagEntries = () => {
   }
 
   return (
-    <>
+    <div className="p-4">
       <Helmet>
         <title>{seo.title}</title>
         <meta name="description" content={seo.description} />
@@ -533,7 +533,7 @@ const TagEntries = () => {
         </div>
       </div>
       {modals}
-    </>
+    </div>
   );
 };
 
