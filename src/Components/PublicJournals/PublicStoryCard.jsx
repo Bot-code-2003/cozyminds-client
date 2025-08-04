@@ -207,14 +207,14 @@ const JournalCard = memo(
                 <img
                   src={thumbnail}
                   alt={`Cover for ${journal.title}`}
-                  className="w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110"
+                  className="w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-[1.02] group-hover:brightness-110"
                   onError={() => setImageError(true)}
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
                 {/* Reading time badge */}
-                <div className="absolute top-4 right-4 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md text-gray-700 dark:text-gray-200 text-xs font-semibold px-3 py-2 rounded-full flex items-center gap-2 shadow-lg border border-white/20 dark:border-gray-700/30 transition-all duration-300 group-hover:scale-105">
+                <div className="absolute top-4 right-4 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md text-gray-700 dark:text-gray-200 text-xs font-semibold px-3 py-2 rounded-full flex items-center gap-2 shadow-lg border border-white/20 dark:border-gray-700/30 transition-all duration-300 group-hover:scale-[1.02]">
                   <Clock className="w-3.5 h-3.5 text-blue-500" />
                   <span className="tracking-wide">{readingTime}</span>
                 </div>
@@ -269,7 +269,7 @@ const JournalCard = memo(
                       alt={`Avatar of ${
                         journal.author?.anonymousName || "Anonymous"
                       }`}
-                      className="w-9 h-9 rounded-full ring-2 ring-gray-200/60 dark:ring-gray-700/60 transition-all duration-300 group-hover/author:ring-blue-300 dark:group-hover/author:ring-blue-600 group-hover/author:scale-105"
+                      className="w-9 h-9 rounded-full ring-2 ring-gray-200/60 dark:ring-gray-700/60 transition-all duration-300 group-hover/author:ring-blue-300 dark:group-hover/author:ring-blue-600 group-hover/author:scale-[1.02]"
                       loading="lazy"
                     />
                     <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 dark:bg-green-500 rounded-full border-2 border-white dark:border-gray-900 opacity-80"></div>
@@ -298,13 +298,13 @@ const JournalCard = memo(
                       } ${
                         isLiking
                           ? "scale-95"
-                          : "hover:scale-105 active:scale-95"
+                          : "hover:scale-[1.02] active:scale-95"
                       }`}
                       aria-label={isLiked ? "Unlike story" : "Like story"}
                     >
                       <Heart
-                        className={`w-4 h-4 transition-all duration-300 group-hover/like:scale-110 ${
-                          isLiked ? "scale-110" : ""
+                        className={`w-4 h-4 transition-all duration-300 group-hover/like:scale-[1.02] ${
+                          isLiked ? "scale-[1.02]" : ""
                         }`}
                         fill={isLiked ? "currentColor" : "none"}
                       />
@@ -323,13 +323,13 @@ const JournalCard = memo(
                       } ${
                         isSaving
                           ? "scale-95"
-                          : "hover:scale-110 active:scale-95"
+                          : "hover:scale-[1.02] active:scale-95"
                       }`}
                       aria-label={isSavedProp ? "Unsave story" : "Save story"}
                     >
                       <Bookmark
-                        className={`w-4 h-4 transition-all duration-300 group-hover/save:scale-110 ${
-                          isSavedProp ? "scale-110" : ""
+                        className={`w-4 h-4 transition-all duration-300 group-hover/save:scale-[1.02] ${
+                          isSavedProp ? "scale-[1.02]" : ""
                         }`}
                         fill={isSavedProp ? "currentColor" : "none"}
                       />

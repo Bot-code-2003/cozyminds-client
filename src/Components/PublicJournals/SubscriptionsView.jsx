@@ -133,7 +133,7 @@ const SubscriptionsView = () => {
   const hasNotifications = subscriptions.some((sub) => sub.hasNewContent);
 
   const handleBack = () => {
-    navigate("/public-journals");
+    navigate("/");
   };
 
   if (loading) {

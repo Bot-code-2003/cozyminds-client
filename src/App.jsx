@@ -27,6 +27,7 @@ import AboutUs from "./Components/Landing/AboutUs";
 
 import Footer from "./Footer";
 import PublicStories from "./Components/PublicJournals/PublicStories2";
+import SavedEntries from "./Components/PublicJournals/SavedEntries";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -109,7 +110,7 @@ const App = () => {
                 <Route path="/privacy-policy" element={<Privacy />} />
                 <Route path="/terms-of-service" element={<Terms />} />
                 <Route path="/profile-settings" element={<ProfileSettings />} />
-
+                <Route path="/saved-entries" element={<SavedEntries />} />
                 <Route
                   path="/:anonymousName/:slug"
                   element={

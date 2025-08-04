@@ -120,10 +120,10 @@ const LatestStoryCard = ({
   const avatarUrl = getAvatarSvg(avatarStyle, avatarSeed);
 
   return (
-    <div className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
+    <div className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl">
       {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-[1.02]"
         style={{
           backgroundImage: `url(${thumbnail || "/default-book-bg.jpg"})`,
         }}

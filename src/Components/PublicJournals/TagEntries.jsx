@@ -48,6 +48,174 @@ const getTagBanner = (tagName) => {
   return banners[tagName.toLowerCase()] || fantasy; // Default fallback
 };
 
+// Static SEO metadata mapping
+const seoMetadata = {
+  romance: {
+    title: "Romance Stories | Starlit Journals",
+    description:
+      "Explore heartfelt romance stories filled with love and passion. Discover captivating narratives from our community of writers.",
+    keywords:
+      "romance, love stories, fiction, creative writing, starlit journals",
+    image: "https://starlitjournals.com/banners/romance.png",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  comedy: {
+    title: "Comedy Stories | Starlit Journals",
+    description:
+      "Laugh out loud with hilarious comedy stories. Find funny and entertaining tales from our creative writers.",
+    keywords: "comedy, humor, funny stories, fiction, starlit journals",
+    image: "https://starlitjournals.com/banners/comedy.png",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  fantasy: {
+    title: "Fantasy Stories | Starlit Journals",
+    description:
+      "Dive into magical worlds with fantasy stories. Explore epic adventures and mystical tales from our community.",
+    keywords:
+      "fantasy, epic stories, fiction, creative writing, starlit journals",
+    image: "https://starlitjournals.com/banners/fantasy.jpg",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  mystery: {
+    title: "Mystery Stories | Starlit Journals",
+    description:
+      "Unravel thrilling mysteries with our collection of suspenseful stories. Join the adventure with our writers.",
+    keywords: "mystery, suspense, thriller, fiction, starlit journals",
+    image: "https://starlitjournals.com/banners/mystery.png",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  "science fiction": {
+    title: "Science Fiction Stories | Starlit Journals",
+    description:
+      "Journey to futuristic worlds with science fiction stories. Discover innovative and imaginative tales.",
+    keywords:
+      "science fiction, sci-fi, futuristic stories, fiction, starlit journals",
+    image: "https://starlitjournals.com/banners/science fiction.jpg",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  horror: {
+    title: "Horror Stories | Starlit Journals",
+    description:
+      "Experience spine-chilling horror stories. Dive into terrifying tales crafted by our talented writers.",
+    keywords: "horror, scary stories, thriller, fiction, starlit journals",
+    image: "https://starlitjournals.com/banners/horror.jpg",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  drama: {
+    title: "Drama Stories | Starlit Journals",
+    description:
+      "Immerse yourself in emotional drama stories. Explore deep and meaningful narratives from our community.",
+    keywords:
+      "drama, emotional stories, fiction, creative writing, starlit journals",
+    image: "https://starlitjournals.com/banners/drama.png",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  adventure: {
+    title: "Adventure Stories | Starlit Journals",
+    description:
+      "Embark on thrilling adventures with our collection of action-packed stories. Join the journey today.",
+    keywords:
+      "adventure, action stories, fiction, creative writing, starlit journals",
+    image: "https://starlitjournals.com/banners/adventure.jpg",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  personal: {
+    title: "Personal Journals | Starlit Journals",
+    description:
+      "Read intimate personal journal entries. Connect with authentic experiences and reflections from our writers.",
+    keywords: "personal, journal, reflection, daily writing, starlit journals",
+    image: "https://starlitjournals.com/banners/default.jpg", // Replace with actual image
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  reflection: {
+    title: "Reflection Journals | Starlit Journals",
+    description:
+      "Explore thoughtful reflections in our journal entries. Dive into meaningful insights and personal growth stories.",
+    keywords:
+      "reflection, journal, personal growth, daily writing, starlit journals",
+    image: "https://starlitjournals.com/banners/default.jpg", // Replace with actual image
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  life: {
+    title: "Life Journals | Starlit Journals",
+    description:
+      "Discover real-life experiences through our journal entries. Connect with stories of everyday moments and lessons.",
+    keywords: "life, journal, experiences, daily writing, starlit journals",
+    image: "https://starlitjournals.com/banners/default.jpg", // Replace with actual image
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  growth: {
+    title: "Growth Journals | Starlit Journals",
+    description:
+      "Follow journeys of personal growth in our journal entries. Be inspired by stories of transformation and learning.",
+    keywords:
+      "growth, personal development, journal, daily writing, starlit journals",
+    image: "https://starlitjournals.com/banners/default.jpg", // Replace with actual image
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  thoughts: {
+    title: "Thoughts Journals | Starlit Journals",
+    description:
+      "Dive into the inner thoughts of our writers. Explore reflective and introspective journal entries.",
+    keywords:
+      "thoughts, journal, introspection, daily writing, starlit journals",
+    image: "https://starlitjournals.com/banners/default.jpg", // Replace with actual image
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  experience: {
+    title: "Experience Journals | Starlit Journals",
+    description:
+      "Read about unique experiences in our journal entries. Connect with stories that capture life's moments.",
+    keywords:
+      "experience, journal, personal stories, daily writing, starlit journals",
+    image: "https://starlitjournals.com/banners/default.jpg", // Replace with actual image
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  daily: {
+    title: "Daily Journals | Starlit Journals",
+    description:
+      "Explore daily journal entries from our community. Find inspiration in routine reflections and stories.",
+    keywords: "daily, journal, routine, daily writing, starlit journals",
+    image: "https://starlitjournals.com/banners/default.jpg", // Replace with actual image
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  mindfulness: {
+    title: "Mindfulness Journals | Starlit Journals",
+    description:
+      "Discover mindfulness journal entries. Reflect on moments of calm and clarity from our writers.",
+    keywords:
+      "mindfulness, journal, reflection, daily writing, starlit journals",
+    image: "https://starlitjournals.com/banners/default.jpg", // Replace with actual image
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+  default: {
+    title: "Explore Stories and Journals | Starlit Journals",
+    description:
+      "Discover a variety of stories and journal entries from our creative community. Explore now!",
+    keywords:
+      "stories, journals, creative writing, fiction, personal writing, starlit journals",
+    image: "https://starlitjournals.com/banners/fantasy.jpg",
+    canonicalUrl: (tag) =>
+      `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
+  },
+};
+
 // Enhanced Related Tags Component
 const RelatedTags = ({ currentTag, contentType, onTagSelect }) => {
   const storyTags = [
@@ -79,7 +247,7 @@ const RelatedTags = ({ currentTag, contentType, onTagSelect }) => {
   if (relatedTags.length === 0) return null;
 
   return (
-    <div className="bg-black p-2 rounded-b-2xl max-w-7xl mx-auto backdrop-blur-sm border-b border-white/20 py-4  relative z-10">
+    <div className="bg-black p-2 rounded-b-2xl max-w-7xl mx-auto backdrop-blur-sm border-b border-white/20 py-4 relative z-10">
       <div className="">
         <div className="text-center">
           <p className="text-white/90 text-sm mb-3 font-medium">
@@ -110,7 +278,6 @@ const TagHeroSection = ({ tag, totalCount, contentType }) => {
 
   return (
     <div className="relative max-w-7xl rounded-t-2xl mx-auto mt-12 flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
       <div className="">
         <img
           src={bannerImage}
@@ -118,7 +285,6 @@ const TagHeroSection = ({ tag, totalCount, contentType }) => {
           className="w-full h-full object-cover"
         />
       </div>
-      {/* Bottom Fade */}
     </div>
   );
 };
@@ -132,6 +298,7 @@ const LoadingState = ({ seo, modals }) => (
       <meta name="keywords" content={seo.keywords} />
       <meta property="og:title" content={seo.title} />
       <meta property="og:description" content={seo.description} />
+      <meta property="og:image" content={seo.image} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={seo.canonicalUrl} />
       <meta name="robots" content="index, follow" />
@@ -168,6 +335,7 @@ const ErrorState = ({ seo, modals, error, onRetry }) => (
       <meta name="keywords" content={seo.keywords} />
       <meta property="og:title" content={seo.title} />
       <meta property="og:description" content={seo.description} />
+      <meta property="og:image" content={seo.image} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={seo.canonicalUrl} />
       <meta name="robots" content="index, follow" />
@@ -217,7 +385,19 @@ const TagEntries = () => {
 
   // Memoize user to prevent unnecessary re-renders
   const user = useMemo(() => getCurrentUser(), []);
-  const isLoggedIn = !!user;
+
+  // Get static SEO metadata
+  const seo = useMemo(() => {
+    const tagKey = tag.toLowerCase();
+    const metadata = seoMetadata[tagKey] || seoMetadata.default;
+    return {
+      title: metadata.title,
+      description: metadata.description,
+      keywords: metadata.keywords,
+      image: metadata.image,
+      canonicalUrl: metadata.canonicalUrl(tag),
+    };
+  }, [tag]);
 
   // Determine content type from referrer or URL state
   useEffect(() => {
@@ -391,24 +571,6 @@ const TagEntries = () => {
     fetchEntries(1, false);
   }, [tag, contentType, fetchEntries]);
 
-  // Dynamic SEO content
-  const seo = {
-    title: `${
-      contentType === "stories" ? "Stories" : "Journals"
-    } Tagged "${tag}" | Starlit Journals`,
-    description: `Discover ${
-      contentType === "stories"
-        ? "creative stories"
-        : "personal journal entries"
-    } tagged with "${tag}". Find meaningful content from our community of writers.`,
-    keywords: `${tag.toLowerCase()}, ${contentType}, creative writing, ${
-      contentType === "stories"
-        ? "short stories, fiction"
-        : "personal journal, daily writing"
-    }, starlit journals`,
-    canonicalUrl: `https://starlitjournals.com/tag/${tag.toLowerCase()}`,
-  };
-
   if (loading && !loadingMore) {
     return <LoadingState seo={seo} modals={modals} />;
   }
@@ -435,6 +597,7 @@ const TagEntries = () => {
         <meta name="keywords" content={seo.keywords} />
         <meta property="og:title" content={seo.title} />
         <meta property="og:description" content={seo.description} />
+        <meta property="og:image" content={seo.image} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={seo.canonicalUrl} />
         <meta name="robots" content="index, follow" />
@@ -443,7 +606,7 @@ const TagEntries = () => {
 
       <Navbar name="New Entry" link="/journaling-alt" />
 
-      <div className="min-h-screen ">
+      <div className="min-h-screen">
         <TagHeroSection
           tag={tag}
           totalCount={totalCount}
