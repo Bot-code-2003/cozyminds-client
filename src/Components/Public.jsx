@@ -71,10 +71,10 @@ const Public = () => {
       <div className="bg-white sticky top-0 z-[100]">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-center">
-            <div className="flex bg-gray-100 rounded-lg p-1 my-4">
+            <div className="flex bg-gray-100 rounded-full p-1 my-3">
               <button
                 onClick={() => setActiveTab("stories")}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 px-6 py-2 rounded-full font-medium transition-all duration-200 ${
                   activeTab === "stories"
                     ? "bg-white text-black-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
@@ -85,7 +85,7 @@ const Public = () => {
               </button>
               <button
                 onClick={() => setActiveTab("journals")}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 px-6 py-2 rounded-full font-medium transition-all duration-200 ${
                   activeTab === "journals"
                     ? "bg-white text-black-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"

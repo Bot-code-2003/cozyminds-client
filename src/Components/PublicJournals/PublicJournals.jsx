@@ -414,7 +414,7 @@ const PublicJournals = () => {
                   <div
                     key={journal._id}
                     className={`
-                      group rounded-lg relative overflow-hidden bg-gray-900 border border-gray-800 hover:shadow-lg transition-all duration-300
+                      group rounded-2xl relative overflow-hidden bg-gray-900 border border-gray-800 hover:shadow-lg transition-all duration-300
                       ${isLarge ? "sm:col-span-2 sm:row-span-2" : ""}
                       ${isMedium ? "lg:col-span-2" : ""}
                     `}
@@ -614,7 +614,7 @@ const PublicJournals = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {latestJournals.map((journal) => (
                   <JournalCard
                     key={journal._id}

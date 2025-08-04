@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { Tag, Loader } from "lucide-react";
+import { Tag, Loader, Sparkles, TrendingUp } from "lucide-react";
 import axios from "axios";
 import { useDarkMode } from "../../context/ThemeContext";
 import AuthModals from "../Landing/AuthModals";
@@ -9,6 +9,15 @@ import Navbar from "../Dashboard/Navbar";
 import JournalCard, {
   JournalCardSkeleton,
 } from "../PublicJournals/PublicStoryCard";
+
+import romance from "/banners/romance.png";
+import comedy from "/banners/comedy.png";
+import fantasy from "/banners/fantasy.jpg";
+import mystery from "/banners/mystery.png";
+import scienceFiction from "/banners/science fiction.jpg";
+import horror from "/banners/horror.jpg";
+import drama from "/banners/drama.png";
+import adventure from "/banners/adventure.jpg";
 
 const API = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
@@ -23,7 +32,23 @@ const getCurrentUser = () => {
   }
 };
 
-// Related Tags Component
+// Tag banner mapping
+const getTagBanner = (tagName) => {
+  const banners = {
+    romance,
+    comedy,
+    fantasy,
+    mystery,
+    "science fiction": scienceFiction,
+    horror,
+    drama,
+    adventure,
+  };
+
+  return banners[tagName.toLowerCase()] || fantasy; // Default fallback
+};
+
+// Enhanced Related Tags Component
 const RelatedTags = ({ currentTag, contentType, onTagSelect }) => {
   const storyTags = [
     "Fantasy",
@@ -54,18 +79,21 @@ const RelatedTags = ({ currentTag, contentType, onTagSelect }) => {
   if (relatedTags.length === 0) return null;
 
   return (
-    <div className="bg-white border-b border-gray-200 py-2">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="bg-black rounded-b-2xl max-w-7xl mx-auto backdrop-blur-sm border-b border-white/20 py-4  relative z-10">
+      <div className="">
         <div className="text-center">
+          <p className="text-white/90 text-sm mb-3 font-medium">
+            Explore Related Tags
+          </p>
           <div className="flex justify-center">
-            <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            <div className="flex items-center gap-3 overflow-x-auto pb-2">
               {relatedTags.map((tag) => (
                 <button
                   key={tag}
                   onClick={() => onTagSelect(tag)}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap hover:bg-gray-200 transition-colors"
+                  className="group px-5 py-2.5 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-medium whitespace-nowrap hover:bg-white/30 transition-all duration-200 border border-white/20 hover:border-white/40"
                 >
-                  {tag}
+                  <span className="flex items-center gap-1">{tag}</span>
                 </button>
               ))}
             </div>
@@ -76,57 +104,99 @@ const RelatedTags = ({ currentTag, contentType, onTagSelect }) => {
   );
 };
 
-// Hero Section Component
+// Enhanced Hero Section Component
 const TagHeroSection = ({ tag, totalCount, contentType }) => {
-  const getTagDescription = (tagName) => {
-    const descriptions = {
-      // Story tags
-      Fantasy:
-        "Dive into magical realms filled with wonder, mythical creatures, and extraordinary adventures.",
-      Horror:
-        "Experience spine-chilling tales that will keep you on the edge of your seat.",
-      "Science Fiction":
-        "Explore futuristic worlds and cutting-edge technology through imaginative storytelling.",
-      Romance:
-        "Discover heartwarming love stories that celebrate human connection and emotion.",
-      Mystery:
-        "Unravel puzzles and secrets in these captivating tales of intrigue.",
-      Adventure:
-        "Embark on thrilling journeys filled with excitement and discovery.",
-      Drama:
-        "Experience powerful stories that explore the depths of human emotion.",
-      Comedy: "Enjoy lighthearted tales that bring joy and laughter.",
-
-      // Journal tags
-      Personal:
-        "Intimate reflections and personal experiences shared authentically.",
-      Reflection:
-        "Thoughtful contemplations on life, growth, and self-discovery.",
-      Life: "Real stories from everyday experiences and life's journey.",
-      Growth: "Inspiring accounts of personal development and transformation.",
-      Thoughts: "Stream-of-consciousness writing and deep thinking.",
-      Experience: "First-hand accounts of meaningful life experiences.",
-      Daily: "Everyday moments and daily life reflections.",
-      Mindfulness: "Peaceful contemplations on presence and awareness.",
-    };
-    return (
-      descriptions[tagName] ||
-      `Explore ${contentType} tagged with "${tagName}" from our community of writers.`
-    );
-  };
+  const bannerImage = getTagBanner(tag);
 
   return (
-    <div className="bg-white mt-4">
-      <div className="max-w-5xl mx-auto px-4 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 capitalize">
-          {/* {contentType === 'stories' ? 'Stories' : 'Journals'} Tagged "{tag}" */}
-          {tag}
-        </h1>
-        <p className="text-gray-600 mb-4">{getTagDescription(tag)}</p>
+    <div className="relative max-w-7xl rounded-t-2xl mx-auto mt-12 flex items-center justify-center overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div className="">
+        <img
+          src={bannerImage}
+          alt={`${tag} banner`}
+          className="w-full h-full object-cover"
+        />
       </div>
+      {/* Bottom Fade */}
     </div>
   );
 };
+
+// Enhanced Loading Component
+const LoadingState = ({ seo, modals }) => (
+  <>
+    <Helmet>
+      <title>{seo.title}</title>
+      <meta name="description" content={seo.description} />
+      <meta name="keywords" content={seo.keywords} />
+      <meta property="og:title" content={seo.title} />
+      <meta property="og:description" content={seo.description} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={seo.canonicalUrl} />
+      <meta name="robots" content="index, follow" />
+      <link rel="canonical" href={seo.canonicalUrl} />
+    </Helmet>
+
+    <Navbar name="New Entry" link="/journaling-alt" />
+
+    <div className="min-h-screen bg-gray-50">
+      <div className="relative min-h-[50vh] flex items-center justify-center bg-gradient-to-br from-gray-400 to-gray-600 animate-pulse">
+        <div className="text-center text-white">
+          <Loader className="w-12 h-12 animate-spin mx-auto mb-4" />
+          <p className="text-xl font-medium">Loading amazing content...</p>
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <JournalCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    </div>
+    {modals}
+  </>
+);
+
+// Enhanced Error Component
+const ErrorState = ({ seo, modals, error, onRetry }) => (
+  <>
+    <Helmet>
+      <title>{seo.title}</title>
+      <meta name="description" content={seo.description} />
+      <meta name="keywords" content={seo.keywords} />
+      <meta property="og:title" content={seo.title} />
+      <meta property="og:description" content={seo.description} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={seo.canonicalUrl} />
+      <meta name="robots" content="index, follow" />
+      <link rel="canonical" href={seo.canonicalUrl} />
+    </Helmet>
+
+    <Navbar name="New Entry" link="/journaling-alt" />
+
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center max-w-md mx-auto px-4">
+        <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Tag className="w-10 h-10 text-red-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-3">
+          Oops! Something went wrong
+        </h2>
+        <p className="text-gray-600 mb-8 leading-relaxed">{error}</p>
+        <button
+          onClick={onRetry}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+        >
+          <Sparkles className="w-4 h-4" />
+          Try Again
+        </button>
+      </div>
+    </div>
+    {modals}
+  </>
+);
 
 const TagEntries = () => {
   const { tag } = useParams();
@@ -213,7 +283,7 @@ const TagEntries = () => {
         }
       } catch (error) {
         console.error("Error fetching entries:", error);
-        setError("Failed to fetch entries");
+        setError("Failed to fetch entries. Please try again later.");
       } finally {
         setLoading(false);
         setLoadingMore(false);
@@ -340,73 +410,20 @@ const TagEntries = () => {
   };
 
   if (loading && !loadingMore) {
-    return (
-      <>
-        <Helmet>
-          <title>{seo.title}</title>
-          <meta name="description" content={seo.description} />
-          <meta name="keywords" content={seo.keywords} />
-          <meta property="og:title" content={seo.title} />
-          <meta property="og:description" content={seo.description} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={seo.canonicalUrl} />
-          <meta name="robots" content="index, follow" />
-          <link rel="canonical" href={seo.canonicalUrl} />
-        </Helmet>
-
-        <Navbar name="New Entry" link="/journaling-alt" />
-
-        <div className="min-h-screen bg-gray-50">
-          <TagHeroSection tag={tag} totalCount={0} contentType={contentType} />
-          <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <JournalCardSkeleton key={i} />
-              ))}
-            </div>
-          </div>
-        </div>
-        {modals}
-      </>
-    );
+    return <LoadingState seo={seo} modals={modals} />;
   }
 
   if (error) {
     return (
-      <>
-        <Helmet>
-          <title>{seo.title}</title>
-          <meta name="description" content={seo.description} />
-          <meta name="keywords" content={seo.keywords} />
-          <meta property="og:title" content={seo.title} />
-          <meta property="og:description" content={seo.description} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={seo.canonicalUrl} />
-          <meta name="robots" content="index, follow" />
-          <link rel="canonical" href={seo.canonicalUrl} />
-        </Helmet>
-
-        <Navbar name="New Entry" link="/journaling-alt" />
-
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Something went wrong
-            </h2>
-            <p className="text-gray-600 mb-4">{error}</p>
-            <button
-              onClick={() => {
-                setError(null);
-                fetchEntries(1, false);
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-        {modals}
-      </>
+      <ErrorState
+        seo={seo}
+        modals={modals}
+        error={error}
+        onRetry={() => {
+          setError(null);
+          fetchEntries(1, false);
+        }}
+      />
     );
   }
 
@@ -426,68 +443,87 @@ const TagEntries = () => {
 
       <Navbar name="New Entry" link="/journaling-alt" />
 
-      <div className="min-h-screen">
-        <div className="p-6">
-          <TagHeroSection
-            tag={tag}
-            totalCount={totalCount}
-            contentType={contentType}
-          />
-          <RelatedTags
-            currentTag={tag}
-            contentType={contentType}
-            onTagSelect={handleTagSelect}
-          />
-        </div>
-        <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="min-h-screen ">
+        <TagHeroSection
+          tag={tag}
+          totalCount={totalCount}
+          contentType={contentType}
+        />
+        <RelatedTags
+          currentTag={tag}
+          contentType={contentType}
+          onTagSelect={handleTagSelect}
+        />
+
+        <div className="max-w-7xl mx-auto py-12">
           {entries.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-16">
               <div className="max-w-md mx-auto">
-                <Tag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Tag className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
                   No {contentType} found
                 </h3>
-                <p className="text-gray-600 mb-6">
-                  We couldn't find any {contentType} tagged with "{tag}". Try
-                  exploring other tags or check back later.
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  We couldn't find any {contentType} tagged with "{tag}".
+                  <br />
+                  Try exploring other tags or check back later for new content.
                 </p>
                 <button
                   onClick={() => window.history.back()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  Go Back
+                  <Sparkles className="w-4 h-4" />
+                  Explore More
                 </button>
               </div>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {entries.map((entry) => (
-                  <JournalCard
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="text-sm text-gray-500">
+                    Showing {entries.length} of {totalCount} results
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {entries.map((entry, index) => (
+                  <div
                     key={entry._id}
-                    journal={entry}
-                    onLike={handleLike}
-                    onSave={handleSave}
-                    isLiked={likedEntries.has(entry._id)}
-                    isSaved={savedEntries.has(entry._id)}
-                  />
+                    className="transform hover:scale-105 transition-all duration-200"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <JournalCard
+                      journal={entry}
+                      onLike={handleLike}
+                      onSave={handleSave}
+                      isLiked={likedEntries.has(entry._id)}
+                      isSaved={savedEntries.has(entry._id)}
+                    />
+                  </div>
                 ))}
               </div>
 
               {hasMore && (
-                <div className="text-center mt-12">
+                <div className="text-center mt-16">
                   <button
                     onClick={loadMore}
                     disabled={loadingMore}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
                   >
                     {loadingMore ? (
                       <>
-                        <Loader className="w-4 h-4 animate-spin" />
-                        Loading...
+                        <Loader className="w-5 h-5 animate-spin" />
+                        Loading more amazing content...
                       </>
                     ) : (
-                      "Load More"
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        Load More Stories
+                      </>
                     )}
                   </button>
                 </div>

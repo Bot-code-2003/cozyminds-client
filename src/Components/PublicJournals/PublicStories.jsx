@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { Clock, Heart, MessageSquare, BookOpen, Star } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -52,31 +52,33 @@ const getAvatarSvg = (style, seed) => {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
-const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
+// Tag Filter Component
+const TagFilters = memo(({ tags, selectedTag, onTagSelect }) => {
   const navigate = useNavigate();
 
-  const handleTagClick = (tag) => {
-    if (tag) {
-      navigate(`/tag/${tag.toLowerCase()}`, {
-        state: { contentType: "stories", selectedTag: tag },
-      });
-    } else {
-      navigate("/public", { state: { contentType: "stories" } });
-      onTagSelect(null);
-    }
-  };
+  const handleTagClick = useCallback(
+    (tag) => {
+      if (tag) {
+        navigate(`/tag/${tag.toLowerCase()}`, {
+          state: { contentType: "stories" },
+        });
+      }
+    },
+    [navigate]
+  );
 
   return (
-    <div className="bg-white border-b border-gray-100 py-4">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center gap-3 overflow-x-auto">
+    <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 pb-4 pt-2 sticky top-0 z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
           <button
-            onClick={() => handleTagClick(null)}
-            className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
+            onClick={() => onTagSelect(null)}
+            className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               !selectedTag
-                ? "bg-gray-900 text-white"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
+            aria-label="Show all journals"
           >
             All
           </button>
@@ -84,11 +86,8 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
             <button
               key={tag}
               onClick={() => handleTagClick(tag)}
-              className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
-                selectedTag === tag
-                  ? "bg-gray-900 text-white"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
+              className="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label={`Filter by ${tag} tag`}
             >
               {tag}
             </button>
@@ -97,7 +96,7 @@ const TagFilters = ({ tags, selectedTag, onTagSelect }) => {
       </div>
     </div>
   );
-};
+});
 
 // Redesigned LatestStoryCard - Full image background with overlay content
 const LatestStoryCard = ({
@@ -557,7 +556,7 @@ const PublicStories = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <TagFilters
         tags={popularTags}
         selectedTag={selectedTag}
@@ -606,7 +605,7 @@ const PublicStories = () => {
                     <div
                       key={story._id}
                       className={`
-                        group rounded-lg relative overflow-hidden bg-gray-900 border border-gray-800 hover:shadow-lg transition-all duration-300
+                        group rounded-2xl relative overflow-hidden bg-gray-900 border border-gray-800 hover:shadow-lg transition-all duration-300
                         ${isLarge ? "md:col-span-2 md:row-span-2" : ""}
                         ${isMedium ? "lg:col-span-2" : ""}
                       `}
@@ -645,12 +644,12 @@ const PublicStories = () => {
                             {story.title}
                           </h3>
                           {isLarge && (
-                            <p className="text-sm leading-relaxed line-clamp-3 mb-4 text-white/80">
+                            <p className="text-sm leading-relaxed line-clamp-1 mb-4 text-white/80">
                               {story.metaDescription ||
                                 (story.content
                                   ? story.content
                                       .replace(/<[^>]*>/g, "")
-                                      .substring(0, 120) + "..."
+                                      .substring(0, 180) + "..."
                                   : "No preview available")}
                             </p>
                           )}
@@ -797,7 +796,7 @@ const PublicStories = () => {
                     onSave={handleSave}
                     isLiked={likedStories.has(story._id)}
                     isSaved={savedStories.has(story._id)}
-                    hideStats={true}
+                    // hideStats={true}
                   />
                 ))}
               </div>
@@ -829,7 +828,7 @@ const PublicStories = () => {
                   ))}
                 </div>
               ) : topByGenre[tag]?.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {topByGenre[tag].map((story) => (
                     <JournalCard
                       key={story._id}
@@ -838,7 +837,7 @@ const PublicStories = () => {
                       onSave={handleSave}
                       isLiked={likedStories.has(story._id)}
                       isSaved={savedStories.has(story._id)}
-                      hideStats={true}
+                      // hideStats={true}
                     />
                   ))}
                 </div>
