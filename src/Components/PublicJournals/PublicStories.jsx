@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback, memo } from "react";
-import { Clock, Heart, MessageSquare, BookOpen, Star } from "lucide-react";
+import {
+  Clock,
+  Heart,
+  MessageSquare,
+  BookOpen,
+  Star,
+  Crown,
+  Sparkles,
+} from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import JournalCard, { JournalCardSkeleton } from "./PublicStoryCard";
@@ -50,6 +58,107 @@ const getAvatarSvg = (style, seed) => {
   const collection = avatarStyles[style] || avataaars;
   const svg = createAvatar(collection, { seed }).toString();
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
+const AuthorPickCard = ({ story, getAvatarSvg, index }) => {
+  // Extract a thumbnail (fallback to image inside content or default image)
+  const thumbnail =
+    story.thumbnail ||
+    (story.content &&
+      (() => {
+        try {
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = story.content;
+          return tempDiv.querySelector("img")?.src || "/default-book-bg.jpg";
+        } catch {
+          return "/default-book-bg.jpg";
+        }
+      })());
+
+  // Generate avatar
+  const avatarStyle = story.author?.profileTheme?.avatarStyle || "avataaars";
+  const avatarSeed = story.author?.anonymousName || "Anonymous";
+  const avatarUrl = getAvatarSvg(avatarStyle, avatarSeed);
+
+  // Formatted date
+  const date = new Date(story.createdAt).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+  return (
+    <div
+      className="relative rounded-2xl hover:scale-[1.02] overflow-hidden group cursor-pointer bg-gray-100 h-full shadow-md hover:shadow-xl transition-all duration-300"
+      style={{
+        backgroundImage: `url(${thumbnail})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundBlendMode: "overlay",
+        backgroundColor: "#00000055",
+      }}
+    >
+      {/* Overlay for darkening */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-0 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      {/* Badge */}
+      <div className="absolute top-3 right-3 z-10 bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+        <Crown className="w-3 h-3" />
+        <span>Author's Pick</span>
+      </div>
+
+      {/* Card Content */}
+      <div className="absolute inset-0 z-10 p-4 flex flex-col justify-between text-white">
+        {/* Author Info */}
+        <div className="flex items-center gap-2">
+          <img
+            src={avatarUrl}
+            alt={`${story.author?.anonymousName || "Anonymous"}'s avatar`}
+            className="w-8 h-8 rounded-full border-2 border-white/50 shadow-sm"
+          />
+          <div className="text-sm leading-tight">
+            <div className="font-semibold">
+              {story.author?.anonymousName || "Anonymous"}
+            </div>
+            <div className="text-xs text-white/80">{date}</div>
+          </div>
+        </div>
+
+        {/* Title and Stats */}
+        <div className="space-y-2">
+          <h3 className="font-bold text-lg leading-snug line-clamp-2 group-hover:text-amber-100 transition-colors duration-300">
+            {story.title}
+          </h3>
+          <div className="flex items-center justify-between text-xs text-white/80">
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>5 min read</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Heart className="w-3 h-3" />
+              <span>{story.likeCount || 0}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform translate-x-full group-hover:-translate-x-full transition-transform duration-1000"></div>
+      </div>
+
+      {/* Link Overlay */}
+      <a
+        href={`/${story.author?.anonymousName || "anonymous"}/${story.slug}`}
+        className="absolute inset-0 z-20"
+        aria-label={`Read ${story.title}`}
+        onClick={(e) => {
+          e.preventDefault();
+          window.location.href = `/${
+            story.author?.anonymousName || "anonymous"
+          }/${story.slug}`;
+        }}
+      />
+    </div>
+  );
 };
 
 // Tag Filter Component
@@ -213,12 +322,14 @@ const LoadingSkeleton = ({ count = 4 }) => (
 const PublicStories = () => {
   // Loading states for different sections
   const [loadingStates, setLoadingStates] = useState({
+    authorPicks: true,
     featured: true,
     latest: true,
     topGenres: {},
     selectedGenre: false,
   });
 
+  const [authorPickStories, setAuthorPickStories] = useState([]);
   const [featuredStories, setFeaturedStories] = useState([]);
   const [latestByGenre, setLatestByGenre] = useState([]);
   const [topByGenre, setTopByGenre] = useState({});
@@ -229,12 +340,12 @@ const PublicStories = () => {
 
   const popularTags = [
     "Horror",
+    "Romance",
     "Science Fiction",
     "Comedy",
     "Mystery",
-    "Romance",
-    "Fantasy",
     "Adventure",
+    "Fantasy",
     "Drama",
   ];
 
@@ -295,6 +406,35 @@ const PublicStories = () => {
       );
     }
   };
+
+  const fetchAuthorPickStories = useCallback(async () => {
+    const cacheKey = "authorPickStories";
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      console.log("📦 Loaded authorPickStories from localStorage");
+      setAuthorPickStories(parsed);
+      updateUserStates(parsed);
+      updateLoadingState("authorPicks", false);
+      return;
+    }
+
+    try {
+      console.log("🌐 Fetching authorPickStories from API...");
+      updateLoadingState("authorPicks", true);
+      const response = await API.get("/stories/author-picks");
+      const stories = response.data.stories || [];
+      setAuthorPickStories(stories);
+      localStorage.setItem(cacheKey, JSON.stringify(stories));
+      updateUserStates(stories);
+    } catch (error) {
+      console.error("❌ Error fetching author pick stories:", error);
+      setError("Failed to fetch author pick stories");
+    } finally {
+      updateLoadingState("authorPicks", false);
+    }
+  }, []);
 
   const fetchFeaturedStories = useCallback(async () => {
     const cacheKey = "featuredStories";
@@ -447,6 +587,7 @@ const PublicStories = () => {
             : s
         );
 
+      setAuthorPickStories(updateStory);
       setFeaturedStories(updateStory);
       setLatestByGenre(updateStory);
       setTopByGenre((prev) => {
@@ -511,10 +652,16 @@ const PublicStories = () => {
 
   // Initialize data fetching
   useEffect(() => {
+    fetchAuthorPickStories();
     fetchFeaturedStories();
     fetchLatestByGenre();
     fetchTopByGenre();
-  }, [fetchFeaturedStories, fetchLatestByGenre, fetchTopByGenre]);
+  }, [
+    fetchAuthorPickStories,
+    fetchFeaturedStories,
+    fetchLatestByGenre,
+    fetchTopByGenre,
+  ]);
 
   // Fetch selected genre data when tag changes
   useEffect(() => {
@@ -541,6 +688,7 @@ const PublicStories = () => {
           <button
             onClick={() => {
               setError(null);
+              fetchAuthorPickStories();
               fetchFeaturedStories();
               fetchLatestByGenre();
               fetchTopByGenre();
@@ -564,6 +712,103 @@ const PublicStories = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {!selectedTag && (
+          <section className="mb-20">
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-6">
+              <h2 className="text-2xl md:text-3xl font-extrabold ">
+                Author's Picks
+              </h2>
+            </div>
+
+            {/* 3-column custom grid */}
+            {loadingStates.authorPicks ? (
+              <div className="grid grid-cols-3 gap-6 h-[600px]">
+                <div className="flex flex-col gap-6">
+                  <div className="bg-gray-200 animate-pulse rounded-xl h-[290px]" />
+                  <div className="bg-gray-200 animate-pulse rounded-xl h-[290px]" />
+                </div>
+
+                <div className="bg-gray-200 animate-pulse rounded-xl h-full" />
+
+                <div className="flex flex-col gap-6">
+                  <div className="bg-gray-200 animate-pulse rounded-xl h-[290px]" />
+                  <div className="bg-gray-200 animate-pulse rounded-xl h-[290px]" />
+                </div>
+              </div>
+            ) : authorPickStories.length > 0 ? (
+              <div className="grid grid-cols-3 gap-6 h-[600px]">
+                {/* Left Column: Story 0 & 1 */}
+                <div className="flex flex-col gap-6">
+                  {authorPickStories[0] && (
+                    <AuthorPickCard
+                      story={authorPickStories[0]}
+                      likedStories={likedStories}
+                      savedStories={savedStories}
+                      getAvatarSvg={getAvatarSvg}
+                      index={0}
+                      className="h-[290px]"
+                    />
+                  )}
+                  {authorPickStories[1] && (
+                    <AuthorPickCard
+                      story={authorPickStories[1]}
+                      likedStories={likedStories}
+                      savedStories={savedStories}
+                      getAvatarSvg={getAvatarSvg}
+                      index={1}
+                      className="h-[290px]"
+                    />
+                  )}
+                </div>
+
+                {/* Center Column: Story 2 spans both rows */}
+                <div>
+                  {authorPickStories[2] && (
+                    <AuthorPickCard
+                      story={authorPickStories[2]}
+                      likedStories={likedStories}
+                      savedStories={savedStories}
+                      getAvatarSvg={getAvatarSvg}
+                      index={2}
+                      className="h-full"
+                    />
+                  )}
+                </div>
+
+                {/* Right Column: Story 3 & 4 */}
+                <div className="flex flex-col gap-6">
+                  {authorPickStories[3] && (
+                    <AuthorPickCard
+                      story={authorPickStories[3]}
+                      likedStories={likedStories}
+                      savedStories={savedStories}
+                      getAvatarSvg={getAvatarSvg}
+                      index={3}
+                      className="h-[290px]"
+                    />
+                  )}
+                  {authorPickStories[4] && (
+                    <AuthorPickCard
+                      story={authorPickStories[4]}
+                      likedStories={likedStories}
+                      savedStories={savedStories}
+                      getAvatarSvg={getAvatarSvg}
+                      index={4}
+                      className="h-[290px]"
+                    />
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-600">No author's picks available.</p>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Featured Stories Section */}
         {!selectedTag && (
           <section className="mb-16">
@@ -617,7 +862,8 @@ const PublicStories = () => {
                             alt=""
                             className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-0 transition-opacity duration-300" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </div>
                       )}
                       <div
@@ -700,6 +946,9 @@ const PublicStories = () => {
                             </button>
                           </div>
                         </div>
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform translate-x-full group-hover:-translate-x-full transition-transform duration-1000"></div>
+                        </div>
                       </div>
                       <a
                         href={`/${story.author?.anonymousName || "anonymous"}/${
@@ -772,11 +1021,9 @@ const PublicStories = () => {
         {selectedTag ? (
           <section>
             <div className="flex max-w-3xl mx-auto items-center gap-4 my-8">
-              {/* <div className="flex-1 h-[0.5px] bg-gray-300" /> */}
               <h2 className="text-2xl md:text-3xl bold text-gray-900 whitespace-nowrap">
                 Top Stories in {selectedTag}
               </h2>
-              {/* <div className="flex-1 h-[0.5px] bg-gray-300" /> */}
             </div>
 
             {loadingStates.selectedGenre ||
@@ -796,7 +1043,6 @@ const PublicStories = () => {
                     onSave={handleSave}
                     isLiked={likedStories.has(story._id)}
                     isSaved={savedStories.has(story._id)}
-                    // hideStats={true}
                   />
                 ))}
               </div>
@@ -814,11 +1060,9 @@ const PublicStories = () => {
           popularTags.map((tag) => (
             <section key={tag} className="mb-16">
               <div className="flex items-center gap-4 my-8">
-                {/* <div className="flex-1 h-[0.5px] bg-gray-300" /> */}
                 <h2 className="text-2xl md:text-3xl text-left font-semibold text-gray-900 whitespace-nowrap">
                   Top Stories in {tag}
                 </h2>
-                {/* <div className="flex-1 h-[0.5px] bg-gray-300" /> */}
               </div>
 
               {loadingStates.topGenres[tag] ? (
@@ -837,7 +1081,6 @@ const PublicStories = () => {
                       onSave={handleSave}
                       isLiked={likedStories.has(story._id)}
                       isSaved={savedStories.has(story._id)}
-                      // hideStats={true}
                     />
                   ))}
                 </div>
