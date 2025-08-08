@@ -59,8 +59,7 @@ const getAvatarSvg = (style, seed) => {
   const svg = createAvatar(collection, { seed }).toString();
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
-
-const AuthorPickCard = ({ story, getAvatarSvg, index }) => {
+const AuthorPickCard = ({ story, getAvatarSvg, index, className }) => {
   // Extract a thumbnail (fallback to image inside content or default image)
   const thumbnail =
     story.thumbnail ||
@@ -88,7 +87,7 @@ const AuthorPickCard = ({ story, getAvatarSvg, index }) => {
 
   return (
     <div
-      className="relative rounded-2xl hover:scale-[1.02] overflow-hidden group cursor-pointer bg-gray-100 h-full shadow-md hover:shadow-xl transition-all duration-300"
+      className={`relative rounded-2xl overflow-hidden group cursor-pointer bg-gray-100 shadow-md hover:shadow-xl transition-all duration-300 ${className}`}
       style={{
         backgroundImage: `url(${thumbnail})`,
         backgroundSize: "cover",
@@ -99,23 +98,23 @@ const AuthorPickCard = ({ story, getAvatarSvg, index }) => {
     >
       {/* Overlay for darkening */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-0 transition-opacity duration-300" />
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 md:group-hover:opacity-100" />
       {/* Badge */}
-      <div className="absolute top-3 right-3 z-10 bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+      <div className="absolute top-2 right-2 md:top-3 md:right-3 z-10 bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
         <Crown className="w-3 h-3" />
         <span>Author's Pick</span>
       </div>
 
       {/* Card Content */}
-      <div className="absolute inset-0 z-10 p-4 flex flex-col justify-between text-white">
+      <div className="absolute inset-0 z-10 p-3 md:p-4 flex flex-col justify-between text-white">
         {/* Author Info */}
         <div className="flex items-center gap-2">
           <img
             src={avatarUrl}
             alt={`${story.author?.anonymousName || "Anonymous"}'s avatar`}
-            className="w-8 h-8 rounded-full border-2 border-white/50 shadow-sm"
+            className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white/50 shadow-sm"
           />
-          <div className="text-sm leading-tight">
+          <div className="text-xs md:text-sm leading-tight">
             <div className="font-semibold">
               {story.author?.anonymousName || "Anonymous"}
             </div>
@@ -125,7 +124,7 @@ const AuthorPickCard = ({ story, getAvatarSvg, index }) => {
 
         {/* Title and Stats */}
         <div className="space-y-2">
-          <h3 className="font-bold text-lg leading-snug line-clamp-2 group-hover:text-amber-100 transition-colors duration-300">
+          <h3 className="font-bold text-base md:text-lg leading-snug line-clamp-2 group-hover:text-amber-100 transition-colors duration-300">
             {story.title}
           </h3>
           <div className="flex items-center justify-between text-xs text-white/80">
@@ -141,7 +140,7 @@ const AuthorPickCard = ({ story, getAvatarSvg, index }) => {
         </div>
       </div>
 
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 md:group-hover:opacity-100">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform translate-x-full group-hover:-translate-x-full transition-transform duration-1000"></div>
       </div>
 
@@ -713,33 +712,31 @@ const PublicStories = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {!selectedTag && (
-          <section className="mb-20">
+          <section className="mb-12 md:mb-20">
             {/* Header */}
-            <div className="flex items-center gap-2 mb-6">
-              <h2 className="text-2xl md:text-3xl font-extrabold ">
+            <div className="flex items-center gap-2 mb-4 md:mb-6">
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-extrabold">
                 Author's Picks
               </h2>
             </div>
 
-            {/* 3-column custom grid */}
+            {/* Grid Layout */}
             {loadingStates.authorPicks ? (
-              <div className="grid grid-cols-3 gap-6 h-[600px]">
-                <div className="flex flex-col gap-6">
-                  <div className="bg-gray-200 animate-pulse rounded-xl h-[290px]" />
-                  <div className="bg-gray-200 animate-pulse rounded-xl h-[290px]" />
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
+                <div className="flex flex-col gap-4 md:gap-6">
+                  <div className="bg-gray-200 animate-pulse rounded-xl h-[200px] md:h-[290px]" />
+                  <div className="bg-gray-200 animate-pulse rounded-xl h-[200px] md:h-[290px]" />
                 </div>
-
-                <div className="bg-gray-200 animate-pulse rounded-xl h-full" />
-
-                <div className="flex flex-col gap-6">
-                  <div className="bg-gray-200 animate-pulse rounded-xl h-[290px]" />
-                  <div className="bg-gray-200 animate-pulse rounded-xl h-[290px]" />
+                <div className="bg-gray-200 animate-pulse rounded-xl h-[200px] md:h-[600px] hidden md:block" />
+                <div className="flex flex-col gap-4 md:gap-6">
+                  <div className="bg-gray-200 animate-pulse rounded-xl h-[200px] md:h-[290px]" />
+                  <div className="bg-gray-200 animate-pulse rounded-xl h-[200px] md:h-[290px]" />
                 </div>
               </div>
             ) : authorPickStories.length > 0 ? (
-              <div className="grid grid-cols-3 gap-6 h-[600px]">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
                 {/* Left Column: Story 0 & 1 */}
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4 md:gap-6">
                   {authorPickStories[0] && (
                     <AuthorPickCard
                       story={authorPickStories[0]}
@@ -747,7 +744,7 @@ const PublicStories = () => {
                       savedStories={savedStories}
                       getAvatarSvg={getAvatarSvg}
                       index={0}
-                      className="h-[290px]"
+                      className="h-[200px] md:h-[290px]"
                     />
                   )}
                   {authorPickStories[1] && (
@@ -757,13 +754,13 @@ const PublicStories = () => {
                       savedStories={savedStories}
                       getAvatarSvg={getAvatarSvg}
                       index={1}
-                      className="h-[290px]"
+                      className="h-[200px] md:h-[290px]"
                     />
                   )}
                 </div>
 
                 {/* Center Column: Story 2 spans both rows */}
-                <div>
+                <div className="hidden md:block">
                   {authorPickStories[2] && (
                     <AuthorPickCard
                       story={authorPickStories[2]}
@@ -771,13 +768,13 @@ const PublicStories = () => {
                       savedStories={savedStories}
                       getAvatarSvg={getAvatarSvg}
                       index={2}
-                      className="h-full"
+                      className="h-[600px]"
                     />
                   )}
                 </div>
 
                 {/* Right Column: Story 3 & 4 */}
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4 md:gap-6">
                   {authorPickStories[3] && (
                     <AuthorPickCard
                       story={authorPickStories[3]}
@@ -785,7 +782,7 @@ const PublicStories = () => {
                       savedStories={savedStories}
                       getAvatarSvg={getAvatarSvg}
                       index={3}
-                      className="h-[290px]"
+                      className="h-[200px] md:h-[290px]"
                     />
                   )}
                   {authorPickStories[4] && (
@@ -795,15 +792,17 @@ const PublicStories = () => {
                       savedStories={savedStories}
                       getAvatarSvg={getAvatarSvg}
                       index={4}
-                      className="h-[290px]"
+                      className="h-[200px] md:h-[290px]"
                     />
                   )}
                 </div>
               </div>
             ) : (
-              <div className="text-center py-12">
-                <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-600">No author's picks available.</p>
+              <div className="text-center py-8 md:py-12">
+                <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-600 text-sm md:text-base">
+                  No author's picks available.
+                </p>
               </div>
             )}
           </section>
